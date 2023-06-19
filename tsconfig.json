@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": [
+      "DOM",
+      "ESNext"
+    ],
+    "allowJs": true,
+    "outDir": "dist",
+    "rootDir": "./src",
+    "noEmit": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "moduleResolution": "node",
+    "types": [
+      "@league-of-foundry-developers/foundry-vtt-types/index-lenient",
+      "@types/node"
+    ],
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "dnd5e": [
+        "../../systems/dnd5e/dnd5e.mjs"
+      ]
+    }
+  },
+  "include": [
+    "./src/**/*"
+  ],
+  "files": [
+    "./src/module.ts"
+  ],
+}

@@ -1,0 +1,37 @@
+{
+  "id": "pf2e-fc",
+  "title": "Flat Check Buttons",
+  "description": "👉🔲",
+  "version": "This is auto replaced",
+  "library": "false",
+  "manifestPlusVersion": "1.2.0",
+  "compatibility": {
+    "minimum": 11,
+    "verified": 11,
+    "maximum": 11
+  },
+  "authors": [
+    {
+      "name": "oWave",
+      "discord": "oWave#3018"
+    }
+  ],
+  "relationships": {
+    "systems": [
+      {
+        "id": "pf2e",
+        "type": "system",
+        "compatibility": {
+          "minimum": "5.0.1"
+        }
+      }
+    ],
+    "requires": []
+  },
+  "esmodules": ["dist/module.js"],
+  "url": "This is auto replaced",
+  "manifest": "This is auto replaced",
+  "download": "This is auto replaced",
+  "license": "LICENSE",
+  "readme": "README.md"
+}
