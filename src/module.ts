@@ -2,7 +2,7 @@ import { rollFlatCheck, rollForSingleTarget } from "./flat"
 import { MoreDialog } from "./more-dialog"
 
 Hooks.on("init", () => {
-  game.settings.register("pf2e-fc", "show", {
+  game.settings.register("pf2e-flatcheck-helper", "show", {
     name: "Enable flat check buttons",
     hint: "Toggle visibility of buttons below the chat box.",
     scope: "client",
@@ -17,12 +17,12 @@ Hooks.on(
   "renderSidebarTab",
   async (app: SidebarTab, html: HTMLCollection) => {
     if (app.tabName !== "chat") return
-    if (!game.settings.get("pf2e-fc", "show")) return
+    if (!game.settings.get("pf2e-flatcheck-helper", "show")) return
 
     const chat = html[0].querySelector("#chat-form")
 
     const template = await renderTemplate(
-      "modules/pf2e-fc/templates/buttons.hbs",
+      "modules/pf2e-flatcheck-helper/templates/buttons.hbs",
       {}
     )
     const node = document.createElement("div")

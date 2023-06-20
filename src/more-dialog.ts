@@ -43,7 +43,7 @@ const formSections: Record<
 
 export class MoreDialog extends Application {
   override get template() {
-    return "modules/pf2e-fc/templates/more.hbs"
+    return "modules/pf2e-flatcheck-helper/templates/more.hbs"
   }
   override get title() {
     return "More Flat Checks"

@@ -1,7 +1,6 @@
 {
-  "name": "psikick",
+  "name": "pf2e-flatcheck-helper",
   "version": "1.0.0",
-  "main": "index.js",
   "author": "oWave",
   "license": "MIT",
   "private": true,
