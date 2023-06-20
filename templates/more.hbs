@@ -1,0 +1,19 @@
+<div class="flexcol">
+    {{#each sections}}
+      <div>
+        <h2 style="text-align: center;">{{this.name}}</h2>
+        <div class="flexrow" style="align-items: center;">
+          <strong>{{this.label}}</strong>
+          <input
+            id="{{@key}}-input"
+            type="number"
+            style="width: 50px;"
+            value="{{this.default}}"
+            min="{{this.min}}"
+            max="{{this.max}}"
+          />
+          <button id="{{@key}}-button"><i class="fa-regular fa-dice-d20"></i></button>
+        </div>
+      </div>
+    {{/each}}
+</div>

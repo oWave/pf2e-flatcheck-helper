@@ -1,4 +1,4 @@
-export async function rollFlatCheck(dc: number) {
+export async function rollFlatCheck(dc: number, { hidden = false, label }: { hidden: boolean, label?: string }) {
   const r = await new Roll("d20").roll()
   const degree = r.total >= dc ? 2 : 1
 
@@ -10,11 +10,11 @@ export async function rollFlatCheck(dc: number) {
       adjustment: null,
       dieResult: r.total,
       rollTotal: r.total,
-      dc: { label: "Flat Check DC", value: dc },
+      dc: { label: `${label ?? "Flat Check"} DC`, value: dc },
     },
   })
 
-  r.toMessage({ flavor: flavor.outerHTML })
+  r.toMessage({ flavor: flavor.outerHTML }, { rollMode: hidden ? "blindroll" : "roll" })
 
   // r.toMessage({}, { create: true })
 }
@@ -34,12 +34,12 @@ function dcForToken(token: Token) {
   return dc || null
 }
 
-export async function rollForSingleTarget(target: Token | undefined) {
+export async function rollForSingleTarget(target: Token | undefined, { hidden = false }: { hidden: boolean }) {
   if (!target) return
   const dc = dcForToken(target)
   if (!dc)
     ui.notifications.warn(
       "Selected target has no conditions that require a flat check"
     )
-  else rollFlatCheck(dc)
+  else rollFlatCheck(dc, {hidden})
 }
