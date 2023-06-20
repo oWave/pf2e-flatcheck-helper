@@ -1,0 +1,10 @@
+#fc-container {
+  flex: 0;
+  margin: 2px 6px;
+  position: relative;
+}
+
+#fc-button-target.highlight {
+  outline: rgba(255, 60, 60, 0.7) solid 2px;
+  background-color: #D9B7B6;
+}
