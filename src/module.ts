@@ -1,8 +1,24 @@
+import { moveAfter, setup } from "./delay"
 import { CONDITION_DCS, rollFlatCheck, rollForSingleTarget } from "./flat"
 import { MoreDialog } from "./more-dialog"
 
+export default class Module {
+  static id = "pf2e-flatcheck-helper"
+  static _socket: SocketlibSocket | null = null
+  static get socket() {
+    if (!this._socket) throw new Error("Socket not ready")
+    return this._socket
+  }
+}
+
+Hooks.on("socketlib.ready", () => {
+  const s = socketlib.registerModule(Module.id)
+  s.register("delay", moveAfter)
+  Module._socket = s
+})
+
 Hooks.on("init", () => {
-  game.settings.register("pf2e-flatcheck-helper", "show", {
+  game.settings.register(Module.id, "show", {
     name: "Enable flat check buttons",
     hint: "Toggle visibility of buttons below the chat box.",
     scope: "client",
@@ -11,11 +27,13 @@ Hooks.on("init", () => {
     type: Boolean,
     requiresReload: true,
   })
+
+  setup()
 })
 
 Hooks.on("renderSidebarTab", async (app: SidebarTab, html: HTMLCollection) => {
   if (app.tabName !== "chat") return
-  if (!game.settings.get("pf2e-flatcheck-helper", "show")) return
+  if (!game.settings.get(Module.id, "show")) return
 
   const chat = html[0].querySelector("#chat-form")
 

@@ -6,5 +6,17 @@
 
 #fc-button-target.highlight {
   outline: rgba(255, 60, 60, 0.7) solid 2px;
-  background-color: #D9B7B6;
+  background-color: #d9b7b6;
+}
+
+#fc-container button > i {
+  margin-right: 0;
+}
+
+#initiative-delay {
+  padding: 4px 12px;
+  color: white;
+  background-color: rgba(255, 255, 255, 0.2);
+  outline: black solid 1px;
+  cursor: pointer;
 }
