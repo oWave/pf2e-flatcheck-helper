@@ -14,30 +14,29 @@ const formSections: Record<
   stupefied: {
     name: "Stupefied",
     label: "Value",
-    callback: async (value, e) => rollFlatCheck(5+value, {hidden: e.ctrlKey, label: "Stupefied"}),
+    callback: async (value, e) => rollFlatCheck(5 + value, { hidden: e.ctrlKey, label: "Stupefied" }),
     default: () => {
       let value = 0
       if (canvas.tokens?.controlled.length) {
-        canvas.tokens.controlled.forEach(t => {
+        canvas.tokens.controlled.forEach((t) => {
           // @ts-expect-error pf2e
           t.actor?.conditions.forEach((c) => {
-            if (c.slug === "stupefied")
-              value = Math.max(c.value ?? 0, value)
+            if (c.slug === "stupefied") value = Math.max(c.value ?? 0, value)
           })
         })
       }
       return Math.max(value, 1)
     },
     min: 1,
-    max: 15
+    max: 15,
   },
   custom: {
     name: "Custom",
     label: "DC",
-    callback: async (value, e) => rollFlatCheck(value, {hidden: e.ctrlKey}),
+    callback: async (value, e) => rollFlatCheck(value, { hidden: e.ctrlKey }),
     default: () => 10,
     min: 1,
-    max: 20
+    max: 20,
   },
 }
 
@@ -60,10 +59,8 @@ export class MoreDialog extends Application {
       html.find(`#${key}-button`).on("click", (e) => {
         const s = html.find(`#${key}-input`).val()
         const value = parseInt(s as string)
-        if (Number.isNaN(value))
-          ui.notifications.warn("Invalid input")
-        else
-          data.callback(value, e)
+        if (Number.isNaN(value)) ui.notifications.warn("Invalid input")
+        else data.callback(value, e)
         this.close()
       })
     })
