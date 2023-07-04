@@ -6,8 +6,11 @@ export default class Module {
   static id = "pf2e-flatcheck-helper"
   static _socket: SocketlibSocket | null = null
   static get socket() {
-    if (!this._socket) throw new Error("Socket not ready")
+    if (!this._socket) throw new Error("Can't execute delay: socketlib module not enabled")
     return this._socket
+  }
+  static get delayEnabled() {
+    return game.settings.get(this.id, "delay") as Boolean
   }
 }
 
@@ -26,6 +29,15 @@ Hooks.on("init", () => {
     default: true,
     type: Boolean,
     requiresReload: true,
+  })
+
+  game.settings.register(Module.id, "delay", {
+    name: "Enable delay button",
+    hint: "Shows a delay button in the combat tracker.",
+    scope: "world",
+    config: true,
+    default: true,
+    type: Boolean,
   })
 
   setup()

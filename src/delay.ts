@@ -25,42 +25,48 @@ export function delayButton() {
     return `<option value="${e.id}" ${disabled}>${e.initiative} - ${e.name}</option>`
   })
 
-  new Dialog({
-    title: "Delay",
-    content: `
-    <form>
+  new Dialog(
+    {
+      title: "Delay",
+      content: `
+    <form style="margin: 5px 0 10px 0; text-align: center;">
       <label for="c">Delay after: </label>
       <select id="c">
         ${options}
       </select>
     </form>
     `,
-    buttons: {
-      cancel: {
-        label: "Cancel",
-      },
-      delay: {
-        label: "Delay",
-        callback: (html) => {
-          if (!isJQuery(html)) return
-          const id = html.find("select#c").val()
-          if (typeof id !== "string") return
-          // Ensure it's still the combatants turn that the macro started with
-          if (game.combat?.id !== combat.id || c.id !== game.combat?.combatant?.id) return
-          const target = game.combat.combatants.get(id)
-          if (!target) return
-          combat
-            .nextTurn()
-            .then(() => {
-              Module.socket.executeAsGM("delay", combat.id, c.id, target.id)
-            })
-            .catch((e) => {
-              throw e
-            })
+      buttons: {
+        cancel: {
+          label: "Cancel",
+          icon: `<i class="fa-solid fa-xmark"></i>`,
+        },
+        delay: {
+          label: "Delay",
+          icon: `<i class="fa-solid fa-hourglass"></i>`,
+          callback: (html) => {
+            if (!isJQuery(html)) return
+            const id = html.find("select#c").val()
+            if (typeof id !== "string") return
+            // Ensure it's still the combatants turn that the macro started with
+            if (game.combat?.id !== combat.id || c.id !== game.combat?.combatant?.id) return
+            const target = game.combat.combatants.get(id)
+            if (!target) return
+            combat
+              .nextTurn()
+              .then(() => {
+                Module.socket.executeAsGM("delay", combat.id, c.id, target.id)
+              })
+              .catch((e) => {
+                throw e
+              })
+          },
         },
       },
     },
-  }).render(true)
+    // Prevents opening the dialog multiple times
+    { id: `${Module.id}-delay` }
+  ).render(true)
 }
 
 export function moveAfter(combatId: string, combatantId: string, afterId: string) {
@@ -136,6 +142,7 @@ export function moveAfter(combatId: string, combatantId: string, afterId: string
 
 export function setup() {
   Hooks.on("renderEncounterTrackerPF2e", (tracker, html: JQuery, data) => {
+    if (!Module.delayEnabled) return
     const combat = game.combat
     if (!combat) return
     if (!combat.combatant?.isOwner) return
@@ -143,7 +150,7 @@ export function setup() {
     div.find(".initiative").hide()
 
     const button = $(`
-    <span id="initiative-delay">
+    <span id="initiative-delay" title="Delay">
       <i class="fa-solid fa-hourglass"></i>
     </span>
   `)
