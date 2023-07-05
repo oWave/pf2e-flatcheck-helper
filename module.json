@@ -1,7 +1,7 @@
 {
   "id": "pf2e-flatcheck-helper",
-  "title": "pf2e Flat Check Helper",
-  "description": "👉🔲",
+  "title": "pf2e Utility Buttons",
+  "description": "Collection of clickable additions",
   "version": "This is auto replaced",
   "library": "false",
   "manifestPlusVersion": "1.2.0",
@@ -14,7 +14,7 @@
   "authors": [
     {
       "name": "oWave",
-      "discord": "oWave#3018"
+      "discord": "owave"
     }
   ],
   "relationships": {
