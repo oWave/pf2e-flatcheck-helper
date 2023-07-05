@@ -12,11 +12,17 @@ export default class Module {
   static get delayEnabled() {
     return game.settings.get(this.id, "delay") as Boolean
   }
+  static get delayShouldPrompt() {
+    return game.settings.get(this.id, "delay-prompt") as Boolean
+  }
+  static get allowReturn() {
+    return game.settings.get(this.id, "delay-return") as Boolean
+  }
 }
 
 Hooks.on("socketlib.ready", () => {
   const s = socketlib.registerModule(Module.id)
-  s.register("delay", moveAfter)
+  s.register("moveAfter", moveAfter)
   Module._socket = s
 })
 
@@ -37,6 +43,24 @@ Hooks.on("init", () => {
     scope: "world",
     config: true,
     default: true,
+    type: Boolean,
+  })
+
+  game.settings.register(Module.id, "delay-return", {
+    name: "Enable return button",
+    hint: "Allows returning to initiative by pressing the delay button again.",
+    scope: "world",
+    config: true,
+    default: true,
+    type: Boolean,
+  })
+
+  game.settings.register(Module.id, "delay-prompt", {
+    name: "Prompt for new initiative",
+    hint: "Lets the user select a combatant to delay their turn after. Can still return early anytime they want.",
+    scope: "world",
+    config: true,
+    default: false,
     type: Boolean,
   })
 

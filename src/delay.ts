@@ -1,6 +1,37 @@
 import Module from "./module"
 import { isJQuery } from "./utils"
 
+async function applyDelayEffect(actor: Actor) {
+  return actor.createEmbeddedDocuments("Item", [
+    {
+      type: "effect",
+      name: "Delay",
+      img: "icons/svg/clockwork.svg",
+      system: {
+        tokenIcon: { show: true },
+        duration: {
+          value: -1,
+          unit: "encounter",
+          sustained: false,
+          expiry: "turn-start",
+        },
+        slug: "x-delay",
+      },
+    },
+  ])
+}
+
+function isDelaying(actor: Actor) {
+  // @ts-expect-error pf2e
+  return actor.items.some((e) => e.slug === "x-delay")
+}
+
+function removeDelaying(actor: Actor) {
+  // @ts-expect-error pf2e
+  const e = actor.items.find((e) => e.slug === "x-delay")
+  if (e?.id) actor.deleteEmbeddedDocuments("Item", [e.id])
+}
+
 const sortedCombatants = () => {
   if (!game.combat) throw new Error("No combat?")
   return game.combat.combatants
@@ -25,6 +56,13 @@ export function delayButton() {
     return `<option value="${e.id}" ${disabled}>${e.initiative} - ${e.name}</option>`
   })
 
+  if (c.actor) applyDelayEffect(c.actor)
+  combat.nextTurn()
+
+  if (!Module.delayShouldPrompt) {
+    return
+  }
+
   new Dialog(
     {
       title: "Delay",
@@ -48,18 +86,13 @@ export function delayButton() {
             if (!isJQuery(html)) return
             const id = html.find("select#c").val()
             if (typeof id !== "string") return
-            // Ensure it's still the combatants turn that the macro started with
+            // Ensure it's still the combatants turn that the dialog opened with
             if (game.combat?.id !== combat.id || c.id !== game.combat?.combatant?.id) return
             const target = game.combat.combatants.get(id)
             if (!target) return
-            combat
-              .nextTurn()
-              .then(() => {
-                Module.socket.executeAsGM("delay", combat.id, c.id, target.id)
-              })
-              .catch((e) => {
-                throw e
-              })
+            Module.socket.executeAsGM("moveAfter", combat.id, c.id, target.id).catch((e) => {
+              throw e
+            })
           },
         },
       },
@@ -67,6 +100,11 @@ export function delayButton() {
     // Prevents opening the dialog multiple times
     { id: `${Module.id}-delay` }
   ).render(true)
+}
+
+function returnButton(combatant: Combatant) {
+  if (game.combat && game.combat.combatant)
+    Module.socket.executeAsGM("moveAfter", game.combat.id, combatant.id, game.combat.combatant.id)
 }
 
 export function moveAfter(combatId: string, combatantId: string, afterId: string) {
@@ -116,57 +154,61 @@ export function moveAfter(combatId: string, combatantId: string, afterId: string
   game.combat
     // @ts-expect-error pf2e
     ?.setMultipleInitiatives(updates)
-    .then(() =>
-      combatant.actor?.createEmbeddedDocuments("Item", [
-        {
-          type: "effect",
-          name: "Delay",
-          img: "icons/svg/clockwork.svg",
-          system: {
-            tokenIcon: { show: true },
-            duration: {
-              value: 1,
-              unit: "rounds",
-              sustained: false,
-              expiry: "turn-start",
-            },
-            slug: "x-delay",
-          },
-        },
-      ])
-    )
     .catch((e) => {
       throw e
     })
 }
 
-export function setup() {
-  Hooks.on("renderEncounterTrackerPF2e", (tracker, html: JQuery, data) => {
-    if (!Module.delayEnabled) return
-    const combat = game.combat
-    if (!combat) return
-    if (!combat.combatant?.isOwner) return
-    const div = html.find(".combatant.active .token-initiative")
-    div.find(".initiative").hide()
-
-    const button = $(`
-    <span id="initiative-delay" title="Delay">
+function drawButton(type: "delay" | "return", combatentHtml: JQuery, combatant: Combatant) {
+  let button = $(`
+    <div id="initiative-delay" title="Delay">
       <i class="fa-solid fa-hourglass"></i>
-    </span>
+    </div>
   `)
-    button.on("click", (e) => {
-      e.stopPropagation()
-      delayButton()
-    })
+  if (type === "return") {
+    const title = Module.allowReturn ? "Return to initiative" : "Delaying"
+    const cls = Module.allowReturn ? "initiative-return" : "initiative-delay-indicator"
+    button = $(`
+      <div id="initiative-return" class="${cls}" title="${title}">
+        <img class="delay-indicator" src="/icons/svg/clockwork.svg"></img>
+        <i class="fa-solid fa-play"></i>
+      </div>
+    `)
+  }
 
-    div.append(button)
+  const div = combatentHtml.find(".token-initiative")
+  div.find(".initiative").hide()
+  div.append(button)
+
+  button.on("click", (e) => {
+    e.stopPropagation()
+    if (type === "delay") delayButton()
+    else if (Module.allowReturn) returnButton(combatant)
   })
+}
+
+function onRenderCombatTracker(tracker, html: JQuery, data) {
+  if (!Module.delayEnabled) return
+  const combat = game.combat
+  if (!combat) return
+
+  html.find(".combatant.actor").each((i, e) => {
+    const id = e.dataset["combatantId"]
+    if (!id) return
+    const c = combat.combatants.get(id)
+    if (!c || !c.isOwner) return
+
+    if (combat.combatant?.id == c.id) drawButton("delay", $(e), c)
+    else if (c.actor && isDelaying(c.actor)) drawButton("return", $(e), c)
+  })
+}
+
+export function setup() {
+  Hooks.on("renderEncounterTrackerPF2e", onRenderCombatTracker)
 
   Hooks.on("updateCombat", (combat: Combat) => {
-    if (game.user && game.user.id === game.users?.activeGM?.id) return
+    if (game.user && game.user.id !== game.users?.activeGM?.id) return
     if (!combat.combatant?.actor) return
-    // @ts-expect-error pf2e
-    const effect = combat.combatant.actor.items.find((e) => e.slug === "x-delay")
-    if (effect) combat.combatant.actor.deleteEmbeddedDocuments("Item", [effect.id!])
+    removeDelaying(combat.combatant.actor)
   })
 }
