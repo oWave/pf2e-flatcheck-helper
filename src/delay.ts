@@ -214,4 +214,16 @@ export function setupDelay() {
     if (!combat.combatant?.actor) return
     removeDelaying(combat.combatant.actor)
   })
+
+  Hooks.on("createChatMessage", (msg) => {
+    if (msg.user.id !== game.user?.id) return
+    if (!game.combat || !game.combat.combatant?.isOwner) return
+    const item = msg?.item
+    if (
+      item &&
+      item?.type === "action" &&
+      (item.name === "Delay" || item.flags?.core?.sourceId === "Compendium.pf2e.actionspf2e.Item.A72nHGUtNXgY5Ey9")
+    )
+      delayButton()
+  })
 }
