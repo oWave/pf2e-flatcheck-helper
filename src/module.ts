@@ -1,22 +1,38 @@
-import { moveAfter, setup } from "./delay"
-import { CONDITION_DCS, rollFlatCheck, rollForSingleTarget } from "./flat"
-import { MoreDialog } from "./more-dialog"
+import { moveAfter, setupDelay } from "./delay"
+import { setupFlat } from "./flat"
 
 export default class Module {
   static id = "pf2e-flatcheck-helper"
   static _socket: SocketlibSocket | null = null
   static get socket() {
-    if (!this._socket) throw new Error("Can't execute delay: socketlib module not enabled")
+    if (!this._socket) throw new Error("socketlib module not enabled")
     return this._socket
+  }
+  static get fcButtonsEnabled() {
+    return game.settings.get(this.id, "show") as Boolean
   }
   static get delayEnabled() {
     return game.settings.get(this.id, "delay") as Boolean
   }
   static get delayShouldPrompt() {
-    return game.settings.get(this.id, "delay-prompt") as Boolean
+    const s = game.settings.get(this.id, "delay-prompt") as Boolean
+    if (s && !this._socket) {
+      ui.notifications.error(
+        "socketlib module is required for moving initiative. Or disable prompt option in pf2e Utility Buttons settings"
+      )
+      return false
+    }
+    return s
   }
   static get allowReturn() {
-    return game.settings.get(this.id, "delay-return") as Boolean
+    const s = game.settings.get(this.id, "delay-return") as Boolean
+    if (s && !this._socket) {
+      ui.notifications.error(
+        "socketlib module is required for moving initiative. Or disable return button in pf2e Utility Buttons settings"
+      )
+      return false
+    }
+    return s
   }
 }
 
@@ -48,7 +64,7 @@ Hooks.on("init", () => {
 
   game.settings.register(Module.id, "delay-return", {
     name: "Enable return button",
-    hint: "Allows returning to initiative by pressing the delay button again.",
+    hint: "Allows returning to initiative by pressing the delay button again. Requires socketlib.",
     scope: "world",
     config: true,
     default: true,
@@ -57,68 +73,13 @@ Hooks.on("init", () => {
 
   game.settings.register(Module.id, "delay-prompt", {
     name: "Prompt for new initiative",
-    hint: "Lets the user select a combatant to delay their turn after. Can still return early anytime they want.",
+    hint: "Lets the user select a combatant to delay their turn after. Can still return early anytime they want. Requires socketlib.",
     scope: "world",
     config: true,
     default: false,
     type: Boolean,
   })
 
-  setup()
-})
-
-Hooks.on("renderSidebarTab", async (app: SidebarTab, html: HTMLCollection) => {
-  if (app.tabName !== "chat") return
-  if (!game.settings.get(Module.id, "show")) return
-
-  const chat = html[0].querySelector("#chat-form")
-
-  const template = await renderTemplate("modules/pf2e-flatcheck-helper/templates/buttons.hbs", {})
-  const node = document.createElement("div")
-  node.id = "fc-container"
-  // node.style.flex = "0"
-  node.innerHTML = template
-
-  chat?.after(node)
-  const $node = $(node)
-  // @ts-expect-error jquery
-  $node.find(".tooltip").tooltipster({
-    contentAsHTML: true,
-  })
-
-  node.querySelectorAll("button").forEach((button) =>
-    button.addEventListener("click", function (e) {
-      const value = this.dataset.dc
-      if (!value) throw new Error("Bad button DC value " + value)
-      const hidden = e.ctrlKey
-
-      if (value === "targets") {
-        if (game.user?.targets.size == 0) return ui.notifications.warn("No targets selected")
-        if (game.user?.targets.size == 1) return rollForSingleTarget(game.user.targets.first(), { hidden })
-        else return ui.notifications.warn("Too many targets")
-      } else if (value === "more") {
-        new MoreDialog().render(true)
-      } else {
-        const dc = Number(value)
-        if (Number.isNaN(dc)) throw new Error("Bad button DC value " + value)
-
-        rollFlatCheck(dc, { hidden })
-      }
-    })
-  )
-})
-
-Hooks.on("targetToken", (user) => {
-  if (user.id !== game.user?.id) return
-  if (game.user.targets.size !== 1) return document.querySelector("#fc-button-target")?.classList.remove("highlight")
-  const effectSlugs = Object.keys(CONDITION_DCS)
-
-  if (
-    game.user?.targets
-      ?.first()
-      // @ts-expect-error pf2e
-      ?.actor?.conditions.some((c) => effectSlugs.includes(c.slug))
-  )
-    document.querySelector("#fc-button-target")?.classList.add("highlight")
-  else document.querySelector("#fc-button-target")?.classList.remove("highlight")
+  setupDelay()
+  setupFlat()
 })

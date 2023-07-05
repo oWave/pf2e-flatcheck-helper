@@ -206,7 +206,7 @@ function onRenderCombatTracker(tracker, html: JQuery, data) {
   })
 }
 
-export function setup() {
+export function setupDelay() {
   Hooks.on("renderEncounterTrackerPF2e", onRenderCombatTracker)
 
   Hooks.on("updateCombat", (combat: Combat) => {
