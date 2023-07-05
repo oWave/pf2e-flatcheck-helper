@@ -56,10 +56,9 @@ export function delayButton() {
     return `<option value="${e.id}" ${disabled}>${e.initiative} - ${e.name}</option>`
   })
 
-  if (c.actor) applyDelayEffect(c.actor)
-  combat.nextTurn()
-
   if (!Module.delayShouldPrompt) {
+    if (c.actor) applyDelayEffect(c.actor)
+    combat.nextTurn()
     return
   }
 
@@ -90,9 +89,13 @@ export function delayButton() {
             if (game.combat?.id !== combat.id || c.id !== game.combat?.combatant?.id) return
             const target = game.combat.combatants.get(id)
             if (!target) return
-            Module.socket.executeAsGM("moveAfter", combat.id, c.id, target.id).catch((e) => {
-              throw e
-            })
+            if (c.actor) applyDelayEffect(c.actor)
+            combat
+              .nextTurn()
+              .then(() => Module.socket.executeAsGM("moveAfter", combat.id, c.id, target.id))
+              .catch((e) => {
+                throw e
+              })
           },
         },
       },
