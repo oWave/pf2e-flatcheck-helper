@@ -48,7 +48,7 @@ export async function rollForSingleTarget(target: Token | undefined, { hidden = 
 export function setupFlat() {
   Hooks.on("renderSidebarTab", async (app: SidebarTab, html: HTMLCollection) => {
     if (app.tabName !== "chat") return
-    if (Module.fcButtonsEnabled) return
+    if (!Module.fcButtonsEnabled) return
 
     const chat = html[0].querySelector("#chat-form")
 
