@@ -119,15 +119,22 @@ export function moveAfter(combatId: string, combatantId: string, afterId: string
   if (!combatant || !after) return
 
   const targetInitiative = after.initiative
+  const updates: Record<string, any>[] = []
   // @ts-expect-error pf2e
-  const targetPriority = after.flags.pf2e.overridePriority[targetInitiative] + 1
-  const updates = [
-    {
-      id: combatant.id,
+  if (typeof after.flags.pf2e.overridePriority[targetInitiative] !== "number") {
+    updates.push({
+      id: after.id,
       value: targetInitiative,
-      overridePriority: targetPriority,
-    },
-  ]
+      overridePriority: 0,
+    })
+  }
+  // @ts-expect-error pf2e
+  const targetPriority = (after.flags.pf2e.overridePriority[targetInitiative] ?? 0) + 1
+  updates.push({
+    id: combatant.id,
+    value: targetInitiative,
+    overridePriority: targetPriority,
+  })
   let i = targetPriority + 1
   sortedCombatants()
     .filter(
