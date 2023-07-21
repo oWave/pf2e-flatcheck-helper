@@ -200,7 +200,7 @@ function drawButton(type: "delay" | "return", combatentHtml: JQuery, combatant: 
 function onRenderCombatTracker(tracker, html: JQuery, data) {
   if (!Module.delayEnabled) return
   const combat = game.combat
-  if (!combat) return
+  if (!combat || !combat.started) return
 
   html.find(".combatant.actor").each((i, e) => {
     const id = e.dataset["combatantId"]
