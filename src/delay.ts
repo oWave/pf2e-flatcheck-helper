@@ -119,45 +119,41 @@ export function moveAfter(combatId: string, combatantId: string, afterId: string
   if (!combatant || !after) return
 
   const targetInitiative = after.initiative
-  const updates: Record<string, any>[] = []
-  // @ts-expect-error pf2e
-  if (typeof after.flags.pf2e.overridePriority[targetInitiative] !== "number") {
+
+  const order = combat.turns
+    .filter((c) => c.id !== combatantId)
+    .map((c) => {
+      return {
+        id: c.id,
+        initiative: c.initiative,
+      }
+    })
+  const afterIndex = combat.turns.findIndex((c) => c.id === afterId)
+  order.splice(afterIndex, 0, { id: combatant.id, initiative: targetInitiative })
+
+  const updates: {
+    id: string
+    value: number
+    overridePriority: number
+  }[] = []
+
+  const withSameInitiative = order.filter((c) => c.initiative === targetInitiative)
+  for (const [i, { id }] of withSameInitiative.entries()) {
     updates.push({
-      id: after.id,
-      value: targetInitiative,
-      overridePriority: 0,
+      id: id!,
+      value: targetInitiative!,
+      overridePriority: i,
     })
   }
-  // @ts-expect-error pf2e
-  const targetPriority = (after.flags.pf2e.overridePriority[targetInitiative] ?? 0) + 1
-  updates.push({
-    id: combatant.id,
-    value: targetInitiative,
-    overridePriority: targetPriority,
-  })
-  let i = targetPriority + 1
-  sortedCombatants()
-    .filter(
-      (e) =>
-        e.id !== combatant.id &&
-        e.initiative == targetInitiative &&
-        // @ts-expect-error pf2e
-        e.flags.pf2e.overridePriority[targetInitiative] >= targetPriority
-    )
-    .forEach((e) =>
-      updates.push({
-        id: e.id,
-        value: targetInitiative,
-        overridePriority: i++,
-      })
-    )
 
   /*
   console.log("--Updates--")
   updates.forEach((e) => {
     const c = game.combat?.combatants.get(e.id)
     console.log(
-      `${c?.name} ${c?.initiative} ${c?.flags.pf2e.overridePriority[c?.initiative]} -> ${e.value} ${e.overridePriority}`
+      `${c?.name} ${c?.initiative} ${c?.flags.pf2e.overridePriority[c?.initiative] ?? "-"} -> ${e.value} ${
+        e.overridePriority
+      }`
     )
   })
   */
