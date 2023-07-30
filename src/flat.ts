@@ -3,24 +3,23 @@ import { MoreDialog } from "./more-dialog"
 
 export async function rollFlatCheck(dc: number, { hidden = false, label }: { hidden: boolean; label?: string }) {
   const r = await new Roll("d20").roll()
-  const degree = r.total >= dc ? 2 : 1
+  const degree = r.total >= dc ? "success" : "failure"
+  const delta = r.total - dc
+  const deltaText = delta > 0 ? `+${delta}` : delta.toString()
 
-  // @ts-expect-error pf2e
-  const flavor: HTMLElement = await game.pf2e.Check.createResultFlavor({
-    degree: {
-      value: degree,
-      unadjusted: degree,
-      adjustment: null,
-      dieResult: r.total,
-      rollTotal: r.total,
-      dc: { label: `${label ?? "Flat Check"} DC`, value: dc },
-    },
-  })
+  const flavor = document.createElement("span")
+  flavor.classList.add("flavor-text")
+  flavor.innerHTML = `
+  <div class="target-dc-result">
+    <div class="target-dc"><span>${label ?? "Flat"} DC: ${dc}</span></div>
+    <div class="result degree-of-success">
+      Result: <span data-visibility="all" data-whose="self" class="${degree}">${degree.capitalize()}</span>
+      <span data-whose="target">by ${deltaText}</span>
+    </div>
+  </div>
+  `
 
-  r.toMessage(
-    { flavor: flavor.outerHTML.replaceAll('data-visibility="gm"', "") },
-    { rollMode: hidden ? "blindroll" : "roll" }
-  )
+  r.toMessage({ flavor: flavor.outerHTML }, { rollMode: hidden ? "blindroll" : "roll" })
 }
 
 export const CONDITION_DCS = {
