@@ -133,7 +133,7 @@ export function setupLink() {
     const flags = msg.flags?.pf2e?.appliedDamage
     const uuid = flags?.uuid
     const dmg = flags?.updates.find((e) => e.path === "system.attributes.hp.value")?.value
-    if (!uuid || !dmg) return
+    if (!uuid || dmg <= 0) return
 
     const actor = fromUuidSync(uuid) as Actor
     if (!actor) return
