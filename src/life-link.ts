@@ -99,8 +99,8 @@ export function setupLink() {
       if (!e) return
       if (combatant.actor.id != e.origin.id) return
 
-      if (!e.origin)
-        return ui.notifications.error(`Spirit Linked effect on ${actor.name} does not have an origin actor!`)
+      if (!e.origin || e.origin.id === actor.id)
+        return ui.notifications.error(`Bad origin actor for Spirit Linked effect on ${actor.name}! See module readme.`)
 
       const transfer = e.level * 2
       const missingHP = actor.system.attributes.hp.max - actor.system.attributes.hp.value
@@ -140,7 +140,8 @@ export function setupLink() {
     const e = actorEffectBySlug(actor, "life-linked")
     if (!e) return
 
-    if (!e.origin) return ui.notifications.error(`Life Linked effect on ${actor.name} does not have an origin actor!`)
+    if (!e.origin || e.origin.id === actor.id)
+      return ui.notifications.error(`Bad origin actor for Life Linked effect on ${actor.name}! See module readme.`)
 
     let maxTransfer = 3
     if (Module.lifeLinkVariant === "plus") maxTransfer = 2 + Math.floor((e.level - 1) / 2) * 3
@@ -173,7 +174,6 @@ export function setupLink() {
   Hooks.on("renderChatMessage", (msg, html) => {
     if (!game.user?.isGM) return
     html.find("a.life-link").on("click", async (event) => {
-      debugger
       const args = JSON.parse(event.target.dataset.args!) as ButtonArgs
       await handleTransferButton(args)
     })
