@@ -1,5 +1,2 @@
 dist/
 node_modules/
-
-packs/effects/*
-!packs/effects/_source
