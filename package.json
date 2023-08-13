@@ -12,7 +12,6 @@
     "pack": "fvtt package workon \"pf2e-flatcheck-helper\" && fvtt package pack \"effects\""
   },
   "devDependencies": {
-    "@foundryvtt/foundryvtt-cli": "^0.0.9",
     "@league-of-foundry-developers/foundry-vtt-types": "https://github.com/League-of-Foundry-Developers/foundry-vtt-types.git",
     "@typescript-eslint/eslint-plugin": "^5.41.0",
     "@typescript-eslint/parser": "^5.41.0",
