@@ -17,6 +17,26 @@
       "discord": "owave"
     }
   ],
+  "packFolders": [
+    {
+      "name": "PF2e Utility Buttons",
+      "sorting": "a",
+      "packs": [
+        "Effects"
+      ]
+    }
+  ],
+  "packs": [
+    {
+      "label": "Effects",
+      "name": "Effects",
+      "path": "packs/effects.db",
+      "system": "pf2e",
+      "type": "Item",
+      "private": false,
+      "flags": {}
+    }
+  ],
   "relationships": {
     "systems": [
       {

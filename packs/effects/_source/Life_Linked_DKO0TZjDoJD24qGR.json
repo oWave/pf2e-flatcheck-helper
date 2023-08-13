@@ -1,0 +1,68 @@
+{
+  "name": "Life Linked",
+  "type": "effect",
+  "effects": [],
+  "system": {
+    "description": {
+      "gm": "",
+      "value": ""
+    },
+    "source": {
+      "value": ""
+    },
+    "rules": [],
+    "slug": "life-linked",
+    "schema": {
+      "version": 0.854,
+      "lastMigration": null
+    },
+    "traits": {
+      "value": []
+    },
+    "level": {
+      "value": 1
+    },
+    "duration": {
+      "value": -1,
+      "unit": "unlimited",
+      "sustained": false,
+      "expiry": null
+    },
+    "start": {
+      "value": 0,
+      "initiative": null
+    },
+    "tokenIcon": {
+      "show": true
+    },
+    "badge": null,
+    "context": null,
+    "unidentified": false
+  },
+  "img": "systems/pf2e/icons/spells/life-link.webp",
+  "folder": null,
+  "ownership": {
+    "default": 0,
+    "jXb8EXsGlTsyU0zc": 3
+  },
+  "flags": {
+    "core": {},
+    "exportSource": {
+      "world": "ruby-phoenix",
+      "system": "pf2e",
+      "coreVersion": "11.307",
+      "systemVersion": "5.3.2"
+    }
+  },
+  "_stats": {
+    "systemId": "pf2e",
+    "systemVersion": "5.3.2",
+    "coreVersion": "11.307",
+    "createdTime": 1691779995759,
+    "modifiedTime": 1691848037507,
+    "lastModifiedBy": "jXb8EXsGlTsyU0zc"
+  },
+  "_id": "DKO0TZjDoJD24qGR",
+  "sort": 0,
+  "_key": "!items!DKO0TZjDoJD24qGR"
+}
