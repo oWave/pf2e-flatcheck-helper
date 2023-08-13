@@ -39,7 +39,7 @@ export default class Module {
     return game.settings.get(this.id, "lifelink") as Boolean
   }
   static get lifeLinkVariant() {
-    return game.settings.get(this.id, "lifelink") as "apg" | "plus"
+    return game.settings.get(this.id, "lifelink-formular") as "apg" | "plus"
   }
 }
 
