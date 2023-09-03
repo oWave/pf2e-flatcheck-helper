@@ -31,7 +31,7 @@ export const CONDITION_DCS = {
 function dcForToken(token: Token) {
   let dc = 0
   // @ts-expect-error pf2e
-  token.actor?.conditions.forEach((c) => {
+  token.actor?.conditions.stored.forEach((c) => {
     dc = Math.max(CONDITION_DCS[c.slug] ?? 0, dc)
   })
   return dc || null
