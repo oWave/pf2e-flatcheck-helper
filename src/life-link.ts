@@ -1,5 +1,7 @@
+import { CombatantPF2e, EncounterPF2e } from "types/pf2e/module/encounter"
 import Module from "./module"
 import { actorEffectBySlug, actorHasEffect } from "./utils"
+import { ActorPF2e, ChatMessagePF2e } from "types/pf2e/module/documents"
 
 interface ButtonArgs {
   dmg: number
@@ -58,7 +60,6 @@ async function handleTransferButton(args: ButtonArgs) {
   await updateHP(target, transfer)
 
   if (!!args.cd) {
-    // @ts-expect-error pf2e
     await target.createEmbeddedDocuments("Item", [
       {
         type: "effect",
@@ -88,22 +89,23 @@ async function handleTransferButton(args: ButtonArgs) {
 }
 
 export function setupLink() {
-  Hooks.on("pf2e.startTurn", async (combatant, combat) => {
+  Hooks.on<[CombatantPF2e, EncounterPF2e]>("pf2e.startTurn", async (combatant, combat) => {
     if (!Module.lifeLinkEnabled) return
     if (game?.users?.activeGM?.id !== game.user?.id) return
 
     const links: string[] = []
 
     combat.combatants.forEach(({ actor }) => {
+      if (!actor) return
       const e = actorEffectBySlug(actor, "spirit-linked")
       if (!e) return
-      if (combatant.actor.id != e.origin.id) return
+      if (combatant.actor?.id != e.origin?.id) return
 
       if (!e.origin || e.origin.id === actor.id)
         return ui.notifications.error(`Bad origin actor for Spirit Linked effect on ${actor.name}! See module readme.`)
 
       const transfer = e.level * 2
-      const missingHP = actor.system.attributes.hp.max - actor.system.attributes.hp.value
+      const missingHP = actor.system.attributes.hp!.max - actor.system.attributes.hp!.value
       if (missingHP <= 0) return
 
       links.push(
@@ -120,7 +122,7 @@ export function setupLink() {
     if (links.length) {
       await ChatMessage.create({
         content,
-        whisper: ChatMessage.getWhisperRecipients("GM"),
+        whisper: ChatMessage.getWhisperRecipients("GM").map((u) => u.id),
         speaker: ChatMessage.getSpeaker({ actor: combatant.actor }),
       })
     }
@@ -130,12 +132,12 @@ export function setupLink() {
     if (!Module.lifeLinkEnabled) return
     if (game.users?.activeGM?.id !== game.user?.id) return
 
-    const flags = msg.flags?.pf2e?.appliedDamage
+    const flags = (<ChatMessagePF2e>msg).flags?.pf2e?.appliedDamage
     const uuid = flags?.uuid
     const dmg = flags?.updates.find((e) => e.path === "system.attributes.hp.value")?.value
-    if (!uuid || dmg <= 0) return
+    if (!uuid || !dmg || dmg <= 0) return
 
-    const actor = fromUuidSync(uuid) as Actor
+    const actor = fromUuidSync(uuid) as ActorPF2e
     if (!actor) return
     const e = actorEffectBySlug(actor, "life-linked")
     if (!e) return
@@ -166,7 +168,7 @@ export function setupLink() {
 
     await ChatMessage.create({
       content,
-      whisper: ChatMessage.getWhisperRecipients("GM"),
+      whisper: ChatMessage.getWhisperRecipients("GM").map((u) => u.id),
       speaker: ChatMessage.getSpeaker({ actor: e.origin }),
     })
   })

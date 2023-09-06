@@ -13,23 +13,23 @@
     "strict": true,
     "noImplicitAny": false,
     "moduleResolution": "node",
+    "typeRoots": [
+      "node_modules/@types",
+      "types",
+    ],
     "types": [
-      "@league-of-foundry-developers/foundry-vtt-types/index-lenient",
-      "@types/node"
+      "jquery",
+      "node",
+      "foundry"
     ],
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
-    "paths": {
-      "dnd5e": [
-        "../../systems/dnd5e/dnd5e.mjs"
-      ]
-    }
   },
   "include": [
-    "./src/**/*"
+    "./src/**/*",
   ],
   "files": [
     "./src/module.ts"

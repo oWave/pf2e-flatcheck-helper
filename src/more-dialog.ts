@@ -1,4 +1,6 @@
+import { ActorPF2e } from "types/pf2e/module/documents"
 import { rollFlatCheck } from "./flat"
+import { ActorConditions } from "types/pf2e/module/actor/conditions"
 
 const formSections: Record<
   string,
@@ -19,10 +21,8 @@ const formSections: Record<
       let value = 0
       if (canvas.tokens?.controlled.length) {
         canvas.tokens.controlled.forEach((t) => {
-          // @ts-expect-error pf2e
-          t.actor?.conditions.forEach((c) => {
-            if (c.slug === "stupefied") value = Math.max(c.value ?? 0, value)
-          })
+          const conditions = t.actor?.conditions
+          if (conditions?.stupefied?.value) value = Math.max(conditions.stupefied.value, value)
         })
       }
       return Math.max(value, 1)

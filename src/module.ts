@@ -102,7 +102,7 @@ Hooks.on("init", () => {
     scope: "world",
     config: true,
     type: String,
-    // @ts-expect-error no idea why this is erroring
+    default: "apg",
     choices: {
       apg: "Standard, as written in the APG",
       plus: "Oracles+ (Heightened (+2))",

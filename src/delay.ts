@@ -1,7 +1,9 @@
+import { ActorPF2e, ItemPF2e } from "types/pf2e/module/documents"
 import Module from "./module"
 import { isJQuery } from "./utils"
+import { CombatantPF2e, EncounterPF2e } from "types/pf2e/module/encounter"
 
-async function applyDelayEffect(actor: Actor) {
+async function applyDelayEffect(actor: ActorPF2e) {
   return actor.createEmbeddedDocuments("Item", [
     {
       type: "effect",
@@ -21,13 +23,11 @@ async function applyDelayEffect(actor: Actor) {
   ])
 }
 
-function isDelaying(actor: Actor) {
-  // @ts-expect-error pf2e
+function isDelaying(actor: ActorPF2e) {
   return actor.items.some((e) => e.slug === "x-delay")
 }
 
-function removeDelaying(actor: Actor) {
-  // @ts-expect-error pf2e
+function removeDelaying(actor: ActorPF2e) {
   const e = actor.items.find((e) => e.slug === "x-delay")
   if (e?.id) actor.deleteEmbeddedDocuments("Item", [e.id])
 }
@@ -39,8 +39,7 @@ const sortedCombatants = () => {
     .sort((a, b) =>
       a.initiative != b.initiative
         ? b.initiative! - a.initiative!
-        : // @ts-expect-error pf2e
-          a.flags.pf2e.overridePriority[a.initiative] - b.flags.pf2e.overridePriority[b.initiative]
+        : (a.flags.pf2e.overridePriority[a.initiative!] ?? 0) - (b.flags.pf2e.overridePriority[b.initiative!] ?? 0)
     )
 }
 
@@ -105,7 +104,7 @@ export function delayButton() {
   ).render(true)
 }
 
-function returnButton(combatant: Combatant) {
+function returnButton(combatant: CombatantPF2e) {
   if (game.combat && game.combat.combatant)
     Module.socket.executeAsGM("moveAfter", game.combat.id, combatant.id, game.combat.combatant.id)
 }
@@ -157,15 +156,12 @@ export function moveAfter(combatId: string, combatantId: string, afterId: string
     )
   })
   */
-  game.combat
-    // @ts-expect-error pf2e
-    ?.setMultipleInitiatives(updates)
-    .catch((e) => {
-      throw e
-    })
+  game.combat?.setMultipleInitiatives(updates).catch((e) => {
+    throw e
+  })
 }
 
-function drawButton(type: "delay" | "return", combatentHtml: JQuery, combatant: Combatant) {
+function drawButton(type: "delay" | "return", combatentHtml: JQuery, combatant: CombatantPF2e) {
   let button = $(`
     <div id="initiative-delay" title="Delay">
       <i class="fa-solid fa-hourglass"></i>
@@ -212,16 +208,17 @@ function onRenderCombatTracker(tracker, html: JQuery, data) {
 export function setupDelay() {
   Hooks.on("renderEncounterTrackerPF2e", onRenderCombatTracker)
 
-  Hooks.on("updateCombat", (combat: Combat) => {
+  Hooks.on<[EncounterPF2e]>("updateCombat", (combat) => {
     if (game.user && game.user.id !== game.users?.activeGM?.id) return
     if (!combat.combatant?.actor) return
     removeDelaying(combat.combatant.actor)
   })
 
   Hooks.on("createChatMessage", (msg) => {
-    if (msg.user.id !== game.user?.id) return
+    if (msg?.user?.id !== game.user?.id) return
     if (!game.combat || !game.combat.combatant?.isOwner) return
-    const item = msg?.item
+    // @ts-expect-error pf2e
+    const item = msg?.item as ItemPF2e | null
     if (
       item &&
       item?.type === "action" &&

@@ -1,8 +1,9 @@
+import { TokenPF2e } from "types/pf2e/module/canvas"
 import Module from "./module"
 import { MoreDialog } from "./more-dialog"
 
 export async function rollFlatCheck(dc: number, { hidden = false, label }: { hidden: boolean; label?: string }) {
-  const r = await new Roll("d20").roll()
+  const r = await new Roll("d20").roll({ async: true })
   const degree = r.total >= dc ? "success" : "failure"
   const delta = r.total - dc
   const deltaText = delta > 0 ? `+${delta}` : delta.toString()
@@ -28,16 +29,15 @@ export const CONDITION_DCS = {
   invisible: 11,
 }
 
-function dcForToken(token: Token) {
+function dcForToken(token: TokenPF2e) {
   let dc = 0
-  // @ts-expect-error pf2e
   token.actor?.conditions.stored.forEach((c) => {
     dc = Math.max(CONDITION_DCS[c.slug] ?? 0, dc)
   })
   return dc || null
 }
 
-export async function rollForSingleTarget(target: Token | undefined, { hidden = false }: { hidden: boolean }) {
+export async function rollForSingleTarget(target: TokenPF2e | undefined, { hidden = false }: { hidden: boolean }) {
   if (!target) return
   const dc = dcForToken(target)
   if (!dc) ui.notifications.warn("Selected target has no conditions that require a flat check")
@@ -92,12 +92,7 @@ export function setupFlat() {
     if (game.user.targets.size !== 1) return document.querySelector("#fc-button-target")?.classList.remove("highlight")
     const effectSlugs = Object.keys(CONDITION_DCS)
 
-    if (
-      game.user?.targets
-        ?.first()
-        // @ts-expect-error pf2e
-        ?.actor?.conditions.some((c) => effectSlugs.includes(c.slug))
-    )
+    if (game.user?.targets?.first()?.actor?.conditions.some((c) => effectSlugs.includes(c.slug)))
       document.querySelector("#fc-button-target")?.classList.add("highlight")
     else document.querySelector("#fc-button-target")?.classList.remove("highlight")
   })

@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "module": "esnext",
+        "target": "es2022",
+        "lib": [
+            "esnext",
+            "dom"
+        ],
+        "strict": true,
+        "noImplicitOverride": true,
+        "noEmit": true,
+        "esModuleInterop": true,
+        "allowImportingTsExtensions": true
+    },
+    "files": [
+        "index.d.ts",
+        "util.d.ts"
+    ]
+}
