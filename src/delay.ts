@@ -225,7 +225,7 @@ function onRenderTokenHUD(app: TokenHUD, html: JQuery) {
       const column = html.find("div.col.right")
 
       if (isDelaying(combatant.actor)) {
-        if (!combatantIsNext(combatant)) {
+        if (!combatantIsNext(combatant) && Module.allowReturn) {
           const btn = column.append(`
           <div class="control-icon" data-action="return" title="Return to initiative">
           <i class="fa-solid fa-play"></i>
@@ -278,7 +278,8 @@ export function setupDelay() {
       item?.type === "action" &&
       (item.name === "Delay" || item.flags?.core?.sourceId === "Compendium.pf2e.actionspf2e.Item.A72nHGUtNXgY5Ey9")
     )
-      if (isDelaying(item.actor) && item.actor.combatant) returnButton(item.actor.combatant)
-      else if (item.actor.id == game.combat.combatant?.actorId) delayButton()
+      if (isDelaying(item.actor) && item.actor.combatant) {
+        if (Module.allowReturn) returnButton(item.actor.combatant)
+      } else if (item.actor.id == game.combat.combatant?.actorId) delayButton()
   })
 }
