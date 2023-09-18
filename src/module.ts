@@ -2,6 +2,12 @@ import { moveAfter, setupDelay } from "./delay"
 import { setupFlat } from "./flat"
 import { setupLink } from "./life-link"
 
+const sockeLibNotification = foundry.utils.debounce(() => {
+  ui.notifications.error(
+    "socketlib module is required for moving initiative. Or disable return button in pf2e Utility Buttons settings"
+  )
+}, 500)
+
 export default class Module {
   static id = "pf2e-flatcheck-helper"
   static _socket: SocketlibSocket | null = null
@@ -12,15 +18,10 @@ export default class Module {
   static get fcButtonsEnabled() {
     return game.settings.get(this.id, "show") as Boolean
   }
-  static get delayEnabled() {
-    return game.settings.get(this.id, "delay") as Boolean
-  }
   static get delayShouldPrompt() {
     const s = game.settings.get(this.id, "delay-prompt") as Boolean
     if (s && !this._socket) {
-      ui.notifications.error(
-        "socketlib module is required for moving initiative. Or disable prompt option in pf2e Utility Buttons settings"
-      )
+      sockeLibNotification()
       return false
     }
     return s
@@ -28,13 +29,21 @@ export default class Module {
   static get allowReturn() {
     const s = game.settings.get(this.id, "delay-return") as Boolean
     if (s && !this._socket) {
-      ui.notifications.error(
-        "socketlib module is required for moving initiative. Or disable return button in pf2e Utility Buttons settings"
-      )
+      sockeLibNotification()
       return false
     }
     return s
   }
+  static get showInCombatTracker() {
+    return game.settings.get(this.id, "delay-combat-tracker") as Boolean
+  }
+  static get showInTokenHUD() {
+    return game.settings.get(this.id, "delay-token-hud") as Boolean
+  }
+  static get removeCombatToggle() {
+    return game.settings.get(this.id, "token-hud-remove-combat-toggle") as Boolean
+  }
+
   static get lifeLinkEnabled() {
     return game.settings.get(this.id, "lifelink") as Boolean
   }
@@ -60,9 +69,18 @@ Hooks.on("init", () => {
     requiresReload: true,
   })
 
-  game.settings.register(Module.id, "delay", {
-    name: "Enable delay button",
-    hint: "Shows a delay button in the combat tracker.",
+  game.settings.register(Module.id, "delay-combat-tracker", {
+    name: "Show delay button in combat tracker",
+    hint: "Adds delay/return buttons to the combat tracker. Will probably not work with any modules that change the combat tracker.",
+    scope: "world",
+    config: true,
+    default: true,
+    type: Boolean,
+  })
+
+  game.settings.register(Module.id, "delay-token-hud", {
+    name: "Show delay button in token HUD",
+    hint: "Adds delay/return buttons to the menu that appears when right-clicking a token",
     scope: "world",
     config: true,
     default: true,
@@ -81,6 +99,15 @@ Hooks.on("init", () => {
   game.settings.register(Module.id, "delay-prompt", {
     name: "Prompt for new initiative",
     hint: "Lets the user select a combatant to delay their turn after. Can still return early anytime they want. Requires socketlib.",
+    scope: "world",
+    config: true,
+    default: false,
+    type: Boolean,
+  })
+
+  game.settings.register(Module.id, "token-hud-remove-combat-toggle", {
+    name: "Remove combat toggle from token HUD",
+    hint: "Removes the 'Toggle Combat State' button for tokens in combat",
     scope: "world",
     config: true,
     default: false,

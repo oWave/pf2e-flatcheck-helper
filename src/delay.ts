@@ -1,6 +1,6 @@
 import { ActorPF2e, ItemPF2e } from "types/pf2e/module/documents"
 import Module from "./module"
-import { isJQuery } from "./utils"
+import { combatantIsNext, isJQuery } from "./utils"
 import { CombatantPF2e, EncounterPF2e } from "types/pf2e/module/encounter"
 
 async function applyDelayEffect(actor: ActorPF2e) {
@@ -105,7 +105,7 @@ export function delayButton() {
 }
 
 function returnButton(combatant: CombatantPF2e) {
-  if (game.combat && game.combat.combatant)
+  if (game.combat && game.combat.combatant && !combatantIsNext(combatant))
     Module.socket.executeAsGM("moveAfter", game.combat.id, combatant.id, game.combat.combatant.id)
 }
 
@@ -127,8 +127,14 @@ export function moveAfter(combatId: string, combatantId: string, afterId: string
         initiative: c.initiative,
       }
     })
-  const afterIndex = combat.turns.findIndex((c) => c.id === afterId)
-  order.splice(afterIndex, 0, { id: combatant.id, initiative: targetInitiative })
+  let afterIndex = combat.turns.findIndex((c) => c.id === afterId)
+  if (afterIndex == 0) afterIndex++
+
+  const newOrder = [
+    ...order.slice(0, afterIndex),
+    { id: combatant.id, initiative: targetInitiative },
+    ...order.slice(afterIndex),
+  ]
 
   const updates: {
     id: string
@@ -136,7 +142,7 @@ export function moveAfter(combatId: string, combatantId: string, afterId: string
     overridePriority: number
   }[] = []
 
-  const withSameInitiative = order.filter((c) => c.initiative === targetInitiative)
+  const withSameInitiative = newOrder.filter((c) => c.initiative === targetInitiative)
   for (const [i, { id }] of withSameInitiative.entries()) {
     updates.push({
       id: id!,
@@ -190,7 +196,7 @@ function drawButton(type: "delay" | "return", combatentHtml: JQuery, combatant: 
 }
 
 function onRenderCombatTracker(tracker, html: JQuery, data) {
-  if (!Module.delayEnabled) return
+  if (!Module.showInCombatTracker) return
   const combat = game.combat
   if (!combat || !combat.started) return
 
@@ -205,8 +211,54 @@ function onRenderCombatTracker(tracker, html: JQuery, data) {
   })
 }
 
+function onRenderTokenHUD(app: TokenHUD, html: JQuery) {
+  if (Module.showInTokenHUD) {
+    const token = app.object
+    const combatant = token?.combatant as CombatantPF2e
+    if (
+      combatant?.parent?.started &&
+      !!combatant &&
+      combatant.initiative != null &&
+      combatant.actor &&
+      combatant.isOwner
+    ) {
+      const column = html.find("div.col.right")
+
+      if (isDelaying(combatant.actor)) {
+        if (!combatantIsNext(combatant)) {
+          const btn = column.append(`
+          <div class="control-icon" data-action="return" title="Return to initiative">
+          <i class="fa-solid fa-play"></i>
+          </div>`)
+          btn.on("click", () => {
+            if (combatant.actor && isDelaying(combatant.actor) && !combatantIsNext(combatant)) returnButton(combatant)
+          })
+        }
+      } else if (combatant.parent.combatant?.id == combatant.id) {
+        const btn = column.append(`
+        <div class="control-icon" data-action="delay" title="Delay">
+        <i class="fa-solid fa-hourglass"></i>
+        </div>`)
+        btn.on("click", () => {
+          if (combatant.parent?.combatant?.id == combatant.id) delayButton()
+        })
+      }
+    }
+  }
+
+  if (Module.removeCombatToggle) {
+    const token = app.object
+    const combatant = token?.combatant
+    if (combatant?.parent.started && !!combatant && combatant.initiative != null) {
+      const toggleCombatButton = html.find("div.control-icon[data-action=combat]")
+      toggleCombatButton?.hide()
+    }
+  }
+}
+
 export function setupDelay() {
   Hooks.on("renderEncounterTrackerPF2e", onRenderCombatTracker)
+  Hooks.on("renderTokenHUD", onRenderTokenHUD)
 
   Hooks.on<[EncounterPF2e]>("updateCombat", (combat) => {
     if (game.user && game.user.id !== game.users?.activeGM?.id) return
@@ -216,14 +268,17 @@ export function setupDelay() {
 
   Hooks.on("createChatMessage", (msg) => {
     if (msg?.user?.id !== game.user?.id) return
-    if (!game.combat || !game.combat.combatant?.isOwner) return
+    if (!game.combat || !game.combat.started) return
     // @ts-expect-error pf2e
     const item = msg?.item as ItemPF2e | null
     if (
       item &&
+      item.actor &&
+      item.actor.isOwner &&
       item?.type === "action" &&
       (item.name === "Delay" || item.flags?.core?.sourceId === "Compendium.pf2e.actionspf2e.Item.A72nHGUtNXgY5Ey9")
     )
-      delayButton()
+      if (isDelaying(item.actor) && item.actor.combatant) returnButton(item.actor.combatant)
+      else if (item.actor.id == game.combat.combatant?.actorId) delayButton()
   })
 }

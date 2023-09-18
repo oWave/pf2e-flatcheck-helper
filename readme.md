@@ -10,10 +10,16 @@ Adds some buttons below the chat box for quickly rolling various flat checks.
 ## Delay Button
 ![image](https://github.com/oWave/pf2e-flatcheck-helper/assets/9253349/df782d32-50ec-45fd-93f2-f40d0b63932d)
 
-Adds a button in the combat tracker that lets the owner of the current combatant delay their turn, and pressing it again returns them to initiative (after the current turn).
+Adds buttons that allow delaying a combatants turn (and returning to initiative).
+- In the combat tracker
+- In the token HUD (menu when right-clicking a token)
+- Also works when using the "Delay" action (any action named "Delay" or the delay action imported from the system compendium)
+
 Has some options:
 - Return button can be turned off, so delaying is just a marker
 - Prompt-variant: Lets the user select which turn to delay after. Can still return early if they wish.
+
+Returning to initiative requires the [socketlib](https://foundryvtt.com/packages/socketlib) module.
 
 ## Spirit & Life Link Automation
 Adds a chat message on turn start (spirit link) and damage (life link) to tranfer HP from caster to spell target.  

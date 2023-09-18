@@ -28,7 +28,9 @@ declare global {
         /* -------------------------------------------- */
 
         /** Get the Combatant who has the current turn. */
-        get combatant(): CollectionValue<this["combatants"]> | undefined;
+    get combatant(): CollectionValue<this["combatants"]> | undefined
+
+    get nextCombatant(): CollectionValue<this["combatants"]>
 
         /** The numeric round of the Combat encounter */
         get round(): number;
