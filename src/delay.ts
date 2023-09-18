@@ -198,7 +198,7 @@ function onRenderCombatTracker(tracker, html: JQuery, data) {
     const id = e.dataset["combatantId"]
     if (!id) return
     const c = combat.combatants.get(id)
-    if (!c || !c.isOwner) return
+    if (!c || !c.isOwner || c.initiative == null) return
 
     if (combat.combatant?.id == c.id) drawButton("delay", $(e), c)
     else if (c.actor && isDelaying(c.actor)) drawButton("return", $(e), c)
