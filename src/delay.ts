@@ -226,22 +226,27 @@ function onRenderTokenHUD(app: TokenHUD, html: JQuery) {
 
       if (isDelaying(combatant.actor)) {
         if (!combatantIsNext(combatant) && Module.allowReturn) {
-          const btn = column.append(`
-          <div class="control-icon" data-action="return" title="Return to initiative">
-          <i class="fa-solid fa-play"></i>
-          </div>`)
-          btn.on("click", () => {
-            if (combatant.actor && isDelaying(combatant.actor) && !combatantIsNext(combatant)) returnButton(combatant)
-          })
+          $(`
+            <div class="control-icon" data-action="return" title="Return to initiative">
+              <i class="fa-solid fa-play"></i>
+            </div>`)
+            .on("click", (e) => {
+              if (combatant.actor && isDelaying(combatant.actor) && !combatantIsNext(combatant)) {
+                returnButton(combatant)
+                e.currentTarget.style.display = "none"
+              }
+            })
+            .appendTo(column)
         }
       } else if (combatant.parent.combatant?.id == combatant.id) {
-        const btn = column.append(`
-        <div class="control-icon" data-action="delay" title="Delay">
-        <i class="fa-solid fa-hourglass"></i>
-        </div>`)
-        btn.on("click", () => {
-          if (combatant.parent?.combatant?.id == combatant.id) delayButton()
-        })
+        $(`
+          <div class="control-icon" data-action="delay" title="Delay">
+            <i class="fa-solid fa-hourglass"></i>
+          </div>`)
+          .on("click", (e) => {
+            if (combatant.parent?.combatant?.id == combatant.id) delayButton()
+          })
+          .appendTo(column)
       }
     }
   }
