@@ -2,12 +2,6 @@ import { moveAfter, setupDelay } from "./delay"
 import { setupFlat } from "./flat"
 import { setupLink } from "./life-link"
 
-const sockeLibNotification = foundry.utils.debounce(() => {
-  ui.notifications.error(
-    "socketlib module is required for moving initiative. Or disable return button in pf2e Utility Buttons settings"
-  )
-}, 500)
-
 export default class Module {
   static id = "pf2e-flatcheck-helper"
   static _socket: SocketlibSocket | null = null
@@ -21,7 +15,6 @@ export default class Module {
   static get delayShouldPrompt() {
     const s = game.settings.get(this.id, "delay-prompt") as Boolean
     if (s && !this._socket) {
-      sockeLibNotification()
       return false
     }
     return s
@@ -29,7 +22,6 @@ export default class Module {
   static get allowReturn() {
     const s = game.settings.get(this.id, "delay-return") as Boolean
     if (s && !this._socket) {
-      sockeLibNotification()
       return false
     }
     return s
@@ -139,4 +131,32 @@ Hooks.on("init", () => {
   setupDelay()
   setupFlat()
   setupLink()
+})
+
+Hooks.on("ready", () => {
+  if (
+    game.user.isGM &&
+    !Module._socket &&
+    (game.settings.get(Module.id, "delay-return") || game.settings.get(Module.id, "delay-prompt"))
+  ) {
+    new Dialog({
+      title: "pf2e Utility Buttons",
+      content: `
+        <p>The <a href="https://foundryvtt.com/packages/socketlib">socketlib</a> module is required for moving initiatives.</p>
+        <p>Please install and enable socketlib, or disable "Enable return button" and "Prompt for new initiative" in the module settings.</p>
+      `,
+      buttons: {
+        settings: {
+          label: "Open settings",
+          callback: () => {
+            game.settings.sheet.render(true)
+          },
+        },
+        close: {
+          label: "Close",
+        },
+      },
+      default: "close",
+    }).render(true)
+  }
 })
