@@ -56,3 +56,20 @@
 .initiative-return:hover .delay-indicator {
   display: none !important;
 }
+
+.fc-undo-button {
+  align-items: center;
+  background: var(--bg-dark);
+  display: inline-flex;
+  justify-content: center;
+  width: 3ch;
+  margin-left: 2px;
+}
+
+.undo-text.undo {
+  text-decoration: line-through;
+}
+
+.undo-text.undo + .fc-undo-button {
+  display: none;
+}
