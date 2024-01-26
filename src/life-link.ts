@@ -262,7 +262,7 @@ export function setupLink() {
       }
       html.find(".undo-text").addClass("undo")
       await msg.update({
-        content: html.html(),
+        content: html.find(".message-content").html(),
       })
     })
   })
