@@ -21,12 +21,12 @@ Has some options:
 
 Returning to initiative requires the [socketlib](https://foundryvtt.com/packages/socketlib) module.
 
-## Spirit & Life Link Automation
-Adds a chat message on turn start (spirit link) and damage (life link) to tranfer HP from caster to spell target.  
+## Spirit & Life Link + Share Life Automation
+Adds a chat message on turn start (spirit link) and damage (life link & ~~shield other~~ share life) to tranfer HP from caster to spell target.  
 Requires the use of the marker effects (see below)
 
 ![image](https://github.com/oWave/pf2e-flatcheck-helper/assets/9253349/53fe08d3-b427-482c-bee5-244e206b8195)
 
 ### Setup
-You can find the marker effects for both spells in the compendium the module adds. They need to be added to those spell by dragging them into their description, i.e. `@UUID[Compendium.pf2e-flatcheck-helper.Effects.Item.iyTVTu4ImC5jDtMU]{Spirit Linked}`.  
+You can find the marker effects for all spells in the compendium the module adds. They need to be added to those spell by dragging them into their description, i.e. `@UUID[Compendium.pf2e-flatcheck-helper.Effects.Item.iyTVTu4ImC5jDtMU]{Spirit Linked}`.  
 The effects need to be dragged onto their targets with the spell posted to chat. Dragging the effects onto tokens from the sidebar or a character sheet will not work.
