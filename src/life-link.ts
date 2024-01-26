@@ -206,7 +206,7 @@ export function setupLink() {
         ) {
           // Both effects from the same source -> One Button
           buttons.push(
-            makeButton(`${Math.floor(remainingDmg / 2)}+${lifeLinkTransfer} HP to ${actor.name}`, {
+            makeButton(`${Math.ceil(remainingDmg / 2) + lifeLinkTransfer} to ${lifeLinkEffect.origin.name}`, {
               transfer: lifeLinkTransfer,
               heal: Math.floor(remainingDmg / 2),
               dmg: Math.ceil(remainingDmg / 2),
@@ -217,11 +217,13 @@ export function setupLink() {
           )
           return
         }
-      } else if (shareLifeEffect?.origin) {
+      }
+      // return above means this is unreachable if both effects are from the same source
+      if (shareLifeEffect?.origin) {
         let remainingDmg = dmg - lifeLinkTransfer
         // Button for Share Life
         buttons.push(
-          makeButton(`(Share Life) ${Math.floor(remainingDmg / 2)} HP to ${actor.name}`, {
+          makeButton(`(Share Life) ${Math.ceil(remainingDmg / 2)} to ${shareLifeEffect.origin.name}`, {
             heal: Math.floor(remainingDmg / 2),
             dmg: Math.ceil(remainingDmg / 2),
             source: shareLifeEffect.origin.uuid,
@@ -230,9 +232,8 @@ export function setupLink() {
         )
       }
       if (lifeLinkEffect && lifeLinkEffect.origin && lifeLinkTransfer) {
-        // return above means this is unreachable if both effects are from the same source
         buttons.push(
-          makeButton(`(Life Link) ${lifeLinkTransfer} HP to ${actor.name}`, {
+          makeButton(`(Life Link) ${lifeLinkTransfer} to ${lifeLinkEffect.origin.name}`, {
             transfer: lifeLinkTransfer,
             cd: 1,
             source: lifeLinkEffect.origin.uuid,
@@ -245,6 +246,7 @@ export function setupLink() {
     await ChatMessage.create({
       content: `<strong>Damage Transfer</strong><br>` + buttons.join("<br>"),
       whisper: ChatMessage.getWhisperRecipients("GM").map((u) => u.id),
+      speaker: ChatMessage.getSpeaker(actor),
     })
   })
 
