@@ -45,9 +45,10 @@ export async function rollForSingleTarget(target: TokenPF2e | undefined, { hidde
 }
 
 export function setupFlat() {
+  if (!Module.fcButtonsEnabled) return
+
   Hooks.on("renderSidebarTab", async (app: SidebarTab, html: HTMLCollection) => {
     if (app.tabName !== "chat") return
-    if (!Module.fcButtonsEnabled) return
 
     const chat = html[0].querySelector("#chat-form")
 
@@ -87,7 +88,6 @@ export function setupFlat() {
   })
 
   Hooks.on("targetToken", (user) => {
-    if (!Module.fcButtonsEnabled) return
     if (user.id !== game.user?.id) return
     if (game.user.targets.size !== 1) return document.querySelector("#fc-button-target")?.classList.remove("highlight")
     const effectSlugs = Object.keys(CONDITION_DCS)

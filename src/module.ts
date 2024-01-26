@@ -10,7 +10,7 @@ export default class Module {
     return this._socket
   }
   static get fcButtonsEnabled() {
-    return game.settings.get(this.id, "show") as Boolean
+    return (game.settings.get(this.id, "show-global") && game.settings.get(this.id, "show")) as Boolean
   }
   static get delayShouldPrompt() {
     const s = game.settings.get(this.id, "delay-prompt") as Boolean
@@ -51,9 +51,18 @@ Hooks.on("socketlib.ready", () => {
 })
 
 Hooks.on("init", () => {
-  game.settings.register(Module.id, "show", {
+  game.settings.register(Module.id, "show-global", {
     name: "Enable flat check buttons",
-    hint: "Toggle visibility of buttons below the chat box.",
+    hint: "Global setting: Enables flat check buttons below the chat box.",
+    scope: "world",
+    config: true,
+    default: true,
+    type: Boolean,
+    requiresReload: true,
+  })
+  game.settings.register(Module.id, "show", {
+    name: "Show flat check buttons",
+    hint: "Client setting: Turn off to hide the flat check buttons just for you.",
     scope: "client",
     config: true,
     default: true,
