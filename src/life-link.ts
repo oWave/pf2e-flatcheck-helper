@@ -208,7 +208,7 @@ export function setupLink() {
           buttons.push(
             makeButton(`${Math.ceil(remainingDmg / 2) + lifeLinkTransfer} to ${lifeLinkEffect.origin.name}`, {
               transfer: lifeLinkTransfer,
-              heal: Math.floor(remainingDmg / 2),
+              heal: remainingDmg == 1 ? 1 : Math.floor(remainingDmg / 2),
               dmg: Math.ceil(remainingDmg / 2),
               cd: 1,
               source: lifeLinkEffect.origin.uuid,
@@ -222,14 +222,15 @@ export function setupLink() {
       if (shareLifeEffect?.origin) {
         let remainingDmg = dmg - lifeLinkTransfer
         // Button for Share Life
-        buttons.push(
-          makeButton(`(Share Life) ${Math.ceil(remainingDmg / 2)} to ${shareLifeEffect.origin.name}`, {
-            heal: Math.floor(remainingDmg / 2),
-            dmg: Math.ceil(remainingDmg / 2),
-            source: shareLifeEffect.origin.uuid,
-            target: actor.uuid,
-          })
-        )
+        if (remainingDmg)
+          buttons.push(
+            makeButton(`(Share Life) ${Math.ceil(remainingDmg / 2)} to ${shareLifeEffect.origin.name}`, {
+              heal: remainingDmg == 1 ? 1 : Math.floor(remainingDmg / 2),
+              dmg: Math.ceil(remainingDmg / 2),
+              source: shareLifeEffect.origin.uuid,
+              target: actor.uuid,
+            })
+          )
       }
       if (lifeLinkEffect && lifeLinkEffect.origin && lifeLinkTransfer) {
         buttons.push(
