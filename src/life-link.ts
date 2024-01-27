@@ -243,11 +243,13 @@ export function setupLink() {
       }
     })()
 
-    await ChatMessage.create({
-      content: `<strong>Damage Transfer</strong><br>` + buttons.join("<br>"),
-      whisper: ChatMessage.getWhisperRecipients("GM").map((u) => u.id),
-      speaker: ChatMessage.getSpeaker(actor),
-    })
+    if (buttons.length) {
+      await ChatMessage.create({
+        content: `<strong>Damage Transfer</strong><br>` + buttons.join("<br>"),
+        whisper: ChatMessage.getWhisperRecipients("GM").map((u) => u.id),
+        speaker: ChatMessage.getSpeaker(actor),
+      })
+    }
   })
 
   Hooks.on("renderChatMessage", (msg, html) => {
