@@ -1,7 +1,8 @@
-import { CombatantPF2e, EncounterPF2e } from "types/pf2e/module/encounter"
 import Module from "./module"
 import { actorEffectBySlug, actorHasEffect } from "./utils"
-import { ActorPF2e, ChatMessagePF2e } from "types/pf2e/module/documents"
+import type { CombatantPF2e, EncounterPF2e } from "types/pf2e/module/encounter"
+import type { ActorPF2e, ChatMessagePF2e } from "types/pf2e/module/documents"
+import type { EffectPF2e, ItemPF2e } from "types/pf2e/module/item"
 
 interface ButtonArgs {
   // HP to transfer from source to target
@@ -111,6 +112,29 @@ async function handleTransferButton(args: ButtonArgs) {
   })
 }
 
+function handleSpiritLink(effect: EffectPF2e) {
+  const { actor, origin } = effect
+
+  if (!actor) {
+    return null
+  }
+
+  if (!origin || origin.id === actor.id) {
+    ui.notifications.error(`Bad origin actor for Spirit Linked effect on ${actor.name}! See module readme.`)
+    return null
+  }
+
+  const transfer = effect.level * 2
+  const missingHP = actor.system.attributes.hp!.max - actor.system.attributes.hp!.value
+  if (missingHP <= 0) return null
+
+  return makeButton(`${transfer} HP to ${actor.name}`, {
+    transfer,
+    source: origin.uuid,
+    target: actor.uuid,
+  })
+}
+
 export function setupLink() {
   Hooks.on<[CombatantPF2e, EncounterPF2e]>("pf2e.startTurn", async (combatant, combat) => {
     if (!Module.lifeLinkEnabled) return
@@ -118,26 +142,14 @@ export function setupLink() {
 
     const links: string[] = []
 
-    combat.combatants.forEach(({ actor }) => {
+    canvas.scene?.tokens.forEach(({ actor }) => {
       if (!actor) return
       const e = actorEffectBySlug(actor, "spirit-linked")
       if (!e) return
       if (combatant.actor?.id != e.origin?.id) return
 
-      if (!e.origin || e.origin.id === actor.id)
-        return ui.notifications.error(`Bad origin actor for Spirit Linked effect on ${actor.name}! See module readme.`)
-
-      const transfer = e.level * 2
-      const missingHP = actor.system.attributes.hp!.max - actor.system.attributes.hp!.value
-      if (missingHP <= 0) return
-
-      links.push(
-        makeButton(`${transfer} HP to ${actor.name}`, {
-          transfer,
-          source: e.origin.uuid,
-          target: actor.uuid,
-        })
-      )
+      const link = handleSpiritLink(e)
+      if (link) links.push(link)
     })
 
     const content = `<strong>Spirit Link</strong><br>` + links.join("<br>")
@@ -148,6 +160,19 @@ export function setupLink() {
         whisper: ChatMessage.getWhisperRecipients("GM").map((u) => u.id),
         speaker: ChatMessage.getSpeaker({ actor: combatant.actor }),
       })
+    }
+  })
+
+  Hooks.on<[ItemPF2e]>("createItem", async (item) => {
+    if (item.isOfType("effect") && item.slug == "spirit-linked") {
+      const link = handleSpiritLink(item)
+      if (link) {
+        await ChatMessage.create({
+          content: "<strong>Spirit Link</strong><br>" + link,
+          whisper: ChatMessage.getWhisperRecipients("GM").map((u) => u.id),
+          speaker: ChatMessage.getSpeaker({ actor: item.actor }),
+        })
+      }
     }
   })
 
