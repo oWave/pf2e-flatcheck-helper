@@ -34,13 +34,20 @@ function removeDelaying(actor: ActorPF2e) {
 
 const sortedCombatants = () => {
   if (!game.combat) throw new Error("No combat?")
-  return game.combat.combatants
-    .filter((e) => e.initiative !== null)
-    .sort((a, b) =>
-      a.initiative != b.initiative
-        ? b.initiative! - a.initiative!
-        : (a.flags.pf2e.overridePriority[a.initiative!] ?? 0) - (b.flags.pf2e.overridePriority[b.initiative!] ?? 0)
-    )
+  return game
+    .combat!.combatants.filter((e) => e.initiative !== null)
+    .sort((a, b) => {
+      const resolveTie = (): number => {
+        const [priorityA, priorityB] = [a, b].map(
+          (c): number => c.overridePriority(c.initiative ?? 0) ?? c.actor?.initiative?.tiebreakPriority ?? 3
+        )
+        return priorityA === priorityB ? a.id.localeCompare(b.id) : priorityA - priorityB
+      }
+
+      return typeof a.initiative === "number" && typeof b.initiative === "number" && a.initiative === b.initiative
+        ? resolveTie()
+        : b.initiative! - a.initiative! || (a.id > b.id ? 1 : -1)
+    })
 }
 
 export function delayButton() {
