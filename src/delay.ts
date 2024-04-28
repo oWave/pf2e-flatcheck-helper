@@ -61,7 +61,7 @@ export function delayButton() {
   const currentId = combatants.findIndex((e) => e.id == c.id)
 
   const options = combatants
-    .filter((e) => !e.hidden)
+    .filter((e) => game.user.isGM || !e.hidden)
     .map((e, i) => {
       const disabled = e.id === c.id || i == currentId - 1 ? "disabled" : ""
       const style = e.id == c.id ? "background: rgba(51, 188, 78, 0.3);" : ""
@@ -69,7 +69,7 @@ export function delayButton() {
       if (!game.user.isGM && game.pf2e.settings.tokens.nameVisibility && !e.playersCanSeeName) name = "?"
 
       return `<option value="${e.id}" style="${style}" ${disabled}>${e.initiative} - ${name}</option>`
-  })
+    })
 
   if (!Module.delayShouldPrompt) {
     if (c.actor) applyDelayEffect(c.actor)
