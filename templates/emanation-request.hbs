@@ -1,0 +1,38 @@
+<form class="flexcol">
+  <div style="display: flex; align-items: center; margin: 0 auto">
+    <img src="{{origin.texture.src}}" style="height: var(--avatar-size); object-fit: contain; margin-right: 6px;" />
+    <span>{{origin.name}}, {{spell.system.area.value}} ft</span>
+  </div>
+
+  <div style="text-align: center;">
+    <strong style="display: block;">Effect</strong>
+    <a class="content-link">
+      <i class="fa-solid fa-person-rays"></i>
+      {{effect.name}}
+    </a>
+  </div>
+
+  {{#if durationOverride}}
+    <div style="text-align: center;">
+      <strong style="display: block;">Duration</strong>
+      <input type="number" value="{{effect.system.duration.value}}" min="1" required style="width: 5ch;" />
+      <span>round(s)</span>
+    </div>
+  {{/if}}
+
+  <div style="text-align: center;">
+    <strong>Targets</strong>
+    <div style="text-align: left; max-height: 400px; overflow: scroll">
+      {{#each targets}}
+        <div style="display: flex; align-items: center; margin-bottom: 2px;">
+          <img src="{{this.texture.src}}" style="height: var(--avatar-size); object-fit: contain; margin-right: 6px;" />
+          <span style="flex-grow: 1;">{{this.name}}</span>
+          <input type="checkbox" data-id="{{this.id}}" checked />
+        </div>
+      {{/each}}
+    </div>
+  </div>
+
+  <button type="submit" style="margin: 3px 0;">Apply</button>
+  <button type="button" data-action="cancel">Cancel</button>
+</form>

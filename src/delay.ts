@@ -39,6 +39,7 @@ const sortedCombatants = () => {
     .sort((a, b) => {
       const resolveTie = (): number => {
         const [priorityA, priorityB] = [a, b].map(
+          // @ts-expect-error pf2e
           (c): number => c.overridePriority(c.initiative ?? 0) ?? c.actor?.initiative?.tiebreakPriority ?? 3
         )
         return priorityA === priorityB ? a.id.localeCompare(b.id) : priorityA - priorityB
@@ -66,6 +67,7 @@ export function delayButton() {
       const disabled = e.id === c.id || i == currentId - 1 ? "disabled" : ""
       const style = e.id == c.id ? "background: rgba(51, 188, 78, 0.3);" : ""
       let name = e.name
+      // @ts-expect-error pf2e
       if (!game.user.isGM && game.pf2e.settings.tokens.nameVisibility && !e.playersCanSeeName) name = "?"
 
       return `<option value="${e.id}" style="${style}" ${disabled}>${e.initiative} - ${name}</option>`
@@ -107,7 +109,7 @@ export function delayButton() {
             if (c.actor) applyDelayEffect(c.actor)
             combat
               .nextTurn()
-              .then(() => Module.socket.executeAsGM("moveAfter", combat.id, c.id, target.id))
+              .then(() => emitMoveAfter(combat.id, c.id, target.id))
               .catch((e) => {
                 throw e
               })
@@ -122,10 +124,22 @@ export function delayButton() {
 
 function returnButton(combatant: CombatantPF2e) {
   if (game.combat && game.combat.combatant && !combatantIsNext(combatant))
-    Module.socket.executeAsGM("moveAfter", game.combat.id, combatant.id, game.combat.combatant.id)
+    emitMoveAfter(game.combat.id, combatant.id, game.combat.combatant.id)
 }
 
-export function moveAfter(combatId: string, combatantId: string, afterId: string) {
+interface MoveAfterPayload {
+  combatId: string
+  combatantId: string
+  afterId: string
+}
+
+function emitMoveAfter(combatId: string, combatantId: string, afterId: string) {
+  Module.socketHandler.emit("moveAfter", { combatId, combatantId, afterId })
+}
+
+export function moveAfter({ combatId, combatantId, afterId }: MoveAfterPayload) {
+  if (game.users.activeGM?.id !== game.user.id) return
+
   const combat = game.combats?.get(combatId)
   if (!combat) return
   const combatant = combat.combatants.get(combatantId)
@@ -303,4 +317,6 @@ export function setupDelay() {
         if (Module.allowReturn) returnButton(item.actor.combatant)
       } else if (item.actor.id == game.combat.combatant?.actorId) delayButton()
   })
+
+  Module.socketHandler.register("moveAfter", moveAfter)
 }

@@ -1,0 +1,151 @@
+import { ChatMessagePF2e } from "types/pf2e/module/chat-message"
+import Module from "./module"
+import { SpellPF2e, SpellSheetPF2e } from "types/pf2e/module/item/spell"
+import { ItemPF2e } from "types/pf2e/module/item"
+import { EmanationRequestDialog } from "./emanation-dialog"
+
+export interface EmanationRequestData {
+  /** Spell UUID */
+  spellUuid: string
+  /** Effect UUID */
+  effectUuid: string
+  /** Origin Token UUID */
+  originToken: string
+}
+
+export function extractFlagData(item: SpellPF2e) {
+  const emanationAllies = item.getFlag(Module.id, "emanation-allies") as boolean
+  const emanationEnemies = item.getFlag(Module.id, "emanation-enemies") as boolean
+  const emanationExcludeSelf = item.getFlag(Module.id, "emanation-exclude-self") as boolean
+  const emanationPromptDuration = item.getFlag(Module.id, "emanation-prompt-duration") as boolean
+
+  return {
+    emanationAllies,
+    emanationEnemies,
+    emanationExcludeSelf,
+    emanationPromptDuration,
+  }
+}
+
+function isValidSpell(item: SpellPF2e) {
+  // @ts-expect-error missing defense type
+  return item.system.area?.type === "emanation" && item.system.area.value && !item.system.defense
+}
+
+function extractEffectUUIDs(item: SpellPF2e) {
+  if (!isValidSpell(item)) return null
+
+  const matches = [...item.system.description.value.matchAll(/@UUID\[(.+?)\]/g)]
+
+  return matches.reduce<string[]>((acc, match) => {
+    const id = match.at(1)
+    id && acc.push(id)
+    return acc
+  }, [])
+}
+
+async function extractEffects(item: SpellPF2e) {
+  const uuids = extractEffectUUIDs(item)
+  if (!uuids) return []
+
+  const effects = (await Promise.all(uuids.map((id) => fromUuid<ItemPF2e>(id)))).filter((e) => e?.isOfType("effect"))
+  return effects
+}
+
+async function onChatMessage(msg: ChatMessagePF2e, html: JQuery<"div">) {
+  if (!Module.emanationAutomation) return
+  if (!game.user.isGM) return
+  if (!msg.item || !msg.item.isOfType("spell")) return
+  const spell = msg.item
+  const range = spell.system.area?.type === "emanation" ? spell.system.area?.value : null
+  const token = msg.actor?.getActiveTokens().at(0)
+  if (!token || !range) return
+
+  const options = extractFlagData(spell)
+  const effect = (await extractEffects(spell)).at(0)
+
+  if (!effect || !(options.emanationAllies || options.emanationEnemies)) return
+
+  html.find("section.card-buttons").append(`
+    <div class="spell-button">
+      <button type="button" data-action="emanation-automation">Apply emanation effect</button>
+    </div>
+  `)
+
+  html.find('button[data-action="emanation-automation"]').on("click", async () => {
+    new EmanationRequestDialog({
+      spellUuid: spell.uuid,
+      effectUuid: effect.uuid,
+      originToken: token.document.uuid,
+    }).render(true)
+  })
+}
+
+async function onSheetRender(sheet: SpellSheetPF2e, html: JQuery<"div">) {
+  if (!Module.emanationAutomation) return
+
+  const effects = await extractEffects(sheet.item)
+  if (!effects) return
+
+  const { emanationAllies, emanationExcludeSelf, emanationEnemies, emanationPromptDuration } = extractFlagData(
+    sheet.item
+  )
+
+  const checked = (value: boolean) => (value ? "checked" : "")
+
+  const content =
+    effects.length == 1
+      ? `
+  <div class="form-group">
+    <label>Apply to</label>
+    <div class="form-fields" style="justify-content: start">
+      <input type="checkbox" id="field-${sheet.id}-emanation-allies" ${checked(emanationAllies)}>
+      <label for="field-${sheet.id}-emanation-allies">Allies</label>
+
+      <input type="checkbox" id="field-${sheet.id}-emanation-exclude-self" ${checked(emanationExcludeSelf)}>
+      <label for="field-${sheet.id}-emanation-self">Exclude Self</label>
+
+      <input type="checkbox" id="field-${sheet.id}-emanation-enemies" ${checked(emanationEnemies)}>
+      <label for="field-${sheet.id}-emanation-enemies">Enemies</label>
+    </div>
+  </div>
+  <div class="form-group" title="Will ask for effect duration when applying to support Lingering Composition">
+    <label for="field-${sheet.id}-emanation-prompt-duration">Prompt for effect duration</label>
+    <div class="form-fields" style="justify-content: start">
+      <input type="checkbox" id="field-${sheet.id}-emanation-prompt-duration" ${checked(emanationPromptDuration)}>
+      <i class="fa-solid fa-circle-info" style="cursor: help;"></i>
+    </div>
+  </div>
+`
+      : `<p>Formatting error: Description contains multiple effect links.</p>`
+
+  html.find("fieldset.publication").before(`
+    <fieldset class="emanation-automation">
+      <legend>
+        Automatic Emanation Effect
+        <span style="font-weight: lighter;">(pf2e Utility Buttons)</span>
+      </legend>
+
+      ${content}
+
+    </fieldset>
+  `)
+
+  html.find<HTMLInputElement>(`input#field-${sheet.id}-emanation-allies`).on("change", (e) => {
+    sheet.item.setFlag(Module.id, "emanation-allies", e.target.checked)
+  })
+  html.find<HTMLInputElement>(`input#field-${sheet.id}-emanation-enemies`).on("change", (e) => {
+    sheet.item.setFlag(Module.id, "emanation-enemies", e.target.checked)
+  })
+  html.find<HTMLInputElement>(`input#field-${sheet.id}-emanation-exclude-self`).on("change", (e) => {
+    sheet.item.setFlag(Module.id, "emanation-exclude-self", e.target.checked)
+  })
+  html.find<HTMLInputElement>(`input#field-${sheet.id}-emanation-prompt-duration`).on("change", (e) => {
+    sheet.item.setFlag(Module.id, "emanation-prompt-duration", e.target.checked)
+  })
+}
+
+export function setupEmanationAutomation() {
+  Hooks.on("renderChatMessage", onChatMessage)
+  Hooks.on("renderSpellSheetPF2e", onSheetRender)
+}
