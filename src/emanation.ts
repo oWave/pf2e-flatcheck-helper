@@ -83,7 +83,7 @@ async function onChatMessage(msg: ChatMessagePF2e, html: JQuery<"div">) {
 
 async function onSheetRender(sheet: SpellSheetPF2e, html: JQuery<"div">) {
   if (!Module.emanationAutomation) return
-
+  if (!isValidSpell(sheet.item)) return
   const effects = await extractEffects(sheet.item)
   if (!effects) return
 
