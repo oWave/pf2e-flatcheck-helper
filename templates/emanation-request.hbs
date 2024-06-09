@@ -1,6 +1,6 @@
 <form class="flexcol">
   <div style="display: flex; align-items: center; margin: 0 auto">
-    <img src="{{origin.texture.src}}" style="height: var(--avatar-size); object-fit: contain; margin-right: 6px;" />
+    <img src="{{origin.texture.src}}" style="height: 40px; object-fit: contain; margin-right: 6px;" />
     <span>{{origin.name}}, {{spell.system.area.value}} ft</span>
   </div>
 
@@ -25,7 +25,7 @@
     <div style="text-align: left; max-height: 400px; overflow: scroll">
       {{#each targets}}
         <div style="display: flex; align-items: center; margin-bottom: 2px;">
-          <img src="{{this.texture.src}}" style="height: var(--avatar-size); object-fit: contain; margin-right: 6px;" />
+          <img src="{{this.texture.src}}" style="height: 40px; object-fit: contain; margin-right: 6px;" />
           <span style="flex-grow: 1;">{{this.name}}</span>
           <input type="checkbox" data-id="{{this.id}}" checked />
         </div>

@@ -117,7 +117,7 @@ async function onSheetRender(sheet: SpellSheetPF2e, html: JQuery<"div">) {
     </div>
   </div>
 `
-      : `<p>Formatting error: Description contains multiple effect links.</p>`
+      : `<p>Formatting error: Description contains no/multiple effect links.</p>`
 
   html.find("fieldset.publication").before(`
     <fieldset class="emanation-automation">

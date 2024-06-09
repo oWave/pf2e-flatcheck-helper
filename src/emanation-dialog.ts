@@ -112,6 +112,7 @@ export class EmanationRequestDialog extends Application {
       template: `modules/${Module.id}/templates/emanation-request.hbs`,
       width: "auto",
       height: "auto",
+      classes: ["fc-emanation"],
     }
   }
 }

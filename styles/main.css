@@ -73,3 +73,9 @@
 .undo-text.undo + .fc-undo-button {
   display: none;
 }
+
+.fc-emanation {
+  img {
+    border: unset;
+  }
+}
