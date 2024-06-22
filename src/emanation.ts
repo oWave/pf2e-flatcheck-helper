@@ -81,8 +81,7 @@ async function onChatMessage(msg: ChatMessagePF2e, html: JQuery<"div">) {
   })
 }
 
-async function onSheetRender(sheet: SpellSheetPF2e, html: JQuery<"div">) {
-  if (!Module.emanationAutomation) return
+async function spellSheetRenderInner(sheet: SpellSheetPF2e, $html: JQuery) {
   if (!isValidSpell(sheet.item)) return
   const effects = await extractEffects(sheet.item)
   if (!effects) return
@@ -119,7 +118,7 @@ async function onSheetRender(sheet: SpellSheetPF2e, html: JQuery<"div">) {
 `
       : `<p>Formatting error: Description contains no/multiple effect links.</p>`
 
-  html.find("fieldset.publication").before(`
+  $html.find("fieldset.publication").before(`
     <fieldset class="emanation-automation">
       <legend>
         Automatic Emanation Effect
@@ -130,22 +129,52 @@ async function onSheetRender(sheet: SpellSheetPF2e, html: JQuery<"div">) {
 
     </fieldset>
   `)
+}
 
-  html.find<HTMLInputElement>(`input#field-${sheet.id}-emanation-allies`).on("change", (e) => {
-    sheet.item.setFlag(Module.id, "emanation-allies", e.target.checked)
+async function spellSheetRenderWrapper(this: SpellSheetPF2e, wrapped, ...args) {
+  const $html = await wrapped(...args)
+
+  if (Module.emanationAutomation) await spellSheetRenderInner(this, $html)
+
+  return $html
+}
+
+function spellSheetActivateListenersWrapper(this: SpellSheetPF2e, wrapped, $html: JQuery) {
+  wrapped($html)
+
+  $html.find<HTMLInputElement>(`input#field-${this.id}-emanation-allies`).on("change", (e) => {
+    this.item.setFlag(Module.id, "emanation-allies", e.target.checked)
   })
-  html.find<HTMLInputElement>(`input#field-${sheet.id}-emanation-enemies`).on("change", (e) => {
-    sheet.item.setFlag(Module.id, "emanation-enemies", e.target.checked)
+  $html.find<HTMLInputElement>(`input#field-${this.id}-emanation-enemies`).on("change", (e) => {
+    this.item.setFlag(Module.id, "emanation-enemies", e.target.checked)
   })
-  html.find<HTMLInputElement>(`input#field-${sheet.id}-emanation-exclude-self`).on("change", (e) => {
-    sheet.item.setFlag(Module.id, "emanation-exclude-self", e.target.checked)
+  $html.find<HTMLInputElement>(`input#field-${this.id}-emanation-exclude-self`).on("change", (e) => {
+    this.item.setFlag(Module.id, "emanation-exclude-self", e.target.checked)
   })
-  html.find<HTMLInputElement>(`input#field-${sheet.id}-emanation-prompt-duration`).on("change", (e) => {
-    sheet.item.setFlag(Module.id, "emanation-prompt-duration", e.target.checked)
+  $html.find<HTMLInputElement>(`input#field-${this.id}-emanation-prompt-duration`).on("change", (e) => {
+    this.item.setFlag(Module.id, "emanation-prompt-duration", e.target.checked)
   })
+
+  return $html
 }
 
 export function setupEmanationAutomation() {
+  if (!Module.emanationAutomation) return
+
   Hooks.on("renderChatMessage", onChatMessage)
-  Hooks.on("renderSpellSheetPF2e", onSheetRender)
+  // Hooks.on("renderSpellSheetPF2e", onSheetRender)
+
+  libWrapper.register(
+    Module.id,
+    'CONFIG.Item.sheetClasses.spell["pf2e.SpellSheetPF2e"].cls.prototype._renderInner',
+    spellSheetRenderWrapper,
+    "WRAPPER"
+  )
+
+  libWrapper.register(
+    Module.id,
+    'CONFIG.Item.sheetClasses.spell["pf2e.SpellSheetPF2e"].cls.prototype.activateListeners',
+    spellSheetActivateListenersWrapper,
+    "WRAPPER"
+  )
 }

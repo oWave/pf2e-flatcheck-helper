@@ -77,6 +77,18 @@ declare global {
 
   const socketlib: Socketlib
 
+  interface LibWrapper {
+    register(
+      moduleId: string,
+      target: string,
+      fn: CallableFunction,
+      type: "MIXED" | "WRAPPER" | "OVERRIDE",
+      options?: any
+    )
+  }
+
+  const libWrapper: LibWrapper
+
   interface Game<
     TActor extends Actor<null>,
     TActors extends Actors<TActor>,

@@ -155,7 +155,7 @@ Hooks.on("init", () => {
 
   game.settings.register(Module.id, "emanation-automation", {
     name: "Enable automatic emanation effect application",
-    hint: "",
+    hint: "Requires libwrapper",
     scope: "world",
     config: true,
     type: Boolean,
@@ -167,5 +167,36 @@ Hooks.on("init", () => {
   setupDelay()
   setupFlat()
   setupLink()
+})
+
+Hooks.on("ready", () => {
   setupEmanationAutomation()
+})
+
+Hooks.on("renderSettingsConfig", (app: SettingsConfig, $html: JQuery) => {
+  const root = $html[0]
+  const tab = root.querySelector(`.tab[data-tab="${Module.id}"]`)
+  if (!tab) return
+
+  const createHeading = (settingId: string, text: string) => {
+    const el = root.querySelector(`div[data-setting-id="${Module.id}.${settingId}"]`)
+    if (!el) return
+
+    const heading = document.createElement("h3")
+    heading.textContent = text
+    el.before(heading)
+  }
+
+  createHeading("show-global", "Flat Check Buttons")
+  createHeading("delay-combat-tracker", "Delay")
+  createHeading("lifelink", "Life Link")
+  createHeading("emanation-automation", "Emanation Automation")
+
+  if (!game.modules.get("lib-wrapper")?.active) {
+    const input = root.querySelector<HTMLInputElement>('input[name="pf2e-flatcheck-helper.emanation-automation"]')!
+    input.title = "Requires lib-wrapper"
+    input.disabled = true
+    input.checked = false
+    input.style.cursor = "not-allowed"
+  }
 })
