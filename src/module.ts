@@ -106,7 +106,7 @@ Hooks.on("init", () => {
 
   game.settings.register(Module.id, "delay-return", {
     name: "Enable return button",
-    hint: "Allows returning to initiative by pressing the delay button again. Requires socketlib.",
+    hint: "Allows returning to initiative by pressing the delay button again.",
     scope: "world",
     config: true,
     default: true,
@@ -115,7 +115,7 @@ Hooks.on("init", () => {
 
   game.settings.register(Module.id, "delay-prompt", {
     name: "Prompt for new initiative",
-    hint: "Lets the user select a combatant to delay their turn after. Can still return early anytime they want. Requires socketlib.",
+    hint: "Lets the user select a combatant to delay their turn after. Can still return early anytime they want.",
     scope: "world",
     config: true,
     default: false,
@@ -155,7 +155,7 @@ Hooks.on("init", () => {
 
   game.settings.register(Module.id, "emanation-automation", {
     name: "Enable automatic emanation effect application",
-    hint: "Requires libwrapper",
+    hint: "Still experimental, may change it this works in the future. Requires libwrapper.",
     scope: "world",
     config: true,
     type: Boolean,
