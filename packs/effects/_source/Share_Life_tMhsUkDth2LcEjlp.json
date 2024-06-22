@@ -1,0 +1,78 @@
+{
+  "name": "Share Life",
+  "type": "effect",
+  "effects": [],
+  "system": {
+    "description": {
+      "gm": "",
+      "value": ""
+    },
+    "rules": [],
+    "slug": "share-life",
+    "_migration": {
+      "version": 0.915,
+      "lastMigration": null,
+      "previous": {
+        "schema": 0.854,
+        "foundry": "11.315",
+        "system": "5.12.7"
+      }
+    },
+    "traits": {
+      "otherTags": [],
+      "value": []
+    },
+    "publication": {
+      "title": "",
+      "authors": "",
+      "license": "OGL",
+      "remaster": false
+    },
+    "level": {
+      "value": 1
+    },
+    "duration": {
+      "value": 10,
+      "unit": "minutes",
+      "expiry": "turn-start",
+      "sustained": false
+    },
+    "start": {
+      "value": 0,
+      "initiative": null
+    },
+    "tokenIcon": {
+      "show": true
+    },
+    "badge": null,
+    "context": null,
+    "unidentified": false
+  },
+  "img": "systems/pf2e/icons/spells/shield-other.webp",
+  "folder": null,
+  "ownership": {
+    "default": 0,
+    "jXb8EXsGlTsyU0zc": 3,
+    "Nefe2HHlwCu8ydsH": 3
+  },
+  "flags": {
+    "core": {},
+    "exportSource": {
+      "world": "ruby-phoenix",
+      "system": "pf2e",
+      "coreVersion": "11.307",
+      "systemVersion": "5.3.2"
+    }
+  },
+  "_stats": {
+    "systemId": "pf2e",
+    "systemVersion": "5.12.7",
+    "coreVersion": "11.315",
+    "createdTime": 1691779995759,
+    "modifiedTime": 1706299219558,
+    "lastModifiedBy": "Nefe2HHlwCu8ydsH"
+  },
+  "_id": "tMhsUkDth2LcEjlp",
+  "sort": 0,
+  "_key": "!items!tMhsUkDth2LcEjlp"
+}
