@@ -74,7 +74,7 @@ async function handleTransferButton(args: ButtonArgs) {
   await updateHP(source, -dmg)
   await updateHP(target, heal)
 
-  if (!!args.cd) {
+  if (args.cd) {
     await target.createEmbeddedDocuments("Item", [
       {
         type: "effect",
@@ -136,7 +136,7 @@ function handleSpiritLink(effect: EffectPF2e) {
 }
 
 export function setupLink() {
-  Hooks.on<[CombatantPF2e, EncounterPF2e]>("pf2e.startTurn", async (combatant, combat) => {
+  Hooks.on<[CombatantPF2e, EncounterPF2e]>("pf2e.startTurn", async (combatant) => {
     if (!Module.lifeLinkEnabled) return
     if (game?.users?.activeGM?.id !== game.user?.id) return
 
@@ -219,10 +219,10 @@ export function setupLink() {
         permanent: true,
       })
 
-    let buttons: string[] = []
+    const buttons: string[] = []
     ;(function () {
       if (shareLifeEffect && lifeLinkTransfer) {
-        let remainingDmg = dmg - lifeLinkTransfer
+        const remainingDmg = dmg - lifeLinkTransfer
 
         if (
           shareLifeEffect?.origin &&
@@ -245,7 +245,7 @@ export function setupLink() {
       }
       // return above means this is unreachable if both effects are from the same source
       if (shareLifeEffect?.origin) {
-        let remainingDmg = dmg - lifeLinkTransfer
+        const remainingDmg = dmg - lifeLinkTransfer
         // Button for Share Life
         if (remainingDmg)
           buttons.push(
@@ -284,7 +284,7 @@ export function setupLink() {
       const args = JSON.parse(event.target.dataset.args!) as ButtonArgs
       await handleTransferButton(args)
     })
-    html.find("button.fc-undo-button").on("click", async (event) => {
+    html.find("button.fc-undo-button").on("click", async () => {
       const data = msg.flags.undo as unknown as [string, number][]
       for (const [uuid, dmg] of data) {
         const actor = await fromUuid(uuid)

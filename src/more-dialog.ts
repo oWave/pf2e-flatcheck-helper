@@ -1,6 +1,4 @@
-import { ActorPF2e } from "types/pf2e/module/documents"
 import { rollFlatCheck } from "./flat"
-import { ActorConditions } from "types/pf2e/module/actor/conditions"
 
 const formSections: Record<
   string,
