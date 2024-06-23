@@ -19,8 +19,6 @@ Has some options:
 - Return button can be turned off, so delaying is just a marker
 - Prompt-variant: Lets the user select which turn to delay after. Can still return early if they wish.
 
-Returning to initiative requires the [socketlib](https://foundryvtt.com/packages/socketlib) module.
-
 ## Spirit & Life Link + Share Life Automation
 Adds a chat message on turn start (spirit link) and damage (life link & ~~shield other~~ share life) to tranfer HP from caster to spell target.  
 Requires the use of the marker effects (see below)
@@ -40,4 +38,4 @@ Adds a button to emanation spells that applies the spell effect to all tokens in
 - The config options show up in the spells detail tab if
   - no defense is set (no save)
   - the area is set to emanation
-- After setting "Apply to", the button shows up for GMs in that spells chat card
+- After setting "Apply to", the button shows up in that spells chat card (for GMs only)
