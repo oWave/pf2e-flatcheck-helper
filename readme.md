@@ -32,7 +32,12 @@ You can find the marker effects for all spells in the compendium the module adds
 The effects need to be dragged onto their targets with the spell posted to chat. Dragging the effects onto tokens from the sidebar or a character sheet will not work.
 
 ## Emanation Automation
-**Work in progress, v0.8 pre-release only right now**
+**Experimental, may change how this works in the future**
 
-Adds a button to any emanation spells (that don't need a save) that allows a GM to apply the spells effect to all tokens in the area.
+Adds a button to emanation spells that applies the spell effect to all tokens in the area.
 ![chrome_g2zBZ20th5](https://github.com/oWave/pf2e-flatcheck-helper/assets/9253349/830d4b77-bb3e-4534-a3af-cd6898da3cfb)
+
+- The config options show up in the spells detail tab if
+  - no defense is set (no save)
+  - the area is set to emanation
+- After setting "Apply to", the button shows up for GMs in that spells chat card
