@@ -62,7 +62,7 @@ export default class Module {
     return game.settings.get(this.id, "lifelink-formular") as "apg" | "plus"
   }
   static get emanationAutomation() {
-    return game.settings.get(this.id, "emanation-automation") as boolean
+    return game.modules.get("lib-wrapper")?.active && (game.settings.get(this.id, "emanation-automation") as boolean)
   }
 }
 
