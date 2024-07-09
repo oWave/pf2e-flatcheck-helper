@@ -25,7 +25,7 @@ class SocketHandler {
       throw new Error(`No socket callback registered for '${type}'`)
     }
 
-    game.socket.emit(`module.${Module.id}`, { type, data })
+    game.socket.emit(`module.${Module.id}`, { type, payload: data })
     // Call function on this client as well
     this.#callbacks[type](data)
   }
