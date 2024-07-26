@@ -302,7 +302,7 @@ export function setupDelay() {
   })
 
   Hooks.on("createChatMessage", (msg) => {
-    if (msg?.user?.id !== game.user?.id) return
+    if (msg?.author?.id !== game.user?.id) return
     if (!game.combat || !game.combat.started) return
     // @ts-expect-error pf2e
     const item = msg?.item as ItemPF2e | null
