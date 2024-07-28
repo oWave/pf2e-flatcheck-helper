@@ -149,7 +149,7 @@ function emitMoveAfter(combatId: string, combatantId: string, afterId: string) {
 export function moveAfter({ combatId, combatantId, afterId }: MoveAfterPayload) {
   if (game.users.activeGM?.id !== game.user.id) return
 
-  const combat = game.combats?.get(combatId)
+  const combat = game.combats?.get(combatId) as EncounterPF2e
   if (!combat) return
   const combatant = combat.combatants.get(combatantId)
   const after = combat.combatants.get(afterId)
@@ -157,6 +157,7 @@ export function moveAfter({ combatId, combatantId, afterId }: MoveAfterPayload) 
   if (!combatant || !after) return
 
   const targetInitiative = after.initiative
+  if (!targetInitiative) return
 
   const order = combat.turns
     .filter((c) => c.id !== combatantId)
