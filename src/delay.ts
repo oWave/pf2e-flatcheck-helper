@@ -3,6 +3,7 @@ import Module from "./module"
 import { combatantIsNext, isJQuery, sleep } from "./utils"
 import { ActorPF2e } from "types/pf2e/module/actor"
 import { ChatMessagePF2e } from "types/pf2e/module/chat-message"
+import { TokenDocumentPF2e } from "types/pf2e/module/scene"
 
 async function applyDelayEffect(actor: ActorPF2e) {
   return actor.createEmbeddedDocuments("Item", [
@@ -30,7 +31,7 @@ function isDelaying(actor: ActorPF2e) {
 
 function removeDelaying(actor: ActorPF2e) {
   const e = actor.items.find((e) => e.slug === "x-delay")
-  if (e?.id) actor.deleteEmbeddedDocuments("Item", [e.id])
+  if (e?.id) return actor.deleteEmbeddedDocuments("Item", [e.id])
 }
 
 const sortedCombatants = () => {
@@ -51,7 +52,11 @@ const sortedCombatants = () => {
     })
 }
 
-export function delayButton() {
+interface TryDelayOptions {
+  skipMessage: boolean
+}
+
+export function tryDelay(opts?: TryDelayOptions) {
   const combat = game.combat
   if (!combat) return ui.notifications.error("No combat active")
   const c = combat.combatant
@@ -73,6 +78,7 @@ export function delayButton() {
     })
 
   if (!Module.delayShouldPrompt) {
+    if (!opts?.skipMessage) createMessage(c.token, "Delay")
     if (c.actor) applyDelayEffect(c.actor)
     combat.nextTurn()
     return
@@ -106,6 +112,7 @@ export function delayButton() {
             const target = game.combat.combatants.get(id)
             if (!target) return
             if (c.actor) applyDelayEffect(c.actor)
+            if (!opts?.skipMessage) createMessage(c.token, "Delay")
             combat
               .nextTurn()
               .then(() => sleep(50))
@@ -122,9 +129,11 @@ export function delayButton() {
   ).render(true)
 }
 
-function returnButton(combatant: CombatantPF2e) {
-  if (game.combat && game.combat.combatant && !combatantIsNext(combatant))
+function tryReturn(combatant: CombatantPF2e, opts?: TryDelayOptions) {
+  if (game.combat && game.combat.combatant && !combatantIsNext(combatant)) {
+    if (!opts?.skipMessage && combatant.token) createMessage(combatant.token, "Return")
     emitMoveAfter(game.combat.id, combatant.id, game.combat.combatant.id)
+  }
 }
 
 interface MoveAfterPayload {
@@ -220,8 +229,20 @@ function drawButton(type: "delay" | "return", combatentHtml: JQuery, combatant: 
 
   button.on("click", (e) => {
     e.stopPropagation()
-    if (type === "delay") delayButton()
-    else if (Module.allowReturn) returnButton(combatant)
+    if (type === "delay") tryDelay()
+    else if (Module.allowReturn) tryReturn(combatant)
+  })
+}
+
+function createMessage(token: TokenDocumentPF2e, title: string) {
+  ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({ token }),
+    content: `<div class="pf2e chat-card action-card">
+      <header class="card-header flexrow">
+          <img src="systems/pf2e/icons/actions/FreeAction.webp" alt="${title}">
+          <h3>${title} <span class="action-glyph">F</span></h3>
+      </header>
+    </div>`,
   })
 }
 
@@ -262,7 +283,7 @@ function onRenderTokenHUD(app: TokenHUD, html: JQuery) {
             </div>`)
             .on("click", (e) => {
               if (combatant.actor && isDelaying(combatant.actor) && !combatantIsNext(combatant)) {
-                returnButton(combatant)
+                tryReturn(combatant)
                 e.currentTarget.style.display = "none"
               }
             })
@@ -274,7 +295,7 @@ function onRenderTokenHUD(app: TokenHUD, html: JQuery) {
             <i class="fa-solid fa-hourglass"></i>
           </div>`)
           .on("click", (e) => {
-            if (combatant.parent?.combatant?.id == combatant.id) delayButton()
+            if (combatant.parent?.combatant?.id == combatant.id) tryDelay()
           })
           .appendTo(column)
       }
@@ -301,21 +322,14 @@ export function setupDelay() {
     removeDelaying(combat.combatant.actor)
   })
 
-
   Hooks.on<[ChatMessagePF2e]>("createChatMessage", (msg) => {
     if (msg?.author?.id !== game.user?.id) return
-    if (!game.combat || !game.combat.started) return
+    if (!game.combat?.started) return
     const item = msg?.item
-    if (
-      item &&
-      item.actor &&
-      item.actor.isOwner &&
-      item?.type === "action" &&
-      (item.name === "Delay" || item.flags?.core?.sourceId === "Compendium.pf2e.actionspf2e.Item.A72nHGUtNXgY5Ey9")
-    )
+    if (item?.actor?.isOwner && item?.type === "action" && item.slug === "delay")
       if (isDelaying(item.actor) && item.actor.combatant) {
-        if (Module.allowReturn) returnButton(item.actor.combatant)
-      } else if (item.actor.id == game.combat.combatant?.actorId) delayButton()
+        if (Module.allowReturn) tryReturn(item.actor.combatant, { skipMessage: true })
+      } else if (item.actor.id == game.combat.combatant?.actorId) tryDelay({ skipMessage: true })
   })
 
   Module.socketHandler.register("moveAfter", moveAfter)

@@ -45,6 +45,9 @@ export default class Module {
     const s = game.settings.get(this.id, "delay-return") as boolean
     return s
   }
+  static get delayCreateMessage() {
+    return game.settings.get(this.id, "delay-create-message") as boolean
+  }
   static get showInCombatTracker() {
     return game.settings.get(this.id, "delay-combat-tracker") as boolean
   }
@@ -119,6 +122,14 @@ Hooks.on("init", () => {
     scope: "world",
     config: true,
     default: false,
+    type: Boolean,
+  })
+
+  game.settings.register(Module.id, "delay-create-message", {
+    name: "Delay/Return creates chat message",
+    scope: "world",
+    config: true,
+    default: true,
     type: Boolean,
   })
 
