@@ -301,6 +301,7 @@ export function setupDelay() {
     removeDelaying(combat.combatant.actor)
   })
 
+
   Hooks.on<[ChatMessagePF2e]>("createChatMessage", (msg) => {
     if (msg?.author?.id !== game.user?.id) return
     if (!game.combat || !game.combat.started) return
