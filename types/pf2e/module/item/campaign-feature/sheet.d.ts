@@ -1,20 +1,21 @@
 /// <reference types="jquery" resolution-mode="require"/>
 /// <reference types="jquery" resolution-mode="require"/>
 /// <reference types="tooltipster" />
-import { ItemSheetDataPF2e, ItemSheetPF2e } from "types/pf2e/module/item/sheet/index.ts"
-import { CampaignFeaturePF2e } from "./document.ts"
+import { ItemSheetDataPF2e, ItemSheetOptions, ItemSheetPF2e } from "../base/sheet/sheet.ts";
+import type { CampaignFeaturePF2e } from "./document.ts";
 declare class CampaignFeatureSheetPF2e extends ItemSheetPF2e<CampaignFeaturePF2e> {
-  get validTraits(): Record<string, string>
-  getData(options?: Partial<DocumentSheetOptions>): Promise<CampaignFeatureSheetData>
-  activateListeners($html: JQuery<HTMLElement>): void
-  protected _updateObject(event: Event, formData: Record<string, unknown>): Promise<void>
+    static get defaultOptions(): ItemSheetOptions;
+    get validTraits(): Record<string, string>;
+    getData(options?: Partial<ItemSheetOptions>): Promise<CampaignFeatureSheetData>;
+    activateListeners($html: JQuery<HTMLElement>): void;
+    protected _updateObject(event: Event, formData: Record<string, unknown>): Promise<void>;
 }
 interface CampaignFeatureSheetData extends ItemSheetDataPF2e<CampaignFeaturePF2e> {
-  categories: Record<string, string>
-  actionTypes: ConfigPF2e["PF2E"]["actionTypes"]
-  actionsNumber: ConfigPF2e["PF2E"]["actionsNumber"]
-  frequencies: ConfigPF2e["PF2E"]["frequencies"]
-  prerequisites: string
-  isFeat: boolean
+    categories: Record<string, string>;
+    actionTypes: ConfigPF2e["PF2E"]["actionTypes"];
+    actionsNumber: ConfigPF2e["PF2E"]["actionsNumber"];
+    frequencies: ConfigPF2e["PF2E"]["frequencies"];
+    prerequisites: string;
+    isFeat: boolean;
 }
-export { CampaignFeatureSheetPF2e }
+export { CampaignFeatureSheetPF2e };

@@ -24,43 +24,51 @@ export function deepClone<T>(original: T): T;
 export function duplicate<T>(original: T): T;
 
 /**
+ * Test whether a value is empty-like; either undefined or a content-less object.
+ * @param value The value to test
+ * @returns Is the value empty-like?
+ */
+export function isEmpty(value: unknown): boolean;
+
+/**
  * Update a source object by replacing its keys and values with those from a target object.
  *
  * @param original     The initial object which should be updated with values from the target
  * @param [other={}]   A new object whose values should replace those in the source
  * @param [options={}] Additional options which configure the merge
- * @param [options.insertKeys=true]     Control whether to insert new top-level objects into the resulting structure which do not previously exist in the original object.
- * @param [options.insertValues=true]   Control whether to insert new nested values into child objects in the resulting structure which did not previously exist in the original object.
- * @param [options.overwrite=true]      Control whether to replace existing values in the source, or only merge values which do not already exist in the original object.
- * @param [options.recursive=true]      Control whether to merge inner-objects recursively (if true), or whether to simply replace inner objects with a provided new value.
- * @param [options.inplace=true]        Control whether to apply updates to the original object in-place (if true), otherwise the original object is duplicated and the copy is merged.
- * @param [options.enforceTypes=false]  Control whether strict type checking requires that the value of a key in the other object must match the data type in the original data to be merged.
- * @param [options.performDeletions=false]  Control whether to perform deletions on the original object if deletion keys are present in the other object.
- * @param [_d=0]         A privately used parameter to track recursion depth.
+ * @param [_d=0]       A privately used parameter to track recursion depth.
  * @returns The original source object including updated, inserted, or overwritten records.
  *
- * @example <caption>Control how new keys and values are added</caption>
+ * @example Control how new keys and values are added
+ * ```js
  * mergeObject({k1: "v1"}, {k2: "v2"}, {insertKeys: false}); // {k1: "v1"}
  * mergeObject({k1: "v1"}, {k2: "v2"}, {insertKeys: true});  // {k1: "v1", k2: "v2"}
  * mergeObject({k1: {i1: "v1"}}, {k1: {i2: "v2"}}, {insertValues: false}); // {k1: {i1: "v1"}}
  * mergeObject({k1: {i1: "v1"}}, {k1: {i2: "v2"}}, {insertValues: true}); // {k1: {i1: "v1", i2: "v2"}}
+ * ```
  *
- * @example <caption>Control how existing data is overwritten</caption>
+ * @example Control how existing data is overwritten
+ * ```js
  * mergeObject({k1: "v1"}, {k1: "v2"}, {overwrite: true}); // {k1: "v2"}
  * mergeObject({k1: "v1"}, {k1: "v2"}, {overwrite: false}); // {k1: "v1"}
+ * ```
  *
- * @example <caption>Control whether merges are performed recursively</caption>
- * mergeObject({k1: {i1: "v1"}}, {k1: {i2: "v2"}}, {recursive: false}); // {k1: {i1: "v2"}}
+ * @example Control whether merges are performed recursively
+ * ```js
+ * mergeObject({k1: {i1: "v1"}}, {k1: {i2: "v2"}}, {recursive: false}); // {k1: {i2: "v2"}}
  * mergeObject({k1: {i1: "v1"}}, {k1: {i2: "v2"}}, {recursive: true}); // {k1: {i1: "v1", i2: "v2"}}
+ * ```
  *
- * @example <caption>Deleting an existing object key</caption>
- * mergeObject({k1: "v1", k2: "v2"}, {"-=k1": null});   // {k2: "v2"}
+ * @example Deleting an existing object key
+ * ```js
+ * mergeObject({k1: "v1", k2: "v2"}, {"-=k1": null}, {performDeletions: true});   // {k2: "v2"}
+ * ```
  */
 export function mergeObject<T extends object, U extends object = T>(
     original: T,
-    other: U,
-    { insertKeys, insertValues, overwrite, inplace, enforceTypes, performDeletions }?: MergeObjectOptions,
-    _d?: number
+    other?: U | undefined,
+    options?: MergeObjectOptions,
+    _d?: number,
 ): T & U;
 
 /**
@@ -110,7 +118,7 @@ export function flattenObject(obj: object, _d?: number): Record<string, unknown>
  * @param _d   Recursion depth, to prevent overflow
  * @return     An expanded object
  */
-export function expandObject<T extends object>(obj: object, _d?: number): T;
+export function expandObject<T extends Record<string, unknown>>(obj: object, _d?: number): T;
 
 /**
  * A simple function to test whether or not an Object is empty
@@ -127,8 +135,15 @@ export function isObjectEmpty(obj: object): boolean;
  */
 export function diffObject<T extends Record<string, unknown> = Record<string, unknown>>(
     original: object,
-    other: object
+    other: object,
 ): T;
+
+/**
+ * Test if two objects contain the same enumerable keys and values.
+ * @param a  The first object.
+ * @param b  The second object.
+ */
+export function objectsEqual(a: object, b: object): boolean;
 
 /**
  * A helper function which tests whether an object has a property or nested property given a string key.
@@ -148,7 +163,7 @@ export function hasProperty(object: object, key: string): boolean;
  *
  * @return         The value of the found property
  */
-export function getProperty(object: object, key: string): unknown;
+export function getProperty<TValue = unknown>(object: object, key: string): TValue;
 
 /**
  * A helper function which searches through an object to assign a value using a string key
@@ -259,7 +274,7 @@ export function randomID(length?: number): string;
  * @returns Returns the Collection, Document Type, and Document ID to resolve the parent
  *          document, as well as the remaining Embedded Document parts, if any.
  */
-export function parseUuid(uuid: string, options?: { relative?: foundry.abstract.Document }): ResolvedUUID;
+export function parseUuid(uuid: Maybe<string>, options?: { relative?: Maybe<ClientDocument> }): ResolvedUUID;
 
 /**
  * Log a compatibility warning which is filtered based on the client's defined compatibility settings.
@@ -280,39 +295,45 @@ export function logCompatibilityWarning(
         until?: number | string;
         details?: string;
         stack?: boolean;
-    }
+    },
 ): void;
+
+export * from "./http.ts";
 
 declare global {
     interface MergeObjectOptions {
-        insertKeys?: boolean;
-        insertValues?: boolean;
-        overwrite?: boolean;
-        inplace?: boolean;
-        enforceTypes?: boolean;
-        performDeletions?: boolean;
-    }
-
-    namespace globalThis {
-        /* eslint-disable no-var */
-        var deepClone: typeof foundry.utils.deepClone;
-        var diffObject: typeof foundry.utils.diffObject;
-        var duplicate: typeof foundry.utils.duplicate;
-        var expandObject: typeof foundry.utils.expandObject;
-        var flattenObject: typeof foundry.utils.flattenObject;
-        var getType: typeof foundry.utils.getType;
-        var getProperty: typeof foundry.utils.getProperty;
-        var isObjectEmpty: typeof foundry.utils.isObjectEmpty;
-        var mergeObject: typeof foundry.utils.mergeObject;
-        var setProperty: typeof foundry.utils.setProperty;
-        var randomID: typeof foundry.utils.randomID;
-        /* eslint-enable no-var */
-
         /**
-         * Load a single texture and return a Promise which resolves once the texture is ready to use
-         * @param src       The requested texture source
-         * @param fallback  A fallback texture to use if the requested source is unavailable or invalid
+         * Control whether to insert new top-level objects into the resulting structure which do not previously exist
+         * in the original object.
          */
-        function loadTexture(src: string, { fallback }?: { fallback?: ImageFilePath }): Promise<PIXI.Texture>;
+        insertKeys?: boolean;
+        /**
+         * Control whether to insert new nested values into child objects in the resulting structure which did not
+         * previously exist in the original object. */
+        insertValues?: boolean;
+        /**
+         * Control whether to replace existing values in the source, or only merge values which do not already exist
+         * in the original object.
+         */
+        overwrite?: boolean;
+        /**
+         * Control whether to merge inner-objects recursively (if true), or whether to simply replace inner objects
+         * with a provided new value.
+         */
+        recursive?: boolean;
+        /**
+         * Control whether to apply updates to the original object in-place (if true), otherwise the original object is
+         * duplicated and the copy is merged.
+         */
+        inplace?: boolean;
+        /**
+         * Control whether strict type checking requires that the value of a key in the other object must match the
+         * data type in the original data to be merged.
+         */
+        enforceTypes?: boolean;
+        /**
+         * Control whether to perform deletions on the original object if deletion keys are present in the other object.
+         */
+        performDeletions?: boolean;
     }
 }

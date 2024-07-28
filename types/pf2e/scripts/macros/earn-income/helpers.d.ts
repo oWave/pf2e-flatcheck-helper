@@ -1,13 +1,13 @@
 /// <reference types="jquery" resolution-mode="require"/>
-import { CharacterPF2e } from "types/pf2e/module/actor/index.ts"
-import { Statistic } from "types/pf2e/module/system/statistic/index.ts"
-declare function runEarnIncome({ actor, event, skill, level, days }: RunEarnIncomeParams): void
+import type { CharacterPF2e } from "../../../module/actor/index.ts";
+import type { Statistic } from "../../../module/system/statistic/index.ts";
+declare function runEarnIncome({ actor, event, skill, level, days }: RunEarnIncomeParams): void;
 interface RunEarnIncomeParams {
-  actor: CharacterPF2e
-  event: JQuery.TriggeredEvent | undefined
-  skill: Statistic
-  level: number
-  days: number
+    actor: CharacterPF2e;
+    event: JQuery.TriggeredEvent | undefined;
+    skill: Statistic;
+    level: number;
+    days: number;
 }
-declare function askSkillPopupTemplate(skills: Statistic[]): string
-export { askSkillPopupTemplate, runEarnIncome }
+declare function askSkillPopupTemplate(skills: Statistic[]): string;
+export { askSkillPopupTemplate, runEarnIncome };

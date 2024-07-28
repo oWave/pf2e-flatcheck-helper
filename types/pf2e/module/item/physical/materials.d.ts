@@ -1,13 +1,25 @@
-import { Rarity } from "types/pf2e/module/data.ts"
-import { PreciousMaterialGrade, PreciousMaterialType } from "./types.ts"
+import type { Rarity } from "../../data.ts";
+import type { PhysicalItemPF2e } from "./document.ts";
+import type { PreciousMaterialGrade, PreciousMaterialType } from "./types.ts";
 interface MaterialGradeData {
-  level: number
-  price: number
-  rarity: Rarity
+    level: number;
+    price: number;
+    hardness?: number;
+    maxHP?: number;
+    rarity: Rarity;
 }
-type MaterialValuationData = Partial<
-  Record<PreciousMaterialType | "", Record<PreciousMaterialGrade, MaterialGradeData | null>>
->
-declare const WEAPON_MATERIAL_VALUATION_DATA: MaterialValuationData
-declare const ARMOR_MATERIAL_VALUATION_DATA: MaterialValuationData
-export { ARMOR_MATERIAL_VALUATION_DATA, MaterialGradeData, MaterialValuationData, WEAPON_MATERIAL_VALUATION_DATA }
+type MaterialValuationData = Partial<Record<PreciousMaterialType | "", Record<PreciousMaterialGrade, MaterialGradeData | null>>>;
+declare function getMaterialValuationData(item: PhysicalItemPF2e): MaterialGradeData | null;
+declare const OBJECT_MATERIAL_VALUATION_DATA: MaterialValuationData;
+declare const MATERIAL_DATA: {
+    armor: Partial<Record<"" | "adamantine" | "cold-iron" | "dawnsilver" | "duskwood" | "orichalcum" | "silver" | "sisterstone-dusk" | "sisterstone-scarlet" | "warpglass" | "abysium" | "djezet" | "dragonhide" | "grisantian-pelt" | "inubrix" | "keep-stone" | "noqual" | "peachwood" | "siccatite" | "sisterstone" | "sovereign-steel", Record<"low" | "standard" | "high", MaterialGradeData | null>>>;
+    object: Partial<Record<"" | "adamantine" | "cold-iron" | "dawnsilver" | "duskwood" | "orichalcum" | "silver" | "sisterstone-dusk" | "sisterstone-scarlet" | "warpglass" | "abysium" | "djezet" | "dragonhide" | "grisantian-pelt" | "inubrix" | "keep-stone" | "noqual" | "peachwood" | "siccatite" | "sisterstone" | "sovereign-steel", Record<"low" | "standard" | "high", MaterialGradeData | null>>>;
+    shield: {
+        shield: Partial<Record<"" | "adamantine" | "cold-iron" | "dawnsilver" | "duskwood" | "orichalcum" | "silver" | "sisterstone-dusk" | "sisterstone-scarlet" | "warpglass" | "abysium" | "djezet" | "dragonhide" | "grisantian-pelt" | "inubrix" | "keep-stone" | "noqual" | "peachwood" | "siccatite" | "sisterstone" | "sovereign-steel", Record<"low" | "standard" | "high", MaterialGradeData | null>>>;
+        buckler: Partial<Record<"" | "adamantine" | "cold-iron" | "dawnsilver" | "duskwood" | "orichalcum" | "silver" | "sisterstone-dusk" | "sisterstone-scarlet" | "warpglass" | "abysium" | "djezet" | "dragonhide" | "grisantian-pelt" | "inubrix" | "keep-stone" | "noqual" | "peachwood" | "siccatite" | "sisterstone" | "sovereign-steel", Record<"low" | "standard" | "high", MaterialGradeData | null>>>;
+        towerShield: Partial<Record<"" | "adamantine" | "cold-iron" | "dawnsilver" | "duskwood" | "orichalcum" | "silver" | "sisterstone-dusk" | "sisterstone-scarlet" | "warpglass" | "abysium" | "djezet" | "dragonhide" | "grisantian-pelt" | "inubrix" | "keep-stone" | "noqual" | "peachwood" | "siccatite" | "sisterstone" | "sovereign-steel", Record<"low" | "standard" | "high", MaterialGradeData | null>>>;
+    };
+    weapon: Partial<Record<"" | "adamantine" | "cold-iron" | "dawnsilver" | "duskwood" | "orichalcum" | "silver" | "sisterstone-dusk" | "sisterstone-scarlet" | "warpglass" | "abysium" | "djezet" | "dragonhide" | "grisantian-pelt" | "inubrix" | "keep-stone" | "noqual" | "peachwood" | "siccatite" | "sisterstone" | "sovereign-steel", Record<"low" | "standard" | "high", MaterialGradeData | null>>>;
+};
+export { MATERIAL_DATA, OBJECT_MATERIAL_VALUATION_DATA, getMaterialValuationData };
+export type { MaterialGradeData, MaterialValuationData };

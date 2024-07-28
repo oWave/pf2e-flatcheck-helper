@@ -1,30 +1,11 @@
-import type { DamageType } from "types/pf2e/module/system/damage/types.ts"
-import { WeaponPF2e } from "./document.ts"
-import { WeaponPropertyRuneType } from "./types.ts"
-import { CharacterPF2e } from "types/pf2e/module/actor/index.ts"
-/** A helper class to handle toggleable weapon traits */
-declare class WeaponTraitToggles {
-  #private
-  constructor(weapon: WeaponPF2e)
-  get modular(): {
-    options: DamageType[]
-    selection: DamageType | null
-  }
-  get versatile(): {
-    options: DamageType[]
-    selection: DamageType | null
-  }
-}
+import { WeaponPF2e } from "./document.ts";
+/** Upgrade a trait with a dice annotation, if possible, or otherwise return the original trait. */
+declare function upgradeWeaponTrait<TTrait extends string>(trait: TTrait): TTrait;
 /**
- * Update a modular or versatile weapon to change its damage type
- * @returns A promise indicating whether an update was made
+ * Add a trait to an array of traits--unless it matches an existing trait except by annotation. Replace the trait if
+ * the new trait is an upgrade, or otherwise do nothing.
  */
-declare function toggleWeaponTrait({ weapon, trait, selection }: ToggleWeaponTraitParams): Promise<boolean>
-interface ToggleWeaponTraitParams {
-  weapon: WeaponPF2e<CharacterPF2e>
-  trait: "modular" | "versatile"
-  selection: DamageType | null
-}
-/** Remove duplicate and lesser versions from an array of property runes */
-declare function prunePropertyRunes(runes: WeaponPropertyRuneType[]): WeaponPropertyRuneType[]
-export { WeaponTraitToggles, prunePropertyRunes, toggleWeaponTrait }
+declare function addOrUpgradeTrait<TTrait extends string>(traits: TTrait[], newTrait: TTrait): TTrait[];
+/** Apply a two-hand trait to a weapon's damage dice. */
+declare function processTwoHandTrait(weapon: WeaponPF2e): void;
+export { addOrUpgradeTrait, processTwoHandTrait, upgradeWeaponTrait };

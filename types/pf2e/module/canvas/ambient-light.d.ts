@@ -1,13 +1,8 @@
-import { AmbientLightDocumentPF2e } from "types/pf2e/module/scene/index.ts"
-import { LightingLayerPF2e } from "./index.ts"
-declare class AmbientLightPF2e<
-  TParent extends AmbientLightDocumentPF2e = AmbientLightDocumentPF2e
-> extends AmbientLight<TParent> {
-  /** Is this light actually a source of darkness? */
-  get isDarkness(): boolean
+import { AmbientLightDocumentPF2e } from "../scene/index.ts";
+import { LightingLayerPF2e } from "./index.ts";
+declare class AmbientLightPF2e<TDocument extends AmbientLightDocumentPF2e = AmbientLightDocumentPF2e> extends AmbientLight<TDocument> {
 }
-interface AmbientLightPF2e<TParent extends AmbientLightDocumentPF2e = AmbientLightDocumentPF2e>
-  extends AmbientLight<TParent> {
-  get layer(): LightingLayerPF2e<this>
+interface AmbientLightPF2e<TDocument extends AmbientLightDocumentPF2e = AmbientLightDocumentPF2e> extends AmbientLight<TDocument> {
+    get layer(): LightingLayerPF2e<this>;
 }
-export { AmbientLightPF2e }
+export { AmbientLightPF2e };

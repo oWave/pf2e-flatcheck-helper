@@ -1,8 +1,9 @@
+import { ChatMessagePF2e } from "types/pf2e/module/chat-message"
 import Module from "./module"
 import { actorEffectBySlug, actorHasEffect } from "./utils"
 import type { CombatantPF2e, EncounterPF2e } from "types/pf2e/module/encounter"
-import type { ActorPF2e, ChatMessagePF2e } from "types/pf2e/module/documents"
 import type { EffectPF2e, ItemPF2e } from "types/pf2e/module/item"
+import { ActorPF2e } from "types/pf2e/module/actor"
 
 interface ButtonArgs {
   // HP to transfer from source to target

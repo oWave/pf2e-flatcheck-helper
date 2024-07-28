@@ -26,6 +26,9 @@ declare class FilePicker extends Application<FilePickerOptions> {
 
     constructor(options: FilePickerOptions);
 
+    /** The allowed values for the type of this FilePicker instance. */
+    static FILE_TYPES: ["image", "audio", "video", "text", "imagevideo", "font", "folder", "any"];
+
     /** Record the last-browsed directory path so that re-opening a different FilePicker instance uses the same target */
     static LAST_BROWSED_DIRECTORY: string;
 
@@ -48,28 +51,20 @@ declare class FilePicker extends Application<FilePickerOptions> {
      */
     protected _inferCurrentDirectory(target: string): [string, string];
 
-    /**
-     * Get the valid file extensions for a given named file picker type
-     */
+    /** Get the valid file extensions for a given named file picker type */
     protected _getExtensions(type: string): string[];
 
     /* -------------------------------------------- */
     /*  FilePicker Properties                       */
     /* -------------------------------------------- */
 
-    /**
-     * Return the source object for the currently active source
-     */
+    /** Return the source object for the currently active source */
     get source(): object;
 
-    /**
-     * Return the target directory for the currently active source
-     */
+    /** Return the target directory for the currently active source */
     get target(): string;
 
-    /**
-     * Return a flag for whether the current user is able to upload file content
-     */
+    /** Return a flag for whether the current user is able to upload file content */
     get canUpload(): boolean;
 
     /* -------------------------------------------- */
@@ -98,7 +93,7 @@ declare class FilePicker extends Application<FilePickerOptions> {
     static browse(
         source: string,
         target: string,
-        options?: { bucket?: string; extensions?: string[]; wildcard?: boolean }
+        options?: { bucket?: string; extensions?: string[]; wildcard?: boolean },
     ): Promise<object>;
 
     /**
@@ -111,11 +106,26 @@ declare class FilePicker extends Application<FilePickerOptions> {
     static upload(source: string, path: string, file: File, options: object): Promise<boolean>;
 
     /**
+     * A convenience function that uploads a file to a given package's persistent /storage/ directory
+     * @param packageId The id of the package to which the file should be uploaded. Only supports Systems and Modules.
+     * @param path      The relative path in the package's storage directory the file should be uploaded to
+     * @param file      The File object to upload
+     * @param body
+     * @param options   Additional options to configure how the method behaves
+     */
+    static uploadPersistent(
+        packageId: string,
+        path: string,
+        file: File,
+        body?: object,
+        options?: { notify?: boolean },
+    ): Promise<boolean>;
+
+    /**
      * Create a subdirectory within a given source. The requested subdirectory path must not already exist.
-     * @param {string} source     The source location in which to browse. See FilePicker#sources for details
-     * @param {string} target     The target within the source location
-     * @param {Object} options    Optional arguments which modify the request
-     * @return {Promise<Object>}
+     * @param source The source location in which to browse. See FilePicker#sources for details
+     * @param target   The target within the source location
+     * @param options Optional arguments which modify the request
      */
     static createDirectory(source: string, target: string, options: object): Promise<object>;
 
@@ -136,30 +146,22 @@ declare class FilePicker extends Application<FilePickerOptions> {
      */
     protected _onPick(event: Event): void;
 
-    /**
-     * Handle backwards navigation of the folder structure
-     */
+    /** Handle backwards navigation of the folder structure */
     protected _onBack(event: Event): void;
 
     protected _onChangeBucket(event: Event): void;
 
-    /**
-     * Handle a keyup event in the filter box to restrict the set of files shown in the FilePicker
-     */
+    /** Handle a keyup event in the filter box to restrict the set of files shown in the FilePicker */
     protected _onFilterResults(event: Event): void;
 
-    /**
-     * Handle file picker form submission
-     */
+    /** Handle file picker form submission */
     protected _onSubmit(ev: Event): Promise<void>;
 
-    /**
-     * Handle file upload
-     */
+    /** Handle file upload */
     protected _onUpload(ev: Event): Promise<void>;
 
     /* -------------------------------------------- */
-    /*  Factory Methods
+    /*  Factory Methods                             */
     /* -------------------------------------------- */
 
     /**
@@ -168,15 +170,15 @@ declare class FilePicker extends Application<FilePickerOptions> {
      * The data-target attribute should provide the name of the input field which should receive the selected file
      * The data-type attribute is a string in ["image", "audio"] which sets the file extensions which will be accepted
      *
-     * @param button    The button element
+     * @param button The button element
      */
-    static fromButton(button: HTMLElement, options: object): FilePicker;
+    static fromButton(button: HTMLButtonElement, options: object): FilePicker;
 }
 
 type FilePickerDisplayMode = (typeof FilePicker)["DISPLAY_MODES"][number];
 
 declare interface FilePickerOptions extends ApplicationOptions {
-    type?: "audio" | "image" | "video" | "imagevideo" | "folder" | "font" | "graphics" | "text" | "any";
+    type?: (typeof FilePicker.FILE_TYPES)[number];
     /** The current file path being modified, if any */
     current?: string;
     /** A current file source in "data", "public", or "s3" */

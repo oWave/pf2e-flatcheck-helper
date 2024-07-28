@@ -1,38 +1,44 @@
-import {
-  ActionType,
-  BaseItemSourcePF2e,
-  Frequency,
-  FrequencySource,
-  ItemSystemData,
-  ItemSystemSource,
-  ItemTraits,
-} from "types/pf2e/module/item/data/base.ts"
-import { OneToThree } from "types/pf2e/module/data.ts"
-import { ActionCategory, ActionTrait } from "./types.ts"
-type AbilityItemSource = BaseItemSourcePF2e<"action", AbilitySystemSource>
-interface AbilityTraits extends ItemTraits<ActionTrait> {
-  rarity?: never
-}
+import { ActionType, BaseItemSourcePF2e, Frequency, FrequencySource, ItemSystemData, ItemSystemSource, ItemTraitsNoRarity } from "../base/data/system.ts";
+import { OneToThree } from "../../data.ts";
+import type { AbilityTraitToggles } from "./trait-toggles.ts";
+import { ActionCategory, ActionTrait } from "./types.ts";
+type AbilitySource = BaseItemSourcePF2e<"action", AbilitySystemSource>;
 interface AbilitySystemSource extends ItemSystemSource {
-  traits: AbilityTraits
-  actionType: {
-    value: ActionType
-  }
-  actions: {
-    value: OneToThree | null
-  }
-  category: ActionCategory | null
-  requirements: {
-    value: string
-  }
-  trigger: {
-    value: string
-  }
-  deathNote: boolean
-  frequency?: FrequencySource
-  level?: never
+    traits: AbilityTraitsSource;
+    actionType: {
+        value: ActionType;
+    };
+    actions: {
+        value: OneToThree | null;
+    };
+    category: ActionCategory | null;
+    deathNote: boolean;
+    frequency?: FrequencySource;
+    /** A self-applied effect for simple actions */
+    selfEffect?: SelfEffectReferenceSource | null;
+    level?: never;
 }
-interface AbilitySystemData extends AbilitySystemSource, Omit<ItemSystemData, "level" | "traits"> {
-  frequency?: Frequency
+interface AbilityTraitsSource extends ItemTraitsNoRarity<ActionTrait> {
+    toggles?: {
+        mindshift?: {
+            selected?: boolean;
+        } | null;
+    };
 }
-export { AbilityItemSource, AbilitySystemData, AbilityTraits }
+interface SelfEffectReferenceSource {
+    uuid: ItemUUID;
+    name: string;
+}
+interface AbilitySystemData extends Omit<AbilitySystemSource, "description">, Omit<ItemSystemData, "level"> {
+    traits: AbilityTraits;
+    frequency?: Frequency;
+    /** A self-applied effect for simple actions */
+    selfEffect: SelfEffectReference | null;
+}
+interface AbilityTraits extends AbilityTraitsSource {
+    toggles: AbilityTraitToggles;
+}
+interface SelfEffectReference extends SelfEffectReferenceSource {
+    img?: Maybe<ImageFilePath>;
+}
+export type { AbilitySource, AbilitySystemData, AbilityTraitsSource, SelfEffectReference, SelfEffectReferenceSource };

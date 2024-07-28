@@ -28,7 +28,6 @@ export function extractFlagData(item: SpellPF2e) {
 }
 
 function isValidSpell(item: SpellPF2e) {
-  // @ts-expect-error missing defense type
   return item.system.area?.type === "emanation" && item.system.area.value && !item.system.defense
 }
 

@@ -1,19 +1,31 @@
-import { ItemType } from "types/pf2e/module/item/data/index.ts"
-import type { StringField } from "types/foundry/common/data/fields.d.ts"
-import { RuleElementOptions, RuleElementPF2e, RuleElementSchema, RuleElementSource } from "../index.ts"
-import { ItemAlterationSchema } from "./alteration.ts"
+import type { ActorPF2e } from "../../../actor/index.ts";
+import type { ItemPF2e } from "../../../item/index.ts";
+import { ItemType } from "../../../item/base/data/index.ts";
+import type { StringField } from "../../../../../types/foundry/common/data/fields.d.ts";
+import { RuleElementPF2e } from "../base.ts";
+import { ModelPropsFromRESchema, RuleElementSchema } from "../data.ts";
+import { ItemAlterationSchema } from "./alteration.ts";
 declare class ItemAlterationRuleElement extends RuleElementPF2e<ItemAlterationRuleSchema> {
-  constructor(source: RuleElementSource, options: RuleElementOptions)
-  static defineSchema(): ItemAlterationRuleSchema
-  beforePrepareData(): void
-  /** If this RE alters max HP, proportionally adjust current HP of items it would match against */
-  preCreate(): Promise<void>
+    #private;
+    static defineSchema(): ItemAlterationRuleSchema;
+    static validateJoint(data: SourceFromSchema<ItemAlterationRuleSchema>): void;
+    preCreate({ tempItems }: RuleElementPF2e.PreCreateParams): Promise<void>;
+    onApplyActiveEffects(): void;
+    afterPrepareData(): void;
+    applyAlteration({ singleItem, additionalItems }?: ApplyAlterationOptions): void;
 }
-interface ItemAlterationRuleElement
-  extends RuleElementPF2e<ItemAlterationRuleSchema>,
-    ModelPropsFromSchema<ItemAlterationRuleSchema> {}
-type ItemAlterationRuleSchema = RuleElementSchema &
-  ItemAlterationSchema & {
-    itemType: StringField<ItemType, ItemType, true, false, false>
-  }
-export { ItemAlterationRuleElement }
+interface ItemAlterationRuleElement extends RuleElementPF2e<ItemAlterationRuleSchema>, ModelPropsFromRESchema<ItemAlterationRuleSchema> {
+    constructor: typeof ItemAlterationRuleElement;
+}
+type ItemAlterationRuleSchema = RuleElementSchema & ItemAlterationSchema & {
+    /** The type of items to alter */
+    itemType: StringField<ItemType, ItemType, false, false, false>;
+    /** As an alternative to specifying item types, an exact item ID can be provided */
+    itemId: StringField<string, string, false, false, false>;
+};
+interface ApplyAlterationOptions {
+    /** A single item to on which to run alterations instead of all qualifying items owned by the actor */
+    singleItem?: ItemPF2e<ActorPF2e> | null;
+    additionalItems?: ItemPF2e<ActorPF2e>[];
+}
+export { ItemAlterationRuleElement };

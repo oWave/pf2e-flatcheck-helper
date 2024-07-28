@@ -1,16 +1,16 @@
-import { CreatureIdentificationData } from "types/pf2e/module/recall-knowledge.ts"
+import { CreatureIdentificationData } from "../../../recall-knowledge.ts";
 export declare class RecallKnowledgePopup extends Application {
-  #private
-  constructor(options: Partial<ApplicationOptions>, data: CreatureIdentificationData)
-  static get defaultOptions(): ApplicationOptions
-  getData(): Promise<PopupData>
+    #private;
+    constructor(options: Partial<ApplicationOptions>, data: CreatureIdentificationData);
+    static get defaultOptions(): ApplicationOptions;
+    getData(): Promise<PopupData>;
 }
 interface PopupData {
-  standard: {
-    label: string
-    attempts: string[]
-  }
-  loreEasy: string[]
-  loreVeryEasy: string[]
+    standard: {
+        label: string;
+        attempts: string[];
+    };
+    loreEasy: string[];
+    loreVeryEasy: string[];
 }
-export {}
+export {};

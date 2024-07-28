@@ -1,12 +1,13 @@
-import { ItemSystemSource } from "types/pf2e/module/item/data/base.ts"
+import { ItemSystemData, ItemSystemSource } from "../base/data/system.ts";
 interface ABCFeatureEntryData {
-  uuid: string
-  img: ImageFilePath
-  name: string
-  level: number
+    uuid: string;
+    img: ImageFilePath;
+    name: string;
+    level: number;
 }
 interface ABCSystemSource extends ItemSystemSource {
-  items: Record<string, ABCFeatureEntryData>
+    items: Record<string, ABCFeatureEntryData>;
 }
-type ABCSystemData = ABCSystemSource
-export { ABCFeatureEntryData, ABCSystemData, ABCSystemSource }
+interface ABCSystemData extends Omit<ABCSystemSource, "description">, ItemSystemData {
+}
+export type { ABCFeatureEntryData, ABCSystemData, ABCSystemSource };

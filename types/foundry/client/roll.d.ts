@@ -1,3 +1,5 @@
+import type { DiceTerm, FunctionTerm, OperatorTerm, PoolTerm, RollTerm } from "../client-esm/dice/terms/module.d.ts";
+
 export {};
 
 declare global {
@@ -105,8 +107,6 @@ declare global {
          * @param [options={}] Options which inform how the Roll is evaluated
          * @param [options.minimize=false] Minimize the result, obtaining the smallest possible value.
          * @param [options.maximize=false] Maximize the result, obtaining the largest possible value.
-         * @param [options.async=true]     Evaluate the roll asynchronously, receiving a Promise as the returned value.
-         *                                 This will become the default behavior in version 10.x
          * @returns The evaluated Roll instance
          *
          * @example
@@ -115,9 +115,7 @@ declare global {
          * console.log(r.result); // 5 + 4 + 2
          * console.log(r.total);  // 11
          */
-        evaluate({ minimize, maximize, async }: EvaluateRollParams & { async?: false }): Rolled<this>;
-        evaluate({ minimize, maximize, async }: EvaluateRollParams & { async: true }): Promise<Rolled<this>>;
-        evaluate({ minimize, maximize, async }: EvaluateRollParams): Rolled<this> | Promise<Rolled<this>>;
+        evaluate({ minimize, maximize, allowInteractive }?: EvaluateRollParams): Promise<Rolled<this>>;
 
         /**
          * Evaluate the roll asynchronously.
@@ -141,9 +139,7 @@ declare global {
          * Alias for evaluate.
          * @see {Roll#evaluate}
          */
-        roll({ minimize, maximize, async }: EvaluateRollParams & { async?: false }): Rolled<this>;
-        roll({ minimize, maximize, async }: EvaluateRollParams & { async: true }): Promise<Rolled<this>>;
-        roll({ minimize, maximize, async }: EvaluateRollParams): Rolled<this> | Promise<Rolled<this>>;
+        roll({ minimize, maximize }?: EvaluateRollParams): Promise<Rolled<this>>;
 
         /**
          * Create a new Roll object using the original provided formula and data.
@@ -151,9 +147,7 @@ declare global {
          * @param [options={}] Evaluation options passed to Roll#evaluate
          * @return A new Roll object, rolled using the same formula and data
          */
-        reroll({ minimize, maximize, async }: EvaluateRollParams & { async?: false }): Rolled<this>;
-        reroll({ minimize, maximize, async }: EvaluateRollParams & { async: true }): Promise<Rolled<this>>;
-        reroll({ minimize, maximize, async }: EvaluateRollParams): Rolled<this> | Promise<Rolled<this>>;
+        reroll({ minimize, maximize }?: EvaluateRollParams): Promise<Rolled<this>>;
 
         /* -------------------------------------------- */
         /*  Static Class Methods                        */
@@ -167,6 +161,9 @@ declare global {
          * @return The constructed Roll instance
          */
         static create(formula: string, data?: Record<string, unknown>, options?: RollOptions): Roll;
+
+        /** Get the default configured Roll class. */
+        static get defaultImplementation(): typeof Roll;
 
         /**
          * Transform an array of RollTerm objects into a cleaned string formula representation.
@@ -229,7 +226,7 @@ declare global {
         static replaceFormulaData(
             formula: string,
             data: Record<string, unknown>,
-            { missing, warn }?: { missing?: string; warn?: boolean }
+            { missing, warn }?: { missing?: string; warn?: boolean },
         ): string;
 
         /**
@@ -246,8 +243,8 @@ declare global {
          */
         protected static _splitParentheses(_formula: string): string[];
 
-        /** Handle closing of a parenthetical term to create a MathTerm expression with a function and arguments */
-        protected static _splitMathArgs(expression: string): MathTerm[];
+        /** Handle closing of a parenthetical term to create a FunctionTerm expression with a function and arguments */
+        protected static _splitMathArgs(expression: string): FunctionTerm[];
 
         /**
          * Split a formula by identifying its outer-most dice pool terms
@@ -276,7 +273,7 @@ declare global {
                 openSymbol?: string;
                 closeSymbol?: string;
                 onClose?: () => void | Promise<void>;
-            }
+            },
         ): string[];
 
         /**
@@ -319,7 +316,7 @@ declare global {
                 intermediate,
                 prior,
                 next,
-            }?: { intermediate?: boolean; prior?: RollTerm | string; next?: RollTerm | string }
+            }?: { intermediate?: boolean; prior?: RollTerm | string; next?: RollTerm | string },
         ): RollTerm;
 
         /* -------------------------------------------- */
@@ -356,15 +353,15 @@ declare global {
          */
         toMessage(
             messageData: PreCreate<foundry.documents.ChatMessageSource> | undefined,
-            { rollMode, create }: { rollMode?: RollMode | "roll"; create: false }
+            { rollMode, create }: { rollMode?: RollMode | "roll"; create: false },
         ): Promise<foundry.documents.ChatMessageSource>;
         toMessage(
             messageData?: PreCreate<foundry.documents.ChatMessageSource>,
-            { rollMode, create }?: { rollMode?: RollMode | "roll"; create?: true }
+            { rollMode, create }?: { rollMode?: RollMode | "roll"; create?: true },
         ): Promise<ChatMessage>;
         toMessage(
             messageData?: PreCreate<foundry.documents.ChatMessageSource>,
-            { rollMode, create }?: { rollMode?: RollMode | "roll"; create?: boolean }
+            { rollMode, create }?: { rollMode?: RollMode | "roll"; create?: boolean },
         ): Promise<ChatMessage | foundry.documents.ChatMessageSource>;
 
         /* -------------------------------------------- */
@@ -423,10 +420,10 @@ declare global {
         static fromTerms<T extends Roll>(this: ConstructorOf<T>, terms: RollTerm[], options?: RollOptions): T;
     }
 
-    type RollOptions = {
-        [key: string]: unknown;
+    interface RollOptions {
         flavor?: string;
-    };
+        [key: string]: JSONValue;
+    }
 
     interface RollJSON {
         class: string;
@@ -459,7 +456,7 @@ declare global {
     interface EvaluateRollParams {
         minimize?: boolean;
         maximize?: boolean;
-        async?: boolean;
+        allowInteractive?: boolean;
     }
 
     // Empty extended interface that can be expanded by the system without polluting Math itself

@@ -1,3 +1,5 @@
+import type ApplicationV2 from "../../client-esm/applications/api/application.d.ts"
+
 export {}
 declare global {
   type HookCallback<P extends unknown[]> = (...args: P) => boolean | void | Promise<boolean | void>
@@ -6,6 +8,7 @@ declare global {
   // Sequence of hooks called on world load
   type HookParamsInit = HookParameters<"init", never>
   type HookParamsSetup = HookParameters<"setup", never>
+  type HookParamsI18nInit = HookParameters<"i18nInit", never>
   type HookParamsCanvasInit = HookParameters<"canvasInit", [DrawnCanvas]>
   type HookParamsCanvasReady = HookParameters<"canvasReady", [DrawnCanvas]>
   type HookParamsReady = HookParameters<"ready", never>
@@ -19,11 +22,7 @@ declare global {
   type HookParamsLightingRefresh = HookParameters<"lightingRefresh", [LightingLayer]>
   type HookParamsPreCreateItem = HookParameters<
     "preCreateItem",
-    [
-      PreCreate<foundry.documents.ItemSource>,
-      DocumentModificationContext<Actor<TokenDocument<Scene | null> | null> | null>,
-      string
-    ]
+    [PreCreate<foundry.documents.ItemSource>, DatabaseCreateOperation<Actor | null>, string]
   >
   type HooksParamsPreUpdateCombat = HookParameters<
     "preUpdateCombat",
@@ -39,9 +38,9 @@ declare global {
       string
     ]
   >
-  type HookParamsRender<T extends Application, N extends string> = HookParameters<
+  type HookParamsRender<T extends Application | ApplicationV2, N extends string> = HookParameters<
     `render${N}`,
-    [T, JQuery, ReturnType<T["getData"]>]
+    T extends Application ? [T, JQuery, Awaited<ReturnType<T["getData"]>>] : [T, HTMLElement]
   >
   type HookParamsRenderChatMessage = HookParameters<
     "renderChatMessage",
@@ -50,9 +49,13 @@ declare global {
   type HookParamsTargetToken = HookParameters<"targetToken", [User, Token<TokenDocument<Scene>>, boolean]>
   type HookParamsUpdate<T extends foundry.abstract.Document, N extends string> = HookParameters<
     `update${N}`,
-    [T, DocumentUpdateData<T>, DocumentModificationContext<T["parent"]>]
+    [T, Record<string, unknown>, DatabaseCreateOperation<T["parent"]>]
   >
   type HookParamsUpdateWorldTime = HookParameters<"updateWorldTime", [number, number]>
+  type HookParamsGetProseMirrorMenuDropDowns = HookParameters<
+    "getProseMirrorMenuDropDowns",
+    [foundry.prosemirror.ProseMirrorMenu, Record<string, ProseMirrorDropDownConfig>]
+  >
 
   class Hooks {
     /**
@@ -64,6 +67,7 @@ declare global {
     static on(...args: HookParamsSetup): number
     static on(...args: HookParamsInit): number
     static on(...args: HookParamsReady): number
+    static on(...args: HookParamsI18nInit): number
     static on(...args: HookParamsCanvasInit): number
     static on(...args: HookParamsCanvasReady): number
     static on(...args: HookParamsClose<CombatTrackerConfig, "CombatTrackerConfig">): number
@@ -85,6 +89,7 @@ declare global {
     static on(...args: HookParamsRender<ItemDirectory<Item<null>>, "ItemDirectory">): number
     static on(...args: HookParamsRender<SceneControls, "SceneControls">): number
     static on(...args: HookParamsRender<Settings, "Settings">): number
+    static on(...args: HookParamsRender<SettingsConfig, "SettingsConfig">): number
     static on(...args: HookParamsRender<TokenHUD, "TokenHUD">): number
     static on(
       ...args: HookParamsRender<JournalPageSheet<JournalEntryPage<JournalEntry | null>>, "JournalPageSheet">
@@ -92,12 +97,12 @@ declare global {
     static on(
       ...args: HookParamsRender<JournalTextPageSheet<JournalEntryPage<JournalEntry | null>>, "JournalTextPageSheet">
     ): number
+    static on(...args: HookParamsRender<ApplicationV2, "RegionLegend">): number
     static on(...args: HookParamsTargetToken): number
     static on(...args: HookParamsUpdate<Combat, "Combat">): number
     static on(...args: HookParamsUpdate<Scene, "Scene">): number
     static on(...args: HookParamsUpdateWorldTime): number
-    static on(...args: HookParameters<"createChatMessage", [ChatMessage]>): number
-    static on(...args: HookParameters<string, unknown[]>): number
+    static on(...args: HookParamsGetProseMirrorMenuDropDowns): number
     static on<T extends any[]>(...args: HookParameters<string, T>): number
 
     /**
@@ -141,6 +146,7 @@ declare global {
     static once(...args: HookParamsUpdate<Combat, "Combat">): number
     static once(...args: HookParamsUpdate<Scene, "Scene">): number
     static once(...args: HookParamsUpdateWorldTime): number
+    static once(...args: HookParamsI18nInit): number
     static once(...args: HookParameters<string, unknown[]>): number
 
     /**

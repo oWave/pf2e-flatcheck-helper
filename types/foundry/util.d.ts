@@ -2,15 +2,9 @@ import type DataModel from "./common/abstract/data.d.ts";
 import type { DataSchema } from "./common/data/fields.d.ts";
 
 declare global {
-    interface ElementDragEvent extends DragEvent {
-        target: HTMLElement;
-        currentTarget: HTMLElement;
-        readonly dataTransfer: DataTransfer;
-    }
-
     type Maybe<T> = T | null | undefined;
 
-    type DeepPartial<T> = {
+    type DeepPartial<T extends object> = {
         [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
     };
 
@@ -25,7 +19,7 @@ declare global {
     type DocumentConstructorOf<T extends foundry.abstract.Document> = {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         new (...args: any[]): T;
-        updateDocuments(updates?: object[], context?: DocumentModificationContext<T["parent"]>): Promise<T[]>;
+        updateDocuments(updates?: object[], operation?: Partial<DatabaseUpdateOperation<T["parent"]>>): Promise<T[]>;
     };
 
     type ParentOf<TDataModel> = TDataModel extends DataModel<infer P extends DataModel | null> ? P : never;
@@ -39,6 +33,9 @@ declare global {
     type TypeParamOf<T> = T extends TypeWithGeneric<infer U> ? U : never;
 
     type ValueOf<T extends object> = T[keyof T];
+
+    /** A JSON-compatible value, plus `undefined` */
+    type JSONValue = string | number | boolean | object | null | undefined;
 }
 
 type TypeWithGeneric<T> = T[];

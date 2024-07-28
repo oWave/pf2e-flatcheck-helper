@@ -1,7 +1,7 @@
-import { PartyCampaign } from "./types.ts";
+import type { DataSchema } from "../../../../types/foundry/common/data/fields.d.ts";
 import { PartyPF2e } from "./document.ts";
-import { DataSchema } from "types/foundry/common/data/fields.js";
-declare const DataModel: typeof import("../../../../types/foundry/common/abstract/data.js").default;
+import { PartyCampaign } from "./types.ts";
+declare const DataModel: typeof foundry.abstract.DataModel;
 /**
  * Exists if the party's campaign type does not match the configured setting.
  * Creates a warning and deletion dialog to give one last chance to back out.

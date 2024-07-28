@@ -20,7 +20,8 @@
     "types": [
       "jquery",
       "node",
-      "foundry"
+      "foundry",
+      "pf2e"
     ],
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,

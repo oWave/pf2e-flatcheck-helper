@@ -1,28 +1,29 @@
-import { ActorPF2e } from "types/pf2e/module/actor/index.ts"
-import { ItemPF2e } from "types/pf2e/module/item/index.ts"
-import { ActionCost, Frequency } from "types/pf2e/module/item/data/base.ts"
-import { ItemSummaryData } from "types/pf2e/module/item/data/index.ts"
-import { UserPF2e } from "types/pf2e/module/user/index.ts"
-import { AbilityItemSource, AbilitySystemData } from "./data.ts"
+import type { ActorPF2e } from "../../actor/index.ts";
+import { ItemPF2e } from "../index.ts";
+import type { ActionCost, Frequency, RawItemChatData } from "../base/data/index.ts";
+import type { RangeData } from "../types.ts";
+import type { UserPF2e } from "../../user/index.ts";
+import type { AbilitySource, AbilitySystemData } from "./data.ts";
+import type { ActionTrait } from "./types.ts";
 declare class AbilityItemPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends ItemPF2e<TParent> {
-  get actionCost(): ActionCost | null
-  get frequency(): Frequency | null
-  prepareBaseData(): void
-  getRollOptions(prefix?: string): string[]
-  getChatData(this: AbilityItemPF2e<ActorPF2e>, htmlOptions?: EnrichHTMLOptions): Promise<ItemSummaryData>
-  protected _preCreate(
-    data: PreDocumentId<AbilityItemSource>,
-    options: DocumentModificationContext<TParent>,
-    user: UserPF2e
-  ): Promise<boolean | void>
-  protected _preUpdate(
-    changed: DeepPartial<this["_source"]>,
-    options: DocumentModificationContext<TParent>,
-    user: UserPF2e
-  ): Promise<boolean | void>
+    range?: RangeData | null;
+    isMelee?: boolean;
+    static get validTraits(): Record<ActionTrait, string>;
+    get traits(): Set<ActionTrait>;
+    get actionCost(): ActionCost | null;
+    get frequency(): Frequency | null;
+    prepareBaseData(): void;
+    prepareActorData(): void;
+    onPrepareSynthetics(this: AbilityItemPF2e<ActorPF2e>): void;
+    getRollOptions(prefix?: string, options?: {
+        includeGranter?: boolean;
+    }): string[];
+    getChatData(this: AbilityItemPF2e<ActorPF2e>, htmlOptions?: EnrichmentOptions): Promise<RawItemChatData>;
+    protected _preCreate(data: this["_source"], operation: DatabaseCreateOperation<TParent>, user: UserPF2e): Promise<boolean | void>;
+    protected _preUpdate(changed: DeepPartial<this["_source"]>, operation: DatabaseUpdateOperation<TParent>, user: UserPF2e): Promise<boolean | void>;
 }
 interface AbilityItemPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends ItemPF2e<TParent> {
-  readonly _source: AbilityItemSource
-  system: AbilitySystemData
+    readonly _source: AbilitySource;
+    system: AbilitySystemData;
 }
-export { AbilityItemPF2e }
+export { AbilityItemPF2e };

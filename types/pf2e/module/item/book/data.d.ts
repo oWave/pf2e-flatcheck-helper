@@ -1,16 +1,15 @@
-import { EquipmentSystemData, EquipmentSystemSource } from "types/pf2e/module/item/equipment/data.ts"
-import { BasePhysicalItemSource } from "types/pf2e/module/item/physical/data.ts"
-type BookSource = BasePhysicalItemSource<"book", BookSystemSource>
-type BookSystemSource = EquipmentSystemSource & {
-  capacity: number
-} & (FormulaBookData | SpellBookData)
-type BookSystemData = Omit<BookSystemSource, "hp" | "price"> & EquipmentSystemData
-interface FormulaBookData {
-  subtype: "formula"
-  item: ItemUUID[]
+import type { EquipmentTrait } from "../equipment/data.ts";
+import type { BasePhysicalItemSource, PhysicalItemTraits, PhysicalSystemData, PhysicalSystemSource } from "../physical/data.ts";
+type BookSource = BasePhysicalItemSource<"book", BookSystemSource>;
+type BookTraits = PhysicalItemTraits<EquipmentTrait>;
+interface BookSystemSource extends PhysicalSystemSource {
+    traits: BookTraits;
+    category: "formula" | "spell";
+    capacity: number;
+    contents: ItemUUID[];
+    subitems?: never;
 }
-interface SpellBookData {
-  subtype: "spell"
-  item: object[]
+interface BookSystemData extends Omit<BookSystemSource, SourceOmission>, Omit<PhysicalSystemData, "subitems" | "traits"> {
 }
-export { BookSource, BookSystemData }
+type SourceOmission = "apex" | "bulk" | "description" | "hp" | "identification" | "material" | "price" | "temporary" | "usage";
+export type { BookSource, BookSystemData };

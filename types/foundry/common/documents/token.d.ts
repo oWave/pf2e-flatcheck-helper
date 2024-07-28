@@ -1,18 +1,16 @@
-import type { Document, DocumentMetadata } from "../abstract/module.d.ts";
-import type { LightData, TextureData } from "../data/data.d.ts";
+import type * as abstract from "../abstract/module.d.ts";
+import type * as data from "../data/data.d.ts";
 import type * as fields from "../data/fields.d.ts";
-import type { ActorDeltaSource } from "./actor-delta.d.ts";
-import type { BaseActorDelta, BaseScene } from "./module.d.ts";
+import type * as documents from "./module.d.ts";
 
 /**
  * The Token document model.
  * @param data Initial data from which to construct the document.
  * @property data The constructed data object for the document.
  */
-export default class BaseToken<TParent extends BaseScene | null = BaseScene | null> extends Document<
-    TParent,
-    TokenSchema
-> {
+export default class BaseToken<
+    TParent extends documents.BaseScene | null = documents.BaseScene | null,
+> extends abstract.Document<TParent, TokenSchema> {
     static override get metadata(): TokenMetadata;
 
     static override defineSchema(): TokenSchema;
@@ -21,16 +19,14 @@ export default class BaseToken<TParent extends BaseScene | null = BaseScene | nu
     static DEFAULT_ICON: ImageFilePath | VideoFilePath;
 }
 
-export default interface BaseToken<TParent extends BaseScene | null = BaseScene | null>
-    extends Document<TParent, TokenSchema>,
+export default interface BaseToken<TParent extends documents.BaseScene | null = documents.BaseScene | null>
+    extends abstract.Document<TParent, TokenSchema>,
         ModelPropsFromSchema<TokenSchema> {
-    readonly _source: TokenSource;
-
-    delta: BaseActorDelta<this> | null;
-    light: LightData;
+    delta: documents.BaseActorDelta<this> | null;
+    light: data.LightData<this>;
 }
 
-interface TokenMetadata extends DocumentMetadata {
+interface TokenMetadata extends abstract.DocumentMetadata {
     name: "Token";
     collection: "tokens";
     label: "DOCUMENT.Token";
@@ -52,20 +48,28 @@ type TokenSchema = {
     actorId: fields.ForeignDocumentField<string>;
     /** Does this Token uniquely represent a singular Actor, or is it one of many? */
     actorLink: fields.BooleanField;
+    /**
+     * The ActorDelta embedded document which stores the differences between this token and the base actor it
+     * represents.
+     */
+    delta: ActorDeltaField<documents.BaseActorDelta<BaseToken>>;
     appendNumber: fields.BooleanField;
     prependAdjective: fields.BooleanField;
-    /** The token's texture on the canvas. */
-    texture: TextureData;
     /** The width of the Token in grid units */
     width: fields.NumberField<number, number, true, false>;
     /** The height of the Token in grid units */
     height: fields.NumberField<number, number, true, false>;
+    /** The token's texture on the canvas. */
+    texture: data.TextureData;
+    hexagonalShape: fields.NumberField;
     /** The x-coordinate of the top-left corner of the Token */
     x: fields.NumberField<number, number, true, false>;
     /** The y-coordinate of the top-left corner of the Token */
     y: fields.NumberField<number, number, true, false>;
     /** The vertical elevation of the Token, in distance units */
     elevation: fields.NumberField<number, number, true, false>;
+    sort: fields.NumberField<number, number, true, false, true>;
+    locked: fields.BooleanField;
     /** Prevent the Token image from visually rotating? */
     lockRotation: fields.BooleanField;
     /** The rotation of the Token in degrees, from 0 to 360. A value of 0 represents a southward-facing Token. */
@@ -74,8 +78,6 @@ type TokenSchema = {
     effects: fields.ArrayField<
         fields.FilePathField<ImageFilePath | VideoFilePath, ImageFilePath | VideoFilePath, true, false>
     >;
-    /** A single icon path which is displayed as an overlay on the Token */
-    overlayEffect: fields.StringField<ImageFilePath | VideoFilePath | "">;
     /** The opacity of the token image */
     alpha: fields.AlphaField;
     /** Is the Token currently hidden from player view? */
@@ -94,14 +96,14 @@ type TokenSchema = {
         /** The attribute path within the Token's Actor data which should be displayed */
         attribute: fields.StringField<string, string, true, true, true>;
     }>;
-    // /** Configuration of the light source that this Token emits */
-    // light: fields.EmbeddedDataField<LightData>;
+    /** Configuration of the light source that this Token emits */
+    light: fields.EmbeddedDataField<data.LightData<BaseToken>>;
     /** Configuration of sight and vision properties for the Token */
     sight: fields.SchemaField<{
         /** Should vision computation and rendering be active for this Token? */
         enabled: fields.BooleanField;
         /** How far in distance units the Token can see without the aid of a light source */
-        range: fields.NumberField<number, number, true, false>;
+        range: fields.NumberField<number, number, true, true, true>;
         /** An angle at which the Token can see relative to their direction of facing */
         angle: fields.AngleField;
         /** The vision mode which is used to render the appearance of the visible area */
@@ -125,24 +127,36 @@ type TokenSchema = {
             /** Whether or not this detection mode is presently enabled */
             enabled: fields.BooleanField;
             /** The maximum range in distance units at which this mode can detect targets */
-            range: fields.NumberField<number, number, true, false>;
+            range: fields.NumberField<number, number, true>;
         }>
     >;
+    occludable: fields.SchemaField<{
+        radius: fields.NumberField<number, number, false, false>;
+    }>;
+    ring: fields.SchemaField<{
+        enabled: fields.BooleanField;
+        colors: fields.SchemaField<{
+            ring: fields.ColorField;
+            background: fields.ColorField;
+        }>;
+        effects: fields.NumberField;
+        subject: fields.SchemaField<{
+            scale: fields.NumberField;
+            texture: fields.FilePathField;
+        }>;
+    }>;
     /** An object of optional key/value flags */
     flags: fields.ObjectField<DocumentFlags>;
 };
 
-export type TokenSource = SourceFromSchema<TokenSchema> & {
-    delta: ActorDeltaSource | null;
-    light: LightData["_source"];
-};
+export type TokenSource = SourceFromSchema<TokenSchema>;
 
-// declare class ActorDeltaField<
-//     TDocument extends BaseActorDelta<any> = BaseActorDelta<any>
-// > extends fields.EmbeddedDocumentField<TDocument> {
-//     override initialize(
-//         value: fields.MaybeSchemaProp<TDocument["schema"]["fields"], true, true, true>,
-//         model?: ConstructorOf<TDocument>,
-//         options?: object
-//     ): TDocument;
-// }
+declare class ActorDeltaField<
+    TDocument extends documents.BaseActorDelta<BaseToken> = documents.BaseActorDelta<BaseToken>,
+> extends fields.EmbeddedDocumentField<TDocument> {
+    override initialize(
+        value: fields.MaybeSchemaProp<TDocument["_source"], true, true, true>,
+        model?: ConstructorOf<TDocument>,
+        options?: object,
+    ): fields.MaybeSchemaProp<TDocument, true, true, true>;
+}

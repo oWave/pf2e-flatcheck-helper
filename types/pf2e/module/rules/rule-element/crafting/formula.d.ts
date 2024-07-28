@@ -1,22 +1,22 @@
-import { CharacterPF2e } from "types/pf2e/module/actor/index.ts"
-import { ActorType } from "types/pf2e/module/actor/data/index.ts"
-import { RuleElementOptions, RuleElementPF2e, RuleElementSource } from "../index.ts"
+import type { ActorType, CharacterPF2e } from "../../../actor/index.ts";
+import { RuleElementOptions, RuleElementPF2e } from "../base.ts";
+import { RuleElementSource } from "../data.ts";
 /**
  * @category RuleElement
  */
 declare class CraftingFormulaRuleElement extends RuleElementPF2e {
-  protected static validActorTypes: ActorType[]
-  constructor(data: CraftingFormulaSource, options: RuleElementOptions)
-  beforePrepareData(): void
+    protected static validActorTypes: ActorType[];
+    constructor(data: CraftingFormulaSource, options: RuleElementOptions);
+    beforePrepareData(): void;
 }
 interface CraftingFormulaRuleElement extends RuleElementPF2e {
-  data: CraftingFormulaData
-  get actor(): CharacterPF2e
+    data: CraftingFormulaData;
+    get actor(): CharacterPF2e;
 }
 interface CraftingFormulaData extends CraftingFormulaRuleElement {
-  uuid: ItemUUID
+    uuid: ItemUUID;
 }
 interface CraftingFormulaSource extends RuleElementSource {
-  uuid?: unknown
+    uuid?: unknown;
 }
-export { CraftingFormulaRuleElement }
+export { CraftingFormulaRuleElement };

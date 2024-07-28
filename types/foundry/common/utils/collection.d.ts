@@ -80,7 +80,7 @@ declare interface Collection<V>
      * @param transformer  The transformation function to apply to each entry value
      * @return An Array of transformed values
      */
-    map<T>(transformer: (value: V) => T): T[];
+    map<T>(transformer: (value: V, index: number, collection: this) => T): T[];
 
     /**
      * Reduce the Collection by applying an evaluator function and accumulating entries
@@ -107,13 +107,12 @@ declare interface Collection<V>
 }
 
 declare interface CollectionConstructor {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    new (): Collection<any>;
     new <V>(entries?: readonly (readonly [string, V])[] | null): Collection<V>;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    readonly prototype: Collection<any>;
+    new (): Collection<unknown>;
+    readonly prototype: Collection<unknown>;
 }
 
+// biome-ignore lint/style/noVar:
 declare var Collection: CollectionConstructor;
 
 interface CollectionGetOptions {

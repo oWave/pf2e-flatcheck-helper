@@ -1,7 +1,8 @@
-import { ActorPF2e, ItemPF2e } from "types/pf2e/module/documents"
-import Module from "./module"
-import { combatantIsNext, isJQuery } from "./utils"
 import { CombatantPF2e, EncounterPF2e } from "types/pf2e/module/encounter"
+import Module from "./module"
+import { combatantIsNext, isJQuery, sleep } from "./utils"
+import { ActorPF2e } from "types/pf2e/module/actor"
+import { ChatMessagePF2e } from "types/pf2e/module/chat-message"
 
 async function applyDelayEffect(actor: ActorPF2e) {
   return actor.createEmbeddedDocuments("Item", [
@@ -39,7 +40,6 @@ const sortedCombatants = () => {
     .sort((a, b) => {
       const resolveTie = (): number => {
         const [priorityA, priorityB] = [a, b].map(
-          // @ts-expect-error pf2e
           (c): number => c.overridePriority(c.initiative ?? 0) ?? c.actor?.initiative?.tiebreakPriority ?? 3
         )
         return priorityA === priorityB ? a.id.localeCompare(b.id) : priorityA - priorityB
@@ -67,7 +67,6 @@ export function delayButton() {
       const disabled = e.id === c.id || i == currentId - 1 ? "disabled" : ""
       const style = e.id == c.id ? "background: rgba(51, 188, 78, 0.3);" : ""
       let name = e.name
-      // @ts-expect-error pf2e
       if (!game.user.isGM && game.pf2e.settings.tokens.nameVisibility && !e.playersCanSeeName) name = "?"
 
       return `<option value="${e.id}" style="${style}" ${disabled}>${e.initiative} - ${name}</option>`
@@ -109,6 +108,7 @@ export function delayButton() {
             if (c.actor) applyDelayEffect(c.actor)
             combat
               .nextTurn()
+              .then(() => sleep(50))
               .then(() => emitMoveAfter(combat.id, c.id, target.id))
               .catch((e) => {
                 throw e
@@ -301,11 +301,10 @@ export function setupDelay() {
     removeDelaying(combat.combatant.actor)
   })
 
-  Hooks.on("createChatMessage", (msg) => {
-    if (msg?.user?.id !== game.user?.id) return
+  Hooks.on<[ChatMessagePF2e]>("createChatMessage", (msg) => {
+    if (msg?.author?.id !== game.user?.id) return
     if (!game.combat || !game.combat.started) return
-    // @ts-expect-error pf2e
-    const item = msg?.item as ItemPF2e | null
+    const item = msg?.item
     if (
       item &&
       item.actor &&

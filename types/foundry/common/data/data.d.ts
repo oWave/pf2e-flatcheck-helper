@@ -1,6 +1,6 @@
-import type { DataModel, Document } from "../abstract/module.d.ts";
-import type { BaseActor, BaseActorDelta, BaseScene, BaseToken } from "../documents/module.d.ts";
-import type { TokenSource } from "../documents/token.d.ts";
+import type DataModel from "../abstract/data.d.ts";
+import type * as documents from "../documents/module.d.ts";
+import type { TokenSchema } from "../documents/token.d.ts";
 import type * as fields from "./fields.d.ts";
 
 /**
@@ -29,14 +29,14 @@ export interface DarknessActivation {
  * A reusable document structure for the internal data used to render the appearance of a light source.
  * This is re-used by both the AmbientLightData and TokenData classes.
  */
-export class LightData extends DataModel<DataModel | null, LightDataSchema> {
+export class LightData<TParent extends DataModel | null> extends DataModel<TParent, LightDataSchema> {
     static override defineSchema(): LightDataSchema;
 
-    static override migrateData<TSource extends object>(source: TSource): TSource;
+    static override migrateData<TSource extends Record<string, JSONValue>>(source: TSource): TSource;
 }
 
-export interface LightData
-    extends DataModel<DataModel | null, LightDataSchema>,
+export interface LightData<TParent extends DataModel | null>
+    extends DataModel<TParent, LightDataSchema>,
         ModelPropsFromSchema<LightDataSchema> {}
 
 export type LightSource = SourceFromSchema<LightDataSchema>;
@@ -74,12 +74,13 @@ type LightDataSchema = {
     /** A darkness range (min and max) for which the source should be active */
     darkness: fields.SchemaField<{
         min: fields.AlphaField;
+        max: fields.AlphaField;
         speed: fields.AlphaField;
     }>;
 };
 
 /** A data model intended to be used as an inner EmbeddedDataField which defines a geometric shape. */
-export class ShapeData<TParent extends DataModel | Document | null> extends DataModel<TParent, ShapeDataSchema> {
+export class ShapeData<TParent extends DataModel | null> extends DataModel<TParent, ShapeDataSchema> {
     static override defineSchema(): ShapeDataSchema;
 
     /** The primitive shape types which are supported */
@@ -91,7 +92,7 @@ export class ShapeData<TParent extends DataModel | Document | null> extends Data
     };
 }
 
-export interface ShapeData<TParent extends DataModel | Document | null>
+export interface ShapeData<TParent extends DataModel | null>
     extends DataModel<TParent, ShapeDataSchema>,
         ModelPropsFromSchema<ShapeDataSchema> {}
 
@@ -113,11 +114,131 @@ type ShapeDataSchema = {
     points: fields.ArrayField<fields.NumberField<number, number, true, false>>;
 };
 
+/** A data model intended to be used as an inner EmbeddedDataField which defines a geometric shape. */
+export class BaseShapeData<TSchema extends BaseShapeDataSchema> extends DataModel<DataModel | null, TSchema> {
+    static override defineSchema(): BaseShapeDataSchema;
+
+    /** The type of this shape. */
+    static TYPE: keyof typeof BaseShapeData.TYPES;
+
+    /** The possible shape types. */
+    static get TYPES(): {
+        rectangle: typeof RectangleShapeData;
+        circle: typeof CircleShapeData;
+        ellipse: typeof EllipseShapeData;
+        polygon: typeof PolygonShapeData;
+    };
+
+    /** The bottom and top elevation of the shape. A value of null means -/+Infinity. */
+    elevation?: { bottom: number | null; top: number | null };
+}
+
+interface BaseShapeData<TSchema extends BaseShapeDataSchema = BaseShapeDataSchema>
+    extends DataModel<DataModel | null, TSchema>,
+        ModelPropsFromSchema<BaseShapeDataSchema> {}
+
+type BaseShapeDataSchema = {
+    /** The type of shape, a value in BaseShapeData.TYPES. */
+    type: fields.StringField<ShapeDataType, ShapeDataType, true, false, true>;
+    /** Is this shape a hole? */
+    hole: fields.BooleanField;
+};
+
+/** The data model for a rectangular shape. */
+export class RectangleShapeData extends BaseShapeData<RectangleShapeDataSchema> {
+    static override defineSchema(): RectangleShapeDataSchema;
+
+    static override TYPE: "rectangle";
+}
+
+interface RectangleShapeData
+    extends BaseShapeData<RectangleShapeDataSchema>,
+        ModelPropsFromSchema<RectangleShapeDataSchema> {
+    readonly _source: Omit<SourceFromSchema<RectangleShapeDataSchema>, "type"> & { type: "rectangle" };
+    type: "rectangle";
+}
+
+type RectangleShapeDataSchema = BaseShapeDataSchema & {
+    /** The top-left x-coordinate in pixels before rotation. */
+    x: fields.NumberField<number, number, true, false, false>;
+    /** The top-left y-coordinate in pixels before rotation. */
+    y: fields.NumberField<number, number, true, false, false>;
+    /** The width of the rectangle in pixels. */
+    width: fields.NumberField<number, number, true, false, false>;
+    /** The height of the rectangle in pixels. */
+    height: fields.NumberField<number, number, true, false, false>;
+    /** The rotation around the center of the rectangle in degrees. */
+    rotation: fields.AngleField;
+};
+
+/** The data model for a circle shape. */
+export class CircleShapeData extends BaseShapeData<CircleShapeDataSchema> {
+    static override defineSchema(): CircleShapeDataSchema;
+
+    static override TYPE: "circle";
+}
+
+interface CircleShapeData extends BaseShapeData<CircleShapeDataSchema>, ModelPropsFromSchema<CircleShapeDataSchema> {
+    readonly _source: Omit<SourceFromSchema<CircleShapeDataSchema>, "type"> & { type: "circle" };
+    type: "circle";
+}
+
+type CircleShapeDataSchema = BaseShapeDataSchema & {
+    /** The x-coordinate of the center point in pixels. */
+    x: fields.NumberField<number, number, true, false, false>;
+    /** The y-coordinate of the center point in pixels. */
+    y: fields.NumberField<number, number, true, false, false>;
+    /** The radius of the circle in pixels. */
+    radius: fields.NumberField<number, number, true, false, false>;
+};
+
+/** The data model for an ellipse shape. */
+export class EllipseShapeData extends BaseShapeData<EllipseShapeDataSchema> {
+    static defineSchema(): EllipseShapeDataSchema;
+
+    static override TYPE: "ellipse";
+}
+
+interface EllipseShapeData extends BaseShapeData<EllipseShapeDataSchema>, ModelPropsFromSchema<EllipseShapeDataSchema> {
+    readonly _source: Omit<SourceFromSchema<EllipseShapeDataSchema>, "type"> & { type: "ellipse" };
+    type: "ellipse";
+}
+
+type EllipseShapeDataSchema = BaseShapeDataSchema & {
+    /** The x-coordinate of the center point in pixels. */
+    x: fields.NumberField<number, number, true, false, false>;
+    /** The y-coordinate of the center point in pixels. */
+    y: fields.NumberField<number, number, true, false, false>;
+    /** The x-radius of the circle in pixels. */
+    radiusX: fields.NumberField<number, number, true, false, false>;
+    /** The y-radius of the circle in pixels. */
+    radiusY: fields.NumberField<number, number, true, false, false>;
+    /** The rotation around the center of the rectangle in degrees. */
+    rotation: fields.NumberField<number, number, true, false, false>;
+};
+
+/** The data model for a polygon shape. */
+export class PolygonShapeData extends BaseShapeData<PolygonShapeDataSchema> {
+    static defineSchema(): PolygonShapeDataSchema;
+
+    static override TYPE: "polygon";
+}
+
+interface PolygonShapeData extends BaseShapeData<PolygonShapeDataSchema>, ModelPropsFromSchema<PolygonShapeDataSchema> {
+    readonly _source: Omit<SourceFromSchema<PolygonShapeDataSchema>, "type"> & { type: "polygon" };
+    type: "polygon";
+}
+
+type PolygonShapeDataSchema = BaseShapeDataSchema & {
+    /** The points of the polygon ([x0, y0, x1, y1, ...]). The polygon must not be self-intersecting. */
+    points: fields.ArrayField<fields.NumberField<number, number, true, false, false>>;
+};
+
 /** A {@link fields.SchemaField} subclass used to represent texture data. */
 export class TextureData extends fields.SchemaField<TextureDataSchema> {
     /**
-     * @param {DataFieldOptions} options          Options which are forwarded to the SchemaField constructor
-     * @param {FilePathFieldOptions} srcOptions   Additional options for the src field
+     * @param options    Options which are forwarded to the SchemaField constructor
+     * @param srcOptions Additional options for the src field
      */
     constructor(
         options?: fields.DataFieldOptions<SourceFromSchema<TextureDataSchema>, true, false, true>,
@@ -126,7 +247,7 @@ export class TextureData extends fields.SchemaField<TextureDataSchema> {
             initial?: "IMAGE" | "VIDEO" | null;
             wildcard?: boolean;
             label?: string;
-        }
+        },
     );
 }
 
@@ -147,34 +268,34 @@ type TextureDataSchema = {
     tint: fields.ColorField;
 };
 
-export interface PrototypeTokenSource
-    extends Omit<
-        TokenSource,
-        "_id" | "actorId" | "actorData" | "x" | "y" | "elevation" | "effects" | "overlayEffect" | "hidden"
-    > {
-    name: string;
-    randomImg: boolean;
-}
+export class PrototypeToken<TParent extends documents.BaseActor | null> extends DataModel<
+    TParent,
+    PrototypeTokenSchema
+> {
+    constructor(data: DeepPartial<PrototypeTokenSource>, options?: DataModelConstructionOptions<TParent>);
 
-export class PrototypeToken<TParent extends BaseActor | null> extends Document<TParent> {
+    static override defineSchema(): PrototypeTokenSchema;
+
     get actor(): TParent;
 
     protected override _initialize(): void;
 
-    override toJSON(): RawObject<this>;
-
-    lightAnimation: AnimationData;
-
-    bar1: BaseToken["bar1"];
-
-    bar2: BaseToken["bar1"];
+    override toJSON(): this["_source"];
 }
 
-export interface PrototypeToken<TParent extends BaseActor | null>
-    extends Document<TParent>,
-        Omit<PrototypeTokenSource, "bar1" | "bar2"> {
-    readonly _source: PrototypeTokenSource;
-}
+export interface PrototypeToken<TParent extends documents.BaseActor | null>
+    extends DataModel<TParent, PrototypeTokenSchema>,
+        ModelPropsFromSchema<PrototypeTokenSchema> {}
+
+type PrototypeTokenSchema = Omit<
+    TokenSchema,
+    "_id" | "name" | "actorId" | "delta" | "x" | "y" | "elevation" | "effects" | "overlayEffect" | "hidden"
+> & {
+    name: fields.StringField<string, string, true, false, true>;
+    randomImg: fields.BooleanField;
+};
+
+export type PrototypeTokenSource = SourceFromSchema<PrototypeTokenSchema>;
 
 /**
  * A minimal data model used to represent a tombstone entry inside an {@link EmbeddedCollectionDelta}.
@@ -184,18 +305,25 @@ export interface PrototypeToken<TParent extends BaseActor | null>
  * @property _tombstone A property that identifies this entry as a tombstone.
  * @property [_stats]   An object of creation and access information.
  */
-export class TombstoneData<TParent extends BaseActorDelta<BaseToken<BaseScene | null> | null> | null> extends DataModel<
-    TParent,
-    TombstoneDataSchema
-> {
+export class TombstoneData<
+    TParent extends documents.BaseActorDelta<documents.BaseToken<documents.BaseScene | null> | null> | null,
+> extends DataModel<TParent, TombstoneDataSchema> {
     static override defineSchema(): TombstoneDataSchema;
 }
 
-export interface TombstoneData<TParent extends BaseActorDelta<BaseToken<BaseScene | null> | null> | null>
-    extends DataModel<TParent, TombstoneDataSchema>,
-        SourceFromSchema<TombstoneDataSchema> {}
+export interface TombstoneData<
+    TParent extends documents.BaseActorDelta<documents.BaseToken<documents.BaseScene | null> | null> | null,
+> extends DataModel<TParent, TombstoneDataSchema>,
+        SourceFromSchema<TombstoneDataSchema> {
+    readonly _source: TombstoneSource;
+}
 
-export type TombstoneSource = SourceFromSchema<TombstoneDataSchema>;
+export type TombstoneSource<TDocumentId extends string | null = string | null> = Omit<
+    SourceFromSchema<TombstoneDataSchema>,
+    "_id"
+> & {
+    _id: TDocumentId;
+};
 
 export type TombstoneDataSchema = {
     _id: fields.DocumentIdField;

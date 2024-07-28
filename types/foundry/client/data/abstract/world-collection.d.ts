@@ -88,14 +88,14 @@ declare global {
          * @param pack         The CompendiumCollection instance from which to import
          * @param id           The ID of the compendium entry to import
          * @param [updateData] Optional additional data used to modify the imported Document before it is created
-         * @param [options]    Optional arguments passed to the Document.create method
+         * @param [operation]    Optional arguments passed to the Document.create method
          * @return The imported Document instance
          */
         importFromCompendium(
             pack: CompendiumCollection,
             id: string,
-            updateData?: DocumentUpdateData<TDocument>,
-            options?: DocumentModificationContext<null>
+            updateData?: Record<string, unknown>,
+            operation?: Partial<DatabaseCreateOperation<null>>,
         ): Promise<TDocument | null>;
 
         /**
@@ -110,7 +110,7 @@ declare global {
          */
         fromCompendium(
             document: TDocument | TDocument["_source"],
-            options?: FromCompendiumOptions
+            options?: FromCompendiumOptions,
         ): TDocument["_source"];
 
         /* -------------------------------------------- */
