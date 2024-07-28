@@ -1,68 +1,64 @@
 /// <reference types="jquery" resolution-mode="require"/>
 /// <reference types="jquery" resolution-mode="require"/>
 /// <reference types="tooltipster" />
-import { SpellPF2e, SpellSystemSource } from "types/pf2e/module/item/spell/index.ts"
-import { ItemSheetPF2e } from "../sheet/base.ts"
-import { ItemSheetDataPF2e } from "../sheet/data-types.ts"
-import { SpellSystemData } from "./data.ts"
-import { DamageCategoryUnique } from "types/pf2e/module/system/damage/types.ts"
+import { ItemSheetDataPF2e, ItemSheetOptions, ItemSheetPF2e } from "../base/sheet/sheet.ts";
+import { TraitTagifyEntry } from "../../sheet/helpers.ts";
+import { DamageCategoryUnique, DamageType } from "../../system/damage/types.ts";
+import type { EffectAreaShape, SpellPF2e, SpellSystemData, SpellSystemSource } from "./index.ts";
 export declare class SpellSheetPF2e extends ItemSheetPF2e<SpellPF2e> {
-  #private
-  get id(): string
-  getData(options?: Partial<DocumentSheetOptions>): Promise<SpellSheetData>
-  static get defaultOptions(): DocumentSheetOptions
-  get title(): string
-  activateListeners($html: JQuery): void
-  protected _updateObject(event: Event, formData: Record<string, unknown>): Promise<void>
-  protected _onDragStart(event: ElementDragEvent): void
-  protected _onDrop(event: ElementDragEvent): Promise<void>
-  private getAvailableHeightenLevels
-  private getOverlayFromEvent
+    #private;
+    static get defaultOptions(): ItemSheetOptions;
+    get id(): string;
+    protected get validTraits(): Record<string, string>;
+    getData(options?: Partial<ItemSheetOptions>): Promise<SpellSheetData>;
+    get title(): string;
+    activateListeners($html: JQuery): void;
+    protected _updateObject(event: Event, formData: Record<string, unknown>): Promise<void>;
+    protected _onDragStart(event: DragEvent): void;
+    protected _onDrop(event: DragEvent): Promise<void>;
+    private getAvailableHeightenLevels;
 }
 interface SpellSheetData extends ItemSheetDataPF2e<SpellPF2e> {
-  isCantrip: boolean
-  isFocusSpell: boolean
-  isRitual: boolean
-  isVariant: boolean
-  variants: {
-    name: string
-    id: string
-    sort: number
-    actions: string
-  }[]
-  magicSchools: ConfigPF2e["PF2E"]["magicSchools"]
-  spellCategories: ConfigPF2e["PF2E"]["spellCategories"]
-  spellLevels: ConfigPF2e["PF2E"]["spellLevels"]
-  spellTypes: ConfigPF2e["PF2E"]["spellTypes"]
-  saves: ConfigPF2e["PF2E"]["saves"]
-  damageCategories: ConfigPF2e["PF2E"]["damageCategories"]
-  damageTypes: Record<string, string>
-  damageSubtypes: Pick<ConfigPF2e["PF2E"]["damageCategories"], DamageCategoryUnique>
-  spellComponents: string[]
-  areaSizes: ConfigPF2e["PF2E"]["areaSizes"]
-  areaTypes: ConfigPF2e["PF2E"]["areaTypes"]
-  heightenIntervals: number[]
-  heightenOverlays: SpellSheetHeightenOverlayData[]
-  canHeighten: boolean
+    isVariant: boolean;
+    variants: {
+        name: string;
+        variantId: string | null;
+        sort: number;
+        actions: string;
+    }[];
+    materials: typeof CONFIG.PF2E.materialDamageEffects;
+    damageTypes: Record<DamageType, string>;
+    damageSubtypes: Pick<typeof CONFIG.PF2E.damageCategories, DamageCategoryUnique>;
+    damageKinds: Record<string, {
+        value: string[];
+        label: string;
+        selected: boolean;
+        disabled: boolean;
+    }[]>;
+    areaShapes: Record<EffectAreaShape, string>;
+    heightenIntervals: FormSelectOption[];
+    heightenOverlays: SpellSheetHeightenOverlayData[];
+    canHeighten: boolean;
+    defensePassiveOptions: FormSelectOption[];
+    defenseSaveOptions: typeof CONFIG.PF2E.saves;
 }
 interface SpellSheetOverlayData {
-  id: string | null
-  /** Base path to the property that includes its siblings, dot delimited */
-  collectionPath: string
-  /** Base path to the property, dot delimited */
-  base: string
-  /** Base path to the spell override data, dot delimited. Currently this is the same as base */
-  dataPath: string
-  level: number | null
-  type: "heighten" | "variant"
-  system: Partial<SpellSystemSource> | null
+    id: string | null;
+    /** Base path to the property, dot delimited */
+    base: string;
+    /** Base path to the spell override data, dot delimited. Currently this is the same as base */
+    dataPath: string;
+    level: number | null;
+    type: "heighten" | "variant";
+    system: Partial<SpellSystemSource> | null;
 }
 interface SpellSheetHeightenOverlayData extends SpellSheetOverlayData {
-  system: Partial<SpellSystemSource>
-  heightenLevels: number[]
-  missing: {
-    key: keyof SpellSystemData
-    label: string
-  }[]
+    system: Partial<SpellSystemSource>;
+    heightenLevels: FormSelectOption[];
+    missing: {
+        key: keyof SpellSystemData;
+        label: string;
+    }[];
+    traits?: TraitTagifyEntry[] | null;
 }
-export {}
+export {};

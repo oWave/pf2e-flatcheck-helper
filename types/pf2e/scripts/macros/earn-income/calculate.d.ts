@@ -1,22 +1,22 @@
-import { CoinsPF2e } from "types/pf2e/module/item/physical/helpers.ts"
-import { OneToFour } from "types/pf2e/module/data.ts"
-import { calculateDC } from "types/pf2e/module/dc.ts"
-import { DegreeOfSuccessIndex, RollBrief } from "types/pf2e/module/system/degree-of-success.ts"
+import { CoinsPF2e } from "../../../module/item/physical/coins.ts";
+import { OneToFour } from "../../../module/data.ts";
+import { calculateDC } from "../../../module/dc.ts";
+import { DegreeOfSuccessIndex, RollBrief } from "../../../module/system/degree-of-success.ts";
 /**
  * Implementation of Earn Income rules on https://2e.aonprd.com/Skills.aspx?ID=2&General=true
  */
-type Rewards = Record<OneToFour, CoinsPF2e>
+type Rewards = Record<OneToFour, CoinsPF2e>;
 type IncomeForLevel = {
-  failure: CoinsPF2e
-  rewards: Rewards
-}
-declare function getIncomeForLevel(level: number): IncomeForLevel
+    failure: CoinsPF2e;
+    rewards: Rewards;
+};
+declare function getIncomeForLevel(level: number): IncomeForLevel;
 interface PerDayEarnIncomeResult {
-  rewards: CoinsPF2e
-  degreeOfSuccess: DegreeOfSuccessIndex
+    rewards: CoinsPF2e;
+    degreeOfSuccess: DegreeOfSuccessIndex;
 }
 interface EarnIncomeOptions {
-  useLoreAsExperiencedProfessional: boolean
+    useLoreAsExperiencedProfessional: boolean;
 }
 /**
  * @param level number between 0 and 20
@@ -26,24 +26,25 @@ interface EarnIncomeOptions {
  * @param options feats or items that affect earn income
  * @param dcOptions if dc by level is active
  */
-declare function earnIncome({ level, days, rollBrief, proficiency, options, dc }: EarnIncomeParams): EarnIncomeResult
+declare function earnIncome({ level, days, rollBrief, proficiency, options, dc }: EarnIncomeParams): EarnIncomeResult;
 interface EarnIncomeParams {
-  level: number
-  days: number
-  rollBrief: RollBrief
-  proficiency: OneToFour
-  options: EarnIncomeOptions
-  dc: number
+    level: number;
+    days: number;
+    rollBrief: RollBrief;
+    proficiency: OneToFour;
+    options: EarnIncomeOptions;
+    dc: number;
 }
 interface EarnIncomeResult {
-  rewards: {
-    perDay: CoinsPF2e
-    combined: CoinsPF2e
-  }
-  degreeOfSuccess: DegreeOfSuccessIndex
-  daysSpentWorking: number
-  level: number
-  dc: number
-  roll: number
+    rewards: {
+        perDay: CoinsPF2e;
+        combined: CoinsPF2e;
+    };
+    degreeOfSuccess: DegreeOfSuccessIndex;
+    daysSpentWorking: number;
+    level: number;
+    dc: number;
+    roll: number;
 }
-export { EarnIncomeOptions, EarnIncomeResult, PerDayEarnIncomeResult, calculateDC, earnIncome, getIncomeForLevel }
+export { calculateDC, earnIncome, getIncomeForLevel };
+export type { EarnIncomeOptions, EarnIncomeResult, PerDayEarnIncomeResult };

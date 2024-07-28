@@ -1,4 +1,5 @@
-export {};
+import type { PolygonVertex } from "../../../../client-esm/canvas/edges/module.d.ts";
+import type * as sources from "../../../../client-esm/canvas/sources/module.d.ts";
 
 declare global {
     /** An extension of the default PIXI.Polygon which is used to represent the line of sight for a point source. */
@@ -35,7 +36,7 @@ declare global {
         static create<T extends PointSourcePolygon>(
             this: ConstructorOf<T>,
             origin: Point,
-            config?: PointSourcePolygonConfig
+            config?: PointSourcePolygonConfig,
         ): T;
 
         override contains(x: number, y: number): boolean;
@@ -88,22 +89,22 @@ declare global {
         static testCollision(
             origin: Point,
             destination: Point,
-            config?: PointSourcePolygonConfig & { mode: "closest" }
+            config?: PointSourcePolygonConfig & { mode: "closest" },
         ): PolygonVertex | null;
         static testCollision(
             origin: Point,
             destination: Point,
-            config?: PointSourcePolygonConfig & { mode: "any" }
+            config?: PointSourcePolygonConfig & { mode: "any" },
         ): boolean;
         static testCollision(
             origin: Point,
             destination: Point,
-            config?: PointSourcePolygonConfig & { mode: "all" }
+            config?: PointSourcePolygonConfig & { mode: "all" },
         ): PolygonVertex[];
         static testCollision(
             origin: Point,
             destination: Point,
-            config?: PointSourcePolygonConfig & { mode?: "any" | "all" | "closest" }
+            config?: PointSourcePolygonConfig & { mode?: "any" | "all" | "closest" },
         ): boolean | PolygonVertex | PolygonVertex[] | null;
 
         /**
@@ -138,7 +139,7 @@ declare global {
         /** Is this polygon constrained by any walls? */
         walls?: boolean;
         /** The object (if any) that spawned this polygon. */
-        source?: PointSource;
+        source?: sources.BaseEffectSource;
         /** Limiting polygon boundary shape*/
         boundaryShape?: (PIXI.Rectangle | PIXI.Circle | PIXI.Polygon)[];
     }

@@ -1,6 +1,6 @@
 import type { Document, DocumentMetadata } from "../abstract/module.d.ts";
-import type { BaseActor, BaseCombat, BaseItem, BaseUser } from "./module.d.ts";
 import type * as fields from "../data/fields.d.ts";
+import type { BaseActor, BaseItem, BaseUser } from "./module.d.ts";
 
 /**
  * The ActiveEffect document model.
@@ -28,7 +28,7 @@ export default class BaseActiveEffect<TParent extends BaseActor | BaseItem<BaseA
     override testUserPermission(
         user: BaseUser,
         permission: DocumentOwnershipString | DocumentOwnershipLevel,
-        { exact }?: { exact?: boolean }
+        { exact }?: { exact?: boolean },
     ): boolean;
 
     /* -------------------------------------------- */
@@ -36,16 +36,16 @@ export default class BaseActiveEffect<TParent extends BaseActor | BaseItem<BaseA
     /* -------------------------------------------- */
 
     protected override _preCreate(
-        data: PreDocumentId<this["_source"]>,
-        options: DocumentModificationContext<TParent>,
-        user: BaseUser
+        data: this["_source"],
+        options: DatabaseCreateOperation<TParent>,
+        user: BaseUser,
     ): Promise<boolean | void>;
 }
 
 export default interface BaseActiveEffect<TParent extends BaseActor | BaseItem<BaseActor | null> | null>
     extends Document<TParent, ActiveEffectSchema>,
         ModelPropsFromSchema<ActiveEffectSchema> {
-    readonly _source: SourceFromSchema<ActiveEffectSchema>;
+    get documentName(): ActiveEffectMetadata["name"];
 }
 
 export interface ActiveEffectMetadata extends DocumentMetadata {
@@ -58,34 +58,40 @@ export interface ActiveEffectMetadata extends DocumentMetadata {
 type ActiveEffectSchema = {
     _id: fields.DocumentIdField;
     name: fields.StringField<string, string, true, false, false>;
-    changes: fields.ArrayField<
-        fields.SchemaField<{
-            key: fields.StringField<string, string, true, false, false>;
-            value: fields.StringField<string, string, true, false, false>;
-            mode: fields.NumberField<ActiveEffectChangeMode, ActiveEffectChangeMode, false, false, true>;
-            priority: fields.NumberField;
-        }>
-    >;
+    changes: fields.ArrayField<fields.SchemaField<EffectChangeSchema>>;
+    system: fields.TypeDataField;
+    type: fields.StringField<string, string, false, true, true>;
     disabled: fields.BooleanField;
-    duration: fields.SchemaField<{
-        startTime: fields.NumberField<number, number, false, true, true>;
-        seconds: fields.NumberField;
-        combat: fields.ForeignDocumentField;
-        rounds: fields.NumberField;
-        turns: fields.NumberField;
-        startRound: fields.NumberField;
-        startTurn: fields.NumberField;
-    }>;
+    duration: fields.SchemaField<EffectDurationSchema>;
     description: fields.HTMLField;
-    icon: fields.FilePathField<ImageFilePath>;
+    img: fields.FilePathField<ImageFilePath>;
     origin: fields.StringField<ActorUUID | ItemUUID, ActorUUID | ItemUUID, false, true, true>;
     tint: fields.ColorField;
     transfer: fields.BooleanField;
     statuses: fields.SetField<fields.StringField<string, string, true, false, false>>;
     flags: fields.ObjectField<DocumentFlags>;
+    _stats: fields.DocumentStatsField;
+};
+
+type EffectChangeSchema = {
+    key: fields.StringField<string, string, true, false, false>;
+    value: fields.StringField<string, string, true, false, false>;
+    mode: fields.NumberField<ActiveEffectChangeMode, ActiveEffectChangeMode, false, false, true>;
+    priority: fields.NumberField;
+};
+
+type EffectDurationSchema = {
+    startTime: fields.NumberField<number, number, false, true, true>;
+    seconds: fields.NumberField;
+    combat: fields.ForeignDocumentField;
+    rounds: fields.NumberField;
+    turns: fields.NumberField;
+    startRound: fields.NumberField;
+    startTurn: fields.NumberField;
 };
 
 export type ActiveEffectSource = SourceFromSchema<ActiveEffectSchema>;
 
-export type EffectChangeData = BaseActiveEffect<null>["changes"][number];
+export type EffectChangeData = SourceFromSchema<EffectChangeSchema>;
+export type EffectDurationSource = SourceFromSchema<EffectDurationSchema>;
 export type EffectDurationData = BaseActiveEffect<null>["duration"];

@@ -43,9 +43,9 @@ declare abstract class DocumentCollection<TDocument extends foundry.abstract.Doc
      * @return An array of updated data once the operation is complete
      */
     updateAll(
-        transformation: DocumentUpdateData<TDocument> | ((document: TDocument) => DocumentUpdateData<TDocument>),
+        transformation: Record<string, unknown> | ((document: TDocument) => Record<string, unknown>),
         condition?: ((document: TDocument) => boolean) | null,
-        options?: DocumentModificationContext<null>
+        options?: DatabaseCreateOperation<null>,
     ): Promise<TDocument[]>;
 
     /**
@@ -56,8 +56,8 @@ declare abstract class DocumentCollection<TDocument extends foundry.abstract.Doc
      */
     protected _preCreateDocuments(
         result: TDocument["_source"][],
-        options: DocumentModificationContext<null>,
-        userId: string
+        options: DatabaseCreateOperation<null>,
+        userId: string,
     ): void;
 
     /**
@@ -70,8 +70,8 @@ declare abstract class DocumentCollection<TDocument extends foundry.abstract.Doc
     protected _onCreateDocuments(
         documents: TDocument[],
         result: TDocument["_source"][],
-        options: DocumentModificationContext<null>,
-        userId: string
+        options: DatabaseCreateOperation<null>,
+        userId: string,
     ): void;
 
     /**
@@ -82,8 +82,8 @@ declare abstract class DocumentCollection<TDocument extends foundry.abstract.Doc
      */
     protected _preUpdateDocuments(
         result: TDocument["_source"][],
-        options: DocumentModificationContext<null>,
-        userId: string
+        options: DatabaseUpdateOperation<null>,
+        userId: string,
     ): void;
 
     /**
@@ -96,8 +96,8 @@ declare abstract class DocumentCollection<TDocument extends foundry.abstract.Doc
     protected _onUpdateDocuments(
         documents: TDocument[],
         result: TDocument["_source"][],
-        options: DocumentModificationContext<null>,
-        userId: string
+        options: DatabaseUpdateOperation<null>,
+        userId: string,
     ): void;
 
     /**
@@ -108,8 +108,8 @@ declare abstract class DocumentCollection<TDocument extends foundry.abstract.Doc
      */
     protected _preDeleteDocuments(
         result: TDocument["_source"][],
-        options: DocumentModificationContext<null>,
-        userId: string
+        options: DatabaseCreateOperation<null>,
+        userId: string,
     ): void;
 
     /**
@@ -122,7 +122,7 @@ declare abstract class DocumentCollection<TDocument extends foundry.abstract.Doc
     protected _onDeleteDocuments(
         documents: TDocument[],
         result: string[],
-        options: DocumentModificationContext<null>,
-        userId: string
+        options: DatabaseCreateOperation<null>,
+        userId: string,
     ): void;
 }

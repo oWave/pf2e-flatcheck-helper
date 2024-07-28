@@ -1,19 +1,19 @@
-import {
-  BasePhysicalItemSource,
-  Investable,
-  PhysicalItemTraits,
-  PhysicalSystemData,
-  PhysicalSystemSource,
-} from "types/pf2e/module/item/physical/data.ts"
-import type { EquipmentTrait, OtherEquipmentTag } from "./types.ts"
-type EquipmentSource = BasePhysicalItemSource<"equipment", EquipmentSystemSource>
+import type { PhysicalItemSource } from "../base/data/index.ts";
+import type { BasePhysicalItemSource, Investable, PhysicalItemTraits, PhysicalSystemData, PhysicalSystemSource } from "../physical/data.ts";
+import type { EquipmentTrait } from "./types.ts";
+type EquipmentSource = BasePhysicalItemSource<"equipment", EquipmentSystemSource>;
 interface EquipmentSystemSource extends Investable<PhysicalSystemSource> {
-  traits: EquipmentTraits
+    traits: EquipmentTraits;
+    usage: {
+        value: string;
+    };
+    /** Doubly-embedded adjustments, attachments, talismans etc. */
+    subitems: PhysicalItemSource[];
 }
-interface EquipmentSystemData
-  extends Omit<EquipmentSystemSource, "hp" | "identification" | "price" | "temporary" | "usage">,
-    Omit<Investable<PhysicalSystemData>, "traits"> {}
 interface EquipmentTraits extends PhysicalItemTraits<EquipmentTrait> {
-  otherTags: OtherEquipmentTag[]
 }
-export { EquipmentSource, EquipmentSystemData, EquipmentSystemSource, EquipmentTrait }
+interface EquipmentSystemData extends Omit<EquipmentSystemSource, SourceOmission>, Omit<Investable<PhysicalSystemData>, "subitems" | "traits"> {
+    stackGroup: null;
+}
+type SourceOmission = "apex" | "bulk" | "description" | "hp" | "identification" | "material" | "price" | "temporary" | "usage";
+export type { EquipmentSource, EquipmentSystemData, EquipmentSystemSource, EquipmentTrait };

@@ -1,29 +1,27 @@
-import { MeasuredTemplateDocumentPF2e } from "types/pf2e/module/scene/measured-template-document.ts"
-import { TemplateLayerPF2e } from "./index.ts"
-import { ScenePF2e } from "types/pf2e/module/scene/index.ts"
-import { ItemPF2e } from "types/pf2e/module/item/index.ts"
-import { ActorPF2e } from "types/pf2e/module/actor/index.ts"
-declare class MeasuredTemplatePF2e<
-  TDocument extends MeasuredTemplateDocumentPF2e<ScenePF2e | null> = MeasuredTemplateDocumentPF2e<ScenePF2e | null>
-> extends MeasuredTemplate<TDocument> {
-  #private
-  /** Static data for the currently active preview template */
-  static currentPreview: PreviewData | null
-  get type(): MeasuredTemplateType
-  highlightGrid(): void
-  drawPreview(): Promise<MeasuredTemplatePF2e | null>
-  /** Overriden to ensure preview canvas events are removed (if any) on destruction */
-  destroy(options?: boolean | PIXI.IDestroyOptions): void
-  applyRenderFlags(): void
-  get item(): ItemPF2e<ActorPF2e> | null
+import type { ActorPF2e } from "../actor/index.ts";
+import type { ItemPF2e } from "../item/index.ts";
+import type { EffectAreaShape } from "../item/spell/types.ts";
+import type { ChatMessagePF2e } from "../chat-message/document.ts";
+import type { MeasuredTemplateDocumentPF2e, ScenePF2e } from "../scene/index.ts";
+import { type TemplateLayerPF2e } from "./index.ts";
+declare class MeasuredTemplatePF2e<TDocument extends MeasuredTemplateDocumentPF2e<ScenePF2e | null> = MeasuredTemplateDocumentPF2e<ScenePF2e | null>> extends MeasuredTemplate<TDocument> {
+    get actor(): ActorPF2e | null;
+    get item(): ItemPF2e | null;
+    get message(): ChatMessagePF2e | null;
+    get areaShape(): EffectAreaShape | null;
+    /**
+     * Returns the snapping for this template's highlight.
+     * Note that circle templates created via the canvas controls are neither bursts nor emanations, and thus can go in either position.
+     */
+    get snappingMode(): number;
+    highlightGrid(): void;
+    /** Overriden to also return collision information */
+    protected _getGridHighlightPositions(): PointCollision[];
 }
-interface PreviewData {
-  resolve: (value: MeasuredTemplatePF2e | null) => void
-  placed: boolean
+interface PointCollision extends Point {
+    collision?: boolean;
 }
-interface MeasuredTemplatePF2e<
-  TDocument extends MeasuredTemplateDocumentPF2e<ScenePF2e | null> = MeasuredTemplateDocumentPF2e<ScenePF2e | null>
-> extends MeasuredTemplate<TDocument> {
-  get layer(): TemplateLayerPF2e<this>
+interface MeasuredTemplatePF2e<TDocument extends MeasuredTemplateDocumentPF2e<ScenePF2e | null> = MeasuredTemplateDocumentPF2e<ScenePF2e | null>> extends MeasuredTemplate<TDocument> {
+    get layer(): TemplateLayerPF2e<this>;
 }
-export { MeasuredTemplatePF2e }
+export { MeasuredTemplatePF2e };

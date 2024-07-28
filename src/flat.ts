@@ -3,7 +3,7 @@ import Module from "./module"
 import { MoreDialog } from "./more-dialog"
 
 export async function rollFlatCheck(dc: number, { hidden = false, label }: { hidden: boolean; label?: string }) {
-  const r = await new Roll("d20").roll({ async: true })
+  const r = await new Roll("d20").roll()
   const degree = r.total >= dc ? "success" : "failure"
   const delta = r.total - dc
   const deltaText = delta > 0 ? `+${delta}` : delta.toString()
@@ -60,7 +60,6 @@ export function setupFlat() {
 
     chat?.after(node)
     const $node = $(node)
-    // @ts-expect-error jquery
     $node.find(".tooltip").tooltipster({
       contentAsHTML: true,
     })

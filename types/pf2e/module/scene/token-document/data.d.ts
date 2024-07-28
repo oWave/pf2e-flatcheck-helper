@@ -1,9 +1,11 @@
-interface TokenFlagsPF2e extends DocumentFlags {
+import type { TokenSchema } from "../../../../types/foundry/common/documents/token.d.ts";
+type TokenFlagsPF2e = DocumentFlags & {
     pf2e: {
         [key: string]: unknown;
         linkToActorSize: boolean;
         autoscale: boolean;
     };
     [key: string]: Record<string, unknown>;
-}
-export { TokenFlagsPF2e };
+};
+type DetectionModeEntry = ModelPropsFromSchema<TokenSchema>["detectionModes"][number];
+export type { DetectionModeEntry, TokenFlagsPF2e };

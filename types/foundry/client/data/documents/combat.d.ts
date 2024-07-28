@@ -9,8 +9,6 @@ declare global {
     class Combat extends ClientBaseCombat {
         constructor(data: PreCreate<foundry.documents.CombatSource>, context?: DocumentConstructionContext<null>);
 
-        active: boolean;
-
         /** Track the sorted turn order of this combat encounter */
         turns: CollectionValue<this["combatants"]>[];
 
@@ -28,24 +26,13 @@ declare global {
         /* -------------------------------------------- */
 
         /** Get the Combatant who has the current turn. */
-    get combatant(): CollectionValue<this["combatants"]> | undefined
-
-    get nextCombatant(): CollectionValue<this["combatants"]>
-
-        /** The numeric round of the Combat encounter */
-        get round(): number;
-
-        /** A reference to the Scene document within which this Combat encounter occurs */
-        get scene(): NonNullable<NonNullable<CollectionValue<this["combatants"]>["actor"]>["parent"]>["parent"];
+        get combatant(): CollectionValue<this["combatants"]> | undefined;
 
         /** Return the object of settings which modify the Combat Tracker behavior */
         get settings(): Record<string, unknown>;
 
         /** Has this combat encounter been started? */
         get started(): boolean;
-
-        /** The numeric turn of the combat round in the Combat encounter */
-        get turn(): number;
 
         override get visible(): true;
 
@@ -147,25 +134,25 @@ declare global {
 
         protected override _onCreate(
             data: this["_source"],
-            options: DocumentModificationContext<null>,
-            userId: string
+            operation: DatabaseCreateOperation<null>,
+            userId: string,
         ): void;
 
         protected override _onUpdate(
             changed: DeepPartial<this["_source"]>,
-            options: DocumentModificationContext<null>,
-            userId: string
+            operation: DatabaseUpdateOperation<null>,
+            userId: string,
         ): void;
 
-        protected override _onDelete(options: DocumentModificationContext<null>, userId: string): void;
+        protected override _onDelete(operation: DatabaseDeleteOperation<null>, userId: string): void;
 
         protected override _onCreateDescendantDocuments(
             parent: this,
             collection: "combatants",
             documents: Combatant<this>[],
             data: Combatant<this>["_source"][],
-            options: DocumentModificationContext<this>,
-            userId: string
+            operation: DatabaseCreateOperation<this>,
+            userId: string,
         ): void;
 
         protected override _onUpdateDescendantDocuments(
@@ -173,8 +160,8 @@ declare global {
             collection: "combatants",
             documents: Combatant<this>[],
             changes: DeepPartial<Combatant<this>["_source"]>[],
-            options: DocumentModificationContext<this>,
-            userId: string
+            operation: DatabaseUpdateOperation<this>,
+            userId: string,
         ): void;
 
         protected override _onDeleteDescendantDocuments(
@@ -182,9 +169,15 @@ declare global {
             collection: "combatants",
             documents: Combatant<this>[],
             ids: string[],
-            options: DocumentModificationContext<this>,
-            userId: string
+            operation: DatabaseDeleteOperation<this>,
+            userId: string,
         ): void;
+
+        /**
+         * Get the current history state of the Combat encounter.
+         * @param [combatant]       The new active combatant
+         */
+        protected _getCurrentState(combatant?: Combatant<this>): CombatHistoryData;
 
         /* -------------------------------------------- */
         /*  Turn Events                                 */
@@ -251,6 +244,6 @@ declare global {
     interface RollInitiativeOptions {
         formula?: number | null;
         updateTurn?: boolean;
-        messageOptions?: ChatMessageModificationContext;
+        messageOptions?: Partial<ChatMessageCreateOperation>;
     }
 }

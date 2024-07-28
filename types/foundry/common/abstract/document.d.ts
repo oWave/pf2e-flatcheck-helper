@@ -1,50 +1,163 @@
 import type * as CONST from "../constants.d.ts";
-import type { DataSchema, SchemaField } from "../data/fields.d.ts";
+import type { DataField, DataSchema } from "../data/fields.d.ts";
+import type * as documents from "../documents/module.d.ts";
 import type BaseUser from "../documents/user.d.ts";
+import type DataModel from "./data.d.ts";
 import type { DataModelValidationOptions } from "./data.d.ts";
 import type EmbeddedCollection from "./embedded-collection.d.ts";
+import type * as abstract from "./module.d.ts";
 
 /** The abstract base interface for all Document types. */
 export default abstract class Document<
     TParent extends Document | null = _Document | null,
-    TSchema extends DataSchema = DataSchema
-> {
-    constructor(data: object, context?: DocumentConstructionContext<Document | null>);
+    TSchema extends DataSchema = DataSchema,
+> extends DataModel<TParent, TSchema> {
+    /** A set of localization prefix paths which are used by this Document model. */
+    static LOCALIZATION_PREFIXES: string[];
 
-    _id: string | null;
+    protected override _configure(options?: { pack?: string | null; parentCollection?: string | null }): void;
 
-    /** An immutable reverse-reference to the parent Document to which this embedded Document belongs. */
-    readonly parent: TParent;
+    /**
+     * An immutable reverse-reference to the name of the collection that this Document exists in on its parent, if any.
+     */
+    readonly parentCollection: string | null;
 
     /** An immutable reference to a containing Compendium collection to which this Document belongs. */
     readonly pack: string | null;
 
-    _source: object;
-    get schema(): SchemaField<TSchema>;
+    readonly collections: Readonly<Record<string, EmbeddedCollection<Document<this>>>>;
 
-    // actually in `DataModel`
-    static defineSchema(): DataSchema;
+    protected override _initialize(options?: Record<string, unknown>): void;
 
-    /** Perform one-time initialization tasks which only occur when the Document is first constructed. */
-    protected _initialize(): void;
+    protected static override _initializationOrder(): Generator<[string, DataField], void>;
 
-    /**
-     * Initialize the source data for a new DataModel instance.
-     * One-time migrations and initial cleaning operations are applied to the source data.
-     * @param data      The candidate source data from which the model will be constructed
-     * @param [options] Options provided to the model constructor
-     * @returns Migrated and cleaned source data which will be stored to the model instance
-     * System note: actually in `DataModel`
-     */
-    protected _initializeSource(
-        data: Record<string, unknown>,
-        options?: DocumentConstructionContext<TParent>
-    ): this["_source"];
+    /* -------------------------------------------- */
+    /*  Model Configuration                         */
+    /* -------------------------------------------- */
+
+    /** Default metadata which applies to each instance of this Document type. */
+    static get metadata(): DocumentMetadata;
 
     /**
-     * Reset the state of this data instance back to mirror the contained source data, erasing any changes.
+     * The database backend used to execute operations and handle results.
+     * @type {abstract.DatabaseBackend}
      */
-    reset(): void;
+    static get database(): abstract.DatabaseBackend;
+
+    /** Return a reference to the implemented subclass of this base document type. */
+    static get implementation(): ConstructorOf<Document>;
+
+    /** The named collection to which this Document belongs. */
+    static get collectionName(): string;
+    /** The named collection to which this Document belongs. */
+    get collectionName(): string;
+
+    /** The canonical name of this Document type, for example "Actor". */
+    static get documentName(): string;
+    /** The canonical name of this Document type, for example "Actor". */
+    get documentName(): string;
+
+    /** The allowed types which may exist for this Document class. */
+    static get TYPES(): string[];
+
+    /** Does this Document support additional sub-types? */
+    static get hasTypeData(): boolean;
+
+    /* -------------------------------------------- */
+    /*  Model Properties                            */
+    /* -------------------------------------------- */
+
+    /** The Embedded Document hierarchy for this Document. */
+    static get hierarchy(): Record<string, DataField>;
+
+    /**
+     * Determine the collection this Document exists in on its parent, if any.
+     * @param [parentCollection]  An explicitly provided parent collection name.
+     */
+    protected _getParentCollection(parentCollection: string): string | null;
+
+    /** The canonical identifier for this Document. */
+    get id(): string;
+
+    /** Test whether this Document is embedded within a parent Document */
+    get isEmbedded(): boolean;
+
+    /** A Universally Unique Identifier (uuid) for this Document instance. */
+    get uuid(): DocumentUUID;
+
+    /* ---------------------------------------- */
+    /*  Model Permissions                       */
+    /* ---------------------------------------- */
+
+    /**
+     * Test whether a given User has a sufficient role in order to create Documents of this type in general.
+     * @param user The User being tested
+     * @return Does the User have a sufficient role to create?
+     */
+    static canUserCreate(user: documents.BaseUser): boolean;
+
+    /**
+     * Get the explicit permission level that a User has over this Document, a value in CONST.DOCUMENT_OWNERSHIP_LEVELS.
+     * This method returns the value recorded in Document ownership, regardless of the User's role.
+     * To test whether a user has a certain capability over the document, testUserPermission should be used.
+     * @param {documents.BaseUser} user     The User being tested
+     * @returns {number|null}               A numeric permission level from CONST.DOCUMENT_OWNERSHIP_LEVELS or null
+     */
+    getUserLevel(user: documents.BaseUser): DocumentOwnershipLevel | null;
+
+    /**
+     * Test whether a certain User has a requested permission level (or greater) over the Document
+     * @param user       The User being tested
+     * @param permission The permission level from DOCUMENT_PERMISSION_LEVELS to test
+     * @param options    Additional options involved in the permission test
+     * @param [options.exact=false] Require the exact permission level requested?
+     * @return Does the user have this permission level over the Document?
+     */
+    testUserPermission(
+        user: BaseUser,
+        permission: DocumentOwnershipString | DocumentOwnershipLevel,
+        { exact }?: { exact?: boolean },
+    ): boolean;
+
+    /**
+     * Test whether a given User has permission to perform some action on this Document
+     * @param user   The User attempting modification
+     * @param action The attempted action
+     * @param [data] Data involved in the attempted action
+     * @return Does the User have permission?
+     */
+    canUserModify(user: BaseUser, action: UserAction, data?: Record<string, unknown>): boolean;
+
+    /* ---------------------------------------- */
+    /*  Model Methods                           */
+    /* ---------------------------------------- */
+
+    /**
+     * Clone a document, creating a new document by combining current data with provided overrides.
+     * The cloned document is ephemeral and not yet saved to the database.
+     * @param [data={}]              Additional data which overrides current document data at the time of creation
+     * @param [context={}]           Additional options which customize the creation workflow
+     * @param [context.save=false]   Save the clone to the World database?
+     * @param [context.keepId=false] Keep the original Document ID? Otherwise the ID will become undefined
+     * @returns The cloned Document instance
+     */
+    override clone(
+        data: Record<string, unknown> | undefined,
+        context: DocumentCloneContext & { save: true },
+    ): Promise<this>;
+    override clone(data?: Record<string, unknown>, context?: DocumentCloneContext & { save?: false }): this;
+    override clone(data?: Record<string, unknown>, context?: DocumentCloneContext): this | Promise<this>;
+
+    /**
+     * For Documents which include game system data, migrate the system data object to conform to its latest data model.
+     * The data model is defined by the template.json specification included by the game system.
+     * @returns The migrated system data object
+     */
+    migrateSystemData(): Record<string, JSONValue>;
+
+    /* -------------------------------------------- */
+    /*  Database Operations                         */
+    /* -------------------------------------------- */
 
     /**
      * Validate the data contained in the document to check for type and content
@@ -67,52 +180,6 @@ export default abstract class Document<
      */
     validate(options?: DataModelValidationOptions): boolean;
 
-    /* -------------------------------------------- */
-    /*  Configuration                               */
-    /* -------------------------------------------- */
-
-    /** Default metadata which applies to each instance of this Document type. */
-    static get metadata(): DocumentMetadata;
-
-    /**
-     * The database backend used to execute operations and handle results
-     * @type {DatabaseBackend}
-     */
-    static get database(): object;
-
-    /** Return a reference to the implemented subclass of this base document type. */
-    static get implementation(): typeof Document;
-
-    /* -------------------------------------------- */
-    /*  Properties                                  */
-    /* -------------------------------------------- */
-
-    /** The named collection to which this Document belongs. */
-    static get collectionName(): string;
-
-    /** The canonical name of this Document type, for example "Actor". */
-    get documentName(): string;
-
-    /** The canonical name of this Document type, for example "Actor". */
-    static get documentName(): string;
-
-    /** The canonical identifier for this Document */
-    get id(): string;
-
-    /** Test whether this Document is embedded within a parent Document */
-    get isEmbedded(): boolean;
-
-    /* ---------------------------------------- */
-    /*  Methods                                 */
-    /* ---------------------------------------- */
-
-    /**
-     * Test whether a given User has a sufficient role in order to create Documents of this type.
-     * @param user The User being tested
-     * @return Does the User have a sufficient role to create?
-     */
-    static canUserCreate(user: BaseUser): boolean;
-
     /**
      * Get the explicit permission level that a User has over this Document, a value in CONST.DOCUMENT_OWNERSHIP_LEVELS.
      * This method returns the value recorded in Document ownership, regardless of the User's role.
@@ -121,61 +188,6 @@ export default abstract class Document<
      * @returns A numeric permission level from CONST.DOCUMENT_OWNERSHIP_LEVELS or null
      */
     getUserLevel(user: BaseUser): DocumentOwnershipLevel | null;
-
-    /**
-     * Migrate candidate source data for this DataModel which may require initial cleaning or transformations.
-     * @param source           The candidate source data from which the model will be constructed
-     * @returns                Migrated source data, if necessary
-     */
-    static migrateData<TSource extends object>(source: TSource): TSource;
-
-    /**
-     * Update the DataModel locally by applying an object of changes to its source data.
-     * The provided changes are cleaned, validated, and stored to the source data object for this model.
-     * The source data is then re-initialized to apply those changes to the prepared data.
-     * The method returns an object of differential changes which modified the original data.
-     *
-     * @param changes      New values which should be applied to the data model
-     * @param [options={}] Options which determine how the new data is merged
-     * @returns An object containing the changed keys and values
-     */
-    updateSource(data?: DocumentUpdateData, options?: DocumentSourceUpdateContext): DeepPartial<this["_source"]>;
-
-    /**
-     * Clone a document, creating a new document by combining current data with provided overrides.
-     * The cloned document is ephemeral and not yet saved to the database.
-     * @param [data={}]                Additional data which overrides current document data at the time of creation
-     * @param [options={}]             Additional options which customize the creation workflow
-     * @param [options.save=false]    Save the clone to the World database?
-     * @param [options.keepId=false]  Keep the original Document ID? Otherwise the ID will become undefined
-     * @returns The cloned Document instance
-     */
-    clone(data: DocumentUpdateData<this> | undefined, options: DocumentCloneOptions & { save: true }): Promise<this>;
-    clone(data?: DocumentUpdateData<this>, options?: DocumentCloneOptions & { save?: false }): this;
-    clone(data?: DocumentUpdateData<this>, options?: DocumentCloneOptions): this | Promise<this>;
-
-    /**
-     * Test whether a certain User has a requested permission level (or greater) over the Document
-     * @param user The User being tested
-     * @param permission The permission level from DOCUMENT_PERMISSION_LEVELS to test
-     * @param options Additional options involved in the permission test
-     * @param [options.exact=false] Require the exact permission level requested?
-     * @return Does the user have this permission level over the Document?
-     */
-    testUserPermission(
-        user: BaseUser,
-        permission: DocumentOwnershipString | DocumentOwnershipLevel,
-        { exact }?: { exact?: boolean }
-    ): boolean;
-
-    /**
-     * Test whether a given User has permission to perform some action on this Document
-     * @param user   The User attempting modification
-     * @param action The attempted action
-     * @param [data] Data involved in the attempted action
-     * @return Does the User have permission?
-     */
-    canUserModify(user: BaseUser, action: UserAction, data?: Record<string, unknown>): boolean;
 
     /* -------------------------------------------- */
     /*  Database Operations                         */
@@ -206,11 +218,10 @@ export default abstract class Document<
      * const data = [{name: "Compendium Actor", type: "character", img: "path/to/profile.jpg"}];
      * const created = await Actor.createDocuments(data, {pack: "mymodule.mypack"});
      */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    static createDocuments<TDocument extends Document<any>>(
+    static createDocuments<TDocument extends Document>(
         this: ConstructorOf<TDocument>,
         data?: (TDocument | PreCreate<TDocument["_source"]>)[],
-        context?: DocumentModificationContext<TDocument["parent"]>
+        operation?: Partial<DatabaseCreateOperation<TDocument["parent"]>>,
     ): Promise<TDocument[]>;
 
     /**
@@ -218,7 +229,7 @@ export default abstract class Document<
      * Data is provided as an array of objects where each individual object updates one existing Document.
      *
      * @param updates An array of differential data objects, each used to update a single Document
-     * @param [context={}] Additional context which customizes the update workflow
+     * @param [operation={}] Additional context which customizes the update workflow
      * @return An array of updated Document instances
      *
      * @example <caption>Update a single Document</caption>
@@ -240,8 +251,8 @@ export default abstract class Document<
      */
     static updateDocuments<TDocument extends Document>(
         this: ConstructorOf<TDocument>,
-        updates?: DocumentUpdateData<TDocument>[],
-        context?: DocumentModificationContext<TDocument["parent"]>
+        updates?: Record<string, unknown>[],
+        operation?: Partial<DatabaseUpdateOperation<TDocument["parent"]>>,
     ): Promise<TDocument[]>;
 
     /**
@@ -249,7 +260,7 @@ export default abstract class Document<
      * Data is provided as an array of string ids for the documents to delete.
      *
      * @param ids           An array of string ids for the documents to be deleted
-     * @param [context={}] Additional context which customizes the deletion workflow
+     * @param [operation={}] Additional context which customizes the deletion workflow
      * @return An array of deleted Document instances
      *
      * @example <caption>Delete a single Document</caption>
@@ -271,11 +282,10 @@ export default abstract class Document<
      * const actor = await pack.getDocument(documentId);
      * const deleted = await Actor.deleteDocuments([actor.id], {pack: "mymodule.mypack"});
      */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    static deleteDocuments<TDocument extends Document<any>>(
+    static deleteDocuments<TDocument extends Document>(
         this: ConstructorOf<TDocument>,
         ids?: string[],
-        context?: DocumentModificationContext<TDocument["parent"]>
+        operation?: Partial<DatabaseDeleteOperation<TDocument["parent"]>>,
     ): Promise<TDocument[]>;
 
     /**
@@ -301,53 +311,72 @@ export default abstract class Document<
     static create<TDocument extends Document>(
         this: ConstructorOf<TDocument>,
         data: PreCreate<TDocument["_source"]>,
-        context?: DocumentModificationContext<TDocument["parent"]>
+        operation?: Partial<DatabaseCreateOperation<TDocument["parent"]>>,
     ): Promise<TDocument | undefined>;
     static create<TDocument extends Document>(
         this: ConstructorOf<TDocument>,
         data: PreCreate<TDocument["_source"]>[],
-        context?: DocumentModificationContext<TDocument["parent"]>
+        operation?: Partial<DatabaseCreateOperation<TDocument["parent"]>>,
     ): Promise<TDocument[]>;
     static create<TDocument extends Document>(
         this: ConstructorOf<TDocument>,
         data: PreCreate<TDocument["_source"]> | PreCreate<TDocument["_source"]>[],
-        context?: DocumentModificationContext<TDocument["parent"]>
+        operation?: Partial<DatabaseCreateOperation<TDocument["parent"]>>,
     ): Promise<TDocument[] | TDocument | undefined>;
 
     /**
-     * Update one or multiple existing entities using provided input data.
-     * Data may be provided as a single object to update one Document, or as an Array of Objects.
-     * @static
-     *
-     * @param data              A Data object or array of Data. Each element must contain the _id of an existing Document.
-     * @param options           Additional options which customize the update workflow
-     * @param [options.diff]    Difference the provided data against the current to eliminate unnecessary changes.
-     * @param [options.noHook]  Block the dispatch of preUpdate hooks for this operation.
-     *
-     * @return  The updated Document or array of Entities
-     *
-     * @example
-     * const data = {_id: "12ekjf43kj2312ds", name: "New Name"}};
-     * const updated = await Document.update(data); // Updated entity saved to the database
-     *
-     * @example
-     * const data = [{_id: "12ekjf43kj2312ds", name: "New Name 1"}, {_id: "kj549dk48k34jk34", name: "New Name 2"}]};
-     * const updated = await Document.update(data); // Returns an Array of Entities, updated in the database
+     * Update this Document using incremental data, saving it to the database.
+     * @see {@link Document.updateDocuments}
+     * @param [data={}]    Differential update data which modifies the existing values of this document data
+     * @param [operation={}] Additional context which customizes the update workflow
+     * @returns The updated Document instance
      */
-    update(data: DocumentUpdateData<this>, options?: DocumentModificationContext<TParent>): Promise<this>;
+    update(
+        data: Record<string, unknown>,
+        operation?: Partial<DatabaseUpdateOperation<TParent>>,
+    ): Promise<this | undefined>;
 
     /**
-                 * Delete the current Document.
-                 * @see {Document.delete}
+     * Delete the current Document.
+     * @see {Document.delete}
+     * @param operation Options which customize the deletion workflow
+     * @return The deleted Document
+     */
+    delete(operation?: Partial<DatabaseDeleteOperation<TParent>>): Promise<this | undefined>;
 
-                 * @param context Options which customize the deletion workflow
-                 * @return The deleted Document
-                 */
-    delete(context?: DocumentModificationContext<TParent>): Promise<this>;
+    /**
+     * Get a World-level Document of this type by its id.
+     * @param documentId  The Document ID
+     * @param [operation] Parameters of the get operation
+     * @returns The retrieved Document, or null
+     */
+    static get(
+        documentId: string,
+        operation?: Partial<DatabaseGetOperation<abstract.Document | null>>,
+    ): Document | null;
 
     /* -------------------------------------------- */
     /*  Embedded Operations                         */
     /* -------------------------------------------- */
+
+    /**
+     * A compatibility method that returns the appropriate name of an embedded collection within this Document.
+     * @param name An existing collection name or a document name.
+     * @returns The provided collection name if it exists, the first available collection for the
+     *          document name provided, or null if no appropriate embedded collection could be found.
+     * @example Passing an existing collection name.
+     * ```js
+     * Actor.getCollectionName("items");
+     * // returns "items"
+     * ```
+     *
+     * @example Passing a document name.
+     * ```js
+     * Actor.getCollectionName("Item");
+     * // returns "items"
+     * ```
+     */
+    static getCollectionName(name: string): string | null;
 
     /**
      * Obtain a reference to the Array of source data within the data object for a certain embedded Document name
@@ -373,45 +402,48 @@ export default abstract class Document<
      * @see {@link Document.createDocuments}
      * @param embeddedName The name of the embedded Document type
      * @param data An array of data objects used to create multiple documents
-     * @param [context={}] Additional context which customizes the creation workflow
+     * @param [operation={}] Additional context which customizes the creation workflow
      * @return An array of created Document instances
      */
     createEmbeddedDocuments(
         embeddedName: string,
-        data: PreCreate<object>[],
-        context?: DocumentModificationContext<this>
+        data: object[],
+        operation?: Partial<DatabaseCreateOperation<this>>,
     ): Promise<Document[]>;
 
     /**
-                 * Update one or multiple existing entities using provided input data.
-                 * Data may be provided as a single object to update one Document, or as an Array of Objects.
-                 /**
-                 * Update multiple embedded Document instances within a parent Document using provided differential data.
-                 * @see {@link Document.updateDocuments}
-                 * @param embeddedName               The name of the embedded Document type
-                 * @param updates An array of differential data objects, each used to update a single Document
-                 * @param [context={}] Additional context which customizes the update workflow
-                 * @return An array of updated Document instances
-                 */
+     * Update multiple embedded Document instances within a parent Document using provided differential data.
+     * @see {@link Document.updateDocuments}
+     * @param embeddedName               The name of the embedded Document type
+     * @param updates An array of differential data objects, each used to update a single Document
+     * @param [operation={}] Additional context which customizes the update workflow
+     * @return An array of updated Document instances
+     */
     updateEmbeddedDocuments(
         embeddedName: string,
-        updateData: EmbeddedDocumentUpdateData<Document>[],
-        context?: DocumentUpdateContext<this>
-    ): Promise<Document[]>;
+        updateData: EmbeddedDocumentUpdateData[],
+        operation?: Partial<DatabaseUpdateOperation<this>>,
+    ): Promise<Document<Document>[]>;
 
     /**
      * Delete multiple embedded Document instances within a parent Document using provided string ids.
      * @see {@link Document.deleteDocuments}
      * @param embeddedName               The name of the embedded Document type
      * @param ids                      An array of string ids for each Document to be deleted
-     * @param [context={}] Additional context which customizes the deletion workflow
+     * @param [operation={}] Additional context which customizes the deletion workflow
      * @return An array of deleted Document instances
      */
     deleteEmbeddedDocuments(
         embeddedName: string,
         dataId: string[],
-        context?: DocumentModificationContext<this>
+        operation?: Partial<DatabaseDeleteOperation<this>>,
     ): Promise<Document<this>[]>;
+
+    /**
+     * Iterate over all embedded Documents that are hierarchical children of this Document.
+     * @param [_parentPath] A parent field path already traversed
+     */
+    traverseEmbeddedDocuments(_parentPath: string): Generator<[string, Document], void>;
 
     /* -------------------------------------------- */
     /*  Flag Operations                             */
@@ -453,10 +485,10 @@ export default abstract class Document<
      * @param key   The flag key
      * @return A Promise resolving to the updated Document
      */
-    unsetFlag(scope: string, key: string): Promise<this>;
+    unsetFlag(scope: string, key: string): Promise<this | undefined>;
 
     /* -------------------------------------------- */
-    /*  Event Handlers                              */
+    /*  Database Creation Operations                */
     /* -------------------------------------------- */
 
     /**
@@ -469,10 +501,59 @@ export default abstract class Document<
      * @returns A return value of false indicates the creation operation should be cancelled.
      */
     protected _preCreate(
-        data: PreDocumentId<this["_source"]>,
-        options: DocumentModificationContext<TParent>,
-        user: BaseUser
+        data: this["_source"],
+        options: DatabaseCreateOperation<TParent>,
+        user: BaseUser,
     ): Promise<boolean | void>;
+
+    /**
+     * Perform follow-up operations after a Document of this type is created.
+     * Post-creation operations occur for all clients after the creation is broadcast.
+     * @param data    The initial data object provided to the document creation request
+     * @param options Additional options which modify the creation request
+     */
+    protected _onCreate(data: this["_source"], options: DatabaseCreateOperation<TParent>, userId: string): void;
+
+    /**
+     * Pre-process a creation operation, potentially altering its instructions or input data. Pre-operation events only
+     * occur for the client which requested the operation.
+     *
+     * This batch-wise workflow occurs after individual {@link Document#_preCreate} workflows and provides a final
+     * pre-flight check before a database operation occurs.
+     *
+     * Modifications to pending documents must mutate the documents array or alter individual document instances using
+     * {@link Document#updateSource}.
+     *
+     * @param documents Pending document instances to be created
+     * @param operation Parameters of the database creation operation
+     * @param user      The User requesting the creation operation
+     * @returns Return false to cancel the creation operation entirely
+     */
+    protected static _preCreateOperation(
+        documents: Document[],
+        operation: DatabaseCreateOperation<abstract.Document | null>,
+        user: BaseUser,
+    ): Promise<boolean | void>;
+
+    /**
+     * Post-process a creation operation, reacting to database changes which have occurred. Post-operation events occur
+     * for all connected clients.
+     *
+     * This batch-wise workflow occurs after individual {@link Document#_onCreate} workflows.
+     *
+     * @param documents The Document instances which were created
+     * @param operation Parameters of the database creation operation
+     * @param user      The User who performed the creation operation
+     */
+    protected static _onCreateOperation(
+        documents: Document[],
+        operation: DatabaseCreateOperation<abstract.Document | null>,
+        user: BaseUser,
+    ): Promise<void>;
+
+    /* -------------------------------------------- */
+    /*  Database Update Operations                  */
+    /* -------------------------------------------- */
 
     /**
      * Perform preliminary operations before a Document of this type is updated.
@@ -484,26 +565,9 @@ export default abstract class Document<
      */
     protected _preUpdate(
         changed: DeepPartial<this["_source"]>,
-        options: DocumentUpdateContext<TParent>,
-        user: BaseUser
+        options: DatabaseUpdateOperation<TParent>,
+        user: BaseUser,
     ): Promise<boolean | void>;
-
-    /**
-     * Perform preliminary operations before a Document of this type is deleted.
-     * Pre-delete operations only occur for the client which requested the operation.
-     * @param options Additional options which modify the deletion request
-     * @param user    The User requesting the document deletion
-     * @returns A return value of false indicates the deletion operation should be cancelled.
-     */
-    protected _preDelete(options: DocumentModificationContext<TParent>, user: BaseUser): Promise<boolean | void>;
-
-    /**
-     * Perform follow-up operations after a Document of this type is created.
-     * Post-creation operations occur for all clients after the creation is broadcast.
-     * @param data    The initial data object provided to the document creation request
-     * @param options Additional options which modify the creation request
-     */
-    protected _onCreate(data: this["_source"], options: DocumentModificationContext<TParent>, userId: string): void;
 
     /**
      * Perform follow-up operations after a Document of this type is updated.
@@ -514,9 +578,59 @@ export default abstract class Document<
      */
     protected _onUpdate(
         changed: DeepPartial<this["_source"]>,
-        options: DocumentUpdateContext<TParent>,
-        userId: string
+        options: DatabaseUpdateOperation<TParent>,
+        userId: string,
     ): void;
+
+    /**
+     * Pre-process an update operation, potentially altering its instructions or input data. Pre-operation events only
+     * occur for the client which requested the operation.
+     *
+     * This batch-wise workflow occurs after individual {@link Document#_preUpdate} workflows and provides a final
+     * pre-flight check before a database operation occurs.
+     *
+     * Modifications to the requested updates are performed by mutating the data array of the operation.
+     * {@link Document#updateSource}.
+     *
+     * @param documents Document instances to be updated
+     * @param operation Parameters of the database update operation
+     * @param user      The User requesting the update operation
+     * @returns Return false to cancel the update operation entirely
+     */
+    protected static _preUpdateOperation(
+        documents: Document[],
+        operation: DatabaseUpdateOperation<abstract.Document | null>,
+        user: BaseUser,
+    ): Promise<boolean | void>;
+
+    /**
+     * Post-process an update operation, reacting to database changes which have occurred. Post-operation events occur
+     * for all connected clients.
+     *
+     * This batch-wise workflow occurs after individual {@link Document#_onUpdate} workflows.
+     *
+     * @param documents The Document instances which were updated
+     * @param operation Parameters of the database update operation
+     * @param user      The User who performed the update operation
+     */
+    protected static _onUpdateOperation(
+        documents: Document[],
+        operation: DatabaseUpdateOperation<abstract.Document | null>,
+        user: BaseUser,
+    ): Promise<void>;
+
+    /* -------------------------------------------- */
+    /*  Database Delete Operations                  */
+    /* -------------------------------------------- */
+
+    /**
+     * Perform preliminary operations before a Document of this type is deleted.
+     * Pre-delete operations only occur for the client which requested the operation.
+     * @param options Additional options which modify the deletion request
+     * @param user    The User requesting the document deletion
+     * @returns A return value of false indicates the deletion operation should be cancelled.
+     */
+    protected _preDelete(options: DatabaseDeleteOperation<TParent>, user: BaseUser): Promise<boolean | void>;
 
     /**
      * Perform follow-up operations after a Document of this type is deleted.
@@ -524,47 +638,44 @@ export default abstract class Document<
      * @param options Additional options which modify the deletion request
      * @param userId The ID of the User requesting the document deletion
      */
-    protected _onDelete(options: DocumentModificationContext<TParent>, userId: string): void;
+    protected _onDelete(options: DatabaseDeleteOperation<TParent>, userId: string): void;
 
     /**
-     * Perform follow-up operations when a set of Documents of this type are created.
-     * This is where side effects of creation should be implemented.
-     * Post-creation side effects are performed only for the client which requested the operation.
-     * @param documents The Document instances which were created
-     * @param context   The context for the modification operation
+     * Pre-process a deletion operation, potentially altering its instructions or input data. Pre-operation events only
+     * occur for the client which requested the operation.
+     *
+     * This batch-wise workflow occurs after individual {@link Document#_preDelete} workflows and provides a final
+     * pre-flight check before a database operation occurs.
+     *
+     * Modifications to the requested deletions are performed by mutating the operation object.
+     * {@link Document#updateSource}.
+     *
+     * @param documents                Document instances to be deleted
+     * @param operation   Parameters of the database update operation
+     * @param user             The User requesting the deletion operation
+     * @returns Return false to cancel the deletion operation entirely
      */
-    protected static _onCreateDocuments(
+    protected static _preDeleteOperation(
         documents: Document[],
-        context: DocumentModificationContext<Document | null>
-    ): void;
+        operation: DatabaseDeleteOperation<abstract.Document | null>,
+        user: BaseUser,
+    ): Promise<boolean | void>;
 
     /**
-     * Perform follow-up operations when a set of Documents of this type are updated.
-     * This is where side effects of updates should be implemented.
-     * Post-update side effects are performed only for the client which requested the operation.
-     * @param documents The Document instances which were updated
-     * @param context   The context for the modification operation
-     */
-    protected static _onUpdateDocuments(
-        documents: Document[],
-        context: DocumentModificationContext<Document | null>
-    ): void;
-
-    /**
-     * Perform follow-up operations when a set of Documents of this type are deleted.
-     * This is where side effects of deletion should be implemented.
-     * Post-deletion side effects are performed only for the client which requested the operation.
+     * Post-process a deletion operation, reacting to database changes which have occurred. Post-operation events occur
+     * for all connected clients.
+     *
+     * This batch-wise workflow occurs after individual {@link Document#_onDelete} workflows.
+     *
      * @param documents The Document instances which were deleted
-     * @param context   The context for the modification operation
+     * @param operation Parameters of the database deletion operation
+     * @param user      The User who performed the deletion operation
      */
-    protected static _onDeleteDocuments(
+    protected static _onDeleteOperation(
         documents: Document[],
-        context: DocumentModificationContext<Document | null>
-    ): void;
-
-    /* ---------------------------------------- */
-    /*  Serialization and Storage               */
-    /* ---------------------------------------- */
+        operation: DatabaseDeleteOperation<abstract.Document | null>,
+        user: BaseUser,
+    ): Promise<void>;
 
     /**
      * Transform the Document instance into a plain object.
@@ -576,47 +687,40 @@ export default abstract class Document<
     toObject(source?: true): this["_source"];
     toObject(source: false): RawObject<this>;
     toObject(source?: boolean): this["_source"] | RawObject<this>;
-
-    /**
-     * Serializing an Document should simply serialize its inner data, not the entire instance
-     */
-    toJSON(): RawObject<this>;
 }
 
 type MetadataPermission =
     | keyof typeof CONST.USER_ROLES
     | keyof typeof CONST.USER_PERMISSIONS
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    | ((...args: any[]) => boolean);
+    | ((...args: unknown[]) => boolean);
 
 export interface DocumentMetadata {
-    collection: string;
-    embedded: Record<string, string>;
-    hasSystemData: boolean;
-    isEmbedded?: boolean;
-    isPrimary?: boolean;
     name: string;
-    pack: null;
+    collection: string;
+    indexed: boolean;
+    compendiumIndexFields: string[];
+    label: string;
+    coreTypes: string[] | number[];
+    embedded: Record<string, string>;
     permissions: {
         create: MetadataPermission;
         update: MetadataPermission;
         delete: MetadataPermission;
     };
-    types: string[] | Record<string, number>;
+    preserveOnImport: string[];
 }
 
 type _Document = Document<_Document | null>;
 
 declare global {
-    type PreCreate<T extends object> = T extends { name: string; type: string }
-        ? Omit<DeepPartial<T>, "name" | "type"> & { name: string; type: T["type"] }
+    type PreCreate<T extends SourceFromSchema<DataSchema>> = T extends { name: string; type: string }
+        ? Omit<DeepPartial<T>, "_id" | "name" | "type"> & { _id?: Maybe<string>; name: string; type: T["type"] }
         : DeepPartial<T>;
 
-    type PreDocumentId<T extends object> = Omit<T, "_id"> & { _id: null };
-
-    type DocumentUpdateData<T extends Document = Document> = Partial<T["_source"]> | Record<string, unknown>;
-
-    type EmbeddedDocumentUpdateData<T extends Document> = DocumentUpdateData<T> & { _id: string };
+    type EmbeddedDocumentUpdateData = {
+        _id: string;
+        [key: string]: unknown;
+    };
 
     interface DocumentRenderOptions extends RenderOptions {
         data?: {
@@ -626,22 +730,12 @@ declare global {
 
     type DocumentFlags = Record<string, Record<string, unknown> | undefined>;
 
-    type RawObject<T extends Document> = {
-        [P in keyof T["_source"]]: T[P] extends EmbeddedCollection<infer U>
-            ? RawObject<U>[]
-            : T[P] extends Document
-            ? RawObject<T[P]>
-            : T[P] extends Document[]
-            ? RawObject<T[P][number]>[]
-            : T[P];
-    };
-
-    interface DocumentCloneOptions extends Omit<DocumentConstructionContext<null>, "parent"> {
+    interface DocumentCloneContext extends Omit<DocumentConstructionContext<null>, "parent"> {
         save?: boolean;
         keepId?: boolean;
     }
 
-    interface DocumentSourceUpdateContext extends Omit<DocumentModificationContext<null>, "parent"> {
+    interface DocumentSourceUpdateContext extends Omit<DatabaseUpdateOperation<null>, "parent"> {
         dryRun?: boolean;
         fallback?: boolean;
     }

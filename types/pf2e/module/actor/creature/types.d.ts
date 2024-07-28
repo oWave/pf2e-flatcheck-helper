@@ -1,66 +1,24 @@
-import { ActorPF2e, ActorUpdateContext } from "types/pf2e/module/actor/base.ts"
-import { ActorSheetDataPF2e } from "types/pf2e/module/actor/sheet/data-types.ts"
-import { AttributeString, SaveType } from "types/pf2e/module/actor/types.ts"
-import { MeleePF2e, WeaponPF2e } from "types/pf2e/module/item/index.ts"
-import { ZeroToFour } from "types/pf2e/module/data.ts"
-import { SheetOptions } from "types/pf2e/module/sheet/helpers.ts"
-import { TokenDocumentPF2e } from "types/pf2e/module/scene/index.ts"
-import { AbilityData, CreatureSystemData, SaveData, SkillData } from "./data.ts"
-import { CreaturePF2e } from "./document.ts"
-import { ALIGNMENTS, ALIGNMENT_TRAITS } from "./values.ts"
-type Alignment = SetElement<typeof ALIGNMENTS>
-type AlignmentTrait = SetElement<typeof ALIGNMENT_TRAITS>
-type CreatureTrait = keyof ConfigPF2e["PF2E"]["creatureTraits"] | AlignmentTrait
-type ModeOfBeing = "living" | "undead" | "construct" | "object"
+import type { ActorPF2e, ActorUpdateOperation } from "../base.ts";
+import type { CREATURE_ACTOR_TYPES } from "../values.ts";
+import type { AbilityItemPF2e, MeleePF2e, WeaponPF2e } from "../../item/index.ts";
+import type { TokenDocumentPF2e } from "../../scene/index.ts";
+import type { LANGUAGES_BY_RARITY, SENSE_TYPES } from "./values.ts";
+/** A `CreaturePF2e` subtype string */
+type CreatureActorType = (typeof CREATURE_ACTOR_TYPES)[number];
+type CreatureTrait = keyof typeof CONFIG.PF2E.creatureTraits;
+/** One of the major creature types given in the Pathfinder bestiaries */
+type CreatureType = keyof typeof CONFIG.PF2E.creatureTypes;
+type Language = "common" | (typeof LANGUAGES_BY_RARITY.common)[number] | (typeof LANGUAGES_BY_RARITY.uncommon)[number] | (typeof LANGUAGES_BY_RARITY.rare)[number] | (typeof LANGUAGES_BY_RARITY.secret)[number];
+type Attitude = keyof typeof CONFIG.PF2E.attitude;
+type ModeOfBeing = "living" | "undead" | "construct" | "object";
+type SenseAcuity = "precise" | "imprecise" | "vague";
+type SenseType = SetElement<typeof SENSE_TYPES>;
+type SpecialVisionType = Extract<SenseType, "low-light-vision" | "darkvision" | "greater-darkvision" | "see-invisibility">;
 interface GetReachParameters {
-  action?: "interact" | "attack"
-  weapon?: WeaponPF2e<ActorPF2e> | MeleePF2e<ActorPF2e> | null
+    action?: "interact" | "attack";
+    weapon?: Maybe<AbilityItemPF2e<ActorPF2e> | WeaponPF2e<ActorPF2e> | MeleePF2e<ActorPF2e>>;
 }
-interface CreatureUpdateContext<TParent extends TokenDocumentPF2e | null> extends ActorUpdateContext<TParent> {
-  allowHPOverage?: boolean
+interface CreatureUpdateOperation<TParent extends TokenDocumentPF2e | null> extends ActorUpdateOperation<TParent> {
+    allowHPOverage?: boolean;
 }
-type WithRank = {
-  icon?: string
-  hover?: string
-  rank: ZeroToFour
-}
-interface CreatureSheetData<TActor extends CreaturePF2e> extends ActorSheetDataPF2e<TActor> {
-  data: CreatureSystemData & {
-    abilities: Record<
-      AttributeString,
-      AbilityData & {
-        label?: string
-      }
-    >
-    attributes: {
-      perception: CreatureSystemData["attributes"]["perception"] & WithRank
-    }
-    saves: Record<SaveType, SaveData & WithRank>
-    skills: Record<string, SkillData & WithRank>
-  }
-  languages: SheetOptions
-  abilities: ConfigPF2e["PF2E"]["abilities"]
-  skills: ConfigPF2e["PF2E"]["skills"]
-  actorSizes: ConfigPF2e["PF2E"]["actorSizes"]
-  alignments: {
-    [K in Alignment]?: string
-  }
-  rarity: ConfigPF2e["PF2E"]["rarityTraits"]
-  frequencies: ConfigPF2e["PF2E"]["frequencies"]
-  attitude: ConfigPF2e["PF2E"]["attitude"]
-  pfsFactions: ConfigPF2e["PF2E"]["pfsFactions"]
-  dying: {
-    maxed: boolean
-    remainingDying: number
-    remainingWounded: number
-  }
-}
-export {
-  Alignment,
-  AlignmentTrait,
-  CreatureSheetData,
-  CreatureTrait,
-  CreatureUpdateContext,
-  GetReachParameters,
-  ModeOfBeing,
-}
+export type { Attitude, CreatureActorType, CreatureTrait, CreatureType, CreatureUpdateOperation, GetReachParameters, Language, ModeOfBeing, SenseAcuity, SenseType, SpecialVisionType, };

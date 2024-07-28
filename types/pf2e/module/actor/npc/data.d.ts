@@ -1,250 +1,208 @@
-import { ActorPF2e } from "types/pf2e/module/actor/base.ts"
-import {
-  Abilities,
-  BaseCreatureSource,
-  CreatureAttributes,
-  CreatureDetails,
-  CreatureInitiativeSource,
-  CreatureResources,
-  CreatureResourcesSource,
-  CreatureSpeeds,
-  CreatureSystemData,
-  CreatureSystemSource,
-  CreatureTraitsData,
-  CreatureTraitsSource,
-  HeldShieldData,
-  LabeledSpeed,
-  SaveData,
-} from "types/pf2e/module/actor/creature/data.ts"
-import {
-  ActorAttributesSource,
-  ActorFlagsPF2e,
-  HitPointsStatistic,
-  PerceptionData,
-  StrikeData,
-} from "types/pf2e/module/actor/data/base.ts"
-import { ActorSizePF2e } from "types/pf2e/module/actor/data/size.ts"
-import { InitiativeTraceData } from "types/pf2e/module/actor/initiative.ts"
-import { ModifierPF2e, StatisticModifier } from "types/pf2e/module/actor/modifiers.ts"
-import { ActorAlliance, AttributeString, SaveType } from "types/pf2e/module/actor/types.ts"
-import { MeleePF2e } from "types/pf2e/module/item/index.ts"
-import { Rarity, Size } from "types/pf2e/module/data.ts"
-import { ArmorClassTraceData } from "types/pf2e/module/system/statistic/armor-class.ts"
-import { StatisticTraceData } from "types/pf2e/module/system/statistic/data.ts"
-interface NPCSource extends BaseCreatureSource<"npc", NPCSystemSource> {
-  flags: DeepPartial<NPCFlags>
-}
+import type { ActorPF2e } from "../base.ts";
+import type { Abilities, BaseCreatureSource, CreatureAttributes, CreatureDetails, CreatureDetailsSource, CreatureHitPointsSource, CreatureInitiativeSource, CreatureLanguagesData, CreaturePerceptionData, CreatureResources, CreatureResourcesSource, CreatureSpeeds, CreatureSystemData, CreatureSystemSource, CreatureTraitsSource, HeldShieldData, LabeledSpeed, SaveData, SenseData } from "../creature/data.ts";
+import type { ActorAttributesSource, ActorFlagsPF2e, AttributeBasedTraceData, HitPointsStatistic, StrikeData } from "../data/base.ts";
+import { InitiativeTraceData } from "../initiative.ts";
+import type { ModifierPF2e, StatisticModifier } from "../modifiers.ts";
+import type { ActorAlliance, SaveType, SkillSlug } from "../types.ts";
+import type { MeleePF2e } from "../../item/index.ts";
+import type { PublicationData } from "../../data.ts";
+import type { RawPredicate } from "../../system/predication.ts";
+type NPCSource = BaseCreatureSource<"npc", NPCSystemSource> & {
+    flags: DeepPartial<NPCFlags>;
+};
 type NPCFlags = ActorFlagsPF2e & {
-  pf2e: {
-    lootable: boolean
-  }
-}
+    pf2e: {
+        lootable: boolean;
+    };
+};
 interface NPCSystemSource extends CreatureSystemSource {
-  traits: NPCTraitsSource
-  /** The six primary ability scores. */
-  abilities: Abilities
-  /** Any special attributes for this NPC, such as AC or health. */
-  attributes: NPCAttributesSource
-  /** Details about this actor, such as alignment or ancestry. */
-  details: NPCDetailsSource
-  /** The three saves for NPCs. NPC saves have a 'base' score which is the score before applying custom modifiers. */
-  saves: NPCSavesSource
-  /** Spellcasting data: currently only used for rituals */
-  spellcasting?: {
-    rituals?: {
-      dc: number
-    }
-  }
-  resources: CreatureResourcesSource
+    traits: NPCTraitsSource;
+    /** The six primary ability scores. */
+    abilities: Abilities;
+    /** Any special attributes for this NPC, such as AC or health. */
+    attributes: NPCAttributesSource;
+    skills: Partial<Record<SkillSlug, NPCSkillSource>>;
+    /** Modifier of the perception statistic */
+    perception: NPCPerceptionSource;
+    initiative: CreatureInitiativeSource;
+    /** Details about this actor, such as alignment or ancestry. */
+    details: NPCDetailsSource;
+    /** The three saves for NPCs. NPC saves have a 'base' score which is the score before applying custom modifiers. */
+    saves: NPCSavesSource;
+    /** Spellcasting data: currently only used for rituals */
+    spellcasting?: {
+        rituals?: {
+            dc: number;
+        };
+    };
+    resources: CreatureResourcesSource;
+}
+interface NPCSkillSource {
+    base: number;
+    /** Any special restriction or clarification */
+    note?: string;
+    /** All saved special skill modifiers */
+    special?: NPCSpecialSkillSource[];
+}
+/** Source data for special skill modifiers (such as +9 to climb) */
+interface NPCSpecialSkillSource {
+    label: string;
+    base: number;
+    /** A predicate that will automatically enable this variant if satisfied */
+    predicate?: RawPredicate;
 }
 interface NPCAttributesSource extends Required<ActorAttributesSource> {
-  ac: {
-    value: number
-    details: string
-  }
-  adjustment: "elite" | "weak" | null
-  hp: {
-    value: number
-    max: number
-    temp: number
-    details: string
-  }
-  initiative: CreatureInitiativeSource
-  perception: {
-    value: number
-  }
-  speed: {
-    value: number
-    otherSpeeds: LabeledSpeed[]
-    details: string
-  }
-  allSaves: {
-    value: string
-  }
+    ac: {
+        value: number;
+        details: string;
+    };
+    adjustment: "elite" | "weak" | null;
+    hp: NPCHitPointsSource;
+    speed: {
+        value: number;
+        otherSpeeds: LabeledSpeed[];
+        details: string;
+    };
+    allSaves: {
+        value: string;
+    };
 }
-interface NPCDetailsSource extends Omit<CreatureDetails, "creature"> {
-  level: {
-    value: number
-  }
-  /** Which sourcebook this creature comes from. */
-  source: {
-    value: string
-    author: string
-  }
-  /** The type of this creature (such as 'undead') */
-  creatureType: string
-  /** A very brief description */
-  blurb: string
-  /** The in depth descripton and any other public notes */
-  publicNotes: string
-  /** The private GM notes */
-  privateNotes: string
+interface NPCHitPointsSource extends Required<CreatureHitPointsSource> {
+    details: string;
 }
-type NPCSavesSource = Record<
-  SaveType,
-  {
-    value: number
-    saveDetail: string
-  }
->
-interface NPCTraitsSource extends CreatureTraitsSource {
-  /** A description of special senses this NPC has */
-  senses: {
-    value: string
-  }
-  rarity: Rarity
-  size: {
-    value: Size
-  }
+interface NPCPerceptionSource {
+    details: string;
+    mod: number;
+    senses: SenseData[];
+    vision: boolean;
+}
+interface NPCDetailsSource extends CreatureDetailsSource {
+    level: {
+        value: number;
+    };
+    languages: CreatureLanguagesData;
+    /** A very brief description */
+    blurb: string;
+    /** The in-depth description and any other public notes */
+    publicNotes: string;
+    /** The private GM notes */
+    privateNotes: string;
+    /** Information concerning the publication from which this actor originates */
+    publication: PublicationData;
+}
+type NPCSavesSource = Record<SaveType, {
+    value: number;
+    saveDetail: string;
+}>;
+interface NPCTraitsSource extends Required<CreatureTraitsSource> {
 }
 /** The raw information contained within the actor data object for NPCs. */
-interface NPCSystemData extends Omit<NPCSystemSource, "attributes">, CreatureSystemData {
-  /** The six primary ability scores. */
-  abilities: Abilities
-  /** The three saves for NPCs. NPC saves have a 'base' score which is the score before applying custom modifiers. */
-  saves: NPCSaves
-  /** Details about this actor, such as alignment or ancestry. */
-  details: NPCDetails
-  /** Any special attributes for this NPC, such as AC or health. */
-  attributes: NPCAttributes
-  /** Skills that this actor possesses; skills the actor is actually trained on are marked 'visible'. */
-  skills: Record<string, NPCSkillData>
-  /** Special strikes which the creature can take. */
-  actions: NPCStrike[]
-  traits: NPCTraitsData
-  resources: CreatureResources
-  spellcasting: {
-    rituals: {
-      dc: number
-    }
-  }
-  customModifiers: Record<string, ModifierPF2e[]>
+interface NPCSystemData extends Omit<NPCSystemSource, "attributes" | "perception" | "traits">, CreatureSystemData {
+    /** The six primary ability scores. */
+    abilities: Abilities;
+    /** The three saves for NPCs. NPC saves have a 'base' score which is the score before applying custom modifiers. */
+    saves: NPCSaves;
+    /** Details about this actor, such as alignment or ancestry. */
+    details: NPCDetails;
+    perception: NPCPerceptionData;
+    initiative: InitiativeTraceData;
+    /** Any special attributes for this NPC, such as AC or health. */
+    attributes: NPCAttributes;
+    /** Skills that this actor possesses; skills the actor is actually trained on are marked 'visible'. */
+    skills: Record<string, NPCSkillData>;
+    /** Special strikes which the creature can take. */
+    actions: NPCStrike[];
+    resources: CreatureResources;
+    spellcasting: {
+        rituals: {
+            dc: number;
+        };
+    };
+    customModifiers: Record<string, ModifierPF2e[]>;
 }
-interface NPCTraitsData extends Omit<CreatureTraitsData, "senses">, NPCTraitsSource {
-  rarity: Rarity
-  size: ActorSizePF2e
+interface NPCPerceptionData extends CreaturePerceptionData {
+    mod: number;
 }
-interface NPCAttributes
-  extends Omit<NPCAttributesSource, "initiative" | "immunities" | "weaknesses" | "resistances">,
-    CreatureAttributes {
-  ac: ArmorClassTraceData
-  adjustment: "elite" | "weak" | null
-  hp: NPCHitPoints
-  perception: NPCPerception
-  initiative: InitiativeTraceData
-  speed: NPCSpeeds
-  /**
-   * Data related to the currently equipped shield. This is copied from the shield data itself, and exists to
-   * allow for the shield health to be shown in a token.
-   */
-  shield: HeldShieldData
-  /** Textual information about any special benefits that apply to all saves. */
-  allSaves: {
-    value: string
-  }
-  familiarAbilities: StatisticModifier
-  /** A fake class DC (set to a level-based DC) for use with critical specialization effects that require it */
-  classDC: {
-    value: number
-  }
-  /** And a fake class-or-spell DC to go along with it */
-  classOrSpellDC: {
-    value: number
-  }
-  /** Rarely needed for an NPC but always available! */
-  bonusEncumbranceBulk: number
-  bonusLimitBulk: number
+interface NPCAttributes extends Omit<NPCAttributesSource, AttributesSourceOmission>, CreatureAttributes {
+    adjustment: "elite" | "weak" | null;
+    hp: NPCHitPoints;
+    speed: NPCSpeeds;
+    /**
+     * Data related to the currently equipped shield. This is copied from the shield data itself, and exists to
+     * allow for the shield health to be shown in a token.
+     */
+    shield: HeldShieldData;
+    /** Textual information about any special benefits that apply to all saves. */
+    allSaves: {
+        value: string;
+    };
+    familiarAbilities: StatisticModifier;
+    /** A fake class DC (set to a level-based DC) for use with critical specialization effects that require it */
+    classDC: {
+        value: number;
+    };
+    /** The best spell DC */
+    spellDC: {
+        value: number;
+    } | null;
+    /** And a fake class-or-spell DC to go along with it */
+    classOrSpellDC: {
+        value: number;
+    };
 }
-interface NPCDetails extends NPCDetailsSource {
-  level: {
-    value: number
-    /** The presence of a `base` that is different from the `value` indicates the level was adjusted. */
-    base: number
-  }
-  alliance: ActorAlliance
+type AttributesSourceOmission = "ac" | "initiative" | "immunities" | "weaknesses" | "resistances";
+interface NPCDetails extends NPCDetailsSource, CreatureDetails {
+    level: {
+        value: number;
+        /** The presence of a `base` that is different from the `value` indicates the level was adjusted. */
+        base: number;
+    };
+    alliance: ActorAlliance;
 }
 /** The full data for a NPC action (used primarily for strikes.) */
 interface NPCStrike extends StrikeData {
-  item: MeleePF2e<ActorPF2e>
-  /** The type of attack as a localization string */
-  attackRollType?: string
-  /** The id of the item this strike is generated from */
-  sourceId?: string
-  /** Additional effects from a successful strike, like "Grab" */
-  additionalEffects: {
-    tag: string
-    label: string
-  }[]
-  /** A melee usage of a firearm: not available on NPC strikes */
-  altUsages?: never
+    item: MeleePF2e<ActorPF2e>;
+    /** The type of attack as a localization string */
+    attackRollType?: string;
+    /** The id of the item this strike is generated from */
+    sourceId?: string;
+    /** Additional effects from a successful strike, like "Grab" */
+    additionalEffects: {
+        tag: string;
+        label: string;
+    }[];
+    /** A melee usage of a firearm: not available on NPC strikes */
+    altUsages?: never;
 }
 /** Save data with an additional "base" value */
 interface NPCSaveData extends SaveData {
-  ability: AttributeString
-  base?: number
-  saveDetail: string
+    base?: number;
+    saveDetail: string;
 }
 /** Saves with NPCSaveData */
 interface NPCSaves {
-  fortitude: NPCSaveData
-  reflex: NPCSaveData
-  will: NPCSaveData
+    fortitude: NPCSaveData;
+    reflex: NPCSaveData;
+    will: NPCSaveData;
 }
 interface NPCHitPoints extends HitPointsStatistic {
-  base?: number
+    base?: number;
 }
-/** Perception data with an additional "base" value */
-interface NPCPerception extends PerceptionData {
-  rank?: number
-  base?: number
+/** System Data for skill special modifiers (such as +9 to climb) */
+interface NPCSpecialSkill extends NPCSpecialSkillSource {
+    mod: number;
 }
 /** Skill data with a "base" value and whether the skill should be rendered (visible) */
-interface NPCSkillData extends StatisticTraceData {
-  base?: number
-  visible?: boolean
-  isLore?: boolean
-  itemID?: string
-  ability: AttributeString
-  variants: {
-    label: string
-    options: string
-  }[]
+interface NPCSkillData extends NPCSkillSource, AttributeBasedTraceData {
+    mod: number;
+    visible: boolean;
+    /** Is this skill a Lore skill? */
+    lore?: boolean;
+    /** If this is a lore skill, what item it came from */
+    itemId?: string;
+    special: NPCSpecialSkill[];
 }
 interface NPCSpeeds extends CreatureSpeeds {
-  details: string
+    details: string;
 }
-export {
-  NPCAttributes,
-  NPCAttributesSource,
-  NPCFlags,
-  NPCHitPoints,
-  NPCPerception,
-  NPCSaveData,
-  NPCSkillData,
-  NPCSource,
-  NPCStrike,
-  NPCSystemData,
-  NPCSystemSource,
-  NPCTraitsData,
-  NPCTraitsSource,
-}
+export type { NPCAttributes, NPCAttributesSource, NPCFlags, NPCHitPoints, NPCPerceptionData, NPCPerceptionSource, NPCSaveData, NPCSkillData, NPCSkillSource, NPCSource, NPCSpecialSkillSource, NPCStrike, NPCSystemData, NPCSystemSource, NPCTraitsSource, };

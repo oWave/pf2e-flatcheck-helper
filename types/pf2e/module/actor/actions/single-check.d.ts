@@ -1,64 +1,74 @@
-import {
-  CheckContext,
-  CheckContextData,
-  CheckContextOptions,
-  CheckResultCallback,
-} from "types/pf2e/module/system/action-macros/types.ts"
-import { ActionUseOptions } from "./types.ts"
-import { ModifierPF2e, RawModifier } from "types/pf2e/module/actor/modifiers.ts"
-import { CheckDC } from "types/pf2e/module/system/degree-of-success.ts"
-import { Statistic } from "types/pf2e/module/system/statistic/index.ts"
-import { RollNoteSource } from "types/pf2e/module/notes.ts"
-import { BaseAction, BaseActionData, BaseActionVariant, BaseActionVariantData } from "./base.ts"
-import { ActorPF2e, CreaturePF2e } from "types/pf2e/module/actor/index.ts"
-import { ItemPF2e } from "types/pf2e/module/item/index.ts"
+import { ActorPF2e } from "../index.ts";
+import { ModifierPF2e, RawModifier } from "../modifiers.ts";
+import { DCSlug } from "../types.ts";
+import type { ItemPF2e } from "../../item/index.ts";
+import { RollNoteSource } from "../../notes.ts";
+import { CheckContextData, CheckContextOptions, CheckMacroContext, CheckResultCallback } from "../../system/action-macros/types.ts";
+import { CheckDC } from "../../system/degree-of-success.ts";
+import { BaseAction, BaseActionData, BaseActionVariant, BaseActionVariantData } from "./base.ts";
+import { ActionUseOptions } from "./types.ts";
 type SingleCheckActionRollNoteData = Omit<RollNoteSource, "selector"> & {
-  selector?: string
-}
+    selector?: string;
+};
 interface SingleCheckActionVariantData extends BaseActionVariantData {
-  difficultyClass?: CheckDC | string
-  modifiers?: RawModifier[]
-  notes?: SingleCheckActionRollNoteData[]
-  rollOptions?: string[]
-  statistic?: string
+    difficultyClass?: CheckDC | DCSlug;
+    modifiers?: RawModifier[];
+    notes?: SingleCheckActionRollNoteData[];
+    rollOptions?: string[];
+    statistic?: string | string[];
 }
 interface SingleCheckActionData extends BaseActionData<SingleCheckActionVariantData> {
-  difficultyClass?: CheckDC | string
-  modifiers?: RawModifier[]
-  notes?: SingleCheckActionRollNoteData[]
-  rollOptions?: string[]
-  statistic: string
+    difficultyClass?: CheckDC | DCSlug;
+    modifiers?: RawModifier[];
+    notes?: SingleCheckActionRollNoteData[];
+    rollOptions?: string[];
+    statistic: string | string[];
+}
+interface ActionVariantCheckPreviewOptions {
+    actor: ActorPF2e;
+}
+interface ActionCheckPreviewOptions extends ActionVariantCheckPreviewOptions {
+    variant: string;
+}
+interface ActionCheckPreview {
+    label: string;
+    modifier?: number;
+    slug: string;
 }
 interface SingleCheckActionUseOptions extends ActionUseOptions {
-  difficultyClass: CheckDC | string
-  modifiers: ModifierPF2e[]
-  multipleAttackPenalty: number
-  notes: SingleCheckActionRollNoteData[]
-  rollOptions: string[]
-  statistic: string
+    difficultyClass: CheckDC | DCSlug | number;
+    modifiers: ModifierPF2e[];
+    multipleAttackPenalty: number;
+    notes: SingleCheckActionRollNoteData[];
+    rollOptions: string[];
+    statistic: string;
 }
 declare class SingleCheckActionVariant extends BaseActionVariant {
-  #private
-  constructor(action: SingleCheckAction, data?: SingleCheckActionVariantData)
-  get difficultyClass(): CheckDC | string | undefined
-  get modifiers(): RawModifier[]
-  get notes(): RollNoteSource[]
-  get rollOptions(): string[]
-  get statistic(): string
-  use(options?: Partial<SingleCheckActionUseOptions>): Promise<CheckResultCallback[]>
-  protected checkContext<ItemType extends ItemPF2e<ActorPF2e>>(
-    opts: CheckContextOptions<ItemType>,
-    data: CheckContextData<ItemType>
-  ): CheckContext<ItemType> | undefined
-  protected difficultyClassWithTarget(_target: CreaturePF2e): Statistic | null
+    #private;
+    constructor(action: SingleCheckAction, data?: SingleCheckActionVariantData);
+    get difficultyClass(): CheckDC | DCSlug | undefined;
+    get modifiers(): RawModifier[];
+    get notes(): RollNoteSource[];
+    get rollOptions(): string[];
+    get statistic(): string | string[];
+    preview(options?: Partial<ActionVariantCheckPreviewOptions>): ActionCheckPreview[];
+    use(options?: Partial<SingleCheckActionUseOptions>): Promise<CheckResultCallback[]>;
+    protected checkContext<ItemType extends ItemPF2e<ActorPF2e>>(opts: CheckContextOptions<ItemType>, data: CheckContextData<ItemType>): CheckMacroContext<ItemType> | undefined;
+    protected toActionCheckPreview(args: {
+        actor?: ActorPF2e;
+        rollOptions: string[];
+        slug: string;
+    }): ActionCheckPreview | null;
 }
 declare class SingleCheckAction extends BaseAction<SingleCheckActionVariantData, SingleCheckActionVariant> {
-  readonly difficultyClass?: CheckDC | string
-  readonly modifiers: RawModifier[]
-  readonly notes: RollNoteSource[]
-  readonly rollOptions: string[]
-  readonly statistic: string
-  constructor(data: SingleCheckActionData)
-  protected toActionVariant(data?: SingleCheckActionVariantData): SingleCheckActionVariant
+    readonly difficultyClass?: CheckDC | DCSlug;
+    readonly modifiers: RawModifier[];
+    readonly notes: RollNoteSource[];
+    readonly rollOptions: string[];
+    readonly statistic: string | string[];
+    constructor(data: SingleCheckActionData);
+    preview(options?: Partial<ActionCheckPreviewOptions>): ActionCheckPreview[];
+    protected toActionVariant(data?: SingleCheckActionVariantData): SingleCheckActionVariant;
 }
-export { SingleCheckAction, SingleCheckActionUseOptions, SingleCheckActionVariant, SingleCheckActionVariantData }
+export { SingleCheckAction, SingleCheckActionVariant };
+export type { ActionCheckPreview, SingleCheckActionUseOptions, SingleCheckActionVariantData };

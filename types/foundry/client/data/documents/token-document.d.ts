@@ -1,18 +1,16 @@
 import type { CanvasBaseToken } from "./client-base-mixes.d.ts";
 
 declare global {
-    class TokenDocument<TParent extends Scene | null> extends CanvasBaseToken<TParent> {
-        constructor(
-            data: PreCreate<foundry.documents.TokenSource>,
-            context?: TokenDocumentConstructionContext<TParent, Actor<TokenDocument<Scene | null>> | null>
-        );
+    class TokenDocument<TParent extends Scene | null = Scene | null> extends CanvasBaseToken<TParent> {
+        /* -------------------------------------------- */
+        /*  Properties                                  */
+        /* -------------------------------------------- */
 
-        /** An array of detection modes which are available to this Token */
-        detectionModes: TokenDetectionMode[];
+        /** A singleton collection which holds a reference to the synthetic token actor by its base actor's ID. */
+        actors: Collection<Actor>;
 
-        sort: number;
-
-        delta: ActorDelta<this> | null;
+        /** The Regions this Token is currently in. */
+        regions: Set<RegionDocument<TParent>> | null;
 
         /**
          * A lazily evaluated reference to the Actor this Token modifies.
@@ -21,17 +19,36 @@ declare global {
          */
         get actor(): Actor<this | null> | null;
 
+        /** A reference to the base, World-level Actor this token represents. */
+        get baseActor(): Actor<null>;
+
         /** An indicator for whether or not the current User has full control over this Token document. */
         override get isOwner(): boolean;
 
         /** A convenient reference for whether this TokenDocument is linked to the Actor it represents, or is a synthetic copy */
         get isLinked(): this["actorLink"];
 
+        /**
+         * Does this TokenDocument have the SECRET disposition and is the current user lacking the necessary permissions
+         * that would reveal this secret?
+         */
+        get isSecret(): boolean;
+
         /** Return a reference to a Combatant that represents this Token, if one is present in the current encounter. */
         get combatant(): Combatant<Combat, this> | null;
 
         /** An indicator for whether or not this Token is currently involved in the active combat encounter. */
         get inCombat(): boolean;
+
+        /**
+         * Define a sort order for this TokenDocument.
+         * This controls its rendering order in the PrimaryCanvasGroup relative to siblings at the same elevation.
+         * In the future this will be replaced with a persisted database field for permanent adjustment of token stacking.
+         * In case of ties, Tokens will be sorted above other types of objects.
+         */
+        get sort(): number;
+
+        set sort(value: number);
 
         /* -------------------------------------------- */
         /*  Methods                                     */
@@ -46,14 +63,11 @@ declare global {
         protected _prepareDetectionModes(): void;
 
         override clone(
-            data: DeepPartial<this["_source"]> | undefined,
-            options: { save: true; keepId?: boolean }
+            data: Record<string, unknown> | undefined,
+            context: DocumentCloneContext & { save: true },
         ): Promise<this>;
-        override clone(data?: DeepPartial<this["_source"]>, options?: { save?: false; keepId?: boolean }): this;
-        override clone(
-            data?: DeepPartial<this["_source"]>,
-            options?: { save?: boolean; keepId?: boolean }
-        ): this | Promise<this>;
+        override clone(data?: Record<string, unknown>, context?: DocumentCloneContext & { save?: false }): this;
+        override clone(data?: Record<string, unknown>, context?: DocumentCloneContext): this | Promise<this>;
 
         /**
          * Create a synthetic Actor using a provided Token instance
@@ -89,25 +103,22 @@ declare global {
          * @param options  Provided options which modify the update request
          * @returns The updated un-linked Actor instance
          */
-        modifyActorDocument(
-            update: Record<string, unknown>,
-            options: DocumentModificationContext<this>
-        ): Promise<Actor<this>[]>;
+        modifyActorDocument(update: Record<string, unknown>, options: DatabaseOperation<this>): Promise<Actor<this>[]>;
 
         /* -------------------------------------------- */
         /*  Event Handlers                              */
         /* -------------------------------------------- */
 
         protected override _preUpdate(
-            data: DocumentUpdateData<this>,
-            options: TokenUpdateContext<TParent>,
-            user: User
+            data: Record<string, unknown>,
+            options: TokenUpdateOperation<TParent>,
+            user: User,
         ): Promise<boolean | void>;
 
         protected override _onUpdate(
             changed: DeepPartial<this["_source"]>,
-            options: DocumentModificationContext<TParent>,
-            userId: string
+            options: TokenUpdateOperation<TParent>,
+            userId: string,
         ): void;
 
         /**
@@ -119,24 +130,24 @@ declare global {
             parent: this,
             collection: string,
             data: object[],
-            options: DocumentModificationContext<this>,
-            userId: string
+            options: DatabaseCreateOperation<this>,
+            userId: string,
         ): void;
 
         protected override _preUpdateDescendantDocuments(
             parent: this,
             collection: string,
             changes: Record<string, unknown>[],
-            options: DocumentModificationContext<this>,
-            userId: string
+            options: DatabaseUpdateOperation<this>,
+            userId: string,
         ): void;
 
         protected override _preDeleteDescendantDocuments(
             parent: this,
             collection: string,
             ids: string[],
-            options: DocumentModificationContext<this>,
-            userId: string
+            options: DatabaseDeleteOperation<this>,
+            userId: string,
         ): void;
 
         protected override _onCreateDescendantDocuments(
@@ -144,8 +155,8 @@ declare global {
             collection: string,
             documents: ClientDocument[],
             data: object[],
-            options: DocumentModificationContext<this>,
-            userId: string
+            options: DatabaseCreateOperation<this>,
+            userId: string,
         ): void;
 
         protected override _onUpdateDescendantDocuments(
@@ -153,8 +164,8 @@ declare global {
             collection: string,
             documents: ClientDocument[],
             changes: Record<string, unknown>[],
-            options: DocumentModificationContext<this>,
-            userId: string
+            options: DatabaseUpdateOperation<this>,
+            userId: string,
         ): void;
 
         protected override _onDeleteDescendantDocuments(
@@ -162,17 +173,17 @@ declare global {
             collection: string,
             documents: ClientDocument[],
             ids: string[],
-            options: DocumentModificationContext<this>,
-            userId: string
+            options: DatabaseDeleteOperation<this>,
+            userId: string,
         ): void;
 
         /**
          * When the base Actor for a TokenDocument changes, we may need to update its Actor instance
          * @internal
          */
-        _onUpdateBaseActor(
+        protected _onUpdateBaseActor(
             update?: Record<string, unknown>,
-            options?: DocumentModificationContext<ClientDocument | null>
+            options?: DatabaseUpdateOperation<ClientDocument | null>,
         ): void;
 
         /**
@@ -180,31 +191,34 @@ declare global {
          * @param [update]  The update delta.
          * @param [options] The options provided to the update.
          */
-        protected _onRelatedUpdate(update?: Record<string, unknown>, options?: DocumentModificationContext<null>): void;
+        protected _onRelatedUpdate(update?: Record<string, unknown>, options?: DatabaseUpdateOperation<null>): void;
 
         /** Get an Array of attribute choices which could be tracked for Actors in the Combat Tracker */
         static getTrackedAttributes(data?: object, _path?: string[]): TrackedAttributesDescription;
 
         /** Inspect the Actor data model and identify the set of attributes which could be used for a Token Bar */
-        static getTrackedAttributeChoices(attributes: TrackedAttributesDescription): TrackedAttributesDescription;
+        static getTrackedAttributeChoices(attributes?: TrackedAttributesDescription): TrackedAttributesDescription;
     }
 
-    interface TokenDocument<TParent extends Scene | null> extends CanvasBaseToken<TParent> {
+    interface TokenDocument<TParent extends Scene | null = Scene | null> extends CanvasBaseToken<TParent> {
+        delta: ActorDelta<this> | null;
+
         get object(): Token<this> | null;
         get sheet(): TokenConfig<this>;
         get uuid(): TokenDocumentUUID;
     }
 
-    interface TokenDocumentConstructionContext<
-        TParent extends Scene | null,
-        TActor extends Actor<TokenDocument<Scene | null>> | null
-    > extends DocumentConstructionContext<TParent> {
+    interface TokenDocumentConstructionContext<TParent extends Scene | null, TActor extends Actor<TokenDocument> | null>
+        extends DocumentConstructionContext<TParent> {
         actor?: TActor;
     }
 
-    interface TokenUpdateContext<TParent extends Scene | null> extends DocumentModificationContext<TParent> {
-        action?: "create" | "update" | "delete";
+    interface TokenUpdateOperation<TParent extends Scene | null> extends DatabaseUpdateOperation<TParent> {
         embedded?: { embeddedName: string; hookData: { _id?: string }[] };
+        animate?: boolean;
+        pan?: boolean;
+        teleport?: boolean;
+        animation?: TokenAnimationOptions;
     }
 
     type TokenDocumentUUID = `Scene.${string}.Token.${string}`;

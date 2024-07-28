@@ -1,93 +1,101 @@
-import { AttributeString } from "types/pf2e/module/actor/types.ts"
-import { ActionTrait } from "types/pf2e/module/item/ability/types.ts"
-import { ItemSystemData, ItemSystemSource } from "types/pf2e/module/item/data/base.ts"
-import { MagicTradition, SpellTrait } from "types/pf2e/module/item/spell/index.ts"
-import { CheckRoll } from "types/pf2e/module/system/check/index.ts"
+import type { AttributeString } from "../../actor/types.ts";
+import type { ItemSystemData, ItemSystemSource, ItemTraitsNoRarity } from "../base/data/system.ts";
+import type { MagicTradition } from "../spell/index.ts";
+import type { CheckRoll } from "../../system/check/index.ts";
+import type { EffectTrait } from "./types.ts";
 interface AbstractEffectSystemSource extends ItemSystemSource {
-  /** Whether this effect originated from a spell */
-  fromSpell?: boolean
+    traits: EffectTraits;
+    /** Whether this effect originated from a spell */
+    fromSpell?: boolean;
+    expired?: boolean;
 }
 interface AbstractEffectSystemData extends ItemSystemData {
-  /** Whether this effect originated from a spell */
-  fromSpell: boolean
+    traits: EffectTraits;
+    /** Whether this effect originated from a spell */
+    fromSpell: boolean;
 }
 interface EffectBadgeBaseSource {
-  labels?: string[]
+    labels?: string[];
 }
 interface EffectBadgeBase extends EffectBadgeBaseSource {
-  label: string | null
+    label: string | null;
 }
 interface EffectBadgeCounterSource extends EffectBadgeBaseSource {
-  type: "counter"
-  max?: number
-  value: number
+    type: "counter";
+    min?: number;
+    max?: number;
+    value: number;
+    loop?: boolean;
 }
 interface EffectBadgeCounter extends EffectBadgeCounterSource, EffectBadgeBase {
-  max: number
+    min: number;
+    max: number;
 }
-interface EffectTraits {
-  value: EffectTrait[]
-  rarity?: never
-  custom?: never
+interface EffectTraits extends ItemTraitsNoRarity<EffectTrait> {
 }
-type EffectTrait = ActionTrait | SpellTrait
 /** A static value, including the result of a formula badge */
 interface EffectBadgeValueSource extends EffectBadgeBaseSource {
-  type: "value"
-  value: number
-  reevaluate?: {
-    formula: string
-    event: "turn-start"
-  } | null
+    type: "value";
+    value: number;
+    reevaluate?: {
+        /** The type of event that reevaluation should occur */
+        event: BadgeReevaluationEventType;
+        /** The formula of this badge when it was of a "formula" type */
+        formula: string;
+        /** The initial value of this badge */
+        initial?: number;
+    } | null;
+    min?: never;
+    max?: never;
 }
-interface EffectBadgeValue extends EffectBadgeValueSource, EffectBadgeBase {
-  max: number
+interface EffectBadgeValue extends Omit<EffectBadgeValueSource, "min" | "max">, EffectBadgeBase {
+    min: number;
+    max: number;
 }
 interface EffectBadgeFormulaSource extends EffectBadgeBaseSource {
-  type: "formula"
-  value: string
-  evaluate?: boolean
-  reevaluate?: "turn-start" | null
+    type: "formula";
+    value: string;
+    evaluate?: boolean;
+    reevaluate?: BadgeReevaluationEventType | null;
+    min?: never;
+    max?: never;
 }
-interface EffectBadgeFormula extends EffectBadgeFormulaSource, EffectBadgeBase {}
+type BadgeReevaluationEventType = "initiative-roll" | "turn-start" | "turn-end";
+interface EffectBadgeFormula extends EffectBadgeFormulaSource, EffectBadgeBase {
+}
 interface EffectContextData {
-  origin: {
-    actor: ActorUUID
-    token: TokenDocumentUUID | null
-    item: ItemUUID | null
-    spellcasting: EffectContextSpellcastingData | null
-  }
-  target: {
-    actor: ActorUUID
-    token: TokenDocumentUUID | null
-  } | null
-  roll: Pick<CheckRoll, "total" | "degreeOfSuccess"> | null
+    origin: {
+        actor: ActorUUID;
+        token: TokenDocumentUUID | null;
+        item: ItemUUID | null;
+        spellcasting: EffectContextSpellcastingData | null;
+        rollOptions?: string[];
+    };
+    target: {
+        actor: ActorUUID;
+        token: TokenDocumentUUID | null;
+    } | null;
+    roll: Pick<CheckRoll, "total" | "degreeOfSuccess"> | null;
 }
 interface EffectContextSpellcastingData {
-  attribute: {
-    type: AttributeString
-    mod: number
-  }
-  tradition: MagicTradition | null
+    attribute: {
+        type: AttributeString;
+        mod: number;
+    };
+    tradition: MagicTradition | null;
 }
 interface EffectAuraData {
-  slug: string
-  origin: ActorUUID
-  removeOnExit: boolean
+    slug: string;
+    origin: ActorUUID;
+    removeOnExit: boolean;
 }
-type EffectBadgeSource = EffectBadgeCounterSource | EffectBadgeValueSource | EffectBadgeFormulaSource
-type EffectBadge = EffectBadgeCounter | EffectBadgeValue | EffectBadgeFormula
-type TimeUnit = "rounds" | "minutes" | "hours" | "days"
-export {
-  AbstractEffectSystemData,
-  AbstractEffectSystemSource,
-  EffectAuraData,
-  EffectBadge,
-  EffectBadgeFormulaSource,
-  EffectBadgeSource,
-  EffectBadgeValueSource,
-  EffectContextData,
-  EffectTrait,
-  EffectTraits,
-  TimeUnit,
+type EffectBadgeSource = EffectBadgeCounterSource | EffectBadgeValueSource | EffectBadgeFormulaSource;
+type EffectBadge = EffectBadgeCounter | EffectBadgeValue | EffectBadgeFormula;
+type TimeUnit = "rounds" | "minutes" | "hours" | "days";
+type EffectExpiryType = "turn-start" | "turn-end" | "round-end";
+interface DurationData {
+    value: number;
+    unit: TimeUnit | "unlimited" | "encounter";
+    expiry: EffectExpiryType | null;
 }
+export type { AbstractEffectSystemData, AbstractEffectSystemSource, BadgeReevaluationEventType, DurationData, EffectAuraData, EffectBadge, EffectBadgeCounter, EffectBadgeFormulaSource, EffectBadgeSource, EffectBadgeValueSource, EffectContextData, EffectExpiryType, EffectTraits, TimeUnit, };

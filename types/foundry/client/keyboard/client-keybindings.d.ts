@@ -156,10 +156,8 @@ declare global {
          */
         private static _onToggleCharacterSheet(
             event: KeyboardEvent,
-            context: KeyboardEventContext
-        ):
-            | ActorSheet<Actor<TokenDocument<Scene | null> | null>>
-            | Promise<ActorSheet<Actor<TokenDocument<Scene | null> | null>>>;
+            context: KeyboardEventContext,
+        ): ActorSheet<Actor> | Promise<ActorSheet<Actor>>;
 
         /**
          * Handle action to target the currently hovered token.
@@ -207,7 +205,7 @@ declare global {
          * @param context            The context data of the event
          * @param movementDirections The Directions being panned in
          */
-        private _onPan(context: KeyboardEventContext, movementDirections: MovementDirection[]): boolean;
+        private _onPan(context: KeyboardEventContext, movementDirections: PanningDirection[]): boolean;
 
         /**
          * Handle Macro executions
@@ -244,5 +242,5 @@ declare global {
         private static _onZoom(context: KeyboardEventContext, zoomDirection: "in" | "out"): boolean;
     }
 
-    type MovementDirection = "up" | "right" | "down" | "left";
+    type PanningDirection = "up" | "right" | "down" | "left";
 }

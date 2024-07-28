@@ -1,6 +1,4 @@
 import type * as fields from "../data/fields.d.ts";
-import type { EmbeddedCollection } from "./embedded-collection.d.mts";
-import type { Document } from "./module.d.ts";
 
 /**
  * The abstract base class which defines the data schema contained within a Document.
@@ -8,12 +6,12 @@ import type { Document } from "./module.d.ts";
  * @param [options={}] Options which affect DataModel construction
  */
 export default abstract class DataModel<
-    TParent extends DataModel | Document | null = _DataModel | null,
-    TSchema extends fields.DataSchema = fields.DataSchema
+    TParent extends DataModel | null = _DataModel | null,
+    TSchema extends fields.DataSchema = fields.DataSchema,
 > {
     constructor(
         data?: DeepPartial<SourceFromSchema<fields.DataSchema>>,
-        options?: DataModelConstructionOptions<TParent>
+        options?: DataModelConstructionOptions<TParent>,
     );
 
     /**
@@ -51,6 +49,12 @@ export default abstract class DataModel<
     /** Is the current state of this DataModel invalid? */
     get invalid(): boolean;
 
+    /** An array of validation failure instances which may have occurred when this instance was last validated. */
+    get validationFailures(): {
+        fields: foundry.data.validation.DataModelValidationFailure | null;
+        joint: foundry.data.validation.DataModelValidationFailure | null;
+    };
+
     /* ---------------------------------------- */
     /*  Data Cleaning Methods                   */
     /* ---------------------------------------- */
@@ -76,6 +80,9 @@ export default abstract class DataModel<
     /*  Data Initialization                     */
     /* ---------------------------------------- */
 
+    /** A generator that orders the DataFields in the DataSchema into an expected initialization order. */
+    protected static _initializationOrder(): Generator<[string, fields.DataField], void>;
+
     /**
      * Initialize the instance by copying data from the source object to instance attributes.
      * This mirrors the workflow of SchemaField#initialize but with some added functionality.
@@ -85,6 +92,14 @@ export default abstract class DataModel<
 
     /** Reset the state of this data instance back to mirror the contained source data, erasing any changes. */
     reset(): void;
+
+    /**
+     * Clone a model, creating a new data model by combining current data with provided overrides.
+     * @param [data={}]    Additional data which overrides current document data at the time of creation
+     * @param [context={}] Context options passed to the data model constructor
+     * @returns The cloned Document instance
+     */
+    clone(data?: Record<string, unknown>, context?: DataModelConstructionOptions<TParent>): this;
 
     /* ---------------------------------------- */
     /*  Data Validation Methods                 */
@@ -120,7 +135,7 @@ export default abstract class DataModel<
      */
     static formatValidationErrors(
         errors: Record<string, string>,
-        options?: { label?: string; namespace?: string }
+        options?: { label?: string; namespace?: string },
     ): string;
 
     /**
@@ -128,7 +143,7 @@ export default abstract class DataModel<
      * @param data The candidate data object to validate
      * @throws An error if a validation failure is detected
      */
-    static validateJoint(data: object): void;
+    static validateJoint(data: SourceFromSchema<fields.DataSchema>): void;
 
     /* ---------------------------------------- */
     /*  Data Management                         */
@@ -145,8 +160,8 @@ export default abstract class DataModel<
      * @returns An object containing the changed keys and values
      */
     updateSource(
-        changes?: DeepPartial<this["_source"]> | undefined,
-        options?: MergeObjectOptions
+        changes?: Record<string, unknown> | undefined,
+        options?: Partial<DocumentSourceUpdateContext>,
     ): DeepPartial<this["_source"]>;
 
     /* ---------------------------------------- */
@@ -194,7 +209,7 @@ export default abstract class DataModel<
      * @param source The candidate source data from which the model will be constructed
      * @returns Migrated source data, if necessary
      */
-    static migrateData<TSource extends object>(source: TSource): TSource;
+    static migrateData<T extends DataModel>(this: ConstructorOf<T>, source: Record<string, unknown>): T["_source"];
 
     /**
      * Wrap data migration in a try/catch which attempts it safely
@@ -203,16 +218,6 @@ export default abstract class DataModel<
      */
     static migrateDataSafe(source: object): object;
 }
-
-export type RawObject<TModel extends _DataModel> = {
-    [P in keyof TModel]: TModel[P] extends EmbeddedCollection<infer U>
-        ? RawObject<U>[]
-        : TModel[P] extends DataModel
-        ? RawObject<TModel[P]>
-        : TModel[P] extends DataModel[]
-        ? RawObject<TModel[P][number]>[]
-        : TModel[P];
-};
 
 export interface DataModelValidationOptions {
     changes?: object;
@@ -224,17 +229,26 @@ export interface DataModelValidationOptions {
 }
 
 declare global {
-    interface DataModelConstructionOptions<TParent extends DataModel | Document | null> {
-        /** @param [parent=null] A parent DataModel instance to which this DataModel belongs */
+    type RawObject<TModel extends DataModel> = TModel extends { system: infer TSystem }
+        ? Omit<TModel, "system"> & { system: TSystem }
+        : TModel["_source"];
+
+    interface DataModelConstructionOptions<TParent extends DataModel | null> {
+        /** A parent DataModel instance to which this DataModel belongs */
         parent?: TParent;
-        /** @param [strict=true] Control the strictness of validation for initially provided data */
+        /** Control the strictness of validation for initially provided data */
         strict?: boolean;
-        /** @param [fallback=false] Attempt to replace invalid values with valid defaults? */
+        /** Attempt to replace invalid values with valid defaults? */
         fallback?: boolean;
-        /** @param [partial=false]  Allow partial source data, ignoring absent fields? */
+        /** Allow partial source data, ignoring absent fields? */
         partial?: boolean;
         [key: string]: unknown;
     }
+
+    interface ParentedDataModelConstructionOptions<TParent extends DataModel>
+        extends DataModelConstructionOptions<TParent> {
+        parent: TParent;
+    }
 }
 
-type _DataModel = DataModel<_DataModel | null, fields.DataSchema> | Document;
+type _DataModel = DataModel<_DataModel | null, fields.DataSchema>;

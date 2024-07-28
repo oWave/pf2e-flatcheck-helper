@@ -1,4 +1,4 @@
-import { ActorPF2e } from "types/pf2e/module/documents"
+import { ActorPF2e } from "types/pf2e/module/actor"
 import { CombatantPF2e } from "types/pf2e/module/encounter"
 
 export function isJQuery(obj: unknown): obj is JQuery {
@@ -14,5 +14,12 @@ export function actorHasEffect(actor: ActorPF2e, slug: string) {
 }
 
 export function combatantIsNext(c: CombatantPF2e) {
+  // @ts-expect-error missing type def
   return c.parent?.nextCombatant.tokenId == c.tokenId
+}
+
+export function sleep(ms: number) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms)
+  })
 }

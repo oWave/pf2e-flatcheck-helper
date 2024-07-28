@@ -1,45 +1,38 @@
-import {
-  ActorSystemData,
-  ActorSystemSource,
-  BaseActorSourcePF2e,
-  ActorAttributesSource,
-  ActorAttributes,
-} from "types/pf2e/module/actor/data/base.ts"
+import { ActorAttributes, ActorAttributesSource, ActorDetails, ActorSystemData, ActorSystemSource, BaseActorSourcePF2e } from "../data/base.ts";
 /** The stored source data of a loot actor */
-type LootSource = BaseActorSourcePF2e<"loot", LootSystemSource>
+type LootSource = BaseActorSourcePF2e<"loot", LootSystemSource>;
 /** The system-level data of loot actors. */
 interface LootSystemSource extends ActorSystemSource {
-  attributes: LootAttributesSource
-  details: LootDetailsSource
-  lootSheetType: "Merchant" | "Loot"
-  hiddenWhenEmpty: boolean
-  traits?: never
+    attributes: LootAttributesSource;
+    details: LootDetailsSource;
+    lootSheetType: "Merchant" | "Loot";
+    hiddenWhenEmpty: boolean;
+    traits?: never;
 }
-interface LootSystemData extends Omit<LootSystemSource, "attributes">, ActorSystemData {
-  attributes: LootAttributes
-  details: LootDetailsData
-  traits?: never
+interface LootSystemData extends Omit<LootSystemSource, "attributes" | "details">, ActorSystemData {
+    attributes: LootAttributes;
+    details: LootDetails;
+    traits?: never;
 }
 interface LootAttributesSource extends ActorAttributesSource {
-  hp?: never
-  ac?: never
-  perception?: never
-  immunities?: never
-  weaknesses?: never
-  resistances?: never
+    hp?: never;
+    ac?: never;
+    perception?: never;
+    immunities?: never;
+    weaknesses?: never;
+    resistances?: never;
 }
-interface LootAttributes
-  extends Omit<LootAttributesSource, "immunities" | "weaknesses" | "resistances">,
-    Omit<ActorAttributes, "perception" | "hp" | "ac"> {
-  initiative?: never
+interface LootAttributes extends Omit<LootAttributesSource, "immunities" | "weaknesses" | "resistances">, Omit<ActorAttributes, "perception" | "hp" | "ac"> {
+    initiative?: never;
 }
 interface LootDetailsSource {
-  description: string
-  level: {
-    value: number
-  }
+    alliance?: never;
+    description: string;
+    level: {
+        value: number;
+    };
 }
-interface LootDetailsData extends LootDetailsSource {
-  alliance: null
+interface LootDetails extends Omit<LootDetailsSource, "alliance">, ActorDetails {
+    alliance: null;
 }
-export { LootSource, LootSystemData, LootSystemSource }
+export type { LootSource, LootSystemData, LootSystemSource };

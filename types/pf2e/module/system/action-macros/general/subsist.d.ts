@@ -1,13 +1,9 @@
-import { SkillActionOptions } from "../index.ts"
-import {
-  SingleCheckAction,
-  SingleCheckActionVariant,
-  SingleCheckActionVariantData,
-} from "types/pf2e/module/actor/actions/index.ts"
-declare function subsist(options: SkillActionOptions): void
+import { SkillActionOptions } from "../index.ts";
+import { SingleCheckAction, SingleCheckActionVariant, SingleCheckActionVariantData } from "../../../actor/actions/index.ts";
+declare function subsist(options: SkillActionOptions): void;
 declare class SubsistAction extends SingleCheckAction {
-  constructor()
-  protected toActionVariant(data?: SingleCheckActionVariantData): SingleCheckActionVariant
+    constructor();
+    protected toActionVariant(data?: SingleCheckActionVariantData): SingleCheckActionVariant;
 }
-declare const action: SubsistAction
-export { subsist as legacy, action }
+declare const action: SubsistAction;
+export { subsist as legacy, action };

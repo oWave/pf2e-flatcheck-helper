@@ -1,32 +1,27 @@
-import { Coins, PartialPrice } from "types/pf2e/module/item/physical/data.ts"
-import { Size } from "types/pf2e/module/data.ts"
-/** Coins class that exposes methods to perform operations on coins without side effects */
-declare class CoinsPF2e implements Coins {
-  cp: number
-  sp: number
-  gp: number
-  pp: number
-  constructor(data?: Coins | null)
-  /** The total value of this coins in copper */
-  get copperValue(): number
-  get goldValue(): number
-  add(coins: Coins): CoinsPF2e
-  /** Multiply by a number and clean up result */
-  scale(factor: number): CoinsPF2e
-  /** Increase a price for larger physical-item sizes */
-  adjustForSize(size: Size): CoinsPF2e
-  /** Returns a coins data object with all zero value denominations omitted */
-  toObject(): Coins
-  /** Parses a price string such as "5 gp" and returns a new CoinsPF2e object */
-  static fromString(coinString: string, quantity?: number): CoinsPF2e
-  static fromPrice(price: PartialPrice, factor: number): CoinsPF2e
-  /** Creates a new price string such as "5 gp" from this object */
-  toString(): string
-}
-declare const coinCompendiumIds: {
-  pp: string
-  gp: string
-  sp: string
-  cp: string
-}
-export { CoinsPF2e, coinCompendiumIds }
+import type { ContainerPF2e, PhysicalItemPF2e } from "../index.ts";
+import { PhysicalItemSource } from "../base/data/index.ts";
+import { ContainerBulkData } from "../container/data.ts";
+import { Rarity } from "../../data.ts";
+import { CoinsPF2e } from "./coins.ts";
+import { BulkData } from "./data.ts";
+declare function computeLevelRarityPrice(item: PhysicalItemPF2e): {
+    level: number;
+    rarity: Rarity;
+    price: CoinsPF2e;
+};
+/**
+ * Generate a modified item name based on precious materials and runes. Currently only armor and weapon documents
+ * have significant implementations.
+ */
+declare function generateItemName(item: PhysicalItemPF2e): string;
+/** Validate HP changes to a physical item and also adjust current HP when max HP changes */
+declare function handleHPChange(item: PhysicalItemPF2e, changed: DeepPartial<PhysicalItemSource>): void;
+/** Add and adjust properties on an item's bulk data object */
+declare function prepareBulkData<TItem extends PhysicalItemPF2e>(item: TItem): TItem extends ContainerPF2e ? ContainerBulkData : BulkData;
+/**
+ * Detach a subitem from another physical item, either creating it as a new, independent item or incrementing the
+ * quantity of aan existing stack.
+ */
+declare function detachSubitem(subitem: PhysicalItemPF2e, skipConfirm: boolean): Promise<void>;
+export { coinCompendiumIds } from "./coins.ts";
+export { CoinsPF2e, computeLevelRarityPrice, detachSubitem, generateItemName, handleHPChange, prepareBulkData };
