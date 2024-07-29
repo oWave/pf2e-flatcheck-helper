@@ -5,7 +5,7 @@
 
 Adds some buttons below the chat box for quickly rolling various flat checks.
 * Hold control for secret rolls
-* The target button automatically rolls the right flat check based on your targeted token. Currently only checks concealed/hidden/invisible. More soon™ (maybe)
+* The target button automatically rolls the right flat check based on your targeted token. Checks concealed/hidden/invisible.
 
 ## Delay Button
 ![image](https://github.com/oWave/pf2e-flatcheck-helper/assets/9253349/df782d32-50ec-45fd-93f2-f40d0b63932d)
@@ -13,14 +13,15 @@ Adds some buttons below the chat box for quickly rolling various flat checks.
 Adds buttons that allow delaying a combatants turn (and returning to initiative).
 - In the combat tracker
 - In the token HUD (menu when right-clicking a token)
-- Also works when using the "Delay" action (any action named "Delay" or the delay action imported from the system compendium)
+- Also works when using the "Delay" action
+  - The slug of that action (set in the rules tab) need to be "delay". You can change the name and description (and even leave the latter blank to save space)
 
-Has some options:
+Has some variants you can toggle in the module settings:
 - Return button can be turned off, so delaying is just a marker
-- Prompt-variant: Lets the user select which turn to delay after. Can still return early if they wish.
+- Prompt for new initiative: Lets the user select which turn to delay after. Can still return early if they wish.
 
 ## Spirit & Life Link + Share Life Automation
-Adds a chat message on turn start (spirit link) and damage (life link & ~~shield other~~ share life) to tranfer HP from caster to spell target.  
+Adds a chat message on turn start (spirit link) and damage (life link & share life) to transfer HP from caster to spell target.  
 Requires the use of the marker effects (see below)
 
 ![image](https://github.com/oWave/pf2e-flatcheck-helper/assets/9253349/53fe08d3-b427-482c-bee5-244e206b8195)
