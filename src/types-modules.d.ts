@@ -1,33 +1,14 @@
 declare global {
-  type SocketLibCallback = (...args: any[]) => any
-  interface SocketlibSocket {
-    register(handler: string, func: SocketLibCallback)
+	interface LibWrapper {
+		register(
+			moduleId: string,
+			target: string,
+			fn: CallableFunction,
+			type: "MIXED" | "WRAPPER" | "OVERRIDE",
+			options?: any,
+		)
+	}
 
-    executeAsGM(handler: string, ...parameters: any[]): Promise<any>
-    executeAsUser(handler: string, userId: any, ...parameters: any[]): Promise<any>
-    executeForAllGMs(handler: string, ...parameters: any[]): Promise<any>
-    executeForOtherGMs(handler: string, ...parameters: any[]): Promise<any>
-    executeForEveryone(handler: string, ...parameters: any[]): Promise<any>
-    executeForOthers(handler: string, ...parameters: any[]): Promise<any>
-    executeForUsers(handler: string, recipients: any[], ...parameters: any[]): Promise<any>
-  }
-
-  interface Socketlib {
-    registerModule(moduleName: string): SocketlibSocket
-  }
-
-  const socketlib: Socketlib
-
-  interface LibWrapper {
-    register(
-      moduleId: string,
-      target: string,
-      fn: CallableFunction,
-      type: "MIXED" | "WRAPPER" | "OVERRIDE",
-      options?: any
-    )
-  }
-
-  const libWrapper: LibWrapper
+	const libWrapper: LibWrapper
 }
-export {}
+export type {}

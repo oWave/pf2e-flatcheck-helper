@@ -19,7 +19,6 @@
     ],
     "types": [
       "jquery",
-      "node",
       "foundry",
       "pf2e"
     ],
@@ -33,6 +32,6 @@
     "./src/**/*",
   ],
   "files": [
-    "./src/module.ts"
+    "./src/index.ts"
   ],
 }
