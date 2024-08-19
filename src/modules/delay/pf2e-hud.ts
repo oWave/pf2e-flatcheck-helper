@@ -29,7 +29,7 @@ export function onRenderPF2eHudTracker(app, tracker: HTMLElement) {
 		if (combat.combatant === c) {
 			delayElement.replaceWith(makeDelayButton())
 		} else if (c.actor && isDelaying(c.actor)) {
-			delayElement.replaceWith(makeReturnButton())
+			delayElement.replaceWith(makeReturnButton(c))
 		} else {
 			const icon = document.createElement("i")
 			icon.classList.add("fa-solid", "fa-dice-d20")
@@ -55,7 +55,7 @@ function makeDelayButton() {
 	return node
 }
 
-function makeReturnButton() {
+function makeReturnButton(combatant: CombatantPF2e) {
 	if (!MODULE.settings.allowReturn) {
 		return parseHTML(`<i class="fa-solid fa-hourglass delay-indicator" data-tooltip="Delaying">`)
 	}
@@ -65,6 +65,11 @@ function makeReturnButton() {
       <i class="fa-solid fa-hourglass delay-indicator"></i>
     </a>
     `)
+
+	node?.addEventListener("click", (e) => {
+		e.stopPropagation()
+		tryReturn(combatant)
+	})
 
 	return node
 }
