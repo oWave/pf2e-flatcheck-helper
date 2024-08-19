@@ -1,9 +1,9 @@
+import MODULE from "src/index"
+import { actorEffectBySlug, actorHasEffect } from "src/utils"
 import type { ActorPF2e } from "types/pf2e/module/actor"
 import type { ChatMessagePF2e } from "types/pf2e/module/chat-message"
 import type { CombatantPF2e, EncounterPF2e } from "types/pf2e/module/encounter"
 import type { EffectPF2e, ItemPF2e } from "types/pf2e/module/item"
-import MODULE from "src/index"
-import { actorEffectBySlug, actorHasEffect } from "src/utils"
 import { BaseModule } from "./base"
 
 export class LifeLinkModule extends BaseModule {

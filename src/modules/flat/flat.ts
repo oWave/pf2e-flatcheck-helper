@@ -1,7 +1,7 @@
-import type { TokenPF2e } from "types/pf2e/module/canvas"
 import MODULE from "src/index"
-import { MoreDialog } from "./more-dialog"
+import type { TokenPF2e } from "types/pf2e/module/canvas"
 import { BaseModule } from "../base"
+import { MoreDialog } from "./more-dialog"
 
 export class FlatModule extends BaseModule {
 	settingsKey = "show-global"

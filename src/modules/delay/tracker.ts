@@ -1,7 +1,7 @@
+import MODULE from "src/index"
 import type { CombatantPF2e } from "types/pf2e/module/encounter"
-import MODULE from "src"
-import { isDelaying } from "./utils"
 import { tryDelay, tryReturn } from "."
+import { isDelaying } from "./utils"
 
 export function onRenderCombatTracker(tracker, html: JQuery, data) {
 	if (!MODULE.settings.showInCombatTracker) return

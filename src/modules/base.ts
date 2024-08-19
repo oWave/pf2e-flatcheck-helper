@@ -1,5 +1,5 @@
-import MODULE from "src/index"
 import { MODULE_ID } from "src/constants"
+import MODULE from "src/index"
 
 export abstract class BaseModule {
 	enabled = false

@@ -1,7 +1,7 @@
-import MODULE from "src"
-import type { EncounterPF2e } from "types/pf2e/module/encounter"
+import MODULE from "src/index"
+import type { CombatantPF2e, EncounterPF2e } from "types/pf2e/module/encounter"
+import { tryDelay, tryReturn } from "."
 import { isDelaying } from "./utils"
-import { tryDelay } from "."
 
 export function onRenderPF2eHudTracker(app, tracker: HTMLElement) {
 	if (!MODULE.settings.modifyPF2eHud) return

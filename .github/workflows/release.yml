@@ -47,6 +47,7 @@ jobs:
         with:
           allowUpdates: true
           omitDraftDuringUpdate: true
+          omitPrereleaseDuringUpdate: true
           name: ${{ github.event.release.name }}
           token: ${{ secrets.GITHUB_TOKEN }}
           artifacts: "./module.json, ./module.zip"

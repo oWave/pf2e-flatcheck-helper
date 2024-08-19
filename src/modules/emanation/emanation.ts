@@ -1,10 +1,10 @@
+import { MODULE_ID } from "src/constants"
+import MODULE from "src/index"
 import type { ChatMessagePF2e } from "types/pf2e/module/chat-message"
 import type { ItemPF2e } from "types/pf2e/module/item"
 import type { SpellPF2e, SpellSheetPF2e } from "types/pf2e/module/item/spell"
-import { MODULE_ID } from "src/constants"
-import { EmanationRequestDialog } from "./emanation-dialog"
-import MODULE from "src/index"
 import { BaseModule } from "../base"
+import { EmanationRequestDialog } from "./emanation-dialog"
 
 export class EmanationModule extends BaseModule {
 	settingsKey = "emanation-automation"

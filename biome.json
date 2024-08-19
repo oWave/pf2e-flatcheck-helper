@@ -1,24 +1,25 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
-  "javascript": {
-    "formatter": {
-      "semicolons": "asNeeded",
-      "lineWidth": 100
-    }
-  },
-  "linter": {
-    "rules": {
-      "suspicious": {
-        "noExplicitAny": "off"
-      },
-      "complexity": {
-        "noForEach": "off",
-        "noThisInStatic": "off"
-      },
-      "style": {
-        "noNonNullAssertion": "off",
-        "noUselessElse": "off"
-      }
-    }
-  }
+	"$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
+	"javascript": {
+		"formatter": {
+			"semicolons": "asNeeded",
+			"lineWidth": 100
+		}
+	},
+	"linter": {
+		"rules": {
+			"suspicious": {
+				"noExplicitAny": "off"
+			},
+			"complexity": {
+				"noForEach": "off",
+				"noThisInStatic": "off",
+				"noBannedTypes": "off"
+			},
+			"style": {
+				"noNonNullAssertion": "off",
+				"noUselessElse": "off"
+			}
+		}
+	}
 }

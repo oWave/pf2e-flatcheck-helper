@@ -1,9 +1,9 @@
 import { MODULE_ID } from "./constants"
 import { DelayModule } from "./modules/delay"
 import { EmanationModule } from "./modules/emanation/emanation"
-import { settings } from "./settings"
 import { FlatModule } from "./modules/flat/flat"
 import { LifeLinkModule } from "./modules/life-link"
+import { settings } from "./settings"
 
 type Callback = (data: any) => void
 

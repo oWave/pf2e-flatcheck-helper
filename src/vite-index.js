@@ -1,2 +1,2 @@
-import "./index.ts";
-import "./main.css";
+import "./index.ts"
+import "./main.css"
