@@ -4,19 +4,21 @@
   "author": "oWave",
   "license": "MIT",
   "private": true,
+  "type": "module",
   "scripts": {
-    "watch": "esbuild src/index.ts --outfile=dist/module.js --sourcemap --bundle --watch",
-    "build": "esbuild src/index.ts --outfile=dist/module.js --bundle",
-    "lint": "eslint src/",
+    "dev": "vite serve",
+    "build": "vite build",
     "unpack": "fvtt package workon \"pf2e-flatcheck-helper\" && fvtt package unpack \"effects\"",
     "pack": "fvtt package workon \"pf2e-flatcheck-helper\" && fvtt package pack \"effects\""
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",
     "@types/jquery": "^3.5.30",
+    "@types/node": "^22.3.0",
     "typescript": "*",
     "vite": "^5.4.0",
-    "vite-plugin-checker": "^0.7.2"
+    "vite-plugin-checker": "^0.7.2",
+    "vite-tsconfig-paths": "^5.0.1"
   },
   "packageManager": "yarn@1.22.19+sha1.4ba7fc5c6e704fce2066ecbfb0b0d8976fe62447",
   "dependencies": {}

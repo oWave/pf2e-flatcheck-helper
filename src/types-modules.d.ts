@@ -7,6 +7,7 @@ declare global {
 			type: "MIXED" | "WRAPPER" | "OVERRIDE",
 			options?: any,
 		)
+		unregister(moduleId: string, target: number | string)
 	}
 
 	const libWrapper: LibWrapper

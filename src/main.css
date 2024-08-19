@@ -79,3 +79,18 @@
     border: unset;
   }
 }
+
+#pf2e-hud-tracker .combatant .initiative {
+  .delay-indicator {
+    animation: rotating 4s linear infinite;
+  }
+
+  .delay-return .delay-indicator:hover {
+    animation: unset;
+
+    &:before {
+      /* fa-play */
+      content: "\f04b";
+    }
+  }
+}

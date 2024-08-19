@@ -1,9 +1,9 @@
 import { MODULE_ID } from "./constants"
-import { setupDelay } from "./delay"
-import { setupEmanationAutomation } from "./emanation"
-import { setupFlat } from "./flat"
-import { setupLink } from "./life-link"
+import { DelayModule } from "./modules/delay"
+import { EmanationModule } from "./modules/emanation/emanation"
 import { settings } from "./settings"
+import { FlatModule } from "./modules/flat/flat"
+import { LifeLinkModule } from "./modules/life-link"
 
 type Callback = (data: any) => void
 
@@ -21,6 +21,9 @@ class SocketHandler {
 	register(type: string, handler: Callback) {
 		this.#callbacks[type] = handler
 	}
+	unregister(type: string) {
+		delete this.#callbacks[type]
+	}
 
 	emit(type: string, data: any) {
 		if (!(type in this.#callbacks)) {
@@ -33,24 +36,51 @@ class SocketHandler {
 	}
 }
 
-const module = {
+const MODULE = {
 	socketHandler: new SocketHandler(),
 	settings,
+	modules: {
+		flat: new FlatModule(),
+		delay: new DelayModule(),
+		emanation: new EmanationModule(),
+		lifeLink: new LifeLinkModule(),
+	},
 }
 
-export default module
+export default MODULE
 
 Hooks.on("init", () => {
-	module.settings.init()
-	module.socketHandler.init()
+	MODULE.settings.init()
+	MODULE.socketHandler.init()
 
-	setupDelay()
-	setupFlat()
-	setupLink()
+	for (const [name, module] of Object.entries(MODULE.modules)) {
+		const enabled =
+			module.settingsKey == null
+				? true
+				: (game.settings.get(MODULE_ID, module.settingsKey) as boolean)
+
+		if (enabled) module.enable()
+	}
 })
 
 Hooks.on("ready", () => {
-	setupEmanationAutomation()
+	for (const [name, module] of Object.entries(MODULE.modules)) {
+		if (module.enabled) module.onReady()
+	}
+})
+
+Hooks.on("updateSetting", (setting: { key: string }, data) => {
+	if (!setting.key.startsWith(MODULE_ID)) return
+
+	const key = setting.key.split(".", 2).at(1)
+	if (!key) return
+
+	for (const m of Object.values(MODULE.modules).filter((m) => m.settingsKey === key)) {
+		if (data.value === "true") {
+			m.enable()
+			if (m.enabled) m.onReady()
+		} else if (data.value === "false") m.disable()
+	}
 })
 
 Hooks.on("renderSettingsConfig", (app: SettingsConfig, $html: JQuery) => {

@@ -52,7 +52,7 @@
     "dist/module.js"
   ],
   "styles": [
-    "styles/main.css"
+    "dist/style.css"
   ],
   "flags": {
     "hotReload": {

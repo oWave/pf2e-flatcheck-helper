@@ -2,13 +2,9 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "lib": [
-      "DOM",
-      "ESNext"
-    ],
     "allowJs": true,
     "outDir": "dist",
-    "rootDir": "./src",
+    "rootDir": ".",
     "noEmit": true,
     "strict": true,
     "noImplicitAny": false,
@@ -18,6 +14,7 @@
       "types",
     ],
     "types": [
+      "node",
       "jquery",
       "foundry",
       "pf2e"
@@ -27,11 +24,16 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
+    "paths": {
+      "src": [
+        "./src/index"
+      ],
+      "src/*": [
+        "./src/*"
+      ]
+    }
   },
   "include": [
     "./src/**/*",
-  ],
-  "files": [
-    "./src/index.ts"
   ],
 }

@@ -1,10 +1,36 @@
 import type { ChatMessagePF2e } from "types/pf2e/module/chat-message"
 import type { ItemPF2e } from "types/pf2e/module/item"
 import type { SpellPF2e, SpellSheetPF2e } from "types/pf2e/module/item/spell"
-import { MODULE_ID } from "./constants"
+import { MODULE_ID } from "src/constants"
 import { EmanationRequestDialog } from "./emanation-dialog"
-import Module from "./index"
-import module from "./index"
+import MODULE from "src/index"
+import { BaseModule } from "../base"
+
+export class EmanationModule extends BaseModule {
+	settingsKey = "emanation-automation"
+
+	enable(): void {
+		if (!game.modules.get("lib-wrapper")?.active) return
+
+		super.enable()
+
+		this.registerHook("renderChatMessage", onChatMessage)
+	}
+
+	onReady(): void {
+		this.registerWrapper(
+			'CONFIG.Item.sheetClasses.spell["pf2e.SpellSheetPF2e"].cls.prototype._renderInner',
+			spellSheetRenderWrapper,
+			"WRAPPER",
+		)
+
+		this.registerWrapper(
+			'CONFIG.Item.sheetClasses.spell["pf2e.SpellSheetPF2e"].cls.prototype.activateListeners',
+			spellSheetActivateListenersWrapper,
+			"WRAPPER",
+		)
+	}
+}
 
 export interface EmanationRequestData {
 	/** Spell UUID */
@@ -56,7 +82,7 @@ async function extractEffects(item: SpellPF2e) {
 }
 
 async function onChatMessage(msg: ChatMessagePF2e, html: JQuery<"div">) {
-	if (!module.settings.emanationAutomation) return
+	if (!MODULE.settings.emanationAutomation) return
 	if (!game.user.isGM) return
 	if (!msg.item || !msg.item.isOfType("spell")) return
 	const spell = msg.item
@@ -136,7 +162,7 @@ async function spellSheetRenderInner(sheet: SpellSheetPF2e, $html: JQuery) {
 async function spellSheetRenderWrapper(this: SpellSheetPF2e, wrapped, ...args) {
 	const $html = await wrapped(...args)
 
-	if (module.settings.emanationAutomation) await spellSheetRenderInner(this, $html)
+	if (MODULE.settings.emanationAutomation) await spellSheetRenderInner(this, $html)
 
 	return $html
 }
@@ -162,25 +188,4 @@ function spellSheetActivateListenersWrapper(this: SpellSheetPF2e, wrapped, $html
 		})
 
 	return $html
-}
-
-export function setupEmanationAutomation() {
-	if (!module.settings.emanationAutomation) return
-
-	Hooks.on("renderChatMessage", onChatMessage)
-	// Hooks.on("renderSpellSheetPF2e", onSheetRender)
-
-	libWrapper.register(
-		MODULE_ID,
-		'CONFIG.Item.sheetClasses.spell["pf2e.SpellSheetPF2e"].cls.prototype._renderInner',
-		spellSheetRenderWrapper,
-		"WRAPPER",
-	)
-
-	libWrapper.register(
-		MODULE_ID,
-		'CONFIG.Item.sheetClasses.spell["pf2e.SpellSheetPF2e"].cls.prototype.activateListeners',
-		spellSheetActivateListenersWrapper,
-		"WRAPPER",
-	)
 }
