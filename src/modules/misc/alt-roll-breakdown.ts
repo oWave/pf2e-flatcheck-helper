@@ -12,6 +12,7 @@ export class AltRolLBreakdownModule extends BaseModule {
 }
 
 function onRenderChatMessage(msg: ChatMessagePF2e, html: JQuery) {
+  if (!game.settings.get("pf2e", "metagame_showBreakdowns")) return
   if (!msg.author?.isGM || msg.actor?.hasPlayerOwner ) return
 
   if (!msg.isRoll || msg.isDamageRoll) return
