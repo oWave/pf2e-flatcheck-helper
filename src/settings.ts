@@ -176,7 +176,7 @@ export const settings = {
 
     register("script-toggle-shared-vision", {
 			name: "Toggle Shared Vision in Combat",
-			hint: `Automaticly turns the "Shared Party Vision" metagame setting off when combat starts, and enables it again when combat ends. This will override that setting, so only enable if you want to use shared vision.`,
+			hint: `Automaticlly turns the "Shared Party Vision" metagame setting off when combat starts, and enables it again when combat ends. This will override that setting, so only enable if you want to use shared vision.`,
 			scope: "world",
 			config: true,
 			type: Boolean,
