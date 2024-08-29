@@ -13,9 +13,9 @@ export function onRenderPF2eHudTracker(app, tracker: HTMLElement) {
 
 	for (const el of tracker.querySelectorAll<HTMLElement>("ol.combatants li.combatant")) {
 		const id = el.dataset.combatantId
-		if (!id) return
+		if (!id) continue
 		const c = combat.combatants.get(id)
-		if (!c || !c.isOwner || c.initiative == null) return
+		if (!c || !c.isOwner || c.initiative == null) continue
 
 		let delayElement: HTMLElement | null = null
 		if (game.user.isGM) delayElement = el.querySelector<HTMLLinkElement>("a.delay")
@@ -24,7 +24,7 @@ export function onRenderPF2eHudTracker(app, tracker: HTMLElement) {
 				el.querySelector<HTMLElement>("i.fa-solid.fa-hourglass-start") ??
 				el.querySelector<HTMLElement>("i.fa-solid.fa-dice-d20")
 
-		if (!delayElement) return
+		if (!delayElement) continue
 
 		if (combat.combatant === c) {
 			delayElement.replaceWith(makeDelayButton())
