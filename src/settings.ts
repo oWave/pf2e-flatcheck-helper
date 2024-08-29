@@ -1,3 +1,4 @@
+import MODULE from "src"
 import { MODULE_ID } from "./constants"
 
 type Callback = (value: unknown) => void
@@ -44,10 +45,16 @@ export const settings = {
 			(game.settings.get(MODULE_ID, "emanation-automation") as boolean)
 		)
 	},
+  get altRollBreakdown() {
+    return game.settings.get(MODULE_ID, "script-alt-roll-breakdown") as boolean
+  },
+  get toggleSharedVision() {
+    return game.settings.get(MODULE_ID, "script-toggle-shared-vision") as boolean
+  },
 
 	init() {
 		register("show-global", {
-			name: "Enable flat check buttons",
+			name: "Enable Flat Check Buttons",
 			hint: "Global setting: Enables flat check buttons below the chat box.",
 			scope: "world",
 			config: true,
@@ -56,7 +63,7 @@ export const settings = {
 			requiresReload: true,
 		})
 		register("show", {
-			name: "Show flat check buttons",
+			name: "Show Flat Check Buttons",
 			hint: "Client setting: Turn off to hide the flat check buttons just for you.",
 			scope: "client",
 			config: true,
@@ -66,8 +73,8 @@ export const settings = {
 		})
 
 		register("delay-combat-tracker", {
-			name: "Show delay button in combat tracker",
-			hint: "Adds delay/return buttons to the combat tracker. Will probably not work with any modules that change the combat tracker.",
+			name: "Show Delay Button in Combat Tracker",
+			hint: "Adds delay/return buttons to the default combat tracker.",
 			scope: "world",
 			config: true,
 			default: true,
@@ -75,7 +82,7 @@ export const settings = {
 		})
 
 		register("delay-token-hud", {
-			name: "Show delay button in token HUD",
+			name: "Show Delay Button in Token Hud",
 			hint: "Adds delay/return buttons to the menu that appears when right-clicking a token",
 			scope: "world",
 			config: true,
@@ -84,7 +91,7 @@ export const settings = {
 		})
 
 		register("delay-return", {
-			name: "Enable return button",
+			name: "Enable Return Button",
 			hint: "Allows returning to initiative by pressing the delay button again.",
 			scope: "world",
 			config: true,
@@ -93,7 +100,7 @@ export const settings = {
 		})
 
 		register("delay-prompt", {
-			name: "Prompt for new initiative",
+			name: "Prompt for New Initiative",
 			hint: "Lets the user select a combatant to delay their turn after. Can still return early anytime they want.",
 			scope: "world",
 			config: true,
@@ -102,7 +109,7 @@ export const settings = {
 		})
 
 		register("delay-create-message", {
-			name: "Delay/Return creates chat message",
+			name: "Delay/Return Creates Chat Message",
 			scope: "world",
 			config: true,
 			default: true,
@@ -110,7 +117,7 @@ export const settings = {
 		})
 
 		register("token-hud-remove-combat-toggle", {
-			name: "Remove combat toggle from token HUD",
+			name: "Remove Combat Toggle from Token Hud",
 			hint: "Removes the 'Toggle Combat State' button for tokens in combat",
 			scope: "world",
 			config: true,
@@ -128,7 +135,7 @@ export const settings = {
 		})
 
 		register("lifelink", {
-			name: "Enable life/spirit link automation buttons",
+			name: "Enable Life/Spirit Link Automation Buttons",
 			hint: "Check the module readme for setup steps.",
 			scope: "world",
 			config: true,
@@ -144,23 +151,41 @@ export const settings = {
 			type: String,
 			default: "apg",
 			choices: {
-				apg: "Standard, as written in the APG",
+				apg: "Standard",
 				plus: "Oracles+ (Heightened (+2))",
 			},
 		})
 
 		register("emanation-automation", {
-			name: "Enable automatic emanation effect application",
-			hint: "Still experimental, may change it this works in the future. Requires libwrapper.",
+			name: "Auto-Apply Emanation Effect Button",
+			hint: "Requires libwrapper.",
 			scope: "world",
 			config: true,
 			type: Boolean,
 			default: false,
 		})
 
-		for (const [key, setting] of game.settings.settings) {
-			if (!key.startsWith(MODULE_ID)) continue
-		}
+    register("script-alt-roll-breakdown", {
+			name: "Alternative Roll Breakdowns",
+			hint: `Requires the "Show Roll Breakdowns" system metagame setting to be enabled. Hides only total and base modifier from players, instead of all modifiers (e.g. multi attack penalty, status bonuses).`,
+			scope: "world",
+			config: true,
+			type: Boolean,
+			default: false,
+		})
+
+    register("script-toggle-shared-vision", {
+			name: "Toggle Shared Vision in Combat",
+			hint: `Automaticly turns the "Shared Party Vision" metagame setting off when combat starts, and enables it again when combat ends. This will override that setting, so only enable if you want to use shared vision.`,
+			scope: "world",
+			config: true,
+			type: Boolean,
+			default: false
+		})
+
+
+    Hooks.on("updateSetting", onUpdateSetting)
+    Hooks.on("renderSettingsConfig", onRenderSettingsConfig)
 	},
 
 	addListener(key: string, callback: Callback) {
@@ -174,14 +199,75 @@ export const settings = {
 	},
 }
 
-type SettingRegistration = Parameters<typeof game.settings.register>[2]
+type SettingsParamater = Parameters<typeof game.settings.register>[2]
+interface SettingRegistration extends SettingsParamater {
+  onChange?: (newValue: unknown) => void | Promise<void>
+}
 
 function register(key: string, data: SettingRegistration) {
 	game.settings.register(MODULE_ID, key, {
 		...data,
 		onChange() {
 			const value = game.settings.get(MODULE_ID, key)
+      data.onChange?.(value)
 			settings.callListener(key, value)
 		},
 	})
+}
+
+function onUpdateSetting(setting: { key: string }, data) {
+	if (!setting.key.startsWith(MODULE_ID)) return
+
+	const key = setting.key.split(".", 2).at(1)
+	if (!key) return
+
+	for (const m of Object.values(MODULE.modules).filter((m) => m.settingsKey === key)) {
+		if (data.value === "true") {
+			m.enable()
+			if (m.enabled) m.onReady()
+		} else if (data.value === "false") m.disable()
+	}
+}
+
+function onRenderSettingsConfig(app: SettingsConfig, $html: JQuery) {
+	const root = $html[0]
+	const tab = root.querySelector(`.tab[data-tab="${MODULE_ID}"]`)
+	if (!tab) return
+
+	const createHeading = (settingId: string, text: string, hint?: string) => {
+		const el = root.querySelector(`div[data-setting-id="${MODULE_ID}.${settingId}"]`)
+		if (!el) return
+
+		const heading = document.createElement("h3")
+		heading.textContent = text
+		el.before(heading)
+
+    if (hint) {
+      heading.style.marginBottom = "0"
+      const text = document.createElement("p")
+      text.textContent = hint
+      text.style.color = "var(--color-text-dark-secondary)"
+      text.style.marginTop = "0"
+      el.before(text)
+    }
+	}
+
+	createHeading("show-global", "Flat Check Buttons")
+	createHeading("delay-combat-tracker", "Delay")
+	createHeading("lifelink", "Life Link")
+	createHeading("emanation-automation", "Emanation Automation")
+  createHeading("script-alt-roll-breakdown", "Miscellaneous", `This stuff has no buttons‽`)
+
+
+	if (!game.modules.get("lib-wrapper")?.active) {
+		const input = root.querySelector<HTMLInputElement>(
+			'input[name="pf2e-flatcheck-helper.emanation-automation"]',
+		)
+		if (input) {
+			input.title = "Requires lib-wrapper"
+			input.disabled = true
+			input.checked = false
+			input.style.cursor = "not-allowed"
+		}
+	}
 }

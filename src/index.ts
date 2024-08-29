@@ -3,6 +3,8 @@ import { DelayModule } from "./modules/delay"
 import { EmanationModule } from "./modules/emanation/emanation"
 import { FlatModule } from "./modules/flat/flat"
 import { LifeLinkModule } from "./modules/life-link"
+import { AltRolLBreakdownModule } from "./modules/misc/alt-roll-breakdown"
+import { SharedVisionModule } from "./modules/misc/toggle-vision"
 import { settings } from "./settings"
 
 type Callback = (data: any) => void
@@ -44,6 +46,8 @@ const MODULE = {
 		delay: new DelayModule(),
 		emanation: new EmanationModule(),
 		lifeLink: new LifeLinkModule(),
+    altRollBreakdown: new AltRolLBreakdownModule(),
+    sharedVision: new SharedVisionModule()
 	},
 }
 
@@ -66,51 +70,5 @@ Hooks.on("init", () => {
 Hooks.on("ready", () => {
 	for (const [name, module] of Object.entries(MODULE.modules)) {
 		if (module.enabled) module.onReady()
-	}
-})
-
-Hooks.on("updateSetting", (setting: { key: string }, data) => {
-	if (!setting.key.startsWith(MODULE_ID)) return
-
-	const key = setting.key.split(".", 2).at(1)
-	if (!key) return
-
-	for (const m of Object.values(MODULE.modules).filter((m) => m.settingsKey === key)) {
-		if (data.value === "true") {
-			m.enable()
-			if (m.enabled) m.onReady()
-		} else if (data.value === "false") m.disable()
-	}
-})
-
-Hooks.on("renderSettingsConfig", (app: SettingsConfig, $html: JQuery) => {
-	const root = $html[0]
-	const tab = root.querySelector(`.tab[data-tab="${MODULE_ID}"]`)
-	if (!tab) return
-
-	const createHeading = (settingId: string, text: string) => {
-		const el = root.querySelector(`div[data-setting-id="${MODULE_ID}.${settingId}"]`)
-		if (!el) return
-
-		const heading = document.createElement("h3")
-		heading.textContent = text
-		el.before(heading)
-	}
-
-	createHeading("show-global", "Flat Check Buttons")
-	createHeading("delay-combat-tracker", "Delay")
-	createHeading("lifelink", "Life Link")
-	createHeading("emanation-automation", "Emanation Automation")
-
-	if (!game.modules.get("lib-wrapper")?.active) {
-		const input = root.querySelector<HTMLInputElement>(
-			'input[name="pf2e-flatcheck-helper.emanation-automation"]',
-		)
-		if (input) {
-			input.title = "Requires lib-wrapper"
-			input.disabled = true
-			input.checked = false
-			input.style.cursor = "not-allowed"
-		}
 	}
 })
