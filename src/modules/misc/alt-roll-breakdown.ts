@@ -42,7 +42,7 @@ function onDSNRollStart(messageId: string, context: any) {
 }
 
 function verifySettingsDialog() {
-  if (!game.user.isGM) return
+  if (!game.user.isGM || game.settings.get("pf2e", "metagame_showBreakdowns")) return
 
   // @ts-expect-error
   new foundry.applications.api.DialogV2({
