@@ -1,7 +1,7 @@
+import { MODULE_ID } from "src/constants"
 import type { ChatMessagePF2e } from "types/pf2e/module/chat-message"
 import type { DamageRoll } from "types/pf2e/module/system/damage/roll"
 import { BaseModule } from "../base"
-import { MODULE_ID } from "src/constants"
 
 export class AltRolLBreakdownModule extends BaseModule {
 	settingsKey = "script-alt-roll-breakdown"

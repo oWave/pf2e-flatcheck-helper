@@ -45,12 +45,12 @@ export const settings = {
 			(game.settings.get(MODULE_ID, "emanation-automation") as boolean)
 		)
 	},
-  get altRollBreakdown() {
-    return game.settings.get(MODULE_ID, "script-alt-roll-breakdown") as boolean
-  },
-  get toggleSharedVision() {
-    return game.settings.get(MODULE_ID, "script-toggle-shared-vision") as boolean
-  },
+	get altRollBreakdown() {
+		return game.settings.get(MODULE_ID, "script-alt-roll-breakdown") as boolean
+	},
+	get toggleSharedVision() {
+		return game.settings.get(MODULE_ID, "script-toggle-shared-vision") as boolean
+	},
 
 	init() {
 		register("show-global", {
@@ -165,7 +165,7 @@ export const settings = {
 			default: false,
 		})
 
-    register("script-alt-roll-breakdown", {
+		register("script-alt-roll-breakdown", {
 			name: "Alternative Roll Breakdowns",
 			hint: `Requires the "Show Roll Breakdowns" system metagame setting to be enabled. Hides only total and base modifier from players, instead of all modifiers (e.g. multi attack penalty, status bonuses).`,
 			scope: "world",
@@ -174,18 +174,17 @@ export const settings = {
 			default: false,
 		})
 
-    register("script-toggle-shared-vision", {
+		register("script-toggle-shared-vision", {
 			name: "Toggle Shared Vision in Combat",
 			hint: `Automaticlly turns the "Shared Party Vision" metagame setting off when combat starts, and enables it again when combat ends. This will override that setting, so only enable if you want to use shared vision.`,
 			scope: "world",
 			config: true,
 			type: Boolean,
-			default: false
+			default: false,
 		})
 
-
-    Hooks.on("updateSetting", onUpdateSetting)
-    Hooks.on("renderSettingsConfig", onRenderSettingsConfig)
+		Hooks.on("updateSetting", onUpdateSetting)
+		Hooks.on("renderSettingsConfig", onRenderSettingsConfig)
 	},
 
 	addListener(key: string, callback: Callback) {
@@ -201,7 +200,7 @@ export const settings = {
 
 type SettingsParamater = Parameters<typeof game.settings.register>[2]
 interface SettingRegistration extends SettingsParamater {
-  onChange?: (newValue: unknown) => void | Promise<void>
+	onChange?: (newValue: unknown) => void | Promise<void>
 }
 
 function register(key: string, data: SettingRegistration) {
@@ -209,7 +208,7 @@ function register(key: string, data: SettingRegistration) {
 		...data,
 		onChange() {
 			const value = game.settings.get(MODULE_ID, key)
-      data.onChange?.(value)
+			data.onChange?.(value)
 			settings.callListener(key, value)
 		},
 	})
@@ -242,22 +241,21 @@ function onRenderSettingsConfig(app: SettingsConfig, $html: JQuery) {
 		heading.textContent = text
 		el.before(heading)
 
-    if (hint) {
-      heading.style.marginBottom = "0"
-      const text = document.createElement("p")
-      text.textContent = hint
-      text.style.color = "var(--color-text-dark-secondary)"
-      text.style.marginTop = "0"
-      el.before(text)
-    }
+		if (hint) {
+			heading.style.marginBottom = "0"
+			const text = document.createElement("p")
+			text.textContent = hint
+			text.style.color = "var(--color-text-dark-secondary)"
+			text.style.marginTop = "0"
+			el.before(text)
+		}
 	}
 
 	createHeading("show-global", "Flat Check Buttons")
 	createHeading("delay-combat-tracker", "Delay")
 	createHeading("lifelink", "Life Link")
 	createHeading("emanation-automation", "Emanation Automation")
-  createHeading("script-alt-roll-breakdown", "Miscellaneous", `This stuff has no buttons‽`)
-
+	createHeading("script-alt-roll-breakdown", "Miscellaneous", "This stuff has no buttons‽")
 
 	if (!game.modules.get("lib-wrapper")?.active) {
 		const input = root.querySelector<HTMLInputElement>(

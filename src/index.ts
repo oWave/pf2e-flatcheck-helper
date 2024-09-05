@@ -46,8 +46,8 @@ const MODULE = {
 		delay: new DelayModule(),
 		emanation: new EmanationModule(),
 		lifeLink: new LifeLinkModule(),
-    altRollBreakdown: new AltRolLBreakdownModule(),
-    sharedVision: new SharedVisionModule()
+		altRollBreakdown: new AltRolLBreakdownModule(),
+		sharedVision: new SharedVisionModule(),
 	},
 }
 
