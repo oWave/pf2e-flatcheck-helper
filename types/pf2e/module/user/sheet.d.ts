@@ -3,10 +3,6 @@ import type { UserPF2e } from "./document.ts";
 export declare class UserConfigPF2e<TUser extends UserPF2e> extends foundry.applications.sheets.UserConfig<TUser> {
     #private;
     static PARTS: {
-        form: {
-            id: "form";
-            template: "templates/sheets/user-config.hbs";
-        };
         tabs: {
             template: string;
         };

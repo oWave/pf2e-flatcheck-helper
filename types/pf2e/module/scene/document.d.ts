@@ -3,6 +3,7 @@ import type { AmbientLightDocumentPF2e, MeasuredTemplateDocumentPF2e, RegionDocu
 import { TokenDocumentPF2e } from "./index.ts";
 import type { SceneConfigPF2e } from "./sheet.ts";
 declare class ScenePF2e extends Scene {
+    #private;
     /** Has this document completed `DataModel` initialization? */
     initialized: boolean;
     /** Is the rules-based vision setting enabled? */
@@ -14,15 +15,14 @@ declare class ScenePF2e extends Scene {
     get isBright(): boolean;
     get isDimlyLit(): boolean;
     get isDark(): boolean;
-    get hasHexGrid(): boolean;
     /** Whether this scene is "in focus": the active scene, or the viewed scene if only a single GM is logged in */
     get isInFocus(): boolean;
     protected _initialize(options?: Record<string, unknown>): void;
     prepareData(): void;
     /** Toggle Unrestricted Global Vision according to scene darkness level */
     prepareBaseData(): void;
-    /** Redraw auras if the scene was activated while being viewed */
     _onUpdate(changed: DeepPartial<this["_source"]>, operation: SceneUpdateOperation, userId: string): void;
+    protected _onUpdateDescendantDocuments(parent: this, collection: string, documents: ClientDocument[], changes: object[], options: DatabaseUpdateOperation<this>, userId: string): void;
     protected _onDeleteDescendantDocuments(parent: this, collection: string, documents: foundry.abstract.Document[], ids: string[], operation: DatabaseDeleteOperation<this>, userId: string): void;
 }
 interface ScenePF2e extends Scene {

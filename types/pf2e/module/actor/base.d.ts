@@ -71,7 +71,7 @@ declare class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocument
     get allowedItemTypes(): (ItemType | "physical")[];
     /** Returns true if this actor allows synthetic tokens to be created */
     get allowSynthetics(): boolean;
-    /** The compendium source ID of the actor **/
+    /** The UUID of the actor from which this one was copied (or is identical to if a compendium actor) **/
     get sourceId(): ActorUUID | null;
     /** The recorded schema version of this actor, updated after each data migration */
     get schemaVersion(): number | null;

@@ -17,7 +17,8 @@ import { ZeroToFour } from "../../data.ts";
 import { DamageType } from "../../system/damage/types.ts";
 import { CreatureSheetPF2e } from "../creature/sheet.ts";
 import { CharacterConfig } from "./config.ts";
-import { CraftingEntry, CraftingFormula } from "./crafting/index.ts";
+import type { CraftingAbilitySheetData } from "./crafting/ability.ts";
+import { CraftingFormula } from "./crafting/index.ts";
 import { CharacterBiography, CharacterSaveData, CharacterStrike, CharacterSystemData, ClassDCData, MartialProficiency } from "./data.ts";
 import { CharacterPF2e } from "./document.ts";
 import { ElementalBlastConfig } from "./elemental-blast.ts";
@@ -68,9 +69,9 @@ type CharacterSystemSheetData = CharacterSystemData & {
 };
 export interface CraftingEntriesSheetData {
     dailyCrafting: boolean;
-    other: CraftingEntry[];
+    other: CraftingAbilitySheetData[];
     alchemical: {
-        entries: CraftingEntry[];
+        entries: CraftingAbilitySheetData[];
         totalReagentCost: number;
         infusedReagents: {
             value: number;

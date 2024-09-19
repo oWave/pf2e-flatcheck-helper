@@ -27,7 +27,7 @@ declare class ItemPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> exte
     rules: RuleElementPF2e[];
     /** The sluggified name of the item **/
     get slug(): string | null;
-    /** The compendium source ID of the item **/
+    /** The UUID of the item from which this one was copied (or is identical to if a compendium item) **/
     get sourceId(): ItemUUID | null;
     /** The recorded schema version of this item, updated after each data migration */
     get schemaVersion(): number | null;
@@ -105,6 +105,9 @@ declare class ItemPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> exte
     protected _onUpdate(data: DeepPartial<this["_source"]>, operation: DatabaseUpdateOperation<TParent>, userId: string): void;
     /** Call onDelete rule-element hooks */
     protected _onDelete(operation: DatabaseDeleteOperation<TParent>, userId: string): void;
+    /** To be overridden by subclasses to extend the HTML string that will become part of the embed */
+    protected embedHTMLString(_config: DocumentHTMLEmbedConfig, _options: EnrichmentOptions): string;
+    _buildEmbedHTML(config: DocumentHTMLEmbedConfig, options: EnrichmentOptions): Promise<HTMLCollection>;
 }
 interface ItemPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Item<TParent> {
     constructor: typeof ItemPF2e;

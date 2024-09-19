@@ -36,6 +36,11 @@ declare const ITEM_ALTERATION_VALIDATORS: {
         mode: StringField<"upgrade" | "override" | "downgrade" | "add" | "subtract" | "remove", "upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
         value: NumberField<number, NonNullable<JSONValue>, true, false, boolean>;
     }>;
+    "area-size": ItemAlterationValidator<{
+        itemType: StringField<"spell", ItemType, true, false, false>;
+        mode: StringField<"upgrade" | "override" | "downgrade" | "add" | "subtract", "upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
+        value: NumberField<number, NonNullable<JSONValue>, true, false, boolean>;
+    }>;
     "badge-max": ItemAlterationValidator<{
         itemType: StringField<"effect", ItemType, true, false, false>;
         mode: StringField<"override" | "downgrade", "upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;

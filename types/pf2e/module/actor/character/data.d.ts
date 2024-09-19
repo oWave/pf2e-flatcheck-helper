@@ -1,4 +1,4 @@
-import { CraftingEntryData } from "crafting/entry.ts";
+import { CraftingAbilityData } from "crafting/ability.ts";
 import { CraftingFormulaData } from "crafting/formula.ts";
 import { AbilityData, BaseCreatureSource, CreatureAttributes, CreatureDetails, CreatureDetailsSource, CreatureLanguagesData, CreaturePerceptionData, CreatureResources, CreatureSystemData, CreatureSystemSource, HeldShieldData, SaveData, SkillData } from "../creature/data.ts";
 import { CreatureInitiativeSource, CreatureSpeeds, Language } from "../creature/index.ts";
@@ -359,7 +359,7 @@ interface VersatileWeaponOption {
 }
 interface CharacterCraftingData {
     formulas: CraftingFormulaData[];
-    entries: Record<string, Partial<CraftingEntryData>>;
+    entries: Record<string, Partial<CraftingAbilityData>>;
 }
 interface CharacterResources extends CreatureResources {
     /** The current and maximum number of hero points */

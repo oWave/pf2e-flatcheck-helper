@@ -4,7 +4,7 @@
 import type { ItemPF2e } from "../../index.ts";
 import { Rarity } from "../../../data.ts";
 import { RuleElementSource } from "../../../rules/index.ts";
-import { SheetOptions, TraitTagifyEntry } from "../../../sheet/helpers.ts";
+import { SheetOptions, TagifyEntry } from "../../../sheet/helpers.ts";
 import type * as TinyMCE from "tinymce";
 declare class ItemSheetPF2e<TItem extends ItemPF2e> extends ItemSheet<TItem, ItemSheetOptions> {
     #private;
@@ -53,7 +53,8 @@ interface ItemSheetDataPF2e<TItem extends ItemPF2e> extends ItemSheetData<TItem>
     rarity: Rarity | null;
     rarities: typeof CONFIG.PF2E.rarityTraits;
     traits: SheetOptions | null;
-    traitTagifyData: TraitTagifyEntry[] | null;
+    traitTagifyData: TagifyEntry[] | null;
+    otherTagsTagifyData: TagifyEntry[] | null;
     rules: {
         selection: {
             selected: string | null;

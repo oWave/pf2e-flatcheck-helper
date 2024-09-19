@@ -7,7 +7,7 @@ import { BaseDamageData } from "../system/damage/index.ts";
 import { DegreeOfSuccessAdjustment } from "../system/degree-of-success.ts";
 import { RollTwiceOption } from "../system/rolls.ts";
 import { DamageAlteration } from "./rule-element/damage-alteration/alteration.ts";
-import { BracketedValue } from "./rule-element/index.ts";
+import { BracketedValue, RuleElementPF2e } from "./rule-element/index.ts";
 import { DamageDiceSynthetics, RollSubstitution, RollTwiceSynthetic, RuleElementSynthetics } from "./synthetics.ts";
 /** Extracts a list of all cloned modifiers across all given keys in a single list. */
 declare function extractModifiers(synthetics: RuleElementSynthetics, domains: string[], options?: DeferredValueParams): ModifierPF2e[];
@@ -40,4 +40,6 @@ declare function isBracketedValue(value: unknown): value is BracketedValue;
 declare function processPreUpdateActorHooks(changed: Record<string, unknown>, { pack }: {
     pack: string | null;
 }): Promise<void>;
-export { extractDamageAlterations, extractDamageDice, extractDegreeOfSuccessAdjustments, extractEphemeralEffects, extractModifierAdjustments, extractModifiers, extractNotes, extractRollSubstitutions, extractRollTwice, isBracketedValue, processDamageCategoryStacking, processPreUpdateActorHooks, };
+/** Gets the item update info that applies an update to all given rules */
+declare function createBatchRuleElementUpdate(rules: RuleElementPF2e[], update: Record<string, unknown>): EmbeddedDocumentUpdateData[];
+export { createBatchRuleElementUpdate, extractDamageAlterations, extractDamageDice, extractDegreeOfSuccessAdjustments, extractEphemeralEffects, extractModifierAdjustments, extractModifiers, extractNotes, extractRollSubstitutions, extractRollTwice, isBracketedValue, processDamageCategoryStacking, processPreUpdateActorHooks, };

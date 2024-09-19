@@ -1,6 +1,6 @@
 import { ActorPF2e } from "../../actor/index.ts";
 import { DamageDicePF2e, ModifierPF2e } from "../../actor/modifiers.ts";
-import { MeleePF2e, WeaponPF2e } from "../../item/index.ts";
+import type { MeleePF2e, WeaponPF2e } from "../../item/index.ts";
 import type { NPCAttackDamage } from "../../item/melee/data.ts";
 import type { WeaponDamage } from "../../item/weapon/data.ts";
 import { PotencySynthetic } from "../../rules/synthetics.ts";

@@ -14,24 +14,6 @@ declare class HomebrewElements extends SettingsMenuPF2e {
     static get moduleData(): ModuleHomebrewData;
     static get SETTINGS(): string[];
     static get defaultOptions(): FormApplicationOptions;
-    protected static campaignSettings: {
-        campaignFeats: {
-            name: string;
-            hint: string;
-            default: false;
-            type: BooleanConstructor;
-            onChange: (value: unknown) => void;
-        };
-        campaignType: {
-            name: string;
-            hint: string;
-            default: string;
-            choices: Record<string, string>;
-            type: StringConstructor;
-            onChange: () => Promise<void>;
-        };
-    };
-    protected static get traitSettings(): Record<HomebrewTraitKey, PartialSettingsData>;
     protected static get settings(): Record<HomebrewKey, PartialSettingsData>;
     activateListeners($html: JQuery): void;
     getData(): Promise<HomebrewElementsSheetData>;

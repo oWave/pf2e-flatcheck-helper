@@ -1,5 +1,6 @@
 import type { UserPF2e } from "../../user/document.ts";
 import type { EnvironmentBehaviorType, EnvironmentFeatureBehaviorType, RegionBehaviorPF2e, RegionDocumentPF2e } from "../index.ts";
+import type { DIFFICULT_TERRAIN_GRADES } from "./values.ts";
 import coreBehaviors = foundry.data.regionBehaviors;
 type RegionEventPF2e = RegionEvent<RegionDocumentPF2e, UserPF2e>;
 interface AdjustDarknessLevelRegionBehavior<TParent extends RegionDocumentPF2e | null = RegionDocumentPF2e | null> extends RegionBehaviorPF2e<TParent> {
@@ -39,4 +40,5 @@ interface EnvironmentFeatureRegionBehavior<TParent extends RegionDocumentPF2e | 
     system: EnvironmentFeatureBehaviorType;
 }
 type SpecificRegionBehavior<TParent extends RegionDocumentPF2e | null = RegionDocumentPF2e | null> = AdjustDarknessLevelRegionBehavior<TParent> | ExecuteMacroRegionBehavior<TParent> | ExecuteScriptRegionBehavior<TParent> | PauseGameRegionBehavior<TParent> | SuppressWeatherRegionBehavior<TParent> | TeleportTokenRegionBehavior<TParent> | ToggleBehaviorRegionBehavior<TParent> | EnvironmentRegionBehavior<TParent> | EnvironmentFeatureRegionBehavior<TParent>;
-export type { EnvironmentFeatureRegionBehavior, EnvironmentRegionBehavior, RegionEventPF2e, SpecificRegionBehavior };
+type DifficultTerrainGrade = (typeof DIFFICULT_TERRAIN_GRADES)[keyof typeof DIFFICULT_TERRAIN_GRADES];
+export type { DifficultTerrainGrade, EnvironmentFeatureRegionBehavior, EnvironmentRegionBehavior, RegionEventPF2e, SpecificRegionBehavior, };

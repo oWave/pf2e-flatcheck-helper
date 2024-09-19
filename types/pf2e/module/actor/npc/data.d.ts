@@ -25,7 +25,7 @@ interface NPCSystemSource extends CreatureSystemSource {
     /** Modifier of the perception statistic */
     perception: NPCPerceptionSource;
     initiative: CreatureInitiativeSource;
-    /** Details about this actor, such as alignment or ancestry. */
+    /** Details about this actor, such as alliance or level. */
     details: NPCDetailsSource;
     /** The three saves for NPCs. NPC saves have a 'base' score which is the score before applying custom modifiers. */
     saves: NPCSavesSource;

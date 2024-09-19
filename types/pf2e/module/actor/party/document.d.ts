@@ -1,6 +1,5 @@
 import { ActorPF2e, type CreaturePF2e } from "../index.ts";
 import { ItemType } from "../../item/base/data/index.ts";
-import { CombatantPF2e, EncounterPF2e } from "../../encounter/index.ts";
 import { RuleElementPF2e } from "../../rules/index.ts";
 import { RuleElementSchema } from "../../rules/rule-element/data.ts";
 import type { UserPF2e } from "../../user/document.ts";
@@ -33,10 +32,6 @@ declare class PartyPF2e<TParent extends TokenDocumentPF2e | null = TokenDocument
     prepareDerivedData(): void;
     addMembers(...membersToAdd: CreaturePF2e[]): Promise<void>;
     removeMembers(...remove: (ActorUUID | CreaturePF2e)[]): Promise<void>;
-    /** Adds all members to combat */
-    addToCombat(options?: {
-        combat?: EncounterPF2e;
-    }): Promise<CombatantPF2e<EncounterPF2e>[]>;
     getRollOptions(domains?: string[]): string[];
     getRollData(): Record<string, unknown>;
     /** Re-render the sheet if data preparation is called from the familiar's master */

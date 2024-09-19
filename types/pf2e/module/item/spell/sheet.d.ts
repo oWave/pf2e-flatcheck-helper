@@ -2,7 +2,7 @@
 /// <reference types="jquery" resolution-mode="require"/>
 /// <reference types="tooltipster" />
 import { ItemSheetDataPF2e, ItemSheetOptions, ItemSheetPF2e } from "../base/sheet/sheet.ts";
-import { TraitTagifyEntry } from "../../sheet/helpers.ts";
+import { TagifyEntry } from "../../sheet/helpers.ts";
 import { DamageCategoryUnique, DamageType } from "../../system/damage/types.ts";
 import type { EffectAreaShape, SpellPF2e, SpellSystemData, SpellSystemSource } from "./index.ts";
 export declare class SpellSheetPF2e extends ItemSheetPF2e<SpellPF2e> {
@@ -59,6 +59,6 @@ interface SpellSheetHeightenOverlayData extends SpellSheetOverlayData {
         key: keyof SpellSystemData;
         label: string;
     }[];
-    traits?: TraitTagifyEntry[] | null;
+    traits?: TagifyEntry[] | null;
 }
 export {};

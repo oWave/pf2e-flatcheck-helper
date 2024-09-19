@@ -30,7 +30,7 @@ interface OtherTagsOnly {
     rarity?: never;
     otherTags: string[];
 }
-interface ItemFlagsPF2e extends foundry.documents.ItemFlags {
+interface ItemFlagsPF2e extends DocumentFlags {
     pf2e: {
         rulesSelections: Record<string, string | number | object | null>;
         itemGrants: Record<string, ItemGrantData>;
@@ -38,7 +38,7 @@ interface ItemFlagsPF2e extends foundry.documents.ItemFlags {
         [key: string]: unknown;
     };
 }
-interface ItemSourceFlagsPF2e extends DeepPartial<foundry.documents.ItemFlags> {
+interface ItemSourceFlagsPF2e extends DocumentFlags {
     pf2e?: {
         rulesSelections?: Record<string, string | number | object>;
         itemGrants?: Record<string, ItemGrantSource>;

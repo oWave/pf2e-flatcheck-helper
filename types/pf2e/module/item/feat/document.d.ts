@@ -35,6 +35,7 @@ declare class FeatPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> exte
     protected _preUpdate(changed: DeepPartial<this["_source"]>, operation: DatabaseUpdateOperation<TParent>, user: UserPF2e): Promise<boolean | void>;
     /** Warn the owning user(s) if this feat was taken despite some restriction */
     protected _onCreate(data: FeatSource, operation: DatabaseCreateOperation<TParent>, userId: string): void;
+    protected embedHTMLString(_config: DocumentHTMLEmbedConfig, _options: EnrichmentOptions): string;
 }
 interface FeatPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends ItemPF2e<TParent> {
     readonly _source: FeatSource;

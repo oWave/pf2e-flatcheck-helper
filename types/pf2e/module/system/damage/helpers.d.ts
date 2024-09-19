@@ -29,7 +29,7 @@ interface ApplyDamageAlterationsParams {
     actor: ActorPF2e;
     item: ItemPF2e<ActorPF2e>;
     domains: string[];
-    rollOptions: string[] | Set<string>;
+    rollOptions: Set<string>;
 }
 /** Apply damage dice overrides and upgrades to a non-weapon's damage formula */
 declare function applyDamageDiceOverrides(baseEntries: BaseDamageData[], dice: DamageDicePF2e[], options?: {
