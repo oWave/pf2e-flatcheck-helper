@@ -94,3 +94,107 @@
     }
   }
 }
+
+.fc-flatcheck-buttons {
+	display: flex;
+	flex-direction: column;
+
+	div {
+		display: flex;
+		align-items: center;
+		font-size: var(--font-size-14);
+		font-family: var(--font-primary);
+		background: rgba(255, 255, 240, 0.2);
+    border: 1px solid var(--color-border-light-primary);
+    border-radius: 3px;
+		margin: var(--space-2) 0;
+		line-height: 28px;
+
+		> span {
+			display: flex;
+			flex: 1 0 0px;
+			align-self: stretch;
+			align-items: center;
+			justify-content: center;
+
+			&:not(:last-child) {
+				border-right: 1px solid var(--color-border-light-primary);
+			}
+		}
+		.fc-label {
+			min-width: 50%;
+		}
+		.fc-dc {
+			max-width: 20%;
+		}
+		.fc-roll {
+			background: rgba(0,0,0,0.1);
+			font-size: var(--font-size-20);
+      font-weight: bold;
+
+			.fc-rolls {
+				flex-grow: 1;
+				display: flex;
+				justify-content: space-evenly;
+				span {
+					min-width: 2ch;
+					text-align: center;
+				}
+			}
+
+			.fc-icon {
+				margin-right: 2px;
+			}
+			.success {
+				color: rgb(0, 128, 0);
+			}
+
+			.failure {
+				color: rgb(255, 0, 0);
+			}
+
+			.strikethrough {
+				opacity: 0.7;
+				/* text-decoration: line-through; */
+
+				&:empty {
+					display: none;
+				}
+			}
+
+			i {
+				font-size: 60%;
+			}
+
+		}
+		button {
+			flex-basis: 10%;
+			margin: 0 !important;
+			border: unset;
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
+
+			&.hidden {
+				display: none;
+			}
+		}
+		button.hidden {
+			display: none;
+			background: red;
+		}
+	}
+
+	.fc-note {
+		line-height: 28px;
+		display: flex;
+		justify-content: center;
+
+		i {
+			margin-right: 1ch;
+		}
+	}
+}
+
+[id="pf2e-flatcheck-helper.flatcheck.reroll"] .dialog-content {
+	gap: 8px;
+}

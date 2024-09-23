@@ -3,7 +3,7 @@ import type { TokenPF2e } from "types/pf2e/module/canvas"
 import { BaseModule } from "../base"
 import { MoreDialog } from "./more-dialog"
 
-export class FlatModule extends BaseModule {
+export class ChatFlatModule extends BaseModule {
 	settingsKey = "show-global"
 
 	enable() {
@@ -24,7 +24,7 @@ export async function rollFlatCheck(
 	const r = await new Roll("d20").roll()
 	const degree = r.total >= dc ? "success" : "failure"
 	const delta = r.total - dc
-	const deltaText = delta > 0 ? `+${delta}` : delta.toString()
+	const deltaText = delta >= 0 ? `+${delta}` : delta.toString()
 
 	const flavor = document.createElement("span")
 	flavor.classList.add("flavor-text")

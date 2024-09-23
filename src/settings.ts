@@ -54,7 +54,7 @@ export const settings = {
 
 	init() {
 		register("show-global", {
-			name: "Enable Flat Check Buttons",
+			name: "Enable Flat Check Buttons below Chat",
 			hint: "Global setting: Enables flat check buttons below the chat box.",
 			scope: "world",
 			config: true,
@@ -63,8 +63,18 @@ export const settings = {
 			requiresReload: true,
 		})
 		register("show", {
-			name: "Show Flat Check Buttons",
+			name: "Show Flat Check Buttons below Chat",
 			hint: "Client setting: Turn off to hide the flat check buttons just for you.",
+			scope: "client",
+			config: true,
+			default: true,
+			type: Boolean,
+			requiresReload: true,
+		})
+
+		register("flat-check-in-message", {
+			name: "Flat Check Buttons in Messages",
+			hint: "Adds flat checks for supported conditions in strike or spell-cast messages",
 			scope: "client",
 			config: true,
 			default: true,
@@ -167,7 +177,7 @@ export const settings = {
 
 		register("script-alt-roll-breakdown", {
 			name: "Alternative Roll Breakdowns",
-			hint: `Requires the "Show Roll Breakdowns" system metagame setting to be enabled. Hides only total and base modifier from players, instead of all modifiers (e.g. multi attack penalty, status bonuses).`,
+			hint: "Shows some roll modifiers (e.g. circumstance modifies like multi attack penalty, status bonuses, other untyped bonuses) to players.",
 			scope: "world",
 			config: true,
 			type: Boolean,
@@ -258,14 +268,14 @@ function onRenderSettingsConfig(app: SettingsConfig, $html: JQuery) {
 	createHeading("script-alt-roll-breakdown", "Miscellaneous", "This stuff has no buttons‽")
 
 	if (!game.modules.get("lib-wrapper")?.active) {
-		const input = root.querySelector<HTMLInputElement>(
-			'input[name="pf2e-flatcheck-helper.emanation-automation"]',
-		)
-		if (input) {
-			input.title = "Requires lib-wrapper"
-			input.disabled = true
-			input.checked = false
-			input.style.cursor = "not-allowed"
+		for (const s of ["emanation-automation", "flat-check-in-message"]) {
+			const input = root.querySelector<HTMLInputElement>(`input[name="pf2e-flatcheck-helper.${s}"]`)
+			if (input) {
+				input.title = "Requires lib-wrapper"
+				input.disabled = true
+				input.checked = false
+				input.style.cursor = "not-allowed"
+			}
 		}
 	}
 }

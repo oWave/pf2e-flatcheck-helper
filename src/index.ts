@@ -1,7 +1,8 @@
 import { MODULE_ID } from "./constants"
 import { DelayModule } from "./modules/delay"
 import { EmanationModule } from "./modules/emanation/emanation"
-import { FlatModule } from "./modules/flat/flat"
+import { ChatFlatModule } from "./modules/flat/flat"
+import { MessageFlatCheckModule } from "./modules/flat/message"
 import { LifeLinkModule } from "./modules/life-link"
 import { AltRolLBreakdownModule } from "./modules/misc/alt-roll-breakdown"
 import { SharedVisionModule } from "./modules/misc/toggle-vision"
@@ -42,7 +43,8 @@ const MODULE = {
 	socketHandler: new SocketHandler(),
 	settings,
 	modules: {
-		flat: new FlatModule(),
+		flat: new ChatFlatModule(),
+		flatMessageButtons: new MessageFlatCheckModule(),
 		delay: new DelayModule(),
 		emanation: new EmanationModule(),
 		lifeLink: new LifeLinkModule(),
