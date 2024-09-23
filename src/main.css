@@ -99,7 +99,7 @@
 	display: flex;
 	flex-direction: column;
 
-	div {
+	div.fc-check {
 		display: flex;
 		align-items: center;
 		font-size: var(--font-size-14);
@@ -192,6 +192,14 @@
 		i {
 			margin-right: 1ch;
 		}
+	}
+
+	.fc-rule-note {
+		line-height: 1;
+		font-weight: 500;
+		cursor: help;
+		display: flex;
+		justify-content: center;
 	}
 }
 

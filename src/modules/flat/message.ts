@@ -98,7 +98,7 @@ function renderButtons(msg: ChatMessagePF2e, html: JQuery) {
 				? `<span class="fc-icon"><i class="${REROLL_ICONS[data.reroll.keep]}"></i></span>`
 				: ""
 
-			return `<div>
+			return `<div class="fc-check">
 				<span class="fc-label">${data.label}</span>
 				<span class="fc-dc">DC ${data.dc}</span>
 				<span class="fc-roll">
@@ -116,7 +116,13 @@ function renderButtons(msg: ChatMessagePF2e, html: JQuery) {
 
 		const buttonNode = jQuery.parseHTML(
 			`<section class="fc-flatcheck-buttons">${buttonHtml.join("")}</section>`,
-		)
+		)[0] as HTMLElement
+
+		if (data.grabbed && data.stupefied) {
+			$(buttonNode).append(`<div class="fc-rule-note">
+					<span data-tooltip='"If more than one flat check would ever cause or prevent the same thing, just roll once and use the highest DC."'><i class="fa-solid fa-circle-info"></i></span>
+				</div>`)
+		}
 
 		let section = html.find("section.card-buttons")
 		if (section.length) {
