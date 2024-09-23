@@ -10,7 +10,6 @@ export class AltRolLBreakdownModule extends BaseModule {
 		super.enable()
 
 		this.registerHook("renderChatMessage", onRenderChatMessage)
-		this.registerHook("diceSoNiceRollStart", onDSNRollStart)
 	}
 
 	onReady() {
@@ -20,7 +19,7 @@ export class AltRolLBreakdownModule extends BaseModule {
 
 function shouldHide(msg: ChatMessagePF2e) {
 	return (
-		game.settings.get("pf2e", "metagame_showBreakdowns") &&
+		!game.settings.get("pf2e", "metagame_showBreakdowns") &&
 		msg.author?.isGM &&
 		!msg.actor?.hasPlayerOwner &&
 		msg.isRoll
@@ -28,48 +27,31 @@ function shouldHide(msg: ChatMessagePF2e) {
 }
 
 async function onRenderChatMessage(msg: ChatMessagePF2e, html: JQuery) {
-	if (!shouldHide(msg)) return
+	if (game.user.isGM || !shouldHide(msg)) return
 
-	if (msg.isDamageRoll) {
-		html.find("div.tags.modifiers span.tag").attr("data-visibility", "gm")
+	// Testing if the already message has modifiers the lazy way
+	if (!html.find("div.tags.modifiers").is(":empty")) return
 
-		const roll = msg.rolls.at(0) as DamageRoll | null
-		if (roll?.instances.length === 1) {
-			const instanceHtml = await renderTemplate(
-				`modules/${MODULE_ID}/templates/chat/damage-roll-instance.hbs`,
-				{ instances: roll.instances },
-			)
-			html.find("h4.dice-total span.total").after(instanceHtml)
-		}
+	const modifiersHTML = msg.flags.pf2e.modifiers
+		.filter((m) => ["untyped", "circumstance", "status"].includes(m.type) && m.slug !== "base")
+		.map((m) => {
+			const mod = m.modifier < 0 ? m.modifier : `+${m.modifier}`
+			return `<span class="tag tag_transparent" data-slug="${m.slug}">${m.label} ${mod}</span>`
+		})
 
-		if (!game.user.isGM) html.find("div.tags.modifiers").remove()
-	} else {
-		html.find('span.tag[data-slug="base"]').attr("data-visibility", "gm")
-	}
-
-	html.find("div.dice-formula").attr("data-visibility", "gm")
-	html.find("div.dice-tooltip").attr("data-visibility", "gm")
-
-	if (game.user.isGM) return
-	// Hide nat 1/20 highlight
-	const firstRoll = msg.rolls.at(0)
-	if (firstRoll) firstRoll.options.showBreakdown = false
-}
-
-function onDSNRollStart(messageId: string, context: any) {
-	if (game.user.isGM) return
-	const msg = game.messages.get(messageId)
-	if (msg && shouldHide(msg)) context.roll.ghost = true
+	html
+		.find("span.flavor-text")
+		.append(`<div class="tags modifiers">${modifiersHTML.join("")}</div>`)
 }
 
 function verifySettingsDialog() {
-	if (!game.user.isGM || game.settings.get("pf2e", "metagame_showBreakdowns")) return
+	if (!game.user.isGM || !game.settings.get("pf2e", "metagame_showBreakdowns")) return
 
 	// @ts-expect-error
 	new foundry.applications.api.DialogV2({
-		window: { title: "PF2e Utility Buttons" },
+		window: { title: "PF2e Utility Buttons - Alternative Roll Breakdowns" },
 		content: `
-     <p>Alternative Roll Breakdowns need the "Show Roll Breakdowns" system metagame setting to be enabled.</p>
+     <p>Alternative Roll Breakdowns need the "Show Roll Breakdowns" system metagame setting to be disabled.</p>
     `,
 		buttons: [
 			{
@@ -79,9 +61,9 @@ function verifySettingsDialog() {
 			},
 			{
 				action: "enable",
-				label: "Enable system setting",
+				label: "Disable system setting",
 				default: true,
-				callback: () => game.settings.set("pf2e", "metagame_showBreakdowns", true),
+				callback: () => game.settings.set("pf2e", "metagame_showBreakdowns", false),
 			},
 		],
 		submit: () => {},
