@@ -1,4 +1,5 @@
 import { MODULE_ID } from "src/constants"
+import MODULE from "src/index"
 import type { ActorPF2e } from "types/pf2e/module/actor"
 import type { TokenPF2e } from "types/pf2e/module/canvas"
 import type { ChatMessagePF2e } from "types/pf2e/module/chat-message"
@@ -14,6 +15,7 @@ export class MessageFlatCheckModule extends BaseModule {
 
 		this.registerHook("preCreateChatMessage", preCreateMessage)
 		this.registerWrapper("ChatMessage.prototype.getHTML", messageGetHTMLWrapper, "WRAPPER")
+		this.registerSocket("flat-dsn", handleDSNSocket)
 	}
 	disable() {
 		super.disable()
@@ -47,7 +49,7 @@ export async function messageGetHTMLWrapper(this: ChatMessagePF2e, wrapper, ...a
 	const html: JQuery = await wrapper(...args)
 
 	try {
-		renderButtons(this, html)
+		if (this.isContentVisible) renderButtons(this, html)
 	} catch (e) {
 		console.error("Exception occured while rendering message flat-check buttons: ", e)
 	}
@@ -198,6 +200,12 @@ async function handleFlatButtonClick(msg: ChatMessagePF2e, key: string, dc: numb
 		})
 	}
 
+	emitSocket({
+		msgId: msg.id,
+		userId: game.user.id,
+		roll: JSON.stringify(roll.toJSON()),
+	})
+
 	msg.update(updates)
 }
 
@@ -295,4 +303,28 @@ function flatCheckForTarget(origin: ActorPF2e, target: TokenPF2e) {
 
 	if (originDC < targetDC) return { label: targetCondition!.capitalize(), dc: targetDC }
 	else return { label: originCondition!.capitalize(), dc: originDC }
+}
+
+interface SocketData {
+	msgId: string
+	userId: string
+	roll: string
+}
+
+function emitSocket(data: SocketData) {
+	MODULE.socketHandler.emit("flat-dsn", data)
+}
+
+function handleDSNSocket(data: SocketData) {
+	// @ts-expect-error
+	if (!game.dice3d) return
+
+	const msg = game.messages.get(data.msgId)
+	const user = game.users.get(data.userId)
+	const roll = Roll.fromJSON(data.roll)
+
+	if (!user || !msg) return
+
+	// @ts-expect-error
+	game.dice3d.showForRoll(roll, user, false, null, false, data.msgId)
 }
