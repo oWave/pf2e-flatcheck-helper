@@ -2,7 +2,6 @@
 import fs from "node:fs"
 import { type Connect, type PluginOption, defineConfig } from "vite"
 import tsconfigPaths from "vite-tsconfig-paths"
-import checker from "vite-plugin-checker"
 import moduleJSON from "./module.json" with { type: "json" }
 
 const packagePath = `modules/${moduleJSON.id}`
@@ -72,11 +71,6 @@ export default defineConfig(({ command: _buildOrServe }) => ({
 	},
 
 	plugins: [
-		/* process.env.IGNORE_CHECKER
-			? undefined
-			: checker({
-					typescript: true,
-				}), */
 		tsconfigPaths(),
 		{
 			name: "change-names",
