@@ -151,11 +151,11 @@ async function handleFlatButtonClick(msg: ChatMessagePF2e, key: string, dc: numb
 	const roll = await new Roll("d20").roll()
 	const oldRoll = foundry.utils.getProperty(msg, `flags.${MODULE_ID}.flatchecks.${key}.roll`)
 
-	const updates: Record<string, any> = {
-		[`flags.${MODULE_ID}.flatchecks.${key}.roll`]: roll.total,
-	}
+	const updates: Record<string, any> = {}
 
-	if (oldRoll) {
+	if (!oldRoll) {
+		updates[`flags.${MODULE_ID}.flatchecks.${key}.roll`] = roll.total
+	} else {
 		let heroPoints = 0
 		if (msg.actor?.isOfType("character")) {
 			heroPoints = msg.actor?.system.resources.heroPoints.value
@@ -195,18 +195,21 @@ async function handleFlatButtonClick(msg: ChatMessagePF2e, key: string, dc: numb
 					})
 				}
 
+				updates[`flags.${MODULE_ID}.flatchecks.${key}.roll`] = roll.total
 				updates[`flags.${MODULE_ID}.flatchecks.${key}.reroll`] = { oldRoll, keep: result }
 			},
 		})
 	}
 
-	emitSocket({
-		msgId: msg.id,
-		userId: game.user.id,
-		roll: JSON.stringify(roll.toJSON()),
-	})
+	if (Object.keys(updates).length > 0) {
+		emitSocket({
+			msgId: msg.id,
+			userId: game.user.id,
+			roll: JSON.stringify(roll.toJSON()),
+		})
 
-	msg.update(updates)
+		msg.update(updates)
+	}
 }
 
 export async function preCreateMessage(msg: ChatMessagePF2e) {
