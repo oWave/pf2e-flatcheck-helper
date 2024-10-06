@@ -299,10 +299,10 @@ function flatCheckForTarget(origin: ActorPF2e, target: TokenPF2e) {
 		if (slug in targetDCs && (!targetCondition || targetDCs[targetCondition] < targetDCs[slug]))
 			targetCondition = slug as TargetSlug
 	})
-	
+
 	//Pf2e perception support
 	if(game.modules.get("pf2e-perception")?.active) {
-		const originToken = canvas.tokens.placeables.find(t => t.actor.uuid === origin.actor.uuid)
+		const originToken = canvas.tokens.placeables.find(t => t.actor.uuid === origin.uuid)
 		if (!targetCondition) {
 			targetCondition = game.modules.get("pf2e-perception")?.api.token.getVisibility(target, originToken);
 		}
