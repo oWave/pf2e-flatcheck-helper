@@ -305,6 +305,9 @@ function flatCheckForTarget(origin: ActorPF2e, target: TokenPF2e) {
 		const originToken = canvas.tokens.placeables.find(t => t.actor.uuid === origin.uuid)
 		if (!targetCondition) {
 			targetCondition = game.modules.get("pf2e-perception")?.api.token.getVisibility(target, originToken);
+			if (['undetected', 'unnoticed'].includes(targetCondition)) {
+				targetCondition = 'hidden';
+			}
 		}
 	}
 
