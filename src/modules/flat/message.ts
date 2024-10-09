@@ -268,6 +268,8 @@ export const targetDCs = {
 	concealed: 5,
 	hidden: 11,
 	invisible: 11,
+	undetected: 11,
+	unnoticed: 11,
 }
 type TargetSlug = keyof typeof targetDCs
 
@@ -305,15 +307,12 @@ function flatCheckForTarget(origin: ActorPF2e, target: TokenPF2e) {
 			targetCondition = slug as TargetSlug
 	})
 
-	//Pf2e perception support
-	if(game.modules.get("pf2e-perception")?.active) {
-		const originToken = canvas.tokens.placeables.find(t => t.actor.uuid === origin.uuid)
-		if (!targetCondition) {
-			targetCondition = game.modules.get("pf2e-perception")?.api.token.getVisibility(target, originToken);
-			if (['undetected', 'unnoticed'].includes(targetCondition)) {
-				targetCondition = 'hidden';
-			}
-		}
+	if (game.modules.get("pf2e-perception")?.active) {
+		const originToken = canvas.tokens.placeables.find((t) => t.actor?.uuid === origin.uuid)
+		targetCondition = game.modules
+			.get("pf2e-perception")
+			// @ts-expect-error
+			?.api.token.getVisibility(target, originToken) as TargetSlug
 	}
 
 	if (!originCondition && !targetCondition) return null
