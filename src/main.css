@@ -128,7 +128,7 @@
 			max-width: 20%;
 		}
 		.fc-roll {
-			background: rgba(0,0,0,0.1);
+			background: rgba(0, 0, 0, 0.1);
 			font-size: var(--font-size-20);
       font-weight: bold;
 
@@ -165,7 +165,6 @@
 			i {
 				font-size: 60%;
 			}
-
 		}
 		button {
 			flex-basis: 10%;
@@ -185,9 +184,14 @@
 	}
 
 	.fc-note {
-		line-height: 28px;
+		min-height: 28px;
 		display: flex;
 		justify-content: center;
+align-items: center;
+
+		background: rgba(255, 255, 240, 0.2);
+		border: 1px solid var(--color-border-light-primary);
+		border-radius: 3px;
 
 		i {
 			margin-right: 1ch;
@@ -195,6 +199,7 @@
 	}
 
 	.fc-rule-note {
+margin-top: 2px;
 		line-height: 1;
 		font-weight: 500;
 		cursor: help;
