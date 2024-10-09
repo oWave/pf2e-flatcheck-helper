@@ -5,6 +5,7 @@ import type { TokenPF2e } from "types/pf2e/module/canvas"
 import type { ChatMessagePF2e } from "types/pf2e/module/chat-message"
 import type { SpellPF2e } from "types/pf2e/module/item"
 import { BaseModule } from "../base"
+import { flatMessageConfig } from "./message-config"
 
 export class MessageFlatCheckModule extends BaseModule {
 	settingsKey = "flat-check-in-message"
@@ -227,6 +228,7 @@ export async function preCreateMessage(msg: ChatMessagePF2e) {
 	const data: ButtonsFlags = {}
 
 	if (
+		!flatMessageConfig.ignoredCheckTypes.has("manipulate") &&
 		msg.actor?.conditions.stored.some((c) => c.slug === "grabbed") &&
 		msg.item?.system.traits.value?.some((t) => t === "manipulate")
 	) {
@@ -234,7 +236,8 @@ export async function preCreateMessage(msg: ChatMessagePF2e) {
 	}
 
 	if (
-		msg.flags?.pf2e?.context?.type === "spell-cast" ||
+		(!flatMessageConfig.ignoredCheckTypes.has("stupefied") &&
+			msg.flags?.pf2e?.context?.type === "spell-cast") ||
 		(msg.flags?.pf2e?.context?.action === "cast-a-spell" &&
 			msg.flags?.pf2e?.context?.type === "attack-roll")
 	)
@@ -245,8 +248,10 @@ export async function preCreateMessage(msg: ChatMessagePF2e) {
 			}
 		}
 
-	const targetCheck = flatCheckForUserTargets(msg.actor)
-	if (targetCheck) data.targets = targetCheck
+	if (!flatMessageConfig.ignoredCheckTypes.has("target")) {
+		const targetCheck = flatCheckForUserTargets(msg.actor)
+		if (targetCheck) data.targets = targetCheck
+	}
 
 	msg.updateSource({
 		[`flags.${MODULE_ID}.flatchecks`]: data,

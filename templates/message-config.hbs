@@ -1,0 +1,13 @@
+<div>
+
+	<fieldset>
+		<legend>Check Types</legend>
+		{{#each @root.types}}
+			<div class="form-group">
+				<label for="fc-{{this.key}}">{{ @root.i18n (concat this.key ".label") }}</label>
+				<input type="checkbox" name="{{key}}" id="fc-{{key}}" {{checked this.checked}}>
+				<p class="note">{{ @root.i18n (concat this.key ".note") }}</p>
+			</div>
+		{{/each}}
+	</fieldset>
+</div>

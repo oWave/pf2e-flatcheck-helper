@@ -1,0 +1,23 @@
+form[id="fc-flat-check-config"] {
+	p {
+		margin: 0;
+	}
+
+	fieldset {
+		margin-bottom: 0.5rem;
+		legend {
+			font-size: var(--font-size-16);
+		}
+	}
+
+	.form-group {
+		display: flex;
+		margin-bottom: 0.5rem;
+
+		.note {
+			opacity: 0.8;
+			font-size: var(--font-size-13);
+			flex: 0 0 100%;
+		}
+	}
+}

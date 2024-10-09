@@ -1,5 +1,7 @@
 import MODULE from "src"
 import { MODULE_ID } from "./constants"
+import { parseHTML } from "./utils"
+import { FlatMessageConfigApplication } from "./modules/flat/message-config"
 
 type Callback = (value: unknown) => void
 const listeners: Record<string, Callback> = {}
@@ -80,6 +82,15 @@ export const settings = {
 			default: true,
 			type: Boolean,
 			requiresReload: true,
+		})
+
+		register("flat-check-config", {
+			name: "Flat Check Config",
+			hint: "",
+			scope: "world",
+			config: false,
+			default: {},
+			type: Object,
 		})
 
 		register("delay-combat-tracker", {
@@ -168,7 +179,7 @@ export const settings = {
 
 		register("emanation-automation", {
 			name: "Auto-Apply Emanation Effect Button",
-			hint: "Requires libwrapper.",
+			hint: "",
 			scope: "world",
 			config: true,
 			type: Boolean,
@@ -177,7 +188,7 @@ export const settings = {
 
 		register("script-alt-roll-breakdown", {
 			name: "Alternative Roll Breakdowns",
-			hint: "Shows some roll modifiers (e.g. circumstance modifies like multi attack penalty, status bonuses, other untyped bonuses) to players.",
+			hint: "Reveals circumstance/status/untyped roll modifiers (e.g. multi attack penalty) to players.",
 			scope: "world",
 			config: true,
 			type: Boolean,
@@ -269,13 +280,27 @@ function onRenderSettingsConfig(app: SettingsConfig, $html: JQuery) {
 
 	if (!game.modules.get("lib-wrapper")?.active) {
 		for (const s of ["emanation-automation", "flat-check-in-message"]) {
-			const input = root.querySelector<HTMLInputElement>(`input[name="pf2e-flatcheck-helper.${s}"]`)
+			root
+				.querySelector<HTMLElement>(`div.form-group[data-setting-id="${MODULE_ID}.${s}"] p.notes`)
+				?.insertAdjacentHTML(
+					"afterbegin",
+					`<span style="color: var(--color-level-error)">Requires libwrapper. </span>`,
+				)
+			const input = root.querySelector<HTMLInputElement>(`input[name="${MODULE_ID}.${s}"]`)
 			if (input) {
 				input.title = "Requires lib-wrapper"
 				input.disabled = true
-				input.checked = false
+				input.indeterminate = true
 				input.style.cursor = "not-allowed"
 			}
 		}
 	}
+
+	const flatConfigButton = parseHTML(`<button type="button"><i class="fas fa-cogs"></i></button>`)
+	flatConfigButton.firstChild!.addEventListener("click", () => {
+		new FlatMessageConfigApplication({}).render(true)
+	})
+	root
+		.querySelector<HTMLElement>(`input[name="${MODULE_ID}.flat-check-in-message"]`)
+		?.before(flatConfigButton)
 }

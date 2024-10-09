@@ -1,98 +1,100 @@
+@import "modules/flat/message-config.css";
+
 #fc-container {
-  flex: 0;
-  margin: 2px 6px;
-  position: relative;
+	flex: 0;
+	margin: 2px 6px;
+	position: relative;
 }
 
 #fc-button-target.highlight {
-  outline: rgba(255, 60, 60, 0.7) solid 2px;
-  background-color: #d9b7b6;
+	outline: rgba(255, 60, 60, 0.7) solid 2px;
+	background-color: #d9b7b6;
 }
 
 #fc-container button > i {
-  margin-right: 0;
+	margin-right: 0;
 }
 
 @keyframes rotating {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
 }
 
 #initiative-delay,
 #initiative-return {
-  /* padding: 4px 12px; */
-  margin: 4px;
-  text-align: center;
-  color: white;
-  background-color: rgba(255, 255, 255, 0.2);
-  outline: black solid 1px;
-  border-radius: 4px;
+	/* padding: 4px 12px; */
+	margin: 4px;
+	text-align: center;
+	color: white;
+	background-color: rgba(255, 255, 255, 0.2);
+	outline: black solid 1px;
+	border-radius: 4px;
 }
 
 #initiative-delay,
 .initiative-return {
-  cursor: pointer;
+	cursor: pointer;
 }
 
 #initiative-return .fa-play {
-  display: none;
+	display: none;
 }
 #initiative-return .delay-indicator {
-  animation: rotating 4s linear infinite;
-  width: 25px;
-  height: 25px;
-  display: inline-block;
-  position: relative;
-  top: 8.5px;
+	animation: rotating 4s linear infinite;
+	width: 25px;
+	height: 25px;
+	display: inline-block;
+	position: relative;
+	top: 8.5px;
 }
 
 .initiative-return:hover .fa-play {
-  display: unset !important;
+	display: unset !important;
 }
 .initiative-return:hover .delay-indicator {
-  display: none !important;
+	display: none !important;
 }
 
 .fc-undo-button {
-  align-items: center;
-  background: var(--bg-dark);
-  display: inline-flex;
-  justify-content: center;
-  width: 3ch;
-  margin-left: 2px;
+	align-items: center;
+	background: var(--bg-dark);
+	display: inline-flex;
+	justify-content: center;
+	width: 3ch;
+	margin-left: 2px;
 }
 
 .undo-text.undo {
-  text-decoration: line-through;
+	text-decoration: line-through;
 }
 
 .undo-text.undo + .fc-undo-button {
-  display: none;
+	display: none;
 }
 
 .fc-emanation {
-  img {
-    border: unset;
-  }
+	img {
+		border: unset;
+	}
 }
 
 #pf2e-hud-tracker .combatant .initiative {
-  .delay-indicator {
-    animation: rotating 4s linear infinite;
-  }
+	.delay-indicator {
+		animation: rotating 4s linear infinite;
+	}
 
-  .delay-return .delay-indicator:hover {
-    animation: unset;
+	.delay-return .delay-indicator:hover {
+		animation: unset;
 
-    &:before {
-      /* fa-play */
-      content: "\f04b";
-    }
-  }
+		&:before {
+			/* fa-play */
+			content: "\f04b";
+		}
+	}
 }
 
 .fc-flatcheck-buttons {
@@ -105,8 +107,8 @@
 		font-size: var(--font-size-14);
 		font-family: var(--font-primary);
 		background: rgba(255, 255, 240, 0.2);
-    border: 1px solid var(--color-border-light-primary);
-    border-radius: 3px;
+		border: 1px solid var(--color-border-light-primary);
+		border-radius: 3px;
 		margin: var(--space-2) 0;
 		line-height: 28px;
 
@@ -130,7 +132,7 @@
 		.fc-roll {
 			background: rgba(0, 0, 0, 0.1);
 			font-size: var(--font-size-20);
-      font-weight: bold;
+			font-weight: bold;
 
 			.fc-rolls {
 				flex-grow: 1;
@@ -187,7 +189,7 @@
 		min-height: 28px;
 		display: flex;
 		justify-content: center;
-align-items: center;
+		align-items: center;
 
 		background: rgba(255, 255, 240, 0.2);
 		border: 1px solid var(--color-border-light-primary);
@@ -199,7 +201,7 @@ align-items: center;
 	}
 
 	.fc-rule-note {
-margin-top: 2px;
+		margin-top: 2px;
 		line-height: 1;
 		font-weight: 500;
 		cursor: help;

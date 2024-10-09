@@ -1,0 +1,18 @@
+{
+	"pf2e-fc": {
+		"flat-config": {
+			"stupefied": {
+				"label": "Stupefied",
+				"note": "Spellcasting while Stupefied"
+			},
+			"manipulate": {
+				"label": "Manipulate",
+				"note": "Manipulate Actions while Grabbed"
+			},
+			"target": {
+				"label": "Target",
+				"note": "Concealed/Hidden/Dazzled/Blinded/etc. Supports PF2e Perception"
+			}
+		}
+	}
+}

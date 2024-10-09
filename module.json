@@ -1,74 +1,83 @@
 {
-  "id": "pf2e-flatcheck-helper",
-  "title": "PF2e Utility Buttons",
-  "description": "Collection of clickable additions",
-  "version": "This is auto replaced",
-  "library": "false",
-  "socket": true,
-  "compatibility": {
-    "minimum": 12,
-    "verified": 12,
-    "maximum": 12
-  },
-  "authors": [
-    {
-      "name": "oWave",
-      "discord": "owave"
-    }
-  ],
-  "packFolders": [
-    {
-      "name": "PF2e Utility Buttons",
-      "sorting": "a",
-      "packs": [
-        "Effects"
-      ]
-    }
-  ],
-  "packs": [
-    {
-      "label": "Effects",
-      "name": "Effects",
-      "path": "packs/effects.db",
-      "system": "pf2e",
-      "type": "Item",
-      "private": false,
-      "flags": {}
-    }
-  ],
-  "relationships": {
-    "systems": [
-      {
-        "id": "pf2e",
-        "type": "system",
-        "compatibility": {
-          "minimum": "6.1.0"
-        }
-      }
-    ],
-    "requires": []
-  },
-  "esmodules": [
-    "dist/module.js"
-  ],
-  "styles": [
-    "dist/style.css"
-  ],
-  "flags": {
-    "hotReload": {
-      "extensions": [
-        "css",
-        "hbs"
-      ],
-      "paths": [
-        "templates",
-        "styles"
-      ]
-    }
-  },
-  "url": "This is auto replaced",
-  "manifest": "This is auto replaced",
-  "download": "This is auto replaced",
-  "license": "LICENSE",
-  "readme": "README.md"
+	"id": "pf2e-flatcheck-helper",
+	"title": "PF2e Utility Buttons",
+	"description": "Collection of clickable additions",
+	"version": "This is auto replaced",
+	"library": "false",
+	"socket": true,
+	"compatibility": {
+		"minimum": 12,
+		"verified": 12,
+		"maximum": 12
+	},
+	"authors": [
+		{
+			"name": "oWave",
+			"discord": "owave"
+		}
+	],
+	"packFolders": [
+		{
+			"name": "PF2e Utility Buttons",
+			"sorting": "a",
+			"packs": [
+				"Effects"
+			]
+		}
+	],
+	"packs": [
+		{
+			"label": "Effects",
+			"name": "Effects",
+			"path": "packs/effects.db",
+			"system": "pf2e",
+			"type": "Item",
+			"private": false,
+			"flags": {}
+		}
+	],
+	"relationships": {
+		"systems": [
+			{
+				"id": "pf2e",
+				"type": "system",
+				"compatibility": {
+					"minimum": "6.1.0"
+				}
+			}
+		],
+		"requires": []
+	},
+	"esmodules": [
+		"dist/module.js"
+	],
+	"styles": [
+		"dist/style.css"
+	],
+	"languages": [
+		{
+			"lang": "en",
+			"name": "English",
+			"path": "lang/en.json"
+		}
+	],
+	"flags": {
+		"hotReload": {
+			"extensions": [
+				"css",
+				"hbs",
+				"json"
+			],
+			"paths": [
+				"templates",
+				"styles",
+				"lang"
+			]
+		}
+	},
+	"url": "This is auto replaced",
+	"manifest": "This is auto replaced",
+	"download": "This is auto replaced",
+	"license": "LICENSE",
+	"readme": "README.md"
 }

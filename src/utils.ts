@@ -23,3 +23,9 @@ export function sleep(ms: number) {
 		setTimeout(resolve, ms)
 	})
 }
+
+export function parseHTML(string: string) {
+	const template = document.createElement("template")
+	template.innerHTML = string
+	return template.content
+}
