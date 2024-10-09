@@ -33,7 +33,10 @@ async function onRenderChatMessage(msg: ChatMessagePF2e, html: JQuery) {
 	if (!html.find("div.tags.modifiers").is(":empty")) return
 
 	const modifiersHTML = msg.flags.pf2e.modifiers
-		.filter((m) => ["untyped", "circumstance", "status"].includes(m.type) && m.slug !== "base")
+		.filter(
+			(m) =>
+				["untyped", "circumstance", "status"].includes(m.type) && m.slug !== "base" && m.enabled,
+		)
 		.map((m) => {
 			const mod = m.modifier < 0 ? m.modifier : `+${m.modifier}`
 			return `<span class="tag tag_transparent" data-slug="${m.slug}">${m.label} ${mod}</span>`
