@@ -236,17 +236,14 @@ export async function preCreateMessage(msg: ChatMessagePF2e) {
 	}
 
 	if (
-		(!flatMessageConfig.ignoredCheckTypes.has("stupefied") &&
-			msg.flags?.pf2e?.context?.type === "spell-cast") ||
-		(msg.flags?.pf2e?.context?.action === "cast-a-spell" &&
-			msg.flags?.pf2e?.context?.type === "attack-roll")
-	)
-		if (["spell-cast", "attack-roll"].includes(msg.flags?.pf2e?.context?.type)) {
-			const stupefied = msg.actor?.conditions.stupefied?.value
-			if (stupefied) {
-				data.stupefied = { label: `Stupefied ${stupefied}`, dc: 5 + stupefied }
-			}
+		!flatMessageConfig.ignoredCheckTypes.has("stupefied") &&
+		msg.flags?.pf2e?.origin?.type === "spell"
+	) {
+		const stupefied = msg.actor?.conditions.stupefied?.value
+		if (stupefied) {
+			data.stupefied = { label: `Stupefied ${stupefied}`, dc: 5 + stupefied }
 		}
+	}
 
 	if (!flatMessageConfig.ignoredCheckTypes.has("target")) {
 		const targetCheck = flatCheckForUserTargets(msg.actor)
