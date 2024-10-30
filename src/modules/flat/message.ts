@@ -220,7 +220,8 @@ export async function preCreateMessage(msg: ChatMessagePF2e) {
 		(msg.flags?.pf2e?.context?.type === "spell-cast" &&
 			(msg.item as SpellPF2e).isAttack &&
 			!msg.isCheckRoll) ||
-		msg.flags?.pf2e?.context?.type === "saving-throw"
+		msg.flags?.pf2e?.context?.type === "saving-throw" ||
+		msg.flags?.pf2e?.context?.type === "flat-check"
 	) {
 		return
 	}
