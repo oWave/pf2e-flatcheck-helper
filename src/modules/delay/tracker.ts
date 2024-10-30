@@ -30,7 +30,7 @@ function drawButton(type: "delay" | "return", combatentHtml: JQuery, combatant: 
 		const cls = MODULE.settings.allowReturn ? "initiative-return" : "initiative-delay-indicator"
 		button = $(`
       <div id="initiative-return" class="${cls}" title="${title}">
-        <img class="delay-indicator" src="/icons/svg/clockwork.svg"></img>
+        <img class="delay-indicator" src="icons/svg/clockwork.svg"></img>
         <i class="fa-solid fa-play"></i>
       </div>
     `)
