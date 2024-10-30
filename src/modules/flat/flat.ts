@@ -21,24 +21,24 @@ export async function rollFlatCheck(
 	dc: number,
 	{ hidden = false, label }: { hidden: boolean; label?: string },
 ) {
-	const r = await new Roll("d20").roll()
-	const degree = r.total >= dc ? "success" : "failure"
-	const delta = r.total - dc
-	const deltaText = delta >= 0 ? `+${delta}` : delta.toString()
+	const actor =
+		canvas.tokens.controlled.at(0)?.actor ??
+		game.user.character ??
+		new Actor({ type: "npc", name: game.user.name })
 
-	const flavor = document.createElement("span")
-	flavor.classList.add("flavor-text")
-	flavor.innerHTML = `
-  <div class="target-dc-result">
-    <div class="target-dc"><span>${label ?? "Flat"} DC: ${dc}</span></div>
-    <div class="result degree-of-success">
-      Result: <span data-visibility="all" data-whose="self" class="${degree}">${degree.capitalize()}</span>
-      <span data-whose="target">by ${deltaText}</span>
-    </div>
-  </div>
-  `
-
-	r.toMessage({ flavor: flavor.outerHTML }, { rollMode: hidden ? "blindroll" : "roll" })
+	return await game.pf2e.Check.roll(
+		new game.pf2e.StatisticModifier(label ? `Flat Check: ${label}` : "Flat Check", []),
+		{
+			//@ts-expect-error
+			actor,
+			type: "flat-check",
+			dc: { value: dc, visible: true },
+			options: new Set(["flat-check"]),
+			createMessage: true,
+			skipDialog: true,
+			rollMode: hidden ? "blindroll" : "roll",
+		},
+	)
 }
 
 export const CONDITION_DCS = {
