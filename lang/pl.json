@@ -1,0 +1,18 @@
+{
+	"pf2e-fc": {
+		"flat-config": {
+			"stupefied": {
+				"label": "Ogłupiony",
+				"note": "Rzucanie zaklęć w stanie Ogłupienia"
+			},
+			"manipulate": {
+				"label": "Manipulacja",
+				"note": "Akcje manipulacji podczas Pochwycenia"
+			},
+			"target": {
+				"label": "Cel",
+				"note": "Przysłonięty / Ukryty / Zamroczony / Oślepiony / itd. Wspiera PF2e Perception"
+			}
+		}
+	}
+}
