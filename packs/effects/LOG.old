@@ -1,7 +1,0 @@
-2023/12/01-11:21:19.356 1214 Recovering log #121
-2023/12/01-11:21:19.361 1214 Delete type=0 #121
-2023/12/01-11:21:19.362 1214 Delete type=3 #119
-2023/12/01-11:21:38.207 1540 Level-0 table #126: started
-2023/12/01-11:21:38.207 1540 Level-0 table #126: 0 bytes OK
-2023/12/01-11:21:38.209 1540 Delete type=0 #124
-2023/12/01-11:21:38.209 1540 Manual compaction at level-0 from '!items!DKO0TZjDoJD24qGR' @ 72057594037927935 : 1 .. '!items!iyTVTu4ImC5jDtMU' @ 0 : 0; will stop at (end)

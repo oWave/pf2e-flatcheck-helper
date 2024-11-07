@@ -8,11 +8,12 @@
 	"scripts": {
 		"dev": "vite serve",
 		"build": "vite build",
-		"unpack": "fvtt package workon \"pf2e-flatcheck-helper\" && fvtt package unpack \"effects\"",
-		"pack": "fvtt package workon \"pf2e-flatcheck-helper\" && fvtt package pack \"effects\""
+		"unpack": "node build/extract.mjs",
+		"pack": "node build/pack.mjs"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.8.3",
+		"@foundryvtt/foundryvtt-cli": "^1.0.3",
 		"@types/jquery": "^3.5.30",
 		"@types/node": "^22.3.0",
 		"typescript": "*",

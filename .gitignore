@@ -2,3 +2,6 @@ dist/
 node_modules/
 .vscode/
 .vite-cache/
+
+packs/
+!packs/*/_source

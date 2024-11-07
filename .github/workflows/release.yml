@@ -19,6 +19,7 @@ jobs:
       - run: |
           yarn install --frozen-lockfile
           yarn run --production build
+          yarn run pack
 
       # get part of the tag after the `v`
       - name: Extract tag version number
