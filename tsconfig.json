@@ -1,39 +1,39 @@
 {
-  "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "allowJs": true,
-    "outDir": "dist",
-    "rootDir": ".",
-    "noEmit": true,
-    "strict": true,
-    "noImplicitAny": false,
-    "moduleResolution": "node",
-    "typeRoots": [
-      "node_modules/@types",
-      "types",
-    ],
-    "types": [
-      "node",
-      "jquery",
-      "foundry",
-      "pf2e"
-    ],
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
-    "paths": {
-      "src": [
-        "./src/index"
-      ],
-      "src/*": [
-        "./src/*"
-      ]
-    }
-  },
-  "include": [
-    "./src/**/*",
-  ],
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+		"allowJs": true,
+		"outDir": "dist",
+		"rootDir": ".",
+		"noEmit": true,
+		"strict": true,
+		"noImplicitAny": false,
+		"moduleResolution": "Bundler",
+		"typeRoots": [
+			"./node_modules/@types",
+			"./types",
+		],
+		"types": [
+			"node",
+			"jquery",
+			"foundry",
+			"pf2e"
+		],
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"baseUrl": ".",
+		"paths": {
+			"src": [
+				"./src/index"
+			],
+			"src/*": [
+				"./src/*"
+			]
+		}
+	},
+	"include": [
+		"./src/**/*",
+	],
 }
