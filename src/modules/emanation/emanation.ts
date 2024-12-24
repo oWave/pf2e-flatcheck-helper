@@ -75,8 +75,8 @@ async function extractEffects(item: SpellPF2e) {
 	const uuids = extractEffectUUIDs(item)
 	if (!uuids) return []
 
-	const effects = (await Promise.all(uuids.map((id) => fromUuid<ItemPF2e>(id)))).filter((e) =>
-		e?.isOfType("effect"),
+	const effects = (await Promise.all(uuids.map((id) => fromUuid<ItemPF2e>(id)))).filter(
+		(e) => typeof e?.isOfType === "function" && e?.isOfType("effect"),
 	)
 	return effects
 }
@@ -162,7 +162,12 @@ async function spellSheetRenderInner(sheet: SpellSheetPF2e, $html: JQuery) {
 async function spellSheetRenderWrapper(this: SpellSheetPF2e, wrapped, ...args) {
 	const $html = await wrapped(...args)
 
-	if (MODULE.settings.emanationAutomation) await spellSheetRenderInner(this, $html)
+	try {
+		if (MODULE.settings.emanationAutomation) await spellSheetRenderInner(this, $html)
+	} catch (e) {
+		ui.notifications.error("Could not insert emanation automation into spell sheet.")
+		console.error(e)
+	}
 
 	return $html
 }
