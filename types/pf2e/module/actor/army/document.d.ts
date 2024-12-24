@@ -1,4 +1,4 @@
-import { FeatGroup } from "../character/feats.ts";
+import { FeatGroup } from "../character/feats/index.ts";
 import { Kingdom } from "../party/kingdom/model.ts";
 import { type CampaignFeaturePF2e } from "../../item/index.ts";
 import type { ItemSourcePF2e, ItemType } from "../../item/base/data/index.ts";
@@ -20,6 +20,7 @@ declare class ArmyPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentP
     /** Gets the active kingdom. Later this should be configurable based on alliance */
     get kingdom(): Kingdom | null;
     get maxTactics(): number;
+    get strongSave(): "maneuver" | "morale";
     prepareData(): void;
     prepareBaseData(): void;
     /** Run rule elements */

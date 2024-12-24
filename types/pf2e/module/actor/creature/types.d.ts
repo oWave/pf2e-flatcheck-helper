@@ -1,6 +1,7 @@
 import type { ActorPF2e, ActorUpdateOperation } from "../base.ts";
 import type { CREATURE_ACTOR_TYPES } from "../values.ts";
 import type { AbilityItemPF2e, MeleePF2e, WeaponPF2e } from "../../item/index.ts";
+import { LabeledValueAndMax } from "../../data.ts";
 import type { TokenDocumentPF2e } from "../../scene/index.ts";
 import type { LANGUAGES_BY_RARITY, SENSE_TYPES } from "./values.ts";
 /** A `CreaturePF2e` subtype string */
@@ -21,4 +22,7 @@ interface GetReachParameters {
 interface CreatureUpdateOperation<TParent extends TokenDocumentPF2e | null> extends ActorUpdateOperation<TParent> {
     allowHPOverage?: boolean;
 }
-export type { Attitude, CreatureActorType, CreatureTrait, CreatureType, CreatureUpdateOperation, GetReachParameters, Language, ModeOfBeing, SenseAcuity, SenseType, SpecialVisionType, };
+interface ResourceData extends LabeledValueAndMax {
+    slug: string;
+}
+export type { Attitude, CreatureActorType, CreatureTrait, CreatureType, CreatureUpdateOperation, GetReachParameters, Language, ModeOfBeing, ResourceData, SenseAcuity, SenseType, SpecialVisionType, };

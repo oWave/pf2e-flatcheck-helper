@@ -4,7 +4,7 @@ import type { LabeledSpeed, SenseData } from "../actor/creature/data.ts";
 import type { DamageDicePF2e, DeferredDamageDiceOptions, DeferredPromise, DeferredValue, ModifierAdjustment, ModifierPF2e } from "../actor/modifiers.ts";
 import type { MovementType } from "../actor/types.ts";
 import type { MeleePF2e, WeaponPF2e } from "../item/index.ts";
-import type { ActionTrait } from "../item/ability/index.ts";
+import type { AbilityTrait } from "../item/ability/index.ts";
 import type { ConditionSource, EffectSource } from "../item/base/data/index.ts";
 import type { WeaponRuneSource } from "../item/weapon/data.ts";
 import type { WeaponPropertyRuneType } from "../item/weapon/types.ts";
@@ -16,7 +16,9 @@ import type { Predicate } from "../system/predication.ts";
 import type { Statistic } from "../system/statistic/index.ts";
 import type { TokenSource } from "../../../types/foundry/common/documents/token.d.ts";
 import type { DamageAlteration } from "./rule-element/damage-alteration/alteration.ts";
+import { ItemAlterationRuleElement } from "./rule-element/item-alteration/rule-element.ts";
 import type { Suboption } from "./rule-element/roll-option/data.ts";
+import { SpecialResourceRuleElement } from "./rule-element/special-resource.ts";
 /** Defines a list of data provided by rule elements that an actor can pull from during its data preparation lifecycle */
 interface RuleElementSynthetics<TActor extends ActorPF2e = ActorPF2e> {
     criticalSpecializations: {
@@ -27,6 +29,7 @@ interface RuleElementSynthetics<TActor extends ActorPF2e = ActorPF2e> {
     damageDice: DamageDiceSynthetics;
     degreeOfSuccessAdjustments: Record<string, DegreeOfSuccessAdjustment[]>;
     dexterityModifierCaps: DexterityModifierCapData[];
+    itemAlterations: ItemAlterationRuleElement[];
     ephemeralEffects: Record<string, {
         target: DeferredEphemeralEffect[];
         origin: DeferredEphemeralEffect[];
@@ -37,6 +40,7 @@ interface RuleElementSynthetics<TActor extends ActorPF2e = ActorPF2e> {
         [K in MovementType]?: DeferredMovementType[];
     };
     multipleAttackPenalties: Record<string, MAPSynthetic[]>;
+    resources: Record<string, SpecialResourceRuleElement>;
     rollNotes: Record<string, RollNotePF2e[]>;
     rollSubstitutions: Record<string, RollSubstitution[]>;
     rollTwice: Record<string, RollTwiceSynthetic[]>;
@@ -130,7 +134,7 @@ interface StrikeAdjustment {
         materials?: Set<MaterialDamageEffect>;
     }) => void;
     adjustWeapon?: (weapon: WeaponPF2e | MeleePF2e) => void;
-    adjustTraits?: (weapon: WeaponPF2e | MeleePF2e, traits: ActionTrait[]) => void;
+    adjustTraits?: (weapon: WeaponPF2e | MeleePF2e, traits: AbilityTrait[]) => void;
 }
 interface StrikingSynthetic {
     label: string;

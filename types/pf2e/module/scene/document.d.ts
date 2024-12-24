@@ -18,6 +18,10 @@ declare class ScenePF2e extends Scene {
     /** Whether this scene is "in focus": the active scene, or the viewed scene if only a single GM is logged in */
     get isInFocus(): boolean;
     protected _initialize(options?: Record<string, unknown>): void;
+    /**
+     * Prevent double data preparation of child documents.
+     * @removeme in V13
+     */
     prepareData(): void;
     /** Toggle Unrestricted Global Vision according to scene darkness level */
     prepareBaseData(): void;

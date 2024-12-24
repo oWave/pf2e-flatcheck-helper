@@ -118,7 +118,7 @@ declare abstract class PhysicalItemPF2e<TParent extends ActorPF2e | null = Actor
     /** Updates this container's cache while also resolving cyclical references. Skips if already cached */
     protected updateContainerCache(seen?: string[]): void;
     /** Include mystification-related rendering instructions for views that will display this data. */
-    protected traitChatData(dictionary: Record<string, string>): TraitChatData[];
+    traitChatData(dictionary?: Record<string, string>): TraitChatData[];
     /** Redirect subitem updates to the parent item */
     update(data: Record<string, unknown>, operation?: Partial<DatabaseUpdateOperation<TParent>>): Promise<this | undefined>;
     /** Redirect subitem deletes to parent-item updates */

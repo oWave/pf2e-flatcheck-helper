@@ -61,6 +61,9 @@ interface ActorTokenFlag {
     token?: TokenDocumentUUID;
 }
 type ContextFlagOmission = "actor" | "action" | "altUsage" | "createMessage" | "damaging" | "dosAdjustments" | "item" | "mapIncreases" | "notes" | "options" | "origin" | "range" | "target" | "token";
+interface ContextualRollOptions {
+    postRoll?: string[];
+}
 interface CheckContextChatFlag extends Required<Omit<CheckCheckContext, ContextFlagOmission>> {
     actor: string | null;
     token: string | null;
@@ -72,6 +75,7 @@ interface CheckContextChatFlag extends Required<Omit<CheckCheckContext, ContextF
     altUsage?: "thrown" | "melee" | null;
     notes: RollNoteSource[];
     options: string[];
+    contextualOptions?: ContextualRollOptions;
 }
 interface DamageDamageContextFlag extends Required<Omit<DamageDamageContext, ContextFlagOmission | "self">> {
     actor: string | null;
@@ -81,6 +85,7 @@ interface DamageDamageContextFlag extends Required<Omit<DamageDamageContext, Con
     target: ActorTokenFlag | null;
     notes: RollNoteSource[];
     options: string[];
+    contextualOptions?: ContextualRollOptions;
 }
 interface SpellCastContextFlag {
     type: "spell-cast";
@@ -99,7 +104,7 @@ interface SelfEffectContextFlag {
 }
 interface DamageTakenContextFlag {
     type: "damage-taken";
-    domains?: never;
+    domains?: string[];
     options?: string[];
     outcome?: never;
 }

@@ -1,9 +1,9 @@
 /// <reference types="jquery" resolution-mode="require"/>
 /// <reference types="jquery" resolution-mode="require"/>
 /// <reference types="tooltipster" />
-import { CharacterPF2e } from "../../index.ts";
-import { AttributeString } from "../../types.ts";
-import { AncestryPF2e, BackgroundPF2e, ClassPF2e } from "../../../item/index.ts";
+import type { CharacterPF2e } from "../../index.ts";
+import type { AttributeString } from "../../types.ts";
+import type { AncestryPF2e, BackgroundPF2e, ClassPF2e } from "../../../item/index.ts";
 declare class AttributeBuilder extends Application {
     #private;
     actor: CharacterPF2e;

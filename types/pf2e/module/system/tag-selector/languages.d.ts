@@ -2,7 +2,6 @@
 /// <reference types="jquery" resolution-mode="require"/>
 /// <reference types="tooltipster" />
 import { ActorPF2e } from "../../actor/index.ts";
-import type { Language } from "../../actor/creature/types.ts";
 import type { ItemPF2e } from "../../item/index.ts";
 import { TagSelectorBasicData } from "./basic.ts";
 import { TagSelectorBasic, type SelectableTagField, type TagSelectorOptions } from "./index.ts";
@@ -16,7 +15,7 @@ declare class LanguageSelector extends TagSelectorBasic<ActorPF2e | ItemPF2e> {
     protected _updateObject(event: Event, formData: Record<string, unknown>): Promise<void>;
 }
 interface LanguageSelectorData extends TagSelectorBasicData<ActorPF2e | ItemPF2e> {
-    choices: Record<Language, ChoiceData>;
+    choices: Record<string, ChoiceData>;
     hasRarity: true;
 }
 interface ChoiceData {

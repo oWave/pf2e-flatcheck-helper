@@ -19,15 +19,13 @@ declare class PartyPF2e<TParent extends TokenDocumentPF2e | null = TokenDocument
     get canAct(): false;
     /** Part members can add and remove items (though system socket shenanigans)  */
     canUserModify(user: UserPF2e, action: UserAction): boolean;
-    /** Our bond is unbreakable */
+    /** Our bond is unbreakable. */
     isAffectedBy(): false;
     /** Override validation to defer certain properties to the campaign model */
     validate(options?: DataModelValidationOptions): boolean;
     updateSource(data?: Record<string, unknown>, options?: DocumentSourceUpdateContext): DeepPartial<this["_source"]>;
     /** Only prepare rule elements for non-physical items (in case campaign items exist) */
     protected prepareRuleElements(): RuleElementPF2e<RuleElementSchema>[];
-    /** Make `system.campaign` non-enumerable to prevent `TokenDocument.getTrackedAttributes` from recursing into it. */
-    protected _initialize(options?: Record<string, unknown> | undefined): void;
     prepareBaseData(): void;
     prepareDerivedData(): void;
     addMembers(...membersToAdd: CreaturePF2e[]): Promise<void>;

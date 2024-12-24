@@ -1,5 +1,4 @@
-import { CraftingAbilityData } from "crafting/ability.ts";
-import { CraftingFormulaData } from "crafting/formula.ts";
+import type { CraftingAbilityData, CraftingFormulaData } from "crafting/index.ts";
 import { AbilityData, BaseCreatureSource, CreatureAttributes, CreatureDetails, CreatureDetailsSource, CreatureLanguagesData, CreaturePerceptionData, CreatureResources, CreatureSystemData, CreatureSystemSource, HeldShieldData, SaveData, SkillData } from "../creature/data.ts";
 import { CreatureInitiativeSource, CreatureSpeeds, Language } from "../creature/index.ts";
 import { ActorAttributesSource, ActorFlagsPF2e, AttributeBasedTraceData, HitPointsStatistic, InitiativeData, StrikeData, TraitViewData } from "../data/base.ts";
@@ -21,6 +20,8 @@ type CharacterSource = BaseCreatureSource<"character", CharacterSystemSource> & 
 };
 type CharacterFlags = ActorFlagsPF2e & {
     pf2e: {
+        /** Has daily preparation crafting been completed for the day */
+        dailyCraftingComplete?: boolean;
         /** If applicable, the character's proficiency rank in their deity's favored weapon */
         favoredWeaponRank: number;
         /** The highest number of damage dice among the character's equipped weapons and available unarmed attacks */
@@ -35,6 +36,8 @@ type CharacterFlags = ActorFlagsPF2e & {
         sheetTabs: CharacterSheetTabVisibility;
         /** Whether the basic unarmed attack is shown on the Actions tab */
         showBasicUnarmed: boolean;
+        /** The limit for each feat group that supports a custom limit. */
+        featLimits: Record<string, number>;
     };
 };
 interface CharacterSystemSource extends CreatureSystemSource {
@@ -359,18 +362,23 @@ interface VersatileWeaponOption {
 }
 interface CharacterCraftingData {
     formulas: CraftingFormulaData[];
-    entries: Record<string, Partial<CraftingAbilityData>>;
+    entries: Record<string, CraftingAbilityData>;
 }
-interface CharacterResources extends CreatureResources {
+type CharacterResources = CreatureResources & {
     /** The current and maximum number of hero points */
     heroPoints: ValueAndMax;
+    /** The current number of focus points and pool size */
+    focus: ValueAndMax & {
+        cap: number;
+    };
     /** The current and maximum number of invested items */
     investiture: ValueAndMax;
     crafting: {
         infusedReagents: ValueAndMax;
     };
     resolve?: ValueAndMax;
-}
+    mythicPoints: ValueAndMax;
+};
 interface CharacterPerceptionData extends CreaturePerceptionData {
     rank: ZeroToFour;
 }

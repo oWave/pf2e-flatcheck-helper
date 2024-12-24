@@ -19,6 +19,7 @@ import { ItemSummaryRenderer } from "./item-summary-renderer.ts";
 declare abstract class ActorSheetPF2e<TActor extends ActorPF2e> extends ActorSheet<TActor, ItemPF2e> {
     #private;
     static get defaultOptions(): ActorSheetOptions;
+    /** @todo fixme for V13 */
     constructor(actor: TActor, options?: Partial<ActorSheetOptions>);
     /** Implementation used to handle the toggling and rendering of item summaries */
     itemRenderer: ItemSummaryRenderer<TActor, ActorSheetPF2e<TActor>>;

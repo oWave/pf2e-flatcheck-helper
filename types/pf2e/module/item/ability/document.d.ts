@@ -1,15 +1,18 @@
 import type { ActorPF2e } from "../../actor/index.ts";
+import type { CraftingAbility } from "../../actor/character/crafting/ability.ts";
 import { ItemPF2e } from "../index.ts";
 import type { ActionCost, Frequency, RawItemChatData } from "../base/data/index.ts";
 import type { RangeData } from "../types.ts";
 import type { UserPF2e } from "../../user/index.ts";
 import type { AbilitySource, AbilitySystemData } from "./data.ts";
-import type { ActionTrait } from "./types.ts";
+import type { AbilityTrait } from "./types.ts";
 declare class AbilityItemPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends ItemPF2e<TParent> {
     range?: RangeData | null;
     isMelee?: boolean;
-    static get validTraits(): Record<ActionTrait, string>;
-    get traits(): Set<ActionTrait>;
+    /** If this ability can craft, what is the crafting ability */
+    crafting?: CraftingAbility | null;
+    static get validTraits(): Record<AbilityTrait, string>;
+    get traits(): Set<AbilityTrait>;
     get actionCost(): ActionCost | null;
     get frequency(): Frequency | null;
     prepareBaseData(): void;

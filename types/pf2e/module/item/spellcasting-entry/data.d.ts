@@ -6,12 +6,6 @@ import type { RollNotePF2e } from "../../notes.ts";
 import { SpellcastingCategory } from "./types.ts";
 type SlotKey = `slot${ZeroToTen}`;
 type SpellcastingEntrySource = BaseItemSourcePF2e<"spellcastingEntry", SpellcastingEntrySystemSource>;
-interface SpellAttackRollModifier {
-    breakdown: string;
-    notes: RollNotePF2e[];
-    roll: Function;
-    value: number;
-}
 interface SpellDifficultyClass {
     breakdown: string;
     notes: RollNotePF2e[];
@@ -65,4 +59,4 @@ interface SpellCollectionTypeData extends SpellCollectionTypeSource {
     flexible: boolean;
     validItems: "scroll" | null;
 }
-export type { SlotKey, SpellAttackRollModifier, SpellDifficultyClass, SpellcastingEntrySlots, SpellcastingEntrySource, SpellcastingEntrySystemData, SpellcastingEntrySystemSource, };
+export type { SlotKey, SpellDifficultyClass, SpellcastingEntrySlots, SpellcastingEntrySource, SpellcastingEntrySystemData, SpellcastingEntrySystemSource, };

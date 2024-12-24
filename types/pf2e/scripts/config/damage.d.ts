@@ -1,6 +1,25 @@
 import { DamageCategoryUnique, DamageType } from "../../module/system/damage/types.ts";
+import { energyDamageTypes } from "./traits.ts";
 declare const damageCategoriesUnique: Record<DamageCategoryUnique, string>;
-declare const materialDamageEffects: Pick<Record<"adamantine" | "cold-iron" | "dawnsilver" | "duskwood" | "orichalcum" | "silver" | "sisterstone-dusk" | "sisterstone-scarlet" | "warpglass" | "abysium" | "djezet" | "dragonhide" | "grisantian-pelt" | "inubrix" | "keep-stone" | "noqual" | "peachwood" | "siccatite" | "sisterstone" | "sovereign-steel", string>, "adamantine" | "cold-iron" | "dawnsilver" | "duskwood" | "orichalcum" | "silver" | "sisterstone-dusk" | "sisterstone-scarlet" | "warpglass" | "abysium" | "djezet" | "inubrix" | "keep-stone" | "noqual" | "peachwood" | "siccatite" | "sovereign-steel">;
+declare const materialDamageEffects: {
+    adamantine: string;
+    "cold-iron": string;
+    dawnsilver: string;
+    duskwood: string;
+    orichalcum: string;
+    silver: string;
+    "sisterstone-dusk": string;
+    "sisterstone-scarlet": string;
+    warpglass: string;
+    abysium: string;
+    djezet: string;
+    inubrix: string;
+    "keep-stone": string;
+    noqual: string;
+    peachwood: string;
+    siccatite: string;
+    "sovereign-steel": string;
+};
 declare const damageCategories: {
     energy: string;
     physical: string;
@@ -32,5 +51,5 @@ declare const physicalDamageTypes: {
     slashing: string;
 };
 declare const damageTypes: Record<DamageType, string>;
-declare const damageRollFlavors: Record<"bludgeoning" | "piercing" | "slashing" | "bleed" | "vitality" | "void" | "acid" | "cold" | "electricity" | "fire" | "sonic" | "force" | "mental" | "poison" | "spirit" | "untyped", string>;
-export { damageCategories, damageCategoriesUnique, damageRollFlavors, damageTypes, materialDamageEffects, physicalDamageTypes, };
+declare const damageRollFlavors: Record<"poison" | "bludgeoning" | "piercing" | "slashing" | "bleed" | "vitality" | "void" | "acid" | "cold" | "electricity" | "fire" | "sonic" | "force" | "mental" | "spirit" | "untyped", string>;
+export { damageCategories, damageCategoriesUnique, damageRollFlavors, damageTypes, energyDamageTypes, materialDamageEffects, physicalDamageTypes, };

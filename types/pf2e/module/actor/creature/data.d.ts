@@ -1,8 +1,8 @@
 import type { ActorAttributes, ActorAttributesSource, ActorDetailsSource, ActorHitPoints, ActorHitPointsSource, ActorSystemData, ActorSystemSource, ActorTraitsSource, AttributeBasedTraceData, BaseActorSourcePF2e, StrikeData } from "../data/base.ts";
 import type { ActorSizePF2e } from "../data/size.ts";
-import type { DamageDicePF2e, ModifierPF2e, RawModifier, StatisticModifier } from "../modifiers.ts";
+import type { ModifierPF2e, RawModifier, StatisticModifier } from "../modifiers.ts";
 import type { AttributeString, MovementType, SaveType, SkillSlug } from "../types.ts";
-import type { LabeledNumber, Size, ValueAndMax, ZeroToThree } from "../../data.ts";
+import type { LabeledNumber, Size, ValueAndMax, ValueAndMaybeMax, ZeroToThree } from "../../data.ts";
 import type { ArmorClassTraceData } from "../../system/statistic/index.ts";
 import type { PerceptionTraceData } from "../../system/statistic/perception.ts";
 import type { CreatureActorType, CreatureTrait, Language, SenseAcuity, SenseType, SpecialVisionType } from "./types.ts";
@@ -36,10 +36,7 @@ interface CreatureLanguagesData {
 interface CreatureTraitsSource extends ActorTraitsSource<CreatureTrait> {
 }
 interface CreatureResourcesSource {
-    focus?: {
-        value: number;
-        max?: number;
-    };
+    focus?: ValueAndMaybeMax;
 }
 interface CreatureSystemData extends Omit<CreatureSystemSource, "attributes">, ActorSystemData {
     abilities?: Abilities;
@@ -51,13 +48,11 @@ interface CreatureSystemData extends Omit<CreatureSystemSource, "attributes">, A
     perception: CreaturePerceptionData;
     /** Maps roll types -> a list of modifiers which should affect that roll type. */
     customModifiers: Record<string, ModifierPF2e[]>;
-    /** Maps damage roll types -> a list of damage dice which should be added to that damage roll type. */
-    damageDice: Record<string, DamageDicePF2e[]>;
     /** Saving throw data */
     saves: CreatureSaves;
     skills: Record<string, SkillData>;
     actions?: StrikeData[];
-    resources?: CreatureResources;
+    resources: CreatureResources;
 }
 type SenseData = {
     type: SpecialVisionType;
@@ -147,11 +142,10 @@ interface CreatureInitiativeSource {
 }
 interface CreatureResources extends CreatureResourcesSource {
     /** The current number of focus points and pool size */
-    focus: {
-        value: number;
-        max: number;
+    focus?: ValueAndMax & {
         cap: number;
     };
+    [key: string]: ValueAndMax | undefined;
 }
 declare enum VisionLevels {
     BLINDED = 0,

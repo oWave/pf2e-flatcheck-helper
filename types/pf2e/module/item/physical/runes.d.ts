@@ -5,7 +5,7 @@ import type { ArmorPF2e, MeleePF2e, PhysicalItemPF2e, WeaponPF2e } from "../inde
 import { ArmorPropertyRuneType, ResilientRuneType } from "../armor/types.ts";
 import { SpellTrait } from "../spell/types.ts";
 import { StrikingRuneType, WeaponPropertyRuneType } from "../weapon/types.ts";
-import { OneToFour, Rarity, ZeroToFour, ZeroToSix, ZeroToThree } from "../../data.ts";
+import { OneToFour, Rarity, ZeroToFour, ZeroToSix } from "../../data.ts";
 import { RollNoteSource } from "../../notes.ts";
 import { StrikeAdjustment } from "../../rules/synthetics.ts";
 import { DegreeOfSuccessAdjustment } from "../../system/degree-of-success.ts";
@@ -148,15 +148,12 @@ declare const RUNE_DATA: {
             winged: ArmorPropertyRuneData<"winged">;
         };
         potency: Record<ZeroToFour, PotencyRuneData | null>;
-        resilient: Record<ZeroToThree, SecondaryFundamentalRuneData<ResilientRuneType> | null>;
+        resilient: Record<ZeroToFour, SecondaryFundamentalRuneData<ResilientRuneType> | null>;
     };
     shield: FundamentalShieldRuneData;
     weapon: {
         property: {
             speed: WeaponPropertyRuneData<"speed">;
-            holy: WeaponPropertyRuneData<"holy">;
-            unholy: WeaponPropertyRuneData<"unholy">;
-            vorpal: WeaponPropertyRuneData<"vorpal">;
             ancestralEchoing: WeaponPropertyRuneData<"ancestralEchoing">;
             anchoring: WeaponPropertyRuneData<"anchoring">;
             ashen: WeaponPropertyRuneData<"ashen">;
@@ -210,6 +207,7 @@ declare const RUNE_DATA: {
             greaterThundering: WeaponPropertyRuneData<"greaterThundering">;
             grievous: WeaponPropertyRuneData<"grievous">;
             hauling: WeaponPropertyRuneData<"hauling">;
+            holy: WeaponPropertyRuneData<"holy">;
             hopeful: WeaponPropertyRuneData<"hopeful">;
             hooked: WeaponPropertyRuneData<"hooked">;
             impactful: WeaponPropertyRuneData<"impactful">;
@@ -232,10 +230,12 @@ declare const RUNE_DATA: {
             thundering: WeaponPropertyRuneData<"thundering">;
             trueRooting: WeaponPropertyRuneData<"trueRooting">;
             underwater: WeaponPropertyRuneData<"underwater">;
+            unholy: WeaponPropertyRuneData<"unholy">;
+            vorpal: WeaponPropertyRuneData<"vorpal">;
             wounding: WeaponPropertyRuneData<"wounding">;
         };
         potency: Record<ZeroToFour, PotencyRuneData | null>;
-        striking: Record<ZeroToThree, SecondaryFundamentalRuneData<StrikingRuneType> | null>;
+        striking: Record<ZeroToFour, SecondaryFundamentalRuneData<StrikingRuneType> | null>;
     };
 };
 export { RUNE_DATA, getPropertyRuneDamage, getPropertyRuneDegreeAdjustments, getPropertyRuneModifierAdjustments, getPropertyRuneSlots, getPropertyRuneStrikeAdjustments, getRuneValuationData, prunePropertyRunes, };

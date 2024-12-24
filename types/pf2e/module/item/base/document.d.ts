@@ -65,6 +65,7 @@ declare class ItemPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> exte
     /**
      * Never prepare data except as part of `DataModel` initialization. If embedded, don't prepare data if the parent is
      * not yet initialized. See https://github.com/foundryvtt/foundryvtt/issues/7987
+     * @todo remove in V13
      */
     prepareData(): void;
     /** Ensure the presence of the pf2e flag scope with default properties and values */
@@ -79,7 +80,7 @@ declare class ItemPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> exte
      */
     protected processChatData(htmlOptions: EnrichmentOptionsPF2e | undefined, chatData: RawItemChatData): Promise<RawItemChatData>;
     getChatData(htmlOptions?: EnrichmentOptionsPF2e, _rollOptions?: Record<string, unknown>): Promise<RawItemChatData>;
-    protected traitChatData(dictionary?: Record<string, string | undefined>, traits?: ItemTrait[]): TraitChatData[];
+    traitChatData(dictionary?: Record<string, string | undefined>, traits?: ItemTrait[]): TraitChatData[];
     /** Don't allow the user to create a condition or spellcasting entry from the sidebar. */
     static createDialog<TDocument extends foundry.abstract.Document>(this: ConstructorOf<TDocument>, data?: Record<string, unknown>, context?: {
         parent?: TDocument["parent"];

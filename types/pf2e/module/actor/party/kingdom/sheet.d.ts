@@ -2,7 +2,7 @@
 /// <reference types="jquery" resolution-mode="require"/>
 /// <reference types="tooltipster" />
 import { ActorPF2e, ArmyPF2e, type PartyPF2e } from "../../index.ts";
-import { FeatGroup } from "../../character/feats.ts";
+import type { FeatGroup } from "../../character/feats/index.ts";
 import { ActorSheetPF2e, SheetClickActionHandlers } from "../../sheet/base.ts";
 import { ActorSheetDataPF2e } from "../../sheet/data-types.ts";
 import { ItemPF2e, type CampaignFeaturePF2e } from "../../../item/index.ts";
@@ -12,7 +12,7 @@ import { ValueAndMax } from "../../../data.ts";
 import { AdjustedValue, SheetOption, SheetOptions } from "../../../sheet/helpers.ts";
 import { Statistic } from "../../../system/statistic/index.ts";
 import { Kingdom } from "./model.ts";
-import { KingdomAbilityData, KingdomData, KingdomLeadershipData, KingdomSettlementData } from "./types.ts";
+import type { KingdomAbilityData, KingdomData, KingdomLeadershipData, KingdomSettlementData } from "./schema.ts";
 declare class KingdomSheetPF2e extends ActorSheetPF2e<PartyPF2e> {
     #private;
     /** The current selected activity filter, which doubles as an active kingdom phase */

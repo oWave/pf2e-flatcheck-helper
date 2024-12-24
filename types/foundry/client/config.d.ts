@@ -79,6 +79,13 @@ declare global {
                 ): TActor;
             };
             collection: ConstructorOf<Actors<Actor<null>>>;
+            compendiumIndexFields: string[];
+            compendiumBanner: ImageFilePath;
+            sidebarIcon: string;
+            dataModels: Record<string, ConstructorOf<abstract.TypeDataModel<Actor, data.fields.DataSchema>>>;
+            typeLabels: Record<string, string | undefined>;
+            typeIcons: Record<string, string>;
+            trackableAttributes: object;
             sheetClasses: Record<
                 string,
                 Record<
@@ -93,8 +100,6 @@ declare global {
                     }
                 >
             >;
-            typeIcons: Record<string, string>;
-            typeLabels: Record<string, string | undefined>;
         };
 
         /** Configuration for the Cards primary Document type */
@@ -270,7 +275,7 @@ declare global {
                 string,
                 ConstructorOf<abstract.TypeDataModel<abstract.Document, data.fields.DataSchema>>
             >;
-            typeLabels: {};
+            typeLabels: Record<string, string>;
             typeIcons: Record<string, string>;
             defaultType: string;
             sidebarIcon: string;
@@ -674,7 +679,7 @@ declare global {
                 f: typeof terms.FateDie;
                 [key: string]: ConstructorOf<terms.DiceTerm>;
             };
-            randomUniform: Function;
+            randomUniform: () => number;
         };
 
         /** The control icons used for rendering common HUD operations */

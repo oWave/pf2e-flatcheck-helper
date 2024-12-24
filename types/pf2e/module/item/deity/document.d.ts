@@ -1,9 +1,9 @@
 import type { ActorPF2e } from "../../actor/index.ts";
 import { ItemPF2e } from "../index.ts";
 import { BaseWeaponType } from "../weapon/types.ts";
-import { DeitySource, DeitySystemData } from "./data.ts";
+import { DeityCategory, DeitySource, DeitySystemData } from "./data.ts";
 declare class DeityPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends ItemPF2e<TParent> {
-    get category(): "deity" | "pantheon" | "philosophy";
+    get category(): DeityCategory;
     get favoredWeapons(): BaseWeaponType[];
     prepareBaseData(): void;
     prepareActorData(this: DeityPF2e<ActorPF2e>): void;

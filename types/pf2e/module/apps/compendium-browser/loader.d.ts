@@ -1,4 +1,4 @@
-import { CompendiumBrowserSources } from "./index.ts";
+import type { CompendiumBrowserSources } from "./browser.ts";
 declare class PackLoader {
     #private;
     loadedSources: string[];

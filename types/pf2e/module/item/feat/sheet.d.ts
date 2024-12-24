@@ -35,6 +35,11 @@ interface FeatSheetData extends ItemSheetDataPF2e<FeatPF2e> {
     selfEffect: SelfEffectReference | null;
     senses: SenseOption[];
     showPrerequisites: boolean;
+    suppressedFeatures: {
+        uuid: string;
+        name: string;
+        img: string;
+    }[];
 }
 interface LanguageOptions {
     slots: number;

@@ -14,7 +14,7 @@ declare const SIZE_TO_REACH: {
     readonly huge: 10;
     readonly grg: 15;
 };
-declare const SENSE_TYPES: Set<"darkvision" | "echolocation" | "greater-darkvision" | "infrared-vision" | "lifesense" | "low-light-vision" | "magicsense" | "motion-sense" | "scent" | "see-invisibility" | "spiritsense" | "thoughtsense" | "tremorsense" | "truesight" | "wavesense">;
+declare const SENSE_TYPES: Set<"darkvision" | "see-invisibility" | "tremorsense" | "echolocation" | "greater-darkvision" | "infrared-vision" | "lifesense" | "low-light-vision" | "magicsense" | "motion-sense" | "scent" | "spiritsense" | "thoughtsense" | "truesight" | "wavesense">;
 /** Sense types associated with a particular acuities by definition */
 declare const SENSES_WITH_MANDATORY_ACUITIES: {
     [K in SenseType]?: SenseAcuity;

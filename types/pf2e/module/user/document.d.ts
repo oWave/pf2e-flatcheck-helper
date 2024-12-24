@@ -14,7 +14,7 @@ declare class UserPF2e extends User<ActorPF2e<null>> {
     protected _onUpdate(changed: DeepPartial<this["_source"]>, operation: DatabaseUpdateOperation<null>, userId: string): void;
 }
 interface UserPF2e extends User<ActorPF2e<null>> {
-    targets: Set<TokenPF2e<TokenDocumentPF2e<ScenePF2e>>>;
+    targets: UserTargets<TokenPF2e<TokenDocumentPF2e<ScenePF2e>>>;
     flags: UserFlagsPF2e;
     readonly _source: UserSourcePF2e;
 }

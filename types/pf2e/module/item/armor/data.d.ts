@@ -1,7 +1,7 @@
 import { PhysicalItemSource } from "../base/data/index.ts";
 import { BasePhysicalItemSource, Investable, ItemMaterialSource, PhysicalItemTraits, PhysicalSystemData, PhysicalSystemSource } from "../physical/data.ts";
 import { WornUsage } from "../physical/usage.ts";
-import { ZeroToFour, ZeroToThree } from "../../data.ts";
+import { ZeroToFour } from "../../data.ts";
 import { ArmorCategory, ArmorGroup, ArmorPropertyRuneType, ArmorTrait, BaseArmorType, OtherArmorTag } from "./index.ts";
 type ArmorSource = BasePhysicalItemSource<"armor", ArmorSystemSource>;
 interface ArmorSystemSource extends Investable<PhysicalSystemSource> {
@@ -24,7 +24,7 @@ interface ArmorSystemSource extends Investable<PhysicalSystemSource> {
 }
 type ArmorRuneSource = {
     potency: ZeroToFour;
-    resilient: ZeroToThree;
+    resilient: ZeroToFour;
     property: ArmorPropertyRuneType[];
 };
 /** A weapon can either be unspecific or specific along with baseline material and runes */

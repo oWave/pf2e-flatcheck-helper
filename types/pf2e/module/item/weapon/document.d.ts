@@ -50,7 +50,7 @@ declare class WeaponPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> ex
     get ammo(): ConsumablePF2e<ActorPF2e> | WeaponPF2e<ActorPF2e> | null;
     get otherTags(): Set<OtherWeaponTag>;
     acceptsSubitem(candidate: PhysicalItemPF2e): boolean;
-    isStackableWith(item: PhysicalItemPF2e<TParent>): boolean;
+    isStackableWith(item: PhysicalItemPF2e): boolean;
     /** Whether this weapon can serve as ammunition for another weapon */
     isAmmoFor(weapon: WeaponPF2e): boolean;
     /** Generate a list of strings for use in predication */

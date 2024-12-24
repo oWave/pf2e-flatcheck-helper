@@ -1,5 +1,6 @@
 import { ModifierType } from "../../../../actor/modifiers.ts";
 import type { FlatModifierRuleElement, FlatModifierSource } from "../../../../rules/rule-element/flat-modifier.ts";
+import type { DamageCategoryUnique } from "../../../../system/damage/types.ts";
 import { RuleElementForm, RuleElementFormSheetData } from "./base.ts";
 /** Form handler for the flat modifier rule element */
 declare class FlatModifierForm extends RuleElementForm<FlatModifierSource, FlatModifierRuleElement> {
@@ -11,9 +12,9 @@ declare class FlatModifierForm extends RuleElementForm<FlatModifierSource, FlatM
 }
 interface FlatModifierFormSheetData extends RuleElementFormSheetData<FlatModifierSource, FlatModifierRuleElement> {
     selectorIsArray: boolean;
-    abilities: ConfigPF2e["PF2E"]["abilities"];
+    abilities: typeof CONFIG.PF2E.abilities;
     types: Record<ModifierType, string>;
-    damageCategories: Pick<ConfigPF2e["PF2E"]["damageCategories"], "persistent" | "precision" | "splash">;
+    damageCategories: Record<DamageCategoryUnique, string>;
     isDamage: boolean;
     criticalOptions: FormSelectOption[];
 }

@@ -4,13 +4,16 @@ declare class RulerPF2e<TToken extends TokenPF2e | null = TokenPF2e | null> exte
     #private;
     static get canMeasure(): boolean;
     static get hasModuleConflict(): boolean;
+    /** Whether drag measurement is currently in progress */
+    isDragMeasuring: boolean;
+    /** Whether drag measurement is enabled */
     get dragMeasurement(): boolean;
     get isMeasuring(): boolean;
     /** Add a waypoint at the currently-drawn destination. */
     saveWaypoint(): void;
     startDragMeasurement(event: TokenPointerEvent<NonNullable<TToken>>): void;
     /**
-     * @param [exactDestination] The coordinates of the dragged token preview, if any
+     * @param exactDestination?: The coordinates of the dragged token preview, if any
      */
     finishDragMeasurement(event: TokenPointerEvent<NonNullable<TToken>>, exactDestination?: Point | null): Promise<boolean | void>;
     /** Acquire the token's footprint for drag measurement. */
@@ -36,8 +39,9 @@ declare class RulerPF2e<TToken extends TokenPF2e | null = TokenPF2e | null> exte
     /** Widen the ruler when measuring with larger tokens. */
     protected _highlightMeasurementSegment(segment: RulerMeasurementSegment): void;
     protected _animateSegment(token: TToken, segment: RulerMeasurementSegment, destination: Point): Promise<unknown>;
-    /** If measuring with a token, only broadcast during an encounter. */
+    /** If measuring with a token, broadcast if the token is not hidden and only during encounters. */
     protected _broadcastMeasurement(): void;
+    protected _endMeasurement(): void;
     /** Prevent behavior from keybind modifiers if token drag measurement is enabled. */
     _onMouseUp(event: PlaceablesLayerPointerEvent<NonNullable<TToken>>): void;
     /** Prevent behavior from movement keys (typically Space) if token drag measurement is enabled. */

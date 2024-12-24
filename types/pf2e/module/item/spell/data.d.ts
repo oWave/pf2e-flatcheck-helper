@@ -76,6 +76,7 @@ type SpellPassiveDefense = "ac" | `${SaveType}-dc`;
 interface SpellHeighteningInterval {
     type: "interval";
     interval: number;
+    area: number;
     damage: Record<string, string>;
 }
 interface SpellHeighteningFixed {
@@ -124,4 +125,4 @@ interface RitualData {
         casters: number;
     };
 }
-export type { SpellArea, SpellDamage, SpellDamageSource, SpellHeightenLayer, SpellHeighteningInterval, SpellOverlay, SpellOverlayOverride, SpellOverlayType, SpellPassiveDefense, SpellSource, SpellSystemData, SpellSystemSource, };
+export type { SpellArea, SpellDamage, SpellDamageSource, SpellHeighteningInterval, SpellHeightenLayer, SpellOverlay, SpellOverlayOverride, SpellOverlayType, SpellPassiveDefense, SpellSource, SpellSystemData, SpellSystemSource, };

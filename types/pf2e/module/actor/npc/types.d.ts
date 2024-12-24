@@ -53,7 +53,7 @@ interface NPCSystemSheetData extends NPCSystemData {
     skills: Record<SkillSlug, NPCSkillSheetData>;
 }
 interface NPCStrikeSheetData {
-    _id: string;
+    id: string;
     name: string;
     sort: number;
     breakdown: string;

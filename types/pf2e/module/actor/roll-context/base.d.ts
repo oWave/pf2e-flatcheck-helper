@@ -1,7 +1,7 @@
 import type { ActorPF2e } from "../index.ts";
 import type { StrikeData } from "../data/base.ts";
 import type { ItemPF2e } from "../../item/index.ts";
-import type { ActionTrait } from "../../item/ability/types.ts";
+import type { AbilityTrait } from "../../item/ability/types.ts";
 import type { Statistic } from "../../system/statistic/statistic.ts";
 import type { RollContextConstructorParams, UnresolvedOpposingActors } from "./types.ts";
 import { RollContextData } from "./types.ts";
@@ -13,7 +13,7 @@ declare abstract class RollContext<TSelf extends ActorPF2e, TStatistic extends S
     domains: string[];
     /** Initial roll options for the context */
     rollOptions: Set<string>;
-    traits: ActionTrait[];
+    traits: AbilityTrait[];
     /** Whether this is a one-sided roll context for generating sheet-display data */
     viewOnly: boolean;
     /** Whether this roll is associated with an attack action */

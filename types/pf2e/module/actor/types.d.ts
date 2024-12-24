@@ -2,6 +2,7 @@ import type * as ActorInstance from "./index.ts";
 import type { ActorPF2e } from "./index.ts";
 import type { ItemPF2e } from "../item/index.ts";
 import type { EffectTrait } from "../item/abstract-effect/types.ts";
+import { ItemSourcePF2e } from "../item/base/data/index.ts";
 import type { ItemInstances } from "../item/types.ts";
 import type { RollNotePF2e } from "../notes.ts";
 import type { ItemAlteration } from "../rules/rule-element/item-alteration/alteration.ts";
@@ -48,6 +49,7 @@ interface AuraData {
 }
 interface AuraEffectData {
     uuid: string;
+    parent: ItemPF2e;
     affects: "allies" | "enemies" | "all";
     events: ("enter" | "turn-start" | "turn-end")[];
     save: {
@@ -80,6 +82,18 @@ interface AuraAppearanceData {
         playbackRate: number;
     } | null;
 }
+interface ActorCommitData<T extends ActorPF2e = ActorPF2e> {
+    actorUpdates: DeepPartial<T["_source"]> | null;
+    itemCreates: PreCreate<ItemSourcePF2e>[];
+    itemUpdates: EmbeddedDocumentUpdateData[];
+}
+interface ActorRechargeData<T extends ActorPF2e> extends ActorCommitData<T> {
+    affected: {
+        frequencies: boolean;
+        spellSlots: boolean;
+        resources: string[];
+    };
+}
 interface ApplyDamageParams {
     damage: number | Rolled<DamageRoll>;
     token: TokenDocumentPF2e;
@@ -101,4 +115,4 @@ type ResistanceType = keyof typeof resistanceTypes;
 /** Damage types a creature or hazard is possibly unaffected by, outside the IWR framework */
 type UnaffectedType = SetElement<typeof UNAFFECTED_TYPES>;
 type IWRType = ImmunityType | WeaknessType | ResistanceType;
-export type { ActorAlliance, ActorDimensions, ActorInstances, ActorType, ApplyDamageParams, AttributeString, AuraAppearanceData, AuraData, AuraEffectData, DCSlug, EmbeddedItemInstances, IWRType, ImmunityType, MovementType, ResistanceType, SaveType, SkillSlug, UnaffectedType, WeaknessType, };
+export type { ActorAlliance, ActorCommitData, ActorDimensions, ActorInstances, ActorRechargeData, ActorType, ApplyDamageParams, AttributeString, AuraAppearanceData, AuraData, AuraEffectData, DCSlug, EmbeddedItemInstances, ImmunityType, IWRType, MovementType, ResistanceType, SaveType, SkillSlug, UnaffectedType, WeaknessType, };

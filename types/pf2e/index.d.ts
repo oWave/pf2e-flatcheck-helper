@@ -2,13 +2,13 @@ import type { ActorPF2e } from "./module/actor/index.ts";
 import type { Action } from "./module/actor/actions/index.ts";
 import type { AutomaticBonusProgression } from "./module/actor/character/automatic-bonus-progression.ts";
 import type { ElementalBlast } from "./module/actor/character/elemental-blast.ts";
-import type { FeatGroupOptions } from "./module/actor/character/feats.ts";
+import type { FeatGroupData } from "./module/actor/character/feats/index.ts";
 import type { CheckModifier, ModifierPF2e, ModifierType, StatisticModifier } from "./module/actor/modifiers.ts";
 import type { ItemPF2e, PhysicalItemPF2e } from "./module/item/index.ts";
 import type { ConditionSource } from "./module/item/condition/data.ts";
 import type { CoinsPF2e } from "./module/item/physical/helpers.ts";
 import type { ActiveEffectPF2e } from "./module/active-effect.ts";
-import type { CompendiumBrowser, CompendiumBrowserSettings, CompendiumBrowserSources } from "./module/apps/compendium-browser/index.ts";
+import type { CompendiumBrowser, CompendiumBrowserSettings, CompendiumBrowserSources } from "./module/apps/compendium-browser/browser.ts";
 import type { EffectsPanel } from "./module/apps/effects-panel.ts";
 import type { HotbarPF2e } from "./module/apps/hotbar.ts";
 import type { LicenseViewer } from "./module/apps/license-viewer/app.ts";
@@ -91,9 +91,11 @@ interface GamePF2e extends Game<ActorPF2e<null>, ActorsPF2e<ActorPF2e<null>>, Ch
             campaign: {
                 feats: {
                     enabled: boolean;
-                    sections: FeatGroupOptions[];
+                    sections: FeatGroupData[];
                 };
                 languages: LanguageSettings;
+                mythic: "disabled" | "enabled" | "variant-tiers";
+                type: string | null;
             };
             critFumble: {
                 buttons: boolean;
@@ -211,8 +213,9 @@ declare global {
         get(module: "pf2e", setting: "worldClock.timeConvention"): 24 | 12;
         get(module: "pf2e", setting: "worldClock.worldCreatedOn"): string;
         get(module: "pf2e", setting: "campaignFeats"): boolean;
-        get(module: "pf2e", setting: "campaignFeatSections"): FeatGroupOptions[];
+        get(module: "pf2e", setting: "campaignFeatSections"): FeatGroupData[];
         get(module: "pf2e", setting: "campaignType"): string;
+        get(module: "pf2e", setting: "mythic"): "disabled" | "enabled" | "variant-tiers";
         get(module: "pf2e", setting: "activeParty"): string;
         get(module: "pf2e", setting: "activePartyFolderState"): boolean;
         get(module: "pf2e", setting: "createdFirstParty"): boolean;

@@ -10,8 +10,8 @@ declare class RegionPF2e<TDocument extends RegionDocumentPF2e = RegionDocumentPF
             propagate: ["refreshState", "refreshBorder"];
             alias: boolean;
         };
-        refreshState: {};
-        refreshBorder: {};
+        refreshState: object;
+        refreshBorder: object;
     };
     getSnappedPosition(position?: Point): Point;
     protected _canDrag(user: User, event: PIXI.FederatedPointerEvent): boolean;

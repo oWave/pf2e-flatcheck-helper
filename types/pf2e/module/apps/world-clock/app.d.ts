@@ -6,7 +6,7 @@ import { animateDarkness } from "./animate-darkness.ts";
 interface WorldClockData {
     date: string;
     time: string;
-    options?: {};
+    options?: object;
     user: User;
     sign: "+" | "-";
 }

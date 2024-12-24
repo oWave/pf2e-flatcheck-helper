@@ -19,14 +19,14 @@ import type { ArmorStatistic, PerceptionStatistic, Statistic, StatisticDifficult
 import { EnrichmentOptionsPF2e } from "../system/text-editor.ts";
 import { ActorConditions } from "./conditions.ts";
 import { Abilities, VisionLevel } from "./creature/data.ts";
-import { GetReachParameters, ModeOfBeing } from "./creature/types.ts";
+import type { GetReachParameters, ModeOfBeing, ResourceData } from "./creature/types.ts";
 import { ActorFlagsPF2e, ActorSystemData, PrototypeTokenPF2e, RollOptionFlags } from "./data/base.ts";
 import type { ActorSourcePF2e } from "./data/index.ts";
 import type { ActorInitiative } from "./initiative.ts";
 import { ActorInventory } from "./inventory/index.ts";
 import type { ActorSheetPF2e } from "./sheet/base.ts";
 import type { ActorSpellcasting } from "./spellcasting.ts";
-import type { ActorType } from "./types.ts";
+import type { ActorRechargeData, ActorType } from "./types.ts";
 /**
  * Extend the base Actor class to implement additional logic specialized for PF2e.
  * @category Actor
@@ -113,7 +113,7 @@ declare class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocument
     get alliance(): ActorAlliance;
     get combatant(): CombatantPF2e<EncounterPF2e> | null;
     /** Add effect icons from effect items and rule elements */
-    get temporaryEffects(): ActiveEffect<this>[];
+    get temporaryEffects(): ActiveEffectPF2e<this>[];
     /** A means of checking this actor's type without risk of circular import references */
     isOfType<T extends "creature" | ActorType>(...types: T[]): this is ActorInstances<TParent>[T];
     /** Whether this actor is an ally of the provided actor */
@@ -128,6 +128,8 @@ declare class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocument
     checkItemValidity(source: PreCreate<ItemSourcePF2e>): boolean;
     /** Get (almost) any statistic by slug: handling expands in `ActorPF2e` subclasses */
     getStatistic(slug: string): Statistic<this> | null;
+    /** Returns a resource by slug or by key */
+    getResource(_resource: string): ResourceData | null;
     /** Get roll options from this actor's effects, traits, and other properties */
     getSelfRollOptions(prefix?: "self" | "target" | "origin"): string[];
     /** The actor's reach: a meaningful implementation is found in `CreaturePF2e` and `HazardPF2e`. */
@@ -139,6 +141,8 @@ declare class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocument
         actor: ActorPF2e;
         token: TokenDocumentPF2e;
     }): Promise<void>;
+    /** Recharges all abilities after some time has elapsed. */
+    recharge(options: RechargeOptions): Promise<ActorRechargeData<this>>;
     /** Don't allow the user to create in-development actor types. */
     static createDialog<TDocument extends foundry.abstract.Document>(this: ConstructorOf<TDocument>, data?: Record<string, unknown>, context?: {
         parent?: TDocument["parent"];
@@ -157,6 +161,7 @@ declare class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocument
     /**
      * Never prepare data except as part of `DataModel` initialization. If embedded, don't prepare data if the parent is
      * not yet initialized. See https://github.com/foundryvtt/foundryvtt/issues/7987
+     * @todo remove in V13
      */
     prepareData(): void;
     /** Prepare baseline ephemeral data applicable to all actor types */
@@ -252,7 +257,7 @@ declare class ActorPF2e<TParent extends TokenDocumentPF2e | null = TokenDocument
     toggleStatusEffect(statusId: string, options?: {
         active?: boolean;
         overlay?: boolean;
-    }): Promise<boolean | void | ActiveEffect<this>>;
+    }): Promise<boolean | void | ActiveEffectPF2e<this>>;
     /** Assess and pre-process this JSON data, ensuring it's importable and fully migrated */
     importFromJSON(json: string): Promise<this>;
     protected _applyDefaultTokenSettings(data: this["_source"], options?: {
@@ -300,6 +305,11 @@ interface ActorUpdateOperation<TParent extends TokenDocumentPF2e | null> extends
 }
 interface EmbeddedItemUpdateOperation<TParent extends ActorPF2e> extends DatabaseUpdateOperation<TParent> {
     checkHP?: boolean;
+}
+interface RechargeOptions {
+    /** How much time elapsed as a delta operation */
+    duration: "turn" | "round" | "day";
+    commit?: boolean;
 }
 /** A `Proxy` to to get Foundry to construct `ActorPF2e` subclasses */
 declare const ActorProxyPF2e: typeof ActorPF2e;

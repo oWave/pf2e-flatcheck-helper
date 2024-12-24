@@ -38,12 +38,12 @@ interface RawModifier {
     damageType?: DamageType | null;
     /** The damage category */
     damageCategory?: DamageCategoryUnique | null;
-    /** A predicate which determines when this modifier is active. */
+    /** A predicate that determines when this modifier is active */
     predicate?: RawPredicate;
     /** If true, this modifier is only active on a critical hit. */
     critical?: boolean | null;
-    /** The list of traits that this modifier gives to the underlying attack, if any. */
-    traits?: string[];
+    /** A list of tags associated with this modifier */
+    tags?: string[];
     /** Hide this modifier in UIs if it is disabled */
     hideIfDisabled?: boolean;
     /** Whether to use this bonus/penalty/modifier even if it isn't the greatest magnitude */
@@ -98,7 +98,7 @@ declare class ModifierPF2e implements RawModifier {
     damageCategory: DamageCategoryUnique | null;
     predicate: Predicate;
     critical: boolean | null;
-    traits: string[];
+    tags: string[];
     hideIfDisabled: boolean;
     /**
      * The "category" of modifier (a misnomer since bonuses and penalties aren't modifiers):
@@ -275,6 +275,8 @@ declare class DamageDicePF2e {
     /** The damage category of these dice. */
     category: "persistent" | "precision" | "splash" | null;
     damageType: DamageType | null;
+    /** A list of tags associated with this damage */
+    tags: string[];
     /** If true, these dice overide the base damage dice of the weapon. */
     override: DamageDiceOverride | null;
     ignored: boolean;
@@ -303,5 +305,5 @@ declare class DamageDicePF2e {
 }
 interface RawDamageDice extends Required<DamageDiceParameters> {
 }
-export { adjustModifiers, applyStackingRules, CheckModifier, createAttributeModifier, createProficiencyModifier, DamageDicePF2e, ensureProficiencyOption, MODIFIER_TYPES, ModifierPF2e, PROFICIENCY_RANK_OPTION, StatisticModifier, };
+export { CheckModifier, DamageDicePF2e, MODIFIER_TYPES, ModifierPF2e, PROFICIENCY_RANK_OPTION, StatisticModifier, adjustModifiers, applyStackingRules, createAttributeModifier, createProficiencyModifier, ensureProficiencyOption, };
 export type { DamageDiceOverride, DamageDiceParameters, DeferredDamageDiceOptions, DeferredPromise, DeferredValue, DeferredValueParams, ModifierAdjustment, ModifierObjectParams, ModifierType, RawDamageDice, RawModifier, TestableDeferredValueParams, };

@@ -33,119 +33,119 @@ type MaybeAlterationData = {
 declare const ITEM_ALTERATION_VALIDATORS: {
     "ac-bonus": ItemAlterationValidator<{
         itemType: StringField<"armor" | "shield", ItemType, true, false, false>;
-        mode: StringField<"upgrade" | "override" | "downgrade" | "add" | "subtract" | "remove", "upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
+        mode: StringField<"override" | "upgrade" | "downgrade" | "add" | "subtract" | "remove", "override" | "upgrade" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
         value: NumberField<number, NonNullable<JSONValue>, true, false, boolean>;
     }>;
     "area-size": ItemAlterationValidator<{
         itemType: StringField<"spell", ItemType, true, false, false>;
-        mode: StringField<"upgrade" | "override" | "downgrade" | "add" | "subtract", "upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
+        mode: StringField<"override" | "upgrade" | "downgrade" | "add" | "subtract", "override" | "upgrade" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
         value: NumberField<number, NonNullable<JSONValue>, true, false, boolean>;
     }>;
     "badge-max": ItemAlterationValidator<{
         itemType: StringField<"effect", ItemType, true, false, false>;
-        mode: StringField<"override" | "downgrade", "upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
+        mode: StringField<"override" | "downgrade", "override" | "upgrade" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
         value: NumberField<number, NonNullable<JSONValue>, true, false, boolean>;
     }>;
     "badge-value": ItemAlterationValidator<{
         itemType: StringField<"condition" | "effect", ItemType, true, false, false>;
-        mode: StringField<"upgrade" | "override" | "downgrade" | "add" | "subtract" | "remove", "upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
+        mode: StringField<"override" | "upgrade" | "downgrade" | "add" | "subtract" | "remove", "override" | "upgrade" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
         value: NumberField<number, NonNullable<JSONValue>, true, false, boolean>;
     }>;
     bulk: ItemAlterationValidator<{
         itemType: StringField<"armor" | "book" | "consumable" | "backpack" | "equipment" | "shield" | "treasure" | "weapon", ItemType, true, false, false>;
-        mode: StringField<"override", "upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
+        mode: StringField<"override", "override" | "upgrade" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
         value: StrictNumberField<number, number, true, false, false>;
     }>;
     category: ItemAlterationValidator<{
         itemType: StringField<"armor", ItemType, true, false, false>;
-        mode: StringField<"override", "upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
+        mode: StringField<"override", "override" | "upgrade" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
         value: StringField<"medium" | "light" | "heavy", NonNullable<JSONValue>, true, false, boolean>;
     }>;
     "check-penalty": ItemAlterationValidator<{
         itemType: StringField<"armor", ItemType, true, false, false>;
-        mode: StringField<"upgrade" | "override" | "downgrade" | "add" | "subtract" | "remove", "upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
+        mode: StringField<"override" | "upgrade" | "downgrade" | "add" | "subtract" | "remove", "override" | "upgrade" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
         value: StrictNumberField<number, NonNullable<JSONValue>, true, false, boolean>;
     }>;
     "damage-dice-faces": ItemAlterationValidator<{
         itemType: StringField<"weapon", ItemType, true, false, false>;
-        mode: StringField<"upgrade" | "override" | "downgrade", "upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
+        mode: StringField<"override" | "upgrade" | "downgrade", "override" | "upgrade" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
         value: StrictNumberField<6 | 4 | 8 | 10 | 12, 6 | 4 | 8 | 10 | 12, true, true, true>;
     }>;
     "damage-type": ItemAlterationValidator<{
         itemType: StringField<"weapon", ItemType, true, false, false>;
-        mode: StringField<"override", "upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
+        mode: StringField<"override", "override" | "upgrade" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
         value: StringField<never, NonNullable<JSONValue>, true, false, boolean>;
     }>;
     /** The passive defense targeted by an attack spell */
     "defense-passive": ItemAlterationValidator<{
         itemType: StringField<"spell", ItemType, true, false, false>;
-        mode: StringField<"override", "upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
+        mode: StringField<"override", "override" | "upgrade" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
         value: StringField<"ac" | "fortitude-dc" | "reflex-dc" | "will-dc", NonNullable<JSONValue>, true, false, boolean>;
     }>;
     description: ItemAlterationValidator<AlterationSchema>;
     "dex-cap": ItemAlterationValidator<{
         itemType: StringField<"armor", ItemType, true, false, false>;
-        mode: StringField<"upgrade" | "override" | "downgrade" | "add" | "subtract" | "remove", "upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
+        mode: StringField<"override" | "upgrade" | "downgrade" | "add" | "subtract" | "remove", "override" | "upgrade" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
         value: StrictNumberField<number, NonNullable<JSONValue>, true, false, boolean>;
     }>;
     "focus-point-cost": ItemAlterationValidator<{
         itemType: StringField<"spell", ItemType, true, false, false>;
-        mode: StringField<"upgrade" | "override" | "add", "upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
+        mode: StringField<"override" | "upgrade" | "add", "override" | "upgrade" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
         value: StrictNumberField<number, NonNullable<JSONValue>, true, false, boolean>;
     }>;
     hardness: ItemAlterationValidator<{
         itemType: StringField<"armor" | "book" | "consumable" | "backpack" | "equipment" | "shield" | "treasure" | "weapon", ItemType, true, false, false>;
-        mode: StringField<"upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", "upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
+        mode: StringField<"override" | "upgrade" | "downgrade" | "multiply" | "add" | "subtract" | "remove", "override" | "upgrade" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
         value: NumberField<number, NonNullable<JSONValue>, true, false, boolean>;
     }>;
     "hp-max": ItemAlterationValidator<{
         itemType: StringField<"armor" | "book" | "consumable" | "backpack" | "equipment" | "shield" | "treasure" | "weapon", ItemType, true, false, false>;
-        mode: StringField<"upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", "upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
+        mode: StringField<"override" | "upgrade" | "downgrade" | "multiply" | "add" | "subtract" | "remove", "override" | "upgrade" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
         value: NumberField<number, NonNullable<JSONValue>, true, false, boolean>;
     }>;
     "material-type": ItemAlterationValidator<{
         itemType: StringField<"armor" | "book" | "consumable" | "backpack" | "equipment" | "shield" | "treasure" | "weapon", ItemType, true, false, false>;
-        mode: StringField<"override", "upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
-        value: StringField<"adamantine" | "cold-iron" | "dawnsilver" | "duskwood" | "orichalcum" | "silver" | "sisterstone-dusk" | "sisterstone-scarlet" | "warpglass" | "abysium" | "djezet" | "dragonhide" | "grisantian-pelt" | "inubrix" | "keep-stone" | "noqual" | "peachwood" | "siccatite" | "sisterstone" | "sovereign-steel", NonNullable<JSONValue>, true, false, boolean>;
+        mode: StringField<"override", "override" | "upgrade" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
+        value: StringField<"adamantine" | "cold-iron" | "dawnsilver" | "duskwood" | "orichalcum" | "silver" | "sisterstone-dusk" | "sisterstone-scarlet" | "warpglass" | "abysium" | "djezet" | "dragonhide" | "dreamweb" | "grisantian-pelt" | "inubrix" | "keep-stone" | "noqual" | "peachwood" | "siccatite" | "sisterstone" | "sloughstone" | "sovereign-steel", NonNullable<JSONValue>, true, false, boolean>;
     }>;
     "pd-recovery-dc": ItemAlterationValidator<{
         itemType: StringField<"condition", ItemType, true, false, false>;
-        mode: StringField<"upgrade" | "override" | "downgrade" | "add" | "subtract" | "remove", "upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
+        mode: StringField<"override" | "upgrade" | "downgrade" | "add" | "subtract" | "remove", "override" | "upgrade" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
         value: NumberField<number, NonNullable<JSONValue>, true, false, boolean>;
     }>;
     "persistent-damage": ItemAlterationValidator<{
         itemType: StringField<"condition", ItemType, true, false, false>;
-        mode: StringField<"override", "upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
+        mode: StringField<"override", "override" | "upgrade" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
         value: SchemaField<PersistentDamageValueSchema, SourceFromSchema<PersistentDamageValueSchema>, ModelPropsFromSchema<PersistentDamageValueSchema>, true, false, true>;
     }>;
     rarity: ItemAlterationValidator<{
         itemType: StringField<"armor" | "book" | "consumable" | "backpack" | "equipment" | "shield" | "treasure" | "weapon", ItemType, true, false, false>;
-        mode: StringField<"override", "upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
+        mode: StringField<"override", "override" | "upgrade" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
         value: StringField<"common" | "uncommon" | "rare" | "unique", NonNullable<JSONValue>, true, false, boolean>;
     }>;
     "frequency-max": ItemAlterationValidator<{
         itemType: StringField<"action" | "feat", ItemType, true, false, false>;
-        mode: StringField<"upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", "upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
+        mode: StringField<"override" | "upgrade" | "downgrade" | "multiply" | "add" | "subtract" | "remove", "override" | "upgrade" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
         value: NumberField<number, NonNullable<JSONValue>, true, false, boolean>;
     }>;
     "frequency-per": ItemAlterationValidator<{
         itemType: StringField<"action" | "feat", ItemType, true, false, false>;
-        mode: StringField<"upgrade" | "override" | "downgrade", "upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
+        mode: StringField<"override" | "upgrade" | "downgrade", "override" | "upgrade" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
         value: StringField<string, NonNullable<JSONValue>, true, false, boolean>;
     }>;
     "other-tags": ItemAlterationValidator<{
         itemType: StringField<never, ItemType, true, false, false>;
-        mode: StringField<"add" | "subtract" | "remove", "upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
+        mode: StringField<"add" | "subtract" | "remove", "override" | "upgrade" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
         value: SlugField<true, false, boolean>;
     }>;
     "speed-penalty": ItemAlterationValidator<{
         itemType: StringField<"armor" | "shield", ItemType, true, false, false>;
-        mode: StringField<"upgrade" | "override" | "downgrade" | "add" | "subtract" | "remove", "upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
+        mode: StringField<"override" | "upgrade" | "downgrade" | "add" | "subtract" | "remove", "override" | "upgrade" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
         value: StrictNumberField<number, NonNullable<JSONValue>, true, false, boolean>;
     }>;
     strength: ItemAlterationValidator<{
         itemType: StringField<"armor", ItemType, true, false, false>;
-        mode: StringField<"upgrade" | "override" | "downgrade" | "add" | "subtract" | "remove", "upgrade" | "override" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
+        mode: StringField<"override" | "upgrade" | "downgrade" | "add" | "subtract" | "remove", "override" | "upgrade" | "downgrade" | "multiply" | "add" | "subtract" | "remove", true, false, false>;
         value: StrictNumberField<number, NonNullable<JSONValue>, true, false, boolean>;
     }>;
     traits: ItemAlterationValidator<AlterationSchema>;

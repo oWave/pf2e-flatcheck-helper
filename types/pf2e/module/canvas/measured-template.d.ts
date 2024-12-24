@@ -3,7 +3,7 @@ import type { ItemPF2e } from "../item/index.ts";
 import type { EffectAreaShape } from "../item/spell/types.ts";
 import type { ChatMessagePF2e } from "../chat-message/document.ts";
 import type { MeasuredTemplateDocumentPF2e, ScenePF2e } from "../scene/index.ts";
-import { type TemplateLayerPF2e } from "./index.ts";
+import type { TemplateLayerPF2e } from "./layer/template.ts";
 declare class MeasuredTemplatePF2e<TDocument extends MeasuredTemplateDocumentPF2e<ScenePF2e | null> = MeasuredTemplateDocumentPF2e<ScenePF2e | null>> extends MeasuredTemplate<TDocument> {
     get actor(): ActorPF2e | null;
     get item(): ItemPF2e | null;

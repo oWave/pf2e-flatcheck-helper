@@ -46,7 +46,10 @@ declare class TokenDocumentPF2e<TParent extends ScenePF2e | null = ScenePF2e | n
         alternative?: string;
     }): TokenResourceData | null;
     protected _initialize(options?: Record<string, unknown>): void;
-    /** If embedded, don't prepare data if the parent's data model hasn't initialized all its properties */
+    /**
+     * If embedded, don't prepare data if the parent hasn't finished initializing.
+     * @removeme in V13
+     */
     prepareData(): void;
     /** If rules-based vision is enabled, disable manually configured vision radii */
     prepareBaseData(): void;

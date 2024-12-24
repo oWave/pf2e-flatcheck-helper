@@ -5,4 +5,6 @@ import type { FeatPF2e } from "./document.ts";
  * must also only have at most a single trait (assumed to be that of the class)
  */
 declare function featCanHaveKeyOptions(feat: FeatPF2e): boolean;
-export { featCanHaveKeyOptions };
+/** Recursively suppresses a feat and its granted feats */
+declare function suppressFeats(feats: FeatPF2e[]): void;
+export { featCanHaveKeyOptions, suppressFeats };

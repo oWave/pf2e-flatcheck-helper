@@ -6,7 +6,7 @@ import type { RuleElementPF2e } from "../../rules/index.ts";
 import type { UserPF2e } from "../../user/document.ts";
 import type { TokenDocumentPF2e } from "../../scene/index.ts";
 import { Statistic } from "../../system/statistic/index.ts";
-import { FamiliarSource, FamiliarSystemData } from "./data.ts";
+import type { FamiliarSource, FamiliarSystemData } from "./data.ts";
 declare class FamiliarPF2e<TParent extends TokenDocumentPF2e | null = TokenDocumentPF2e | null> extends CreaturePF2e<TParent> {
     /** The familiar's attack statistic, for the rare occasion it must make an attack roll */
     attackStatistic: Statistic;

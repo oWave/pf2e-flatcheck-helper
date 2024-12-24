@@ -2,7 +2,7 @@ import { AttributeString } from "../../actor/types.ts";
 import type { PhysicalItemSource } from "../base/data/index.ts";
 import { ItemFlagsPF2e } from "../base/data/system.ts";
 import type { BasePhysicalItemSource, Investable, ItemMaterialData, ItemMaterialSource, PhysicalItemTraits, PhysicalSystemData, PhysicalSystemSource, UsageDetails } from "../physical/index.ts";
-import { ZeroToFour, ZeroToThree } from "../../data.ts";
+import { ZeroToFour } from "../../data.ts";
 import { DamageDieSize, DamageType } from "../../system/damage/index.ts";
 import type { WeaponTraitToggles } from "./trait-toggles.ts";
 import type { BaseWeaponType, MeleeWeaponGroup, OtherWeaponTag, WeaponCategory, WeaponGroup, WeaponMaterialType, WeaponPropertyRuneType, WeaponRangeIncrement, WeaponReloadTime, WeaponTrait } from "./types.ts";
@@ -117,7 +117,7 @@ interface WeaponMaterialSource extends ItemMaterialSource {
 }
 type WeaponRuneSource = {
     potency: ZeroToFour;
-    striking: ZeroToThree;
+    striking: ZeroToFour;
     property: WeaponPropertyRuneType[];
 };
 interface WeaponSystemData extends Omit<WeaponSystemSource, SourceOmission>, Omit<Investable<PhysicalSystemData>, "material" | "subitems"> {

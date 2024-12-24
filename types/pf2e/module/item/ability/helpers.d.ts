@@ -24,14 +24,14 @@ declare function getActionCostRollOptions(prefix: string, item: {
     actionCost?: ActionCost | null;
 }): string[];
 /** Create data for the "self-applied effect" drop zone on an ability or feat sheet. */
-declare function createSelfEffectSheetData(data: SelfEffectReference | null): SelfEffectSheetReference | null;
+declare function createSelfEffectSheetData(data: Maybe<SelfEffectReference>): SelfEffectSheetReference | null;
 interface SelfEffectSheetReference extends SelfEffectReference {
     id: string | null;
     type: string | null;
     pack: string | null;
 }
-/** Save data from an effect item dropped on an ability or feat sheet. */
-declare function handleSelfEffectDrop(sheet: AbilitySheetPF2e | FeatSheetPF2e, event: DragEvent): Promise<void>;
+/** Save data from an effect item dropped on an ability or feat sheet. Returns true if handled */
+declare function handleSelfEffectDrop(sheet: AbilitySheetPF2e | FeatSheetPF2e, item: ItemPF2e): Promise<boolean>;
 declare function createActionRangeLabel(range: Maybe<RangeData>): string | null;
 /**  Add the holy/unholy trait to sanctified actions and spells if the owning actor is also holy/unholy */
 declare function processSanctification(item: AbilityItemPF2e | FeatPF2e | SpellPF2e): void;

@@ -5,11 +5,13 @@ import { CustomDamageData } from "./data.ts";
  */
 export declare class DamageTypeManager {
     collections: {
+        physicalConfig: Record<string, string>;
+        energyConfig: Record<string, string>;
         physical: string[];
         energy: string[];
-        DAMAGE_TYPES: Set<"bludgeoning" | "piercing" | "slashing" | "bleed" | "vitality" | "void" | "acid" | "cold" | "electricity" | "fire" | "sonic" | "force" | "mental" | "poison" | "spirit" | "untyped">;
-        BASE_DAMAGE_TYPES_TO_CATEGORIES: Record<"bludgeoning" | "piercing" | "slashing" | "bleed" | "vitality" | "void" | "acid" | "cold" | "electricity" | "fire" | "sonic" | "force" | "mental" | "poison" | "spirit" | "untyped", string | number | symbol | null>;
-        DAMAGE_TYPE_ICONS: Record<"bludgeoning" | "piercing" | "slashing" | "bleed" | "vitality" | "void" | "acid" | "cold" | "electricity" | "fire" | "sonic" | "force" | "mental" | "poison" | "spirit" | "untyped", string | null>;
+        DAMAGE_TYPES: Set<"poison" | "bludgeoning" | "piercing" | "slashing" | "bleed" | "vitality" | "void" | "acid" | "cold" | "electricity" | "fire" | "sonic" | "force" | "mental" | "spirit" | "untyped">;
+        BASE_DAMAGE_TYPES_TO_CATEGORIES: Record<"poison" | "bludgeoning" | "piercing" | "slashing" | "bleed" | "vitality" | "void" | "acid" | "cold" | "electricity" | "fire" | "sonic" | "force" | "mental" | "spirit" | "untyped", string | number | symbol | null>;
+        DAMAGE_TYPE_ICONS: Record<"poison" | "bludgeoning" | "piercing" | "slashing" | "bleed" | "vitality" | "void" | "acid" | "cold" | "electricity" | "fire" | "sonic" | "force" | "mental" | "spirit" | "untyped", string | null>;
         damageTypesLocalization: any;
         damageRollFlavorsLocalization: any;
         immunityTypes: Record<string, string>;

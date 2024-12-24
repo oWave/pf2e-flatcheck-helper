@@ -14,8 +14,9 @@ const formSections: Record<
 	stupefied: {
 		name: "Stupefied",
 		label: "Value",
-		callback: async (value, e) =>
-			rollFlatCheck(5 + value, { hidden: e.ctrlKey, label: "Stupefied" }),
+		callback: async (value, e) => {
+			rollFlatCheck(5 + value, { hidden: e.ctrlKey, label: "Stupefied" })
+		},
 		default: () => {
 			let value = 0
 			if (canvas.tokens?.controlled.length) {
@@ -32,7 +33,9 @@ const formSections: Record<
 	custom: {
 		name: "Custom",
 		label: "DC",
-		callback: async (value, e) => rollFlatCheck(value, { hidden: e.ctrlKey }),
+		callback: async (value, e) => {
+			rollFlatCheck(value, { hidden: e.ctrlKey })
+		},
 		default: () => 10,
 		min: 1,
 		max: 20,

@@ -24,4 +24,4 @@ export declare const SKILL_DICTIONARY: {
     readonly thi: "thievery";
 };
 export type SkillAbbreviation = keyof typeof SKILL_DICTIONARY;
-export declare const SKILL_ABBREVIATIONS: ("med" | "acr" | "arc" | "ath" | "cra" | "dec" | "dip" | "itm" | "nat" | "occ" | "prf" | "rel" | "soc" | "ste" | "sur" | "thi")[];
+export declare const SKILL_ABBREVIATIONS: ("med" | "arc" | "soc" | "acr" | "ath" | "cra" | "dec" | "dip" | "itm" | "nat" | "occ" | "prf" | "rel" | "ste" | "sur" | "thi")[];

@@ -20,6 +20,10 @@ interface ChatRollDetailsData {
     modifiers: PreparedModifier[];
     dice: PreparedDice[];
     rollOptions: string[];
+    contextualOptions: {
+        header: string;
+        options: string[];
+    }[];
 }
 interface PreparedModifier extends Omit<Partial<RawModifier>, "critical"> {
     value: string;

@@ -3,6 +3,7 @@ interface PackInfo {
     load: boolean;
     name: string;
     package: string;
+    showFullId?: boolean;
 }
 interface SourceInfo {
     load: boolean;
@@ -17,10 +18,10 @@ interface BrowserTabs {
     hazard: browserTabs.Hazards;
     spell: browserTabs.Spells;
 }
-type TabName = "action" | "bestiary" | "campaignFeature" | "equipment" | "feat" | "hazard" | "spell" | "settings";
+type TabName = "action" | "bestiary" | "campaignFeature" | "equipment" | "feat" | "hazard" | "spell";
 type ContentTabName = Exclude<TabName, "settings">;
 type BrowserTab = InstanceType<(typeof browserTabs)[keyof typeof browserTabs]>;
-type TabData<T> = Record<TabName, T | null>;
+type TabData<T> = Record<TabName, T>;
 type CommonSortByOption = "name" | "level";
 type SortByOption = CommonSortByOption | "price";
 type SortDirection = "asc" | "desc";

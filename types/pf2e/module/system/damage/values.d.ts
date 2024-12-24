@@ -2,14 +2,14 @@ import { DamageCategory, DamageType } from "./types.ts";
 declare const PHYSICAL_DAMAGE_TYPES: readonly ["bludgeoning", "piercing", "slashing", "bleed"];
 declare const ENERGY_DAMAGE_TYPES: readonly ["acid", "cold", "electricity", "fire", "sonic", "force", "vitality", "void"];
 /** A set of mutually exclusive damage categories */
-declare const DAMAGE_CATEGORIES_UNIQUE: Set<"persistent" | "precision" | "splash">;
+declare const DAMAGE_CATEGORIES_UNIQUE: readonly ["persistent", "precision", "splash"];
 /** All damage modifications that only affect IWR (like materials) */
 declare const MATERIAL_DAMAGE_EFFECTS: Set<"adamantine" | "cold-iron" | "dawnsilver" | "duskwood" | "orichalcum" | "silver" | "sisterstone-dusk" | "sisterstone-scarlet" | "warpglass">;
 declare const DAMAGE_CATEGORIES: Set<"physical" | "persistent" | "precision" | "splash" | "adamantine" | "cold-iron" | "dawnsilver" | "duskwood" | "orichalcum" | "silver" | "sisterstone-dusk" | "sisterstone-scarlet" | "warpglass" | "energy">;
 /** The standard damage die sizes (number of faces on a die) */
 declare const DAMAGE_DIE_SIZES: readonly ["d4", "d6", "d8", "d10", "d12"];
 declare const DAMAGE_DICE_FACES: readonly [4, 6, 8, 10, 12];
-declare const DAMAGE_TYPES: Set<"bludgeoning" | "piercing" | "slashing" | "bleed" | "vitality" | "void" | "acid" | "cold" | "electricity" | "fire" | "sonic" | "force" | "mental" | "poison" | "spirit" | "untyped">;
+declare const DAMAGE_TYPES: Set<"poison" | "bludgeoning" | "piercing" | "slashing" | "bleed" | "vitality" | "void" | "acid" | "cold" | "electricity" | "fire" | "sonic" | "force" | "mental" | "spirit" | "untyped">;
 /** Maps damage types to their damage category; these are the immutable base mappings used if there is no override. */
 declare const BASE_DAMAGE_TYPES_TO_CATEGORIES: Record<DamageType, DamageCategory | null>;
 declare const DAMAGE_TYPE_ICONS: Record<DamageType, string | null>;

@@ -1,5 +1,5 @@
 import type { MeleePF2e } from "../index.ts";
-import { ItemSystemModel, ItemSystemSchema } from "../base/data/schema.ts";
+import { ItemSystemModel, ItemSystemSchema } from "../base/data/model.ts";
 import type { BaseItemSourcePF2e, ItemFlagsPF2e, ItemSystemSource, ItemTraitsNoRarity } from "../base/data/system.ts";
 import type { WeaponMaterialData } from "../weapon/data.ts";
 import type { WeaponPropertyRuneType } from "../weapon/types.ts";

@@ -4,7 +4,8 @@
 import type { BoostFlawState } from "../../character/apps/attribute-builder.ts";
 import type { PartyPF2e } from "../document.ts";
 import type { Kingdom } from "./model.ts";
-import type { KingdomAbility, KingdomCHG } from "./types.ts";
+import { KingdomCHG } from "./schema.ts";
+import type { KingdomAbility } from "./types.ts";
 import { KingdomCHGData } from "./values.ts";
 declare const KINGDOM_BUILD_CATEGORIES: readonly ["charter", "heartland", "government"];
 type KingdomBuildCategory = (typeof KINGDOM_BUILD_CATEGORIES)[number];
@@ -18,7 +19,6 @@ declare class KingdomBuilder extends FormApplication<Kingdom> {
         uuid: string;
         tab?: string;
     }): void;
-    constructor(kingdom: Kingdom);
     get id(): string;
     get kingdom(): Kingdom;
     get actor(): PartyPF2e;

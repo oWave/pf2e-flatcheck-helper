@@ -74,6 +74,7 @@ interface FeatSubfeatures {
     senses: {
         [K in SenseType]?: SenseSubfeature;
     };
+    suppressedFeatures: ItemUUID[];
 }
 interface LanguagesSubfeature {
     /** A number of open slots fillable with any language */

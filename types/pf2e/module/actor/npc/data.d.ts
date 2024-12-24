@@ -5,7 +5,7 @@ import { InitiativeTraceData } from "../initiative.ts";
 import type { ModifierPF2e, StatisticModifier } from "../modifiers.ts";
 import type { ActorAlliance, SaveType, SkillSlug } from "../types.ts";
 import type { MeleePF2e } from "../../item/index.ts";
-import type { PublicationData } from "../../data.ts";
+import type { PublicationData, ValueAndMax } from "../../data.ts";
 import type { RawPredicate } from "../../system/predication.ts";
 type NPCSource = BaseCreatureSource<"npc", NPCSystemSource> & {
     flags: DeepPartial<NPCFlags>;
@@ -112,7 +112,7 @@ interface NPCSystemData extends Omit<NPCSystemSource, "attributes" | "perception
     skills: Record<string, NPCSkillData>;
     /** Special strikes which the creature can take. */
     actions: NPCStrike[];
-    resources: CreatureResources;
+    resources: NPCResources;
     spellcasting: {
         rituals: {
             dc: number;
@@ -204,5 +204,12 @@ interface NPCSkillData extends NPCSkillSource, AttributeBasedTraceData {
 }
 interface NPCSpeeds extends CreatureSpeeds {
     details: string;
+}
+interface NPCResources extends CreatureResources {
+    /** The current number of focus points and pool size */
+    focus: ValueAndMax & {
+        cap: number;
+    };
+    mythicPoints: ValueAndMax;
 }
 export type { NPCAttributes, NPCAttributesSource, NPCFlags, NPCHitPoints, NPCPerceptionData, NPCPerceptionSource, NPCSaveData, NPCSkillData, NPCSkillSource, NPCSource, NPCSpecialSkillSource, NPCStrike, NPCSystemData, NPCSystemSource, NPCTraitsSource, };

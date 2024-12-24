@@ -1,5 +1,5 @@
 import { AttributeString } from "../../actor/types.ts";
-import { ActionTrait } from "../ability/types.ts";
+import { AbilityTrait } from "../ability/types.ts";
 import { PhysicalItemSource } from "../base/data/index.ts";
 import { Size, TraitsWithRarity, ValuesList, ZeroToTwo } from "../../data.ts";
 import { MaterialDamageEffect } from "../../system/damage/types.ts";
@@ -120,7 +120,7 @@ interface ItemActivation {
         cast: boolean;
     };
     frequency?: Frequency;
-    traits: ValuesList<ActionTrait>;
+    traits: ValuesList<AbilityTrait>;
 }
 interface PhysicalItemHPSource {
     value: number;
@@ -138,9 +138,10 @@ type Coins = {
 interface PartialPrice {
     value: Coins;
     per?: number;
+    /** Whether the price adjusts according to its size */
+    sizeSensitive?: boolean;
 }
-interface Price extends PartialPrice {
+interface Price extends Required<PartialPrice> {
     value: CoinsPF2e;
-    per: number;
 }
 export type { BasePhysicalItemSource, BulkData, Coins, EquippedData, IdentificationData, IdentificationStatus, IdentifiedData, Investable, ItemActivation, ItemCarryType, ItemMaterialData, ItemMaterialSource, MystifiedData, PartialPrice, PhysicalItemHPSource, PhysicalItemHitPoints, PhysicalItemTrait, PhysicalItemTraits, PhysicalSystemData, PhysicalSystemSource, Price, };
