@@ -34,6 +34,9 @@ export const settings = {
 	get removeCombatToggle() {
 		return game.settings.get(MODULE_ID, "token-hud-remove-combat-toggle") as boolean
 	},
+	get delayCreatesMessage() {
+		return game.settings.get(MODULE_ID, "delay-create-message") as boolean
+	},
 
 	get lifeLinkEnabled() {
 		return game.settings.get(MODULE_ID, "lifelink") as boolean

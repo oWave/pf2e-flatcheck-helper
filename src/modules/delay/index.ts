@@ -240,13 +240,14 @@ function emitMoveAfter(combatId: string, combatantId: string, afterId: string) {
 }
 
 function createMessage(token: TokenDocumentPF2e, title: string) {
-	ChatMessage.create({
-		speaker: ChatMessage.getSpeaker({ token }),
-		content: `<div class="pf2e chat-card action-card">
+	if (MODULE.settings.delayCreateMessage)
+		ChatMessage.create({
+			speaker: ChatMessage.getSpeaker({ token }),
+			content: `<div class="pf2e chat-card action-card">
       <header class="card-header flexrow">
           <img src="systems/pf2e/icons/actions/FreeAction.webp" alt="${title}">
           <h3>${title} <span class="action-glyph">F</span></h3>
       </header>
     </div>`,
-	})
+		})
 }
