@@ -10,6 +10,7 @@
     - Concealed/Hidden + Dazzled/Blinded
     - Stupefied when casting a spell
     - Manipulate while Grabbed
+    - Auditory while Deafened (including non-subtle spells)
 - Below the chat box 
 
 ## Delay Button
