@@ -217,13 +217,13 @@ export async function preCreateMessage(msg: ChatMessagePF2e) {
 	if (!msg.actor) return
 
 	if (
-		(msg.flags?.pf2e?.context?.type === "spell-cast" &&
-			(msg.item as SpellPF2e).isAttack &&
-			!msg.isCheckRoll) ||
-		msg.flags?.pf2e?.context?.type === "saving-throw" ||
-		msg.flags?.pf2e?.context?.type === "flat-check" ||
-		!msg.flags?.pf2e?.context?.dc
+		msg.flags?.pf2e?.context?.type === "spell-cast" &&
+		(msg.item as SpellPF2e).isAttack &&
+		!msg.isCheckRoll
 	) {
+		return
+	}
+	if (msg.isRoll && !msg.flags?.pf2e?.context?.dc) {
 		return
 	}
 
