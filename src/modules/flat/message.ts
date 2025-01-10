@@ -43,6 +43,7 @@ interface ButtonData {
 interface ButtonsFlags {
 	grabbed?: ButtonData
 	stupefied?: ButtonData
+	deafened?: ButtonData
 	targets?: ButtonData | { count: number }
 }
 
@@ -64,6 +65,7 @@ function renderButtons(msg: ChatMessagePF2e, html: JQuery) {
 	if (data) {
 		if (data.grabbed) buttons.push({ key: "grabbed", ...data.grabbed })
 		if (data.stupefied) buttons.push({ key: "stupefied", ...data.stupefied })
+		if (data.deafened) buttons.push({ key: "deafened", ...data.deafened })
 		if (data.targets) {
 			if ("count" in data.targets)
 				buttons.push({ text: `${data.targets.count} targets require a flat check` })
@@ -126,18 +128,26 @@ function renderButtons(msg: ChatMessagePF2e, html: JQuery) {
 					<span data-tooltip='"If more than one flat check would ever cause or prevent the same thing, just roll once and use the highest DC."'><i class="fa-solid fa-circle-info"></i></span>
 				</div>`)
 		}
-
-		let section = html.find("section.card-buttons")
-		if (section.length) {
-			section.append(buttonNode)
-		} else {
-			section = html.find("div.dice-roll")
-			if (!section) {
-				console.error("Could not find an element to insert flat check buttons")
+		;(() => {
+			let section = html.find("section.card-buttons")
+			if (section.length) {
+				section.append(buttonNode)
 				return
 			}
-			section.after(buttonNode)
-		}
+
+			section = html.find("div.dice-roll")
+			if (section.length) {
+				section.after(buttonNode)
+				return
+			}
+
+			section = html.find("footer")
+			if (section.length) {
+				section.before(buttonNode)
+			}
+
+			console.error("Could not insert flat check buttons into message.", msg)
+		})()
 
 		html.on("click", 'button[data-action="roll-flatcheck"]', function (this: HTMLButtonElement) {
 			const key = this.dataset.key!
@@ -235,6 +245,22 @@ export async function preCreateMessage(msg: ChatMessagePF2e) {
 		msg.item?.system.traits.value?.some((t) => t === "manipulate")
 	) {
 		data.grabbed = { label: "Grabbed", dc: 5 }
+	}
+
+	if (
+		!flatMessageConfig.ignoredCheckTypes.has("deafened") &&
+		msg.actor?.conditions.stored.some((c) => c.slug === "deafened") &&
+		msg.item?.system.traits.value?.some((t) => t === "auditory")
+	) {
+		data.deafened = { label: "Deafened", dc: 5 }
+	}
+	if (
+		!flatMessageConfig.ignoredCheckTypes.has("deafened-spellcasting") &&
+		msg.actor?.conditions.stored.some((c) => c.slug === "deafened") &&
+		msg.flags?.pf2e?.origin?.type === "spell" &&
+		!msg.item?.system.traits.value?.some((t) => t === "subtle")
+	) {
+		data.deafened = { label: "Deafened", dc: 5 }
 	}
 
 	if (

@@ -53,7 +53,13 @@ export class FlatMessageConfigApplication extends foundry.applications.api.Handl
 	}
 }
 
-const CHECK_TYPES = ["stupefied", "manipulate", "target"] as const
+const CHECK_TYPES = [
+	"stupefied",
+	"manipulate",
+	"deafened",
+	"deafened-spellcasting",
+	"target",
+] as const
 
 interface ConfigJSON {
 	ignoredCheckTypes: typeof CHECK_TYPES

@@ -9,6 +9,14 @@
 				"label": "Manipulate",
 				"note": "Manipulate Actions while Grabbed"
 			},
+			"deafened": {
+				"label": "Deafened",
+				"note": "Auditory Actions while Deafened"
+			},
+			"deafened-spellcasting": {
+				"label": "Deafened (Spellcasting)",
+				"note": "Non-subtle spells require incantations, and all speech has the auditory trait."
+			},
 			"target": {
 				"label": "Target",
 				"note": "Concealed/Hidden/Dazzled/Blinded/etc. Supports PF2e Perception"
