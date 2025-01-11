@@ -144,6 +144,13 @@ function renderButtons(msg: ChatMessagePF2e, html: JQuery) {
 			section = html.find("footer")
 			if (section.length) {
 				section.before(buttonNode)
+				return
+			}
+
+			section = html.find("div.message-content")
+			if (section.length) {
+				section.append(buttonNode)
+				return
 			}
 
 			console.error("Could not insert flat check buttons into message.", msg)
