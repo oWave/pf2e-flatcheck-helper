@@ -9,6 +9,14 @@
 				"label": "Manipulacja",
 				"note": "Akcje manipulacji podczas Pochwycenia"
 			},
+			"deafened": {
+				"label": "Ogłuchły",
+				"note": "Akcje słuchowe podczas Ogłuchły"
+			},
+			"deafened-spellcasting": {
+				"label": "Ogłuchły (Rzucanie zaklęć)",
+				"note": "Niezbyt subtelne zaklęcia wymagają inkantacji, a cała mowa ma cechę słuchu."
+			},
 			"target": {
 				"label": "Cel",
 				"note": "Przysłonięty / Ukryty / Zamroczony / Oślepiony / itd. Wspiera PF2e Perception"
