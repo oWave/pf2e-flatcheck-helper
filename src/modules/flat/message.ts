@@ -22,23 +22,26 @@ export class MessageFlatCheckModule extends BaseModule {
 		super.disable()
 	}
 	onReady() {
-		if (
-			game.modules.get("pf2e-perception")?.active &&
-			!(
-				(game.modules.get("pf2e-perception") as any)?.api?.check?.getFlatCheckDc instanceof Function
-			)
-		) {
-			// @ts-expect-error
-			foundry.applications.api.DialogV2.prompt({
-				window: { title: "PF2e Utility Buttons" },
-				content:
-					"pf2e-perception is outdated. Flat check integration requires version 0.40.0 or newer.",
-				ok: {
-					label: "Close",
-					icon: "fas fa-close",
-				},
-			})
-		}
+		setTimeout(() => {
+			if (
+				game.modules.get("pf2e-perception")?.active &&
+				!(
+					(game.modules.get("pf2e-perception") as any)?.api?.check?.getFlatCheckDc instanceof
+					Function
+				)
+			) {
+				// @ts-expect-error
+				foundry.applications.api.DialogV2.prompt({
+					window: { title: "PF2e Utility Buttons" },
+					content:
+						"pf2e-perception is outdated. Flat check integration requires version 0.40.0 or newer.",
+					ok: {
+						label: "Close",
+						icon: "fas fa-close",
+					},
+				})
+			}
+		}, 1000)
 	}
 }
 
