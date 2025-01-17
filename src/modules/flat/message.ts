@@ -75,7 +75,7 @@ function renderButtons(msg: ChatMessagePF2e, html: JQuery) {
 		return
 	}
 
-	if (buttons) {
+	if (buttons.length) {
 		const buttonHtml = buttons.map((data) => {
 			if ("text" in data) {
 				return `<div class="fc-note"><i class="fa-regular fa-circle-question"></i> ${data.text}</div>`
@@ -230,20 +230,24 @@ async function handleFlatButtonClick(msg: ChatMessagePF2e, key: string, dc: numb
 	}
 }
 
+function shouldShowFlatChecks(msg: ChatMessagePF2e): boolean {
+	if (msg.flags?.pf2e?.context?.type === "flat-check") return false
+
+	// If the spell has an attack roll, don't show flat checks on the spell card, but only on the attack roll itself
+	if (msg.flags?.pf2e?.context?.type === "spell-cast")
+		return (msg.item as SpellPF2e).isAttack === msg.isRoll
+
+	// Only show flat checks on dice rolls with a DC
+	if (msg.isRoll) return msg.flags?.pf2e?.context?.dc
+
+	if (!msg.item) return false
+
+	return msg.item.isOfType("action", "consumable", "equipment", "feat", "melee", "weapon")
+}
+
 export async function preCreateMessage(msg: ChatMessagePF2e) {
-	if (!msg.actor) return
-
-	if (
-		msg.flags?.pf2e?.context?.type === "spell-cast" &&
-		(msg.item as SpellPF2e).isAttack &&
-		!msg.isCheckRoll
-	) {
-		return
-	}
-	if (msg.isRoll && !msg.flags?.pf2e?.context?.dc) {
-		return
-	}
-
+	if (!msg.actor || !shouldShowFlatChecks(msg)) return
+	
 	const data: ButtonsFlags = {}
 
 	if (
