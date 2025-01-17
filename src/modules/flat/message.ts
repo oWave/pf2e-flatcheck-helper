@@ -21,6 +21,25 @@ export class MessageFlatCheckModule extends BaseModule {
 	disable() {
 		super.disable()
 	}
+	onReady() {
+		if (
+			game.modules.get("pf2e-perception")?.active &&
+			!(
+				(game.modules.get("pf2e-perception") as any)?.api?.check?.getFlatCheckDc instanceof Function
+			)
+		) {
+			// @ts-expect-error
+			foundry.applications.api.DialogV2.prompt({
+				window: { title: "PF2e Utility Buttons" },
+				content:
+					"pf2e-perception is outdated. Flat check integration requires version 0.40.0 or newer.",
+				ok: {
+					label: "Close",
+					icon: "fas fa-close",
+				},
+			})
+		}
+	}
 }
 
 const REROLL_ICONS = {
@@ -247,7 +266,7 @@ function shouldShowFlatChecks(msg: ChatMessagePF2e): boolean {
 
 export async function preCreateMessage(msg: ChatMessagePF2e) {
 	if (!msg.actor || !shouldShowFlatChecks(msg)) return
-	
+
 	const data: ButtonsFlags = {}
 
 	if (
@@ -328,6 +347,18 @@ function flatCheckForUserTargets(origin: ActorPF2e) {
 }
 
 function flatCheckForTarget(origin: ActorPF2e, target: TokenPF2e) {
+	if (game.modules.get("pf2e-perception")?.active) {
+		const perceptionApi = (game.modules.get("pf2e-perception") as any).api
+		const originToken = canvas.tokens.placeables.find((t) => t.actor?.uuid === origin.uuid)
+		const condition = perceptionApi.token.getVisibility(target, originToken, {
+			affects: "target",
+		}) as TargetSlug
+		const dc = perceptionApi.check.getFlatCheckDc(originToken, target) as number
+
+		if (dc === 0) return null
+		return { label: condition.capitalize(), dc }
+	}
+
 	let originCondition = null as OriginSlug | null
 	origin.conditions.stored.forEach((c) => {
 		const slug = c.system.slug
@@ -342,14 +373,6 @@ function flatCheckForTarget(origin: ActorPF2e, target: TokenPF2e) {
 		if (slug in targetDCs && (!targetCondition || targetDCs[targetCondition] < targetDCs[slug]))
 			targetCondition = slug as TargetSlug
 	})
-
-	if (game.modules.get("pf2e-perception")?.active) {
-		const originToken = canvas.tokens.placeables.find((t) => t.actor?.uuid === origin.uuid)
-		targetCondition = game.modules
-			.get("pf2e-perception")
-			// @ts-expect-error
-			?.api.token.getVisibility(target, originToken) as TargetSlug
-	}
 
 	if (!originCondition && !targetCondition) return null
 	const originDC = originCondition ? originDCs[originCondition] : 0
