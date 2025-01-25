@@ -9,15 +9,12 @@
 		"strict": true,
 		"noImplicitAny": false,
 		"moduleResolution": "Bundler",
-		"typeRoots": [
-			"./node_modules/@types",
-			"./types",
-		],
+		/* "typeRoots": [
+			"./node_modules/@types"
+		], */
 		"types": [
-			"node",
-			"jquery",
-			"foundry",
-			"pf2e"
+			"foundry-pf2e",
+			"jquery"
 		],
 		"allowSyntheticDefaultImports": true,
 		"esModuleInterop": true,

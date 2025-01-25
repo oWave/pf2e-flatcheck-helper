@@ -1,8 +1,6 @@
 import { MODULE_ID } from "src/constants"
 import MODULE from "src/index"
-import type { ChatMessagePF2e } from "types/pf2e/module/chat-message"
-import type { ItemPF2e } from "types/pf2e/module/item"
-import type { SpellPF2e, SpellSheetPF2e } from "types/pf2e/module/item/spell"
+import type { ChatMessagePF2e, ItemPF2e, SpellPF2e, SpellSheetPF2e } from "foundry-pf2e"
 import { BaseModule } from "../base"
 import { EmanationRequestDialog } from "./emanation-dialog"
 

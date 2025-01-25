@@ -1,5 +1,4 @@
-import type { ActorPF2e } from "types/pf2e/module/actor"
-import type { EncounterPF2e, RolledCombatant } from "types/pf2e/module/encounter"
+import type { ActorPF2e, EncounterPF2e, RolledCombatant } from "foundry-pf2e"
 
 export function isDelaying(actor: ActorPF2e) {
 	return actor.items.some((e) => e.slug === "x-delay")

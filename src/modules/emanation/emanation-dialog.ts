@@ -1,6 +1,5 @@
 import { MODULE_ID } from "src/constants"
-import type { EffectPF2e, SpellPF2e } from "types/pf2e/module/item"
-import type { TokenDocumentPF2e } from "types/pf2e/module/scene"
+import type { EffectPF2e, SpellPF2e, TokenDocumentPF2e } from "foundry-pf2e"
 import { type EmanationRequestData, extractFlagData } from "./emanation"
 
 export class EmanationRequestDialog extends Application {

@@ -1,5 +1,5 @@
 import MODULE from "src/index"
-import type { CombatantPF2e, EncounterPF2e } from "types/pf2e/module/encounter"
+import type { CombatantPF2e, EncounterPF2e } from "foundry-pf2e"
 import { tryDelay, tryReturn } from "."
 import { isDelaying } from "./utils"
 

@@ -1,11 +1,8 @@
 import { MODULE_ID } from "src/constants"
 import MODULE from "src/index"
-import type { ActorPF2e } from "types/pf2e/module/actor"
-import type { TokenPF2e } from "types/pf2e/module/canvas"
-import type { ChatMessagePF2e } from "types/pf2e/module/chat-message"
-import type { SpellPF2e } from "types/pf2e/module/item"
 import { BaseModule } from "../base"
 import { flatMessageConfig } from "./message-config"
+import type { ActorPF2e, ChatMessagePF2e, SpellPF2e, TokenPF2e } from "foundry-pf2e"
 
 export class MessageFlatCheckModule extends BaseModule {
 	settingsKey = "flat-check-in-message"
@@ -30,7 +27,6 @@ export class MessageFlatCheckModule extends BaseModule {
 					Function
 				)
 			) {
-				// @ts-expect-error
 				foundry.applications.api.DialogV2.prompt({
 					window: { title: "PF2e Utility Buttons" },
 					content:
@@ -104,7 +100,11 @@ function renderButtons(msg: ChatMessagePF2e, html: JQuery) {
 			}
 
 			const buttonIcon = data.roll ? "fa-rotate rotate" : "fa-dice-d20 die"
-			const buttonClass = msg.canUserModify(game.user, "update") && !data.reroll ? "" : "hidden"
+			const buttonClass =
+				msg.canUserModify(game.user as unknown as foundry.documents.BaseUser, "update") &&
+				!data.reroll
+					? ""
+					: "hidden"
 
 			const rolls: [number | undefined, number | undefined] = [data.reroll?.oldRoll, data.roll]
 			const rollClasses: [string, string] = ["strikethrough", "strikethrough"]
@@ -201,7 +201,6 @@ async function handleFlatButtonClick(msg: ChatMessagePF2e, key: string, dc: numb
 			heroPoints = msg.actor?.system.resources.heroPoints.value
 		}
 
-		// @ts-expect-error
 		await foundry.applications.api.DialogV2.wait({
 			id: `${MODULE_ID}.flatcheck.reroll`,
 			window: { title: "PF2e Utility Buttons" },
@@ -260,7 +259,7 @@ function shouldShowFlatChecks(msg: ChatMessagePF2e): boolean {
 		return (msg.item as SpellPF2e).isAttack === msg.isRoll
 
 	// Only show flat checks on dice rolls with a DC
-	if (msg.isRoll) return msg.flags?.pf2e?.context?.dc
+	if (msg.isRoll) return !!msg.flags?.pf2e?.context && "dc" in msg.flags.pf2e.context
 
 	if (!msg.item) return false
 

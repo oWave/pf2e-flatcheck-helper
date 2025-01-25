@@ -1,14 +1,18 @@
 import { MODULE_ID } from "src/constants"
 import MODULE from "src/index"
 import { combatantIsNext, isJQuery, sleep } from "src/utils"
-import type { ActorPF2e } from "types/pf2e/module/actor"
-import type { ChatMessagePF2e } from "types/pf2e/module/chat-message"
-import type { CombatantPF2e, EncounterPF2e, RolledCombatant } from "types/pf2e/module/encounter"
-import type { TokenDocumentPF2e } from "types/pf2e/module/scene"
 import { BaseModule } from "../base"
 import { onRenderPF2eHudTracker } from "./pf2e-hud"
 import { onRenderCombatTracker } from "./tracker"
 import { isDelaying, setInitiativeFromDrop } from "./utils"
+import type {
+	ActorPF2e,
+	ChatMessagePF2e,
+	CombatantPF2e,
+	EncounterPF2e,
+	RolledCombatant,
+	TokenDocumentPF2e,
+} from "foundry-pf2e"
 
 export class DelayModule extends BaseModule {
 	settingsKey = null

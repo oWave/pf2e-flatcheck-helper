@@ -19,7 +19,6 @@ export abstract class BaseModule {
 		this.enabled = false
 
 		for (const [hook, id] of Object.entries(this.hooks)) {
-			// @ts-expect-error
 			Hooks.off(hook, id)
 		}
 		this.hooks = {}

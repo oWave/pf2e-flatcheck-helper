@@ -1,7 +1,7 @@
 import MODULE from "src/index"
-import type { TokenPF2e } from "types/pf2e/module/canvas"
 import { BaseModule } from "../base"
 import { MoreDialog } from "./more-dialog"
+import type { ActorPF2e, TokenPF2e } from "foundry-pf2e"
 
 export class ChatFlatModule extends BaseModule {
 	settingsKey = "show-global"
@@ -24,12 +24,11 @@ export async function rollFlatCheck(
 	const actor =
 		canvas.tokens.controlled.at(0)?.actor ??
 		game.user.character ??
-		new Actor({ type: "npc", name: game.user.name })
+		(new Actor({ type: "npc", name: game.user.name }) as ActorPF2e)
 
 	return await game.pf2e.Check.roll(
 		new game.pf2e.StatisticModifier(label ? `Flat Check: ${label}` : "Flat Check", []),
 		{
-			//@ts-expect-error
 			actor,
 			type: "flat-check",
 			dc: { value: dc, visible: true },
