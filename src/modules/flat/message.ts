@@ -252,7 +252,12 @@ async function handleFlatButtonClick(msg: ChatMessagePF2e, key: string, dc: numb
 }
 
 function shouldShowFlatChecks(msg: ChatMessagePF2e): boolean {
-	if (msg.flags?.pf2e?.context?.type === "flat-check") return false
+	if (
+		[msg.flags?.pf2e?.context?.type && "flat-check", "damage-taken", "healing-received"].includes(
+			msg.flags?.pf2e?.context?.type,
+		)
+	)
+		return false
 
 	// If the spell has an attack roll, don't show flat checks on the spell card, but only on the attack roll itself
 	if (msg.flags?.pf2e?.context?.type === "spell-cast")
