@@ -14,7 +14,8 @@
 		], */
 		"types": [
 			"foundry-pf2e",
-			"jquery"
+			"jquery",
+			"vite/client"
 		],
 		"allowSyntheticDefaultImports": true,
 		"esModuleInterop": true,

@@ -11,17 +11,18 @@
 		"unpack": "node build/extract.mjs",
 		"pack": "node build/pack.mjs"
 	},
-	"devDependencies": {
-		"@biomejs/biome": "^1.8.3",
-		"@foundryvtt/foundryvtt-cli": "^1.0.3",
-		"@types/jquery": "^3.5.30",
-		"@types/node": "^22.10.7",
-		"typescript": "^5.7.3",
-		"vite": "^5.4.11",
-		"vite-tsconfig-paths": "^5.1.4"
-	},
-	"packageManager": "pnpm@9.12.3+sha512.cce0f9de9c5a7c95bef944169cc5dfe8741abfb145078c0d508b868056848a87c81e626246cb60967cbd7fd29a6c062ef73ff840d96b3c86c40ac92cf4a813ee",
+	"packageManager": "pnpm@10.2.0+sha512.0d27364e0139c6aadeed65ada153135e0ca96c8da42123bd50047f961339dc7a758fc2e944b428f52be570d1bd3372455c1c65fa2e7aa0bfbf931190f9552001",
 	"dependencies": {
-		"foundry-pf2e": "github:7H3LaughingMan/foundry-pf2e"
+		"@biomejs/biome": "^1.9.4",
+		"@foundryvtt/foundryvtt-cli": "^1.0.4",
+		"@pixi/filter-outline": "^5.2.0",
+		"@types/jquery": "^3.5.32",
+		"@types/node": "^22.13.1",
+		"foundry-pf2e": "github:7H3LaughingMan/foundry-pf2e",
+		"keep-a-changelog": "^2.5.3",
+		"remeda": "^2.20.1",
+		"typescript": "^5.7.3",
+		"vite": "^5.4.14",
+		"vite-tsconfig-paths": "^5.1.4"
 	}
 }
