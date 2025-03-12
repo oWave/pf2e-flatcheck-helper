@@ -9,7 +9,8 @@
 		"dev": "vite serve",
 		"build": "vite build",
 		"unpack": "node build/extract.mjs",
-		"pack": "node build/pack.mjs"
+		"pack": "node build/pack.mjs",
+		"changelog": "changelog --create --release"
 	},
 	"packageManager": "pnpm@10.2.0+sha512.0d27364e0139c6aadeed65ada153135e0ca96c8da42123bd50047f961339dc7a758fc2e944b428f52be570d1bd3372455c1c65fa2e7aa0bfbf931190f9552001",
 	"dependencies": {
@@ -19,10 +20,17 @@
 		"@types/jquery": "^3.5.32",
 		"@types/node": "^22.13.1",
 		"foundry-pf2e": "github:7H3LaughingMan/foundry-pf2e",
-		"keep-a-changelog": "^2.5.3",
+		"keep-a-changelog": "^2.6.1",
 		"remeda": "^2.20.1",
 		"typescript": "^5.7.3",
 		"vite": "^5.4.14",
 		"vite-tsconfig-paths": "^5.1.4"
+	},
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"@biomejs/biome",
+			"classic-level",
+			"esbuild"
+		]
 	}
 }
