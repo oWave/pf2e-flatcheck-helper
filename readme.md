@@ -13,8 +13,8 @@
     - Auditory while Deafened (including non-subtle spells)
 - Below the chat box 
 
-Also shows flat checks when targetting a token
-![image](https://github.com/user-attachments/assets/ce31c66c-69b2-469d-b596-adfe8df59b74)
+Also shows flat checks when targetting a token. You can hold ALT to highlight squares that have no/dim light.
+![image](https://github.com/user-attachments/assets/bf9f7c53-4c85-4658-854d-0746719df2d2)
 The dim light/darkness flat checks are not enabled by default (yet). You can turn them on in the flat check settings.
 
 If **pf2e-perception** is installed, that module will be used to calculate DCs.
