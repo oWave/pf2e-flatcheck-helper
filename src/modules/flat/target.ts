@@ -100,8 +100,10 @@ export function calculateFlatCheck(
 	origin: CreaturePF2e | null,
 	target: TokenPF2e,
 ): DisplayData | null {
-	// Just use perception if that module is enabled
-	if (origin && game.modules.get("pf2e-perception")?.active) {
+	const perceptionActive = game.modules.get("pf2e-perception")?.active
+	// Flat check with no origin is not supported by pf2e-perception
+	if (!origin && perceptionActive) return null
+	if (origin && perceptionActive) {
 		const perceptionApi = (game.modules.get("pf2e-perception") as any).api
 		const originToken = canvas.tokens.placeables.find((t) => t.actor?.uuid === origin.uuid)
 		const condition = perceptionApi.token.getVisibility(target, originToken, {
