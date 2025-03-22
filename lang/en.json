@@ -14,12 +14,16 @@
 				"note": "Auditory Actions while Deafened"
 			},
 			"deafened-spellcasting": {
-				"label": "Deafened (Spellcasting)",
+				"label": "Deafened - Spellcasting",
 				"note": "Non-subtle spells require incantations, and all speech has the auditory trait."
 			},
 			"target": {
 				"label": "Target",
 				"note": "Concealed/Hidden/Dazzled/Blinded/etc. Supports PF2e Perception"
+			},
+			"light-level": {
+				"label": "Target - Light Level",
+				"note": "Dim Light/Darkness if origin lacks low-light/darkvision"
 			}
 		}
 	}

@@ -79,7 +79,7 @@ export const settings = {
 
 		register("flat-check-in-message", {
 			name: "Flat Check Buttons in Messages",
-			hint: "Adds flat checks for supported conditions in strike or spell-cast messages",
+			hint: "Adds flat checks for supported conditions in chat messages",
 			scope: "client",
 			config: true,
 			default: true,
@@ -94,6 +94,24 @@ export const settings = {
 			config: false,
 			default: {},
 			type: Object,
+		})
+
+		register("flat-check-targer-marker", {
+			name: "Show Flat Check on Token",
+			hint: "Client setting: Shows flat check info on a token when targeting",
+			scope: "client",
+			config: true,
+			default: true,
+			type: Boolean,
+		})
+
+		register("light-level-vis", {
+			name: "Light Level Visualization",
+			hint: "Client setting: Hold alt to highlight squares with no/dim light",
+			scope: "client",
+			config: true,
+			default: true,
+			type: Boolean,
 		})
 
 		register("delay-combat-tracker", {
@@ -231,9 +249,13 @@ function register(key: string, data: SettingRegistration) {
 	game.settings.register(MODULE_ID, key, {
 		...data,
 		onChange() {
-			const value = game.settings.get(MODULE_ID, key)
+			const value = game.settings.get(MODULE_ID, key) as any
 			data.onChange?.(value)
 			settings.callListener(key, value)
+
+			if (data.scope === "client") {
+				onUpdateSetting({ key: `${MODULE_ID}.${key}` }, { value: value.toString() })
+			}
 		},
 	})
 }

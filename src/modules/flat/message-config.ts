@@ -27,25 +27,40 @@ export class FlatMessageConfigApplication extends foundry.applications.api.Handl
 
 	static async onSubmit(event: SubmitEvent | Event, form: HTMLFormElement, data: FormDataExtended) {
 		const ignoredCheckTypes: string[] = []
+		const experimentalCheckTypes: string[] = []
 		for (const [key, checked] of Object.entries(data.object)) {
-			if (!checked) ignoredCheckTypes.push(key)
+			if (CHECK_TYPES.includes(key as any) && !checked) {
+				ignoredCheckTypes.push(key)
+			}
+			if (EXPERIMENTAL_CHECK_TYPES.includes(key as any) && checked) {
+				experimentalCheckTypes.push(key)
+			}
 		}
 
 		game.settings.set(MODULE_ID, "flat-check-config", {
 			ignoredCheckTypes,
+			experimentalCheckTypes,
 		})
 	}
 
 	protected async _prepareContext(options: ApplicationRenderOptions): Promise<object> {
+		const { ignored, experimental } = flatMessageConfig.toSets()
 		return {
 			buttons: [{ type: "submit", icon: "fa-solid fa-save", label: "SETTINGS.Save" }],
-			types: CHECK_TYPES.map((t) => {
-				const ignored = flatMessageConfig.ignoredCheckTypes
-				return {
-					key: t,
-					checked: !ignored.has(t),
-				}
-			}),
+			types: [
+				...CHECK_TYPES.map((t) => {
+					return {
+						key: t,
+						checked: !ignored.has(t),
+					}
+				}),
+				...EXPERIMENTAL_CHECK_TYPES.map((t) => {
+					return {
+						key: t,
+						checked: experimental.has(t),
+					}
+				}),
+			],
 			i18n: (key: string) => {
 				return game.i18n.localize(`pf2e-fc.flat-config.${key}`)
 			},
@@ -61,8 +76,11 @@ const CHECK_TYPES = [
 	"target",
 ] as const
 
+const EXPERIMENTAL_CHECK_TYPES = ["light-level"] as const
+
 interface ConfigJSON {
 	ignoredCheckTypes: typeof CHECK_TYPES
+	experimentalCheckTypes: typeof EXPERIMENTAL_CHECK_TYPES
 }
 
 function getRawConfig() {
@@ -71,7 +89,13 @@ function getRawConfig() {
 
 export const flatMessageConfig = {
 	checkTypes: CHECK_TYPES,
-	get ignoredCheckTypes() {
-		return new Set(getRawConfig().ignoredCheckTypes)
+	experimentalTypes: EXPERIMENTAL_CHECK_TYPES,
+
+	toSets() {
+		const raw = getRawConfig()
+		return {
+			ignored: new Set(raw.ignoredCheckTypes),
+			experimental: new Set(raw.experimentalCheckTypes),
+		}
 	},
 }

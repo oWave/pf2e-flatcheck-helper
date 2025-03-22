@@ -2,7 +2,8 @@ import { MODULE_ID } from "src/constants"
 import MODULE from "src/index"
 import { BaseModule } from "../base"
 import { flatMessageConfig } from "./message-config"
-import type { ActorPF2e, ChatMessagePF2e, SpellPF2e, TokenPF2e } from "foundry-pf2e"
+import type { ChatMessagePF2e, SpellPF2e } from "foundry-pf2e"
+import { flatCheckForUserTargets } from "./target"
 
 export class MessageFlatCheckModule extends BaseModule {
 	settingsKey = "flat-check-in-message"
@@ -50,6 +51,7 @@ const REROLL_ICONS = {
 
 interface ButtonData {
 	label: string
+	description?: string
 	dc: number
 	roll?: number
 	reroll?: {
@@ -126,7 +128,10 @@ function renderButtons(msg: ChatMessagePF2e, html: JQuery) {
 				: ""
 
 			return `<div class="fc-check">
-				<span class="fc-label">${data.label}</span>
+				<span class="fc-label">
+				  <span>${data.label}</span>
+					${data.description ? `<span class="fc-description">${data.description}</span>` : ""}
+				</span>
 				<span class="fc-dc">DC ${data.dc}</span>
 				<span class="fc-roll">
 					<span class="fc-rolls">
@@ -216,6 +221,7 @@ async function handleFlatButtonClick(msg: ChatMessagePF2e, key: string, dc: numb
 					icon: "fa-solid fa-rotate rotate",
 					label: "Reroll",
 					default: true,
+					// @ts-expect-error
 					callback: (event, button, dialog) => button.form.elements.choice.value,
 				},
 				{
@@ -276,8 +282,9 @@ export async function preCreateMessage(msg: ChatMessagePF2e) {
 
 	const data: ButtonsFlags = {}
 
+	const { ignored, experimental } = flatMessageConfig.toSets()
 	if (
-		!flatMessageConfig.ignoredCheckTypes.has("manipulate") &&
+		!ignored.has("manipulate") &&
 		msg.actor?.conditions.stored.some((c) => c.slug === "grabbed") &&
 		msg.item?.system.traits.value?.some((t) => t === "manipulate")
 	) {
@@ -285,14 +292,14 @@ export async function preCreateMessage(msg: ChatMessagePF2e) {
 	}
 
 	if (
-		!flatMessageConfig.ignoredCheckTypes.has("deafened") &&
+		!ignored.has("deafened") &&
 		msg.actor?.conditions.stored.some((c) => c.slug === "deafened") &&
 		msg.item?.system.traits.value?.some((t) => t === "auditory")
 	) {
 		data.deafened = { label: "Deafened", dc: 5 }
 	}
 	if (
-		!flatMessageConfig.ignoredCheckTypes.has("deafened-spellcasting") &&
+		!ignored.has("deafened-spellcasting") &&
 		msg.actor?.conditions.stored.some((c) => c.slug === "deafened") &&
 		msg.flags?.pf2e?.origin?.type === "spell" &&
 		!msg.item?.system.traits.value?.some((t) => t === "subtle")
@@ -300,93 +307,21 @@ export async function preCreateMessage(msg: ChatMessagePF2e) {
 		data.deafened = { label: "Deafened", dc: 5 }
 	}
 
-	if (
-		!flatMessageConfig.ignoredCheckTypes.has("stupefied") &&
-		msg.flags?.pf2e?.origin?.type === "spell"
-	) {
+	if (!ignored.has("stupefied") && msg.flags?.pf2e?.origin?.type === "spell") {
 		const stupefied = msg.actor?.conditions.stupefied?.value
 		if (stupefied) {
 			data.stupefied = { label: `Stupefied ${stupefied}`, dc: 5 + stupefied }
 		}
 	}
 
-	if (!flatMessageConfig.ignoredCheckTypes.has("target")) {
-		const targetCheck = flatCheckForUserTargets(msg.actor)
+	if (!ignored.has("target")) {
+		const targetCheck = msg.actor.isOfType("creature") ? flatCheckForUserTargets(msg.actor) : null
 		if (targetCheck) data.targets = targetCheck
 	}
 
 	msg.updateSource({
 		[`flags.${MODULE_ID}.flatchecks`]: data,
 	})
-}
-
-const originDCs = {
-	dazzled: 5,
-	blinded: 11,
-}
-type OriginSlug = keyof typeof originDCs
-
-export const targetDCs = {
-	concealed: 5,
-	hidden: 11,
-	invisible: 11,
-	undetected: 11,
-	unnoticed: 11,
-}
-type TargetSlug = keyof typeof targetDCs
-
-function flatCheckForUserTargets(origin: ActorPF2e) {
-	if (game.user.targets.size > 1) {
-		const count = game.user.targets.reduce(
-			(acc, t) => (flatCheckForTarget(origin, t) !== null ? acc + 1 : acc),
-			0,
-		)
-		if (count) return { count }
-	} else if (game.user.targets.size === 1) {
-		const target = game.user.targets.first()
-		if (target) {
-			const targetDC = flatCheckForTarget(origin, target)
-			if (targetDC) {
-				return targetDC
-			}
-		}
-	}
-}
-
-function flatCheckForTarget(origin: ActorPF2e, target: TokenPF2e) {
-	if (game.modules.get("pf2e-perception")?.active) {
-		const perceptionApi = (game.modules.get("pf2e-perception") as any).api
-		const originToken = canvas.tokens.placeables.find((t) => t.actor?.uuid === origin.uuid)
-		const condition = perceptionApi.token.getVisibility(target, originToken, {
-			affects: "target",
-		}) as TargetSlug
-		const dc = perceptionApi.check.getFlatCheckDc(originToken, target) as number
-
-		if (dc === 0) return null
-		return { label: condition.capitalize(), dc }
-	}
-
-	let originCondition = null as OriginSlug | null
-	origin.conditions.stored.forEach((c) => {
-		const slug = c.system.slug
-		if (slug in originDCs && (!originCondition || originDCs[originCondition] < originDCs[slug])) {
-			originCondition = slug as OriginSlug
-		}
-	})
-
-	let targetCondition = null as TargetSlug | null
-	target.actor?.conditions?.stored.forEach((c) => {
-		const slug = c.system.slug
-		if (slug in targetDCs && (!targetCondition || targetDCs[targetCondition] < targetDCs[slug]))
-			targetCondition = slug as TargetSlug
-	})
-
-	if (!originCondition && !targetCondition) return null
-	const originDC = originCondition ? originDCs[originCondition] : 0
-	const targetDC = targetCondition ? targetDCs[targetCondition] : 0
-
-	if (originDC < targetDC) return { label: targetCondition!.capitalize(), dc: targetDC }
-	else return { label: originCondition!.capitalize(), dc: originDC }
 }
 
 interface SocketData {

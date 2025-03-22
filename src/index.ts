@@ -2,7 +2,9 @@ import { MODULE_ID } from "./constants"
 import { DelayModule } from "./modules/delay"
 import { EmanationModule } from "./modules/emanation/emanation"
 import { ChatFlatModule } from "./modules/flat/flat"
+import { LightVisModule } from "./modules/flat/light/layer"
 import { MessageFlatCheckModule } from "./modules/flat/message"
+import { TargetInfoModule } from "./modules/flat/target-marker"
 import { LifeLinkModule } from "./modules/life-link"
 import { AltRolLBreakdownModule } from "./modules/misc/alt-roll-breakdown"
 import { SharedVisionModule } from "./modules/misc/toggle-vision"
@@ -45,6 +47,8 @@ const MODULE = {
 	modules: {
 		flat: new ChatFlatModule(),
 		flatMessageButtons: new MessageFlatCheckModule(),
+		lightVis: new LightVisModule(),
+		targetInfo: new TargetInfoModule(),
 		delay: new DelayModule(),
 		emanation: new EmanationModule(),
 		lifeLink: new LifeLinkModule(),
@@ -73,4 +77,7 @@ Hooks.on("ready", () => {
 	for (const [name, module] of Object.entries(MODULE.modules)) {
 		if (module.enabled) module.onReady()
 	}
+
+	/* // @ts-expect-error
+	window.__PIXI_DEVTOOLS__ = { renderer: canvas.app.renderer, stage: canvas.app.stage } */
 })

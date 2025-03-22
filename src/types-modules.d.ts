@@ -11,5 +11,14 @@ declare global {
 	}
 
 	const libWrapper: LibWrapper
+
+	declare class PreciseText extends PIXI.Text {
+		constructor(
+			text: string,
+			style?: Partial<PIXI.ITextStyle> | PIXI.TextStyle,
+			canvas?: HTMLCanvasElement,
+		)
+		static getTextStyle(opts: { anchor?: number } & Partial<PIXI.ITextStyle>): PIXI.TextStyle
+	}
 }
 export type {}

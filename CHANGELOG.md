@@ -1,10 +1,12 @@
 # Changelog
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/)
-and this project adheres to [Semantic Versioning](https://semver.org/).
+🥭
 
 ## [Unreleased]
+### Added
+- Showing flat check info on a token when targeting
+- Light Level Visualization: Hold alt to highlight squares with no/dim light
+- Light Level Flat Checks: Treat target as concealed/hidden if in dim light/darkness
+  - Disabled by default (for now). Toggle is in the flat check config
 
 ## [0.13.4] - 2025-03-12
 ### Fixed

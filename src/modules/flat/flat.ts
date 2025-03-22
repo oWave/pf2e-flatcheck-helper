@@ -10,7 +10,6 @@ export class ChatFlatModule extends BaseModule {
 		super.enable()
 
 		this.registerHook("renderSidebarTab", onRenderSidebarTab)
-		this.registerHook("targetToken", onTargetToken)
 	}
 	disable() {
 		super.disable()
@@ -54,16 +53,6 @@ function dcForToken(token: TokenPF2e) {
 	return dc || null
 }
 
-async function rollForSingleTarget(
-	target: TokenPF2e | undefined,
-	{ hidden = false }: { hidden: boolean },
-) {
-	if (!target) return
-	const dc = dcForToken(target)
-	if (!dc) ui.notifications.warn("Selected target has no conditions that require a flat check")
-	else rollFlatCheck(dc, { hidden })
-}
-
 async function onRenderSidebarTab(app: SidebarTab, html: HTMLCollection) {
 	if (app.tabName !== "chat") return
 	if (!MODULE.settings.fcButtonsEnabled) return
@@ -88,12 +77,7 @@ async function onRenderSidebarTab(app: SidebarTab, html: HTMLCollection) {
 			if (!value) throw new Error(`Bad button DC value ${value}`)
 			const hidden = e.ctrlKey
 
-			if (value === "targets") {
-				if (game.user?.targets.size === 0) return ui.notifications.warn("No targets selected")
-				if (game.user?.targets.size === 1)
-					return rollForSingleTarget(game.user.targets.first(), { hidden })
-				else return ui.notifications.warn("Too many targets")
-			} else if (value === "more") {
+			if (value === "more") {
 				new MoreDialog().render(true)
 			} else {
 				const dc = Number(value)
@@ -103,15 +87,4 @@ async function onRenderSidebarTab(app: SidebarTab, html: HTMLCollection) {
 			}
 		}),
 	)
-}
-
-function onTargetToken(user: User) {
-	if (user.id !== game.user?.id) return
-	if (game.user.targets.size !== 1)
-		return document.querySelector("#fc-button-target")?.classList.remove("highlight")
-	const effectSlugs = Object.keys(CONDITION_DCS)
-
-	if (game.user?.targets?.first()?.actor?.conditions.some((c) => effectSlugs.includes(c.slug)))
-		document.querySelector("#fc-button-target")?.classList.add("highlight")
-	else document.querySelector("#fc-button-target")?.classList.remove("highlight")
 }
