@@ -13,6 +13,12 @@
     - Auditory while Deafened (including non-subtle spells)
 - Below the chat box 
 
+Also shows flat checks when targetting a token
+![image](https://github.com/user-attachments/assets/ce31c66c-69b2-469d-b596-adfe8df59b74)
+The dim light/darkness flat checks are not enabled by default (yet). You can turn them on in the flat check settings.
+
+If **pf2e-perception** is installed, that module will be used to calculate DCs.
+
 ## Delay Button
 ![image](https://github.com/oWave/pf2e-flatcheck-helper/assets/9253349/df782d32-50ec-45fd-93f2-f40d0b63932d)
 
