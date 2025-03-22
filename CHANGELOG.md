@@ -2,6 +2,8 @@
 🥭
 
 ## [Unreleased]
+
+## [0.14.0] - 2025-03-22
 ### Added
 - Showing flat check info on a token when targeting
 - Light Level Visualization: Hold alt to highlight squares with no/dim light
@@ -12,5 +14,6 @@
 ### Fixed
 - Flat checks showing on damage/healing received messages
 
-[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.13.4...HEAD
+[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.14.0...HEAD
+[0.14.0]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.13.4...v0.14.0
 [0.13.4]: https://github.com/oWave/pf2e-flatcheck-helper/releases/tag/v0.13.4
