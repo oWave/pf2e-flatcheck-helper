@@ -32,8 +32,9 @@ const tokenTargetManager = {
 
 const style: Partial<PIXI.ITextStyle> = { align: "center", dropShadow: false, strokeThickness: 2 }
 const textStyles = {
-	normal: PreciseText.getTextStyle({ fontSize: 14, ...style }),
-	small: PreciseText.getTextStyle({ fontSize: 12, fill: "#eeeeee", ...style }),
+	normal: (scale: number) => PreciseText.getTextStyle({ fontSize: 14 * scale, ...style }),
+	small: (scale: number) =>
+		PreciseText.getTextStyle({ fontSize: 12 * scale, fill: "#eeeeee", ...style }),
 }
 
 class TokenTargetRenderer {
@@ -61,22 +62,26 @@ class TokenTargetRenderer {
 		this.#filter.color = color.toNumber()
 
 		const gridSize = this.token.scene!.grid.size
-		const baseThickness = gridSize * 0.05
+
+		const baseThickness = 6
 		const squares = Math.max(
 			1,
 			Math.ceil(Math.min(this.token.bounds.width, this.token.bounds.height) / gridSize),
 		)
-
-		const thickness = baseThickness * ((squares + 1) / 2)
+		const thickness = baseThickness + squares * 3
 		this.#filter.thickness = thickness
 		this.#filter.enabled = true
 
-		const text = new PreciseText(`DC ${condition.dc} - ${condition.label}`, textStyles.normal)
+		const textScale = Math.max(gridSize / 100, 0.8) + 0.5 * (squares - 1)
+		const text = new PreciseText(
+			`DC ${condition.dc} - ${condition.label}`,
+			textStyles.normal(textScale),
+		)
 		text.x = this.token.bounds.width / 2 - text.width / 2
 		text.y = this.token.bounds.height * 0.95 - text.height
 		this.#layer.addChild(text)
 		if ("description" in condition && condition.description) {
-			const smallText = new PreciseText(condition.description, textStyles.small)
+			const smallText = new PreciseText(condition.description, textStyles.small(textScale))
 			smallText.x = this.token.bounds.width / 2 - smallText.width / 2
 			smallText.y = text.y - smallText.height * 0.75
 			this.#layer.addChild(smallText)
