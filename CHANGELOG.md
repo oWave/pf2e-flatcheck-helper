@@ -2,6 +2,8 @@
 🥭
 
 ## [Unreleased]
+### Fixed
+- Token light source are no longer ignored
 
 ## [0.14.1] - 2025-03-22
 ### Changed

@@ -1,3 +1,4 @@
+import type PointLightSource from "foundry-pf2e/foundry/client-esm/canvas/sources/point-light-source.js"
 import * as R from "remeda"
 
 export const Grid = class<T> {
@@ -63,23 +64,22 @@ export const TargetColors = Object.freeze({
 export type LightLevel = typeof LightLevels.DARK
 
 export function darknessAtPoint(x: number, y: number) {
-	const lights = canvas.lighting.quadtree?.getObjects(new PIXI.Rectangle(x, y, 1, 1))
+	for (const source of (canvas.effects as any).darknessSources as Collection<
+		PointLightSource<AmbientLight | Token>
+	>) {
+		if (!source.shape.contains(x, y)) continue
+		return LightLevels.DARK.darknessBreakpoint
+	}
 
 	let darkness = LightLevels.DARK.darknessBreakpoint
-	if (lights?.size) {
-		for (const l of lights) {
-			if (!l.lightSource?.shape.contains(x, y)) continue
-			const d = Math.sqrt(Math.abs(l.x - x) ** 2 + Math.abs(l.y - y) ** 2)
+	for (const l of canvas.effects.lightSources) {
+		if (!l.active || l instanceof foundry.canvas.sources.GlobalLightSource) continue
 
-			if (l.emitsDarkness && d <= Math.max(l.dimRadius, l.brightRadius)) {
-				return LightLevels.DARK.darknessBreakpoint
-			}
+		if (!l.shape.contains(x, y)) continue
+		const d = Math.sqrt(Math.abs(l.x - x) ** 2 + Math.abs(l.y - y) ** 2)
 
-			if (l.emitsLight) {
-				if (d <= l.brightRadius) return LightLevels.BRIGHT.darknessBreakpoint
-				if (d <= l.dimRadius) darkness = LightLevels.DIM.darknessBreakpoint
-			}
-		}
+		if (d <= l.data.bright) return LightLevels.BRIGHT.darknessBreakpoint
+		if (d <= l.data.dim) darkness = LightLevels.DIM.darknessBreakpoint
 	}
 
 	const globalLevel = canvas.environment.darknessLevel
