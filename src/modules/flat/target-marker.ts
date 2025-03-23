@@ -1,8 +1,17 @@
-import { OutlineFilter } from "@pixi/filter-outline"
 import { BaseModule } from "../base"
-import { LightLevels, TargetColors } from "./light/utils"
+import { TargetColors } from "./light/utils"
 import type { TokenPF2e } from "foundry-pf2e"
 import { calculateFlatCheck, guessOrigin } from "./target"
+import { OutlineOverlayFilterCustom } from "./filter"
+
+function calcScaleFromToken(token: Token, multPerSquare = 0) {
+	const gridSize = token.scene!.grid.size
+	const squares = Math.max(
+		1,
+		Math.ceil(Math.min(token.bounds.width, token.bounds.height) / gridSize),
+	)
+	return gridSize / 100 + multPerSquare * squares
+}
 
 const tokenTargetManager = {
 	tokenMap: new Map<string, TokenTargetRenderer>(),
@@ -39,11 +48,16 @@ const textStyles = {
 
 class TokenTargetRenderer {
 	#layer: PIXI.Container
-	#filter: OutlineFilter
+	#filter: OutlineOverlayFilterCustom
 	constructor(public token: TokenPF2e) {
 		this.#layer = new PIXI.Container()
 		this.#layer.alpha = 0.9
-		this.#filter = new OutlineFilter(undefined, undefined, 1, 1, false)
+		const outlineScale = calcScaleFromToken(token, 0.5)
+		this.#filter = OutlineOverlayFilterCustom.create({
+			knockout: false,
+			wave: false,
+		})
+		this.#filter.thickness = 3 * outlineScale
 
 		this.token.addChild(this.#layer)
 		this.token.mesh?.filters?.push(this.#filter)
@@ -59,20 +73,10 @@ class TokenTargetRenderer {
 		}
 
 		const color = TargetColors.fromDC(condition.dc)
-		this.#filter.color = color.toNumber()
-
-		const gridSize = this.token.scene!.grid.size
-
-		const baseThickness = 6
-		const squares = Math.max(
-			1,
-			Math.ceil(Math.min(this.token.bounds.width, this.token.bounds.height) / gridSize),
-		)
-		const thickness = baseThickness + squares * 3
-		this.#filter.thickness = thickness
+		this.#filter.uniforms.outlineColor = color.toArray()
 		this.#filter.enabled = true
 
-		const textScale = Math.max(gridSize / 100, 0.8) + 0.5 * (squares - 1)
+		const textScale = calcScaleFromToken(this.token, 0.5)
 		const text = new PreciseText(
 			`DC ${condition.dc} - ${condition.label}`,
 			textStyles.normal(textScale),
