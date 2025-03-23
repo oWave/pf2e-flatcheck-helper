@@ -14,9 +14,6 @@ importers:
       '@foundryvtt/foundryvtt-cli':
         specifier: ^1.0.4
         version: 1.0.4
-      '@pixi/filter-outline':
-        specifier: ^5.2.0
-        version: 5.2.0(@pixi/core@7.4.2)
       '@types/jquery':
         specifier: ^3.5.32
         version: 3.5.32
@@ -352,11 +349,6 @@ packages:
     resolution: {integrity: sha512-Vy9ViBFhZEGh6xKkd3kFWErolZTwv1Y5Qb1bV7qPIYbvBECYsqzlR4uCrrjBV6KKm0PufpG/+NKC5vICZaqKzg==}
     peerDependencies:
       '@pixi/core': 7.4.2
-
-  '@pixi/filter-outline@5.2.0':
-    resolution: {integrity: sha512-xKfAouhZNKl6A0RvxT5i+2/ean7r16dE/QswwIkbWvr2hhHlp4p9U6XsqdgUERCDxK+IZibMAumbWs4DGxOUeQ==}
-    peerDependencies:
-      '@pixi/core': ^7.0.0-X
 
   '@pixi/graphics-smooth@1.1.1':
     resolution: {integrity: sha512-9xIFWZhHGEb6KCnyWL6TVPYG/QkF0YDM/yDU5EvjTQbaj/1cITrXtI5P3tBkB5H0DQi+8J8/QS38MjfqNEJAYQ==}
@@ -1452,10 +1444,6 @@ snapshots:
       '@pixi/core': 7.4.2
 
   '@pixi/filter-noise@7.4.2(@pixi/core@7.4.2)':
-    dependencies:
-      '@pixi/core': 7.4.2
-
-  '@pixi/filter-outline@5.2.0(@pixi/core@7.4.2)':
     dependencies:
       '@pixi/core': 7.4.2
 

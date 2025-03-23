@@ -16,7 +16,6 @@
 	"dependencies": {
 		"@biomejs/biome": "^1.9.4",
 		"@foundryvtt/foundryvtt-cli": "^1.0.4",
-		"@pixi/filter-outline": "^5.2.0",
 		"@types/jquery": "^3.5.32",
 		"@types/node": "^22.13.1",
 		"foundry-pf2e": "github:7H3LaughingMan/foundry-pf2e",
