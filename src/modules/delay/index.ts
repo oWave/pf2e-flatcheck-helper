@@ -45,7 +45,7 @@ function onRenderTokenHUD(app: TokenHUD, html: JQuery) {
 			if (isDelaying(combatant.actor)) {
 				if (!combatantIsNext(combatant) && MODULE.settings.allowReturn) {
 					$(`
-            <div class="control-icon" data-action="return" title="${translate("delay.token-hud-return-to-initiative")}">
+            <div class="control-icon" data-action="return" title="${translate("delay.return-to-initiative")}">
               <i class="fa-solid fa-play"></i>
             </div>`)
 						.on("click", (e) => {
@@ -58,7 +58,7 @@ function onRenderTokenHUD(app: TokenHUD, html: JQuery) {
 				}
 			} else if (combatant.parent.combatant?.id === combatant.id) {
 				$(`
-          <div class="control-icon" data-action="delay" title="${translate("delay.token-hud-delay")}">
+          <div class="control-icon" data-action="delay" title="${translate("delay.delay")}">
             <i class="fa-solid fa-hourglass"></i>
           </div>`)
 					.on("click", (e) => {
@@ -156,7 +156,7 @@ export function tryDelay(opts?: TryDelayOptions) {
 		})
 
 	if (!MODULE.settings.delayShouldPrompt) {
-		if (!opts?.skipMessage) createMessage(c.token, translate("delay.message-title"))
+		if (!opts?.skipMessage) createMessage(c.token, translate("delay.delay"))
 		if (c.actor) applyDelayEffect(c.actor)
 		combat.nextTurn()
 		return
@@ -167,7 +167,7 @@ export function tryDelay(opts?: TryDelayOptions) {
 			title: translate("delay.dialog-title"),
 			content: `
     <form style="margin: 5px 0 10px 0; text-align: center;">
-      <label for="c">${translate("delay.dialog-select-label")}</label>
+      <label for="c">${translate("delay.dialog-delay-after")}</label>
       <select id="c">
         ${options}
       </select>
@@ -175,11 +175,11 @@ export function tryDelay(opts?: TryDelayOptions) {
     `,
 			buttons: {
 				cancel: {
-					label: translate("delay.dialog-button-cancel"),
+					label: translate("delay.button-cancel"),
 					icon: `<i class="fa-solid fa-xmark"></i>`,
 				},
 				delay: {
-					label: translate("delay.dialog-button-delay"),
+					label: translate("delay.delay"),
 					icon: `<i class="fa-solid fa-hourglass"></i>`,
 					callback: (html) => {
 						if (!isJQuery(html)) return
@@ -190,7 +190,7 @@ export function tryDelay(opts?: TryDelayOptions) {
 						const target = game.combat.combatants.get(id)
 						if (!target) return
 						if (c.actor) applyDelayEffect(c.actor)
-						if (!opts?.skipMessage && c.token) createMessage(c.token, translate("delay.message-title"))
+						if (!opts?.skipMessage && c.token) createMessage(c.token, translate("delay.delay"))
 						combat
 							.nextTurn()
 							.then(() => sleep(50))
@@ -218,7 +218,7 @@ async function applyDelayEffect(actor: ActorPF2e) {
 	return actor.createEmbeddedDocuments("Item", [
 		{
 			type: "effect",
-			name: translate("delay.effect-name"),
+			name: translate("delay.delay"),
 			img: "icons/svg/clockwork.svg",
 			system: {
 				tokenIcon: { show: true },

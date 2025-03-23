@@ -75,14 +75,14 @@ async function onRenderSidebarTab(app: SidebarTab, html: HTMLCollection) {
 	node.querySelectorAll("button").forEach((button) =>
 		button.addEventListener("click", function (e) {
 			const value = this.dataset.dc
-			if (!value) throw new Error(translate("flat.error-bad-button-dc", { value: String(value) }))
+			if (!value) throw new Error(`Bad button DC value ${value}`)
 			const hidden = e.ctrlKey
 
 			if (value === "more") {
 				new MoreDialog().render(true)
 			} else {
 				const dc = Number(value)
-				if (Number.isNaN(dc)) throw new Error(translate("flat.error-bad-button-dc", { value }))
+				if (Number.isNaN(dc)) throw new Error(`Bad button DC value ${value}`)
 
 				rollFlatCheck(dc, { hidden })
 			}

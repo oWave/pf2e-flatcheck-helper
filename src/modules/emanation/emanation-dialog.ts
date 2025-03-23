@@ -107,7 +107,7 @@ export class EmanationRequestDialog extends Application {
 	static override get defaultOptions(): ApplicationOptions {
 		return {
 			...super.defaultOptions,
-			title: translate("emanation.dialog.effect-title"),
+			title: translate("emanation.dialog-effect-title"),
 			template: `modules/${MODULE_ID}/templates/emanation-request.hbs`,
 			width: "auto",
 			height: "auto",

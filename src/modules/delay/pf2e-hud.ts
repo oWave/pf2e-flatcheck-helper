@@ -45,7 +45,7 @@ function parseHTML(html: string) {
 
 function makeDelayButton() {
 	const node = parseHTML(`
-    <a class="delay" data-tooltip="${translate("delay.hud.delay-button-tooltip")}">
+    <a class="delay" data-tooltip="${translate("delay.delay")}">
       <i class="fa-solid fa-clock"></i>
     </a>
     `)
@@ -58,11 +58,11 @@ function makeDelayButton() {
 
 function makeReturnButton(combatant: CombatantPF2e) {
 	if (!MODULE.settings.allowReturn) {
-		return parseHTML(`<i class="fa-solid fa-hourglass delay-indicator" data-tooltip="${translate("delay.hud.delaying-button-tooltip")}">`)
+		return parseHTML(`<i class="fa-solid fa-hourglass delay-indicator" data-tooltip="${translate("delay.delaying")}">`)
 	}
 
 	const node = parseHTML(`
-    <a class="delay-return" data-tooltip="${translate("delay.hud.delaying-button-tooltip")}">
+    <a class="delay-return" data-tooltip="${translate("delay.delaying")}">
       <i class="fa-solid fa-hourglass delay-indicator"></i>
     </a>
     `)

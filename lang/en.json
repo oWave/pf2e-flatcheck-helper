@@ -112,28 +112,15 @@
 			}
 		},
 		"delay": {
-			"token-hud-return-to-initiative": "Return to initiative",
-			"token-hud-delay": "Delay",
+			"return-to-initiative": "Return to initiative",
+			"delay": "Delay",
 			"error-no-combat": "No combat active",
 			"error-no-combatant": "No combatant",
 			"error-combatant-not-owned": "You do not own the current combatant",
-			"message-title": "Delay",
-			"dialog-title": "Delay",
-			"dialog-select-label": "Delay after: ",
-			"dialog-button-cancel": "Cancel",
-			"dialog-button-delay": "Delay",
-			"return-message-title": "Return",
-			"effect-name": "Delay",
-			"hud": {
-				"delay-button-tooltip": "Delay",
-				"delaying-button-tooltip": "Delaying",
-				"return-button-tooltip": "Return to initiative"
-			},
-			"tracker": {
-				"delay-button-title": "Delay",
-				"delaying-button-title": "Delaying",
-				"return-button-title": "Return to initiative"
-			}
+			"delaying": "Delaying",
+			"dialog-delay-after": "Delay after: ",
+			"cancel": "Cancel",
+			"return-message-title": "Return"
 		},
 		"emanation": {
 			"message-text": "Apply emanation effect",
@@ -144,38 +131,28 @@
 			"form-duration-prompt": "Prompt for effect duration",
 			"form-formatting-error": "Formatting error: Description contains no/multiple effect links.",
 			"form-fieldset-legend": "Automatic Emanation Effect",
-			"spellsheet-error": "Could not insert emanation automation into spell sheet.",
-			"dialog":{
-				"error-spell-uuid": "resolving spell UUID failed",
-				"error-effect-uuid": "resolving effect UUID failed",
-				"error-origin-uuid": "resolving origin UUID failed",
-				"error-token-no-actor": "origin token has no actor",
-				"effect-title": "Emanation Effect"
-			}
+			"dialog-effect-title": "Emanation Effect"
 		},
 		"flat": {
 			"flat-check-label": "Flat Check: {label}",
 			"flat-check": "Flat Check",
-			"error-bad-button-dc": "Bad button DC value {value}",
 			"target-marker-dc": "DC {dc} - {label}",
 			"target": {
 				"darkness": "Darkness",
 				"dim-light": "Dim Light"
 			},
-			"message":{
+			"message": {
 				"perception-outdated-title": "PF2e Utility Buttons",
 				"perception-outdated-content": "pf2e-perception is outdated. Flat check integration requires version 0.40.0 or newer.",
 				"button-close": "Close",
-				"error-exception-when-rendering": "Exception occured while rendering message flat-check buttons: ",
 				"button-require-flat-check": "{count} targets require a flat check",
 				"tooltip-highest-dc": "If more than one flat check would ever cause or prevent the same thing, just roll once and use the highest DC.",
-				"error-could-not-insert": "Could not insert flat check buttons into message.",
 				"reroll-hero-point": "Reroll using a hero point",
 				"reroll-new-result": "Reroll and keep the new result",
 				"reroll-lower-result": "Reroll and keep the lower result",
 				"reroll-higher-result": "Reroll and keep the higher result",
-				"reroll-button-reroll": "Reroll",
-				"reroll-button-cancel": "Cancel",
+				"button-reroll": "Reroll",
+				"button-cancel": "Cancel",
 				"grabbed": "Grabbed",
 				"deafened": "Deafened",
 				"stupefied": "Stupefied {value}",
@@ -186,8 +163,7 @@
 				"value": "Value",
 				"custom": "Custom",
 				"dc": "DC",
-				"title": "More Flat Checks",
-				"error-invalid-input": "Invalid input"
+				"title": "More Flat Checks"
 			}
 		},
 		"template": {
@@ -204,7 +180,8 @@
 				"apply": "Apply",
 				"cancel": "Cancel"
 			},
-			"message-config-check-types": "Check Types"
+			"message-config-check-types": "Check Types",
+			"emanation-area": "{origin}, {area} ft"
 		}
 	}
 }

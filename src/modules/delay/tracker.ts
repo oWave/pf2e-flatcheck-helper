@@ -22,12 +22,12 @@ export function onRenderCombatTracker(tracker, html: JQuery, data) {
 
 function drawButton(type: "delay" | "return", combatentHtml: JQuery, combatant: CombatantPF2e) {
 	let button = $(`
-    <div id="initiative-delay" title="${translate("delay.tracker.delay-button-title")}">
+    <div id="initiative-delay" title="${translate("delay.delay")}">
       <i class="fa-solid fa-hourglass"></i>
     </div>
   `)
 	if (type === "return") {
-		const title = MODULE.settings.allowReturn ? translate("delay.tracker.return-button-title") : translate("delay.tracker.delaying-button-title")
+		const title = MODULE.settings.allowReturn ? translate("delay.return-to-initiative") : translate("delay.delaying")
 		const cls = MODULE.settings.allowReturn ? "initiative-return" : "initiative-delay-indicator"
 		button = $(`
       <div id="initiative-return" class="${cls}" title="${title}">

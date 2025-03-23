@@ -62,7 +62,7 @@ export class MoreDialog extends Application {
 			html.find(`#${key}-button`).on("click", (e) => {
 				const s = html.find(`#${key}-input`).val()
 				const value = Number.parseInt(s as string)
-				if (Number.isNaN(value)) ui.notifications.warn(translate("flat.more-dialog.error-invalid-input"))
+				if (Number.isNaN(value)) ui.notifications.warn("Invalid input")
 				else data.callback(value, e)
 				this.close()
 			})

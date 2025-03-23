@@ -74,7 +74,7 @@ export async function messageGetHTMLWrapper(this: ChatMessagePF2e, wrapper, ...a
 	try {
 		if (this.isContentVisible) renderButtons(this, html)
 	} catch (e) {
-		console.error(translate("flat.message.error-exception-when-rendering"), e)
+		console.error("Exception occured while rendering message flat-check buttons: ", e)
 	}
 
 	return html
@@ -220,7 +220,7 @@ async function handleFlatButtonClick(msg: ChatMessagePF2e, key: string, dc: numb
 				{
 					action: "submit",
 					icon: "fa-solid fa-rotate rotate",
-					label: translate("flat.message.reroll-button-reroll"),
+					label: translate("flat.message.button-reroll"),
 					default: true,
 					// @ts-expect-error
 					callback: (event, button, dialog) => button.form.elements.choice.value,
@@ -228,7 +228,7 @@ async function handleFlatButtonClick(msg: ChatMessagePF2e, key: string, dc: numb
 				{
 					action: "cancel",
 					icon: "fas fa-times",
-					label: translate("flat.message.reroll-button-cancel"),
+					label: translate("flat.message.button-cancel"),
 				},
 			],
 			submit: async (result) => {
