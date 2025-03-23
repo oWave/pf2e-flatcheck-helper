@@ -1,6 +1,6 @@
 import MODULE from "src"
 import { MODULE_ID } from "./constants"
-import { parseHTML } from "./utils"
+import { parseHTML, translate } from "./utils"
 import { FlatMessageConfigApplication } from "./modules/flat/message-config"
 
 type Callback = (value: unknown) => void
@@ -59,8 +59,8 @@ export const settings = {
 
 	init() {
 		register("show-global", {
-			name: "Enable Flat Check Buttons below Chat",
-			hint: "Global setting: Enables flat check buttons below the chat box.",
+			name: "pf2e-fc.settings.show-global.name",
+			hint: "pf2e-fc.settings.show-global.hint",
 			scope: "world",
 			config: true,
 			default: true,
@@ -68,8 +68,8 @@ export const settings = {
 			requiresReload: true,
 		})
 		register("show", {
-			name: "Show Flat Check Buttons below Chat",
-			hint: "Client setting: Turn off to hide the flat check buttons just for you.",
+			name: "pf2e-fc.settings.show.name",
+			hint: "pf2e-fc.settings.show.hint",
 			scope: "client",
 			config: true,
 			default: true,
@@ -78,8 +78,8 @@ export const settings = {
 		})
 
 		register("flat-check-in-message", {
-			name: "Flat Check Buttons in Messages",
-			hint: "Adds flat checks for supported conditions in chat messages",
+			name: "pf2e-fc.settings.flat-check-in-message.name",
+			hint: "pf2e-fc.settings.flat-check-in-message.hint",
 			scope: "client",
 			config: true,
 			default: true,
@@ -88,7 +88,7 @@ export const settings = {
 		})
 
 		register("flat-check-config", {
-			name: "Flat Check Config",
+			name: "pf2e-fc.settings.flat-check-config.name",
 			hint: "",
 			scope: "world",
 			config: false,
@@ -97,8 +97,8 @@ export const settings = {
 		})
 
 		register("flat-check-targer-marker", {
-			name: "Show Flat Check on Token",
-			hint: "Client setting: Shows flat check info on a token when targeting",
+			name: "pf2e-fc.settings.flat-check-targer-marker.name",
+			hint: "pf2e-fc.settings.flat-check-targer-marker.hint",
 			scope: "client",
 			config: true,
 			default: true,
@@ -106,8 +106,8 @@ export const settings = {
 		})
 
 		register("light-level-vis", {
-			name: "Light Level Visualization",
-			hint: "Client setting: Hold alt to highlight squares with no/dim light",
+			name: "pf2e-fc.settings.light-level-vis.name",
+			hint: "pf2e-fc.settings.light-level-vis.hint",
 			scope: "client",
 			config: true,
 			default: true,
@@ -115,8 +115,8 @@ export const settings = {
 		})
 
 		register("delay-combat-tracker", {
-			name: "Show Delay Button in Combat Tracker",
-			hint: "Adds delay/return buttons to the default combat tracker.",
+			name: "pf2e-fc.settings.delay-combat-tracker.name",
+			hint: "pf2e-fc.settings.delay-combat-tracker.hint",
 			scope: "world",
 			config: true,
 			default: true,
@@ -124,8 +124,8 @@ export const settings = {
 		})
 
 		register("delay-token-hud", {
-			name: "Show Delay Button in Token Hud",
-			hint: "Adds delay/return buttons to the menu that appears when right-clicking a token",
+			name: "pf2e-fc.settings.delay-token-hud.name",
+			hint: "pf2e-fc.settings.delay-token-hud.hint",
 			scope: "world",
 			config: true,
 			default: true,
@@ -133,8 +133,8 @@ export const settings = {
 		})
 
 		register("delay-return", {
-			name: "Enable Return Button",
-			hint: "Allows returning to initiative by pressing the delay button again.",
+			name: "pf2e-fc.settings.delay-return.name",
+			hint: "pf2e-fc.settings.delay-return.hint",
 			scope: "world",
 			config: true,
 			default: true,
@@ -142,8 +142,8 @@ export const settings = {
 		})
 
 		register("delay-prompt", {
-			name: "Prompt for New Initiative",
-			hint: "Lets the user select a combatant to delay their turn after. Can still return early anytime they want.",
+			name: "pf2e-fc.settings.delay-prompt.name",
+			hint: "pf2e-fc.settings.delay-prompt.hint",
 			scope: "world",
 			config: true,
 			default: false,
@@ -151,7 +151,7 @@ export const settings = {
 		})
 
 		register("delay-create-message", {
-			name: "Delay/Return Creates Chat Message",
+			name: "pf2e-fc.settings.delay-create-message.name",
 			scope: "world",
 			config: true,
 			default: true,
@@ -159,8 +159,8 @@ export const settings = {
 		})
 
 		register("token-hud-remove-combat-toggle", {
-			name: "Remove Combat Toggle from Token Hud",
-			hint: "Removes the 'Toggle Combat State' button for tokens in combat",
+			name: "pf2e-fc.settings.token-hud-remove-combat-toggle.name",
+			hint: "pf2e-fc.settings.token-hud-remove-combat-toggle.hint",
 			scope: "world",
 			config: true,
 			default: false,
@@ -168,8 +168,8 @@ export const settings = {
 		})
 
 		register("pf2e-hud-enable", {
-			name: "Modify PF2e HUD",
-			hint: "Overrides PF2e HUDs delay handling with this modules implementation. Please report issue with this to me and not to PF2e HUD!",
+			name: "pf2e-fc.settings.pf2e-hud-enable.name",
+			hint: "pf2e-fc.settings.pf2e-hud-enable.hint",
 			scope: "world",
 			config: true,
 			default: false,
@@ -177,8 +177,8 @@ export const settings = {
 		})
 
 		register("lifelink", {
-			name: "Enable Life/Spirit Link Automation Buttons",
-			hint: "Check the module readme for setup steps.",
+			name: "pf2e-fc.settings.lifelink.name",
+			hint: "pf2e-fc.settings.lifelink.hint",
 			scope: "world",
 			config: true,
 			default: true,
@@ -186,20 +186,20 @@ export const settings = {
 		})
 
 		register("lifelink-formular", {
-			name: "Life Link Formular",
-			hint: "Variant of life link damage absorption to use",
+			name: "pf2e-fc.settings.lifelink-formular.name",
+			hint: "pf2e-fc.settings.lifelink-formular.hint",
 			scope: "world",
 			config: true,
 			type: String,
 			default: "apg",
 			choices: {
-				apg: "Standard",
-				plus: "Oracles+ (Heightened (+2))",
+				apg: "pf2e-fc.settings.lifelink-formular.choices.apg",
+				plus: "pf2e-fc.settings.lifelink-formular.choices.plus",
 			},
 		})
 
 		register("emanation-automation", {
-			name: "Auto-Apply Emanation Effect Button",
+			name: "pf2e-fc.settings.emanation-automation.name",
 			hint: "",
 			scope: "world",
 			config: true,
@@ -208,8 +208,8 @@ export const settings = {
 		})
 
 		register("script-alt-roll-breakdown", {
-			name: "Alternative Roll Breakdowns",
-			hint: "Reveals circumstance/status/untyped roll modifiers (e.g. multi attack penalty) to players.",
+			name: "pf2e-fc.settings.script-alt-roll-breakdown.name",
+			hint: "pf2e-fc.settings.script-alt-roll-breakdown.hint",
 			scope: "world",
 			config: true,
 			type: Boolean,
@@ -217,8 +217,8 @@ export const settings = {
 		})
 
 		register("script-toggle-shared-vision", {
-			name: "Toggle Shared Vision in Combat",
-			hint: `Automaticlly turns the "Shared Party Vision" metagame setting off when combat starts, and enables it again when combat ends. This will override that setting, so only enable if you want to use shared vision.`,
+			name: "pf2e-fc.settings.script-toggle-shared-vision.name",
+			hint: "pf2e-fc.settings.script-toggle-shared-vision.hint",
 			scope: "world",
 			config: true,
 			type: Boolean,
@@ -284,24 +284,24 @@ function onRenderSettingsConfig(app: SettingsConfig, $html: JQuery) {
 		if (!el) return
 
 		const heading = document.createElement("h3")
-		heading.textContent = text
+		heading.textContent = translate(text)
 		el.before(heading)
 
 		if (hint) {
 			heading.style.marginBottom = "0"
 			const text = document.createElement("p")
-			text.textContent = hint
+			text.textContent = translate(hint)
 			text.style.color = "var(--color-text-dark-secondary)"
 			text.style.marginTop = "0"
 			el.before(text)
 		}
 	}
 
-	createHeading("show-global", "Flat Check Buttons")
-	createHeading("delay-combat-tracker", "Delay")
-	createHeading("lifelink", "Life Link")
-	createHeading("emanation-automation", "Emanation Automation")
-	createHeading("script-alt-roll-breakdown", "Miscellaneous", "This stuff has no buttons‽")
+	createHeading("show-global", "settings.headings.show-global")
+	createHeading("delay-combat-tracker", "settings.headings.delay-combat-tracker")
+	createHeading("lifelink", "settings.headings.lifelink")
+	createHeading("emanation-automation", "settings.headings.emanation-automation")
+	createHeading("script-alt-roll-breakdown", "settings.headings.script-alt-roll-breakdown.text", "settings.headings.script-alt-roll-breakdown.hint")
 
 	if (!game.modules.get("lib-wrapper")?.active) {
 		for (const s of ["emanation-automation", "flat-check-in-message"]) {
@@ -323,7 +323,11 @@ function onRenderSettingsConfig(app: SettingsConfig, $html: JQuery) {
 
 	const flatConfigButton = parseHTML(`<button type="button"><i class="fas fa-cogs"></i></button>`)
 	flatConfigButton.firstChild!.addEventListener("click", () => {
-		new FlatMessageConfigApplication({}).render(true)
+		new FlatMessageConfigApplication({
+			window: {
+				title: translate("settings.flat-check-config.name"),
+			}
+		}).render(true)
 	})
 	root
 		.querySelector<HTMLElement>(`input[name="${MODULE_ID}.flat-check-in-message"]`)

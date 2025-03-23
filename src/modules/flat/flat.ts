@@ -2,6 +2,7 @@ import MODULE from "src/index"
 import { BaseModule } from "../base"
 import { MoreDialog } from "./more-dialog"
 import type { ActorPF2e, TokenPF2e } from "foundry-pf2e"
+import { translate } from "src/utils"
 
 export class ChatFlatModule extends BaseModule {
 	settingsKey = "show-global"
@@ -26,7 +27,7 @@ export async function rollFlatCheck(
 		(new Actor({ type: "npc", name: game.user.name }) as ActorPF2e)
 
 	return await game.pf2e.Check.roll(
-		new game.pf2e.StatisticModifier(label ? `Flat Check: ${label}` : "Flat Check", []),
+		new game.pf2e.StatisticModifier(label ? translate("flat.flat-check-label", { label }) : translate("flat.flat-check"), []),
 		{
 			actor,
 			type: "flat-check",
@@ -74,14 +75,14 @@ async function onRenderSidebarTab(app: SidebarTab, html: HTMLCollection) {
 	node.querySelectorAll("button").forEach((button) =>
 		button.addEventListener("click", function (e) {
 			const value = this.dataset.dc
-			if (!value) throw new Error(`Bad button DC value ${value}`)
+			if (!value) throw new Error(translate("flat.error-bad-button-dc", { value: String(value) }))
 			const hidden = e.ctrlKey
 
 			if (value === "more") {
 				new MoreDialog().render(true)
 			} else {
 				const dc = Number(value)
-				if (Number.isNaN(dc)) throw new Error(`Bad button DC value ${value}`)
+				if (Number.isNaN(dc)) throw new Error(translate("flat.error-bad-button-dc", { value }))
 
 				rollFlatCheck(dc, { hidden })
 			}

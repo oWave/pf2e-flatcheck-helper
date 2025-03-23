@@ -1,7 +1,7 @@
 <div>
 
 	<fieldset>
-		<legend>Check Types</legend>
+		<legend>{{localize "pf2e-fc.template.message-config-check-types"}}</legend>
 		{{#each @root.types}}
 			<div class="form-group">
 				<label for="fc-{{this.key}}">{{ @root.i18n (concat this.key ".label") }}</label>

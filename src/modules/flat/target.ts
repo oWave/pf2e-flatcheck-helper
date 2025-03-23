@@ -2,6 +2,7 @@ import type { ActorPF2e, CreaturePF2e, ScenePF2e, TokenDocumentPF2e, TokenPF2e }
 import { tokenLightLevel } from "./light/token"
 import { LightLevels } from "./light/utils"
 import { flatMessageConfig } from "./message-config"
+import { translate } from "src/utils"
 
 const originConditionDCs = {
 	dazzled: 5,
@@ -164,9 +165,9 @@ export function conditionFromLightLevel(
 
 	const lightLevel = tokenLightLevel(token)
 	if (lightLevel === LightLevels.DARK && !hasDarkvision)
-		return { description: "Darkness", slug: "hidden", dc: targetConditionDCs.hidden }
+		return { description: translate("flat.target.darkness"), slug: "hidden", dc: targetConditionDCs.hidden }
 	if (lightLevel === LightLevels.DIM && !hasLowLightVision)
-		return { description: "Dim Light", slug: "concealed", dc: targetConditionDCs.concealed }
+		return { description: translate("flat.target.dim-light"), slug: "concealed", dc: targetConditionDCs.concealed }
 	return null
 }
 

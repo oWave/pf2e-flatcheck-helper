@@ -25,6 +25,186 @@
 				"label": "Target - Light Level",
 				"note": "Dim Light/Darkness if origin lacks low-light/darkvision"
 			}
+		},
+		"settings": {
+			"show-global": {
+				"name": "Enable Flat Check Buttons below Chat",
+				"hint": "Global setting: Enables flat check buttons below the chat box."
+			},
+			"show": {
+				"name": "Show Flat Check Buttons below Chat",
+				"hint": "Client setting: Turn off to hide the flat check buttons just for you."
+			},
+			"flat-check-in-message": {
+				"name": "Flat Check Buttons in Messages",
+				"hint": "Adds flat checks for supported conditions in chat messages."
+			},
+			"flat-check-config": {
+				"name": "Flat Check Config"
+			},
+			"flat-check-targer-marker": {
+				"name": "Show Flat Check on Token",
+				"hint": "Client setting: Shows flat check info on a token when targeting."
+			},
+			"light-level-vis": {
+				"name": "Light Level Visualization",
+				"hint": "Client setting: Hold alt to highlight squares with no/dim light."
+			},
+			"delay-combat-tracker": {
+				"name": "Show Delay Button in Combat Tracker",
+				"hint": "Adds delay/return buttons to the default combat tracker."
+			},
+			"delay-token-hud": {
+				"name": "Show Delay Button in Token Hud",
+				"hint": "Adds delay/return buttons to the menu that appears when right-clicking a token."
+			},
+			"delay-return": {
+				"name": "Enable Return Button",
+				"hint": "Allows returning to initiative by pressing the delay button again."
+			},
+			"delay-prompt": {
+				"name": "Prompt for New Initiative",
+				"hint": "Lets the user select a combatant to delay their turn after. Can still return early anytime they want."
+			},
+			"delay-create-message": {
+				"name": "Delay/Return Creates Chat Message"
+			},
+			"token-hud-remove-combat-toggle": {
+				"name": "Remove Combat Toggle from Token Hud",
+				"hint": "Removes the 'Toggle Combat State' button for tokens in combat."
+			},
+			"pf2e-hud-enable": {
+				"name": "Modify PF2e HUD",
+				"hint": "Overrides PF2e HUDs delay handling with this modules implementation. Please report issue with this to me and not to PF2e HUD!"
+			},
+			"lifelink": {
+				"name": "Enable Life/Spirit Link Automation Buttons",
+				"hint": "Check the module readme for setup steps."
+			},
+			"lifelink-formular": {
+				"name": "Life Link Formular",
+				"hint": "Variant of life link damage absorption to use.",
+				"choices": {
+					"apg": "Standard",
+					"plus": "Oracles+ (Heightened (+2))"
+				}
+			},
+			"emanation-automation": {
+				"name": "Auto-Apply Emanation Effect Button"
+			},
+			"script-alt-roll-breakdown": {
+				"name": "Alternative Roll Breakdowns",
+				"hint": "Reveals circumstance/status/untyped roll modifiers (e.g. multi attack penalty) to players."
+			},
+			"script-toggle-shared-vision": {
+				"name": "Toggle Shared Vision in Combat",
+				"hint": "Automaticlly turns the \"Shared Party Vision\" metagame setting off when combat starts, and enables it again when combat ends. This will override that setting, so only enable if you want to use shared vision."
+			},
+			"headings": {
+				"show-global": "Flat Check Buttons",
+				"delay-combat-tracker": "Delay",
+				"lifelink": "Life Link",
+				"emanation-automation": "Emanation Automation",
+				"script-alt-roll-breakdown": {
+					"text": "Miscellaneous",
+					"hint": "This stuff has no buttons‽"
+				}
+			}
+		},
+		"delay": {
+			"token-hud-return-to-initiative": "Return to initiative",
+			"token-hud-delay": "Delay",
+			"error-no-combat": "No combat active",
+			"error-no-combatant": "No combatant",
+			"error-combatant-not-owned": "You do not own the current combatant",
+			"message-title": "Delay",
+			"dialog-title": "Delay",
+			"dialog-select-label": "Delay after: ",
+			"dialog-button-cancel": "Cancel",
+			"dialog-button-delay": "Delay",
+			"return-message-title": "Return",
+			"effect-name": "Delay",
+			"hud": {
+				"delay-button-tooltip": "Delay",
+				"delaying-button-tooltip": "Delaying",
+				"return-button-tooltip": "Return to initiative"
+			},
+			"tracker": {
+				"delay-button-title": "Delay",
+				"delaying-button-title": "Delaying",
+				"return-button-title": "Return to initiative"
+			}
+		},
+		"emanation": {
+			"message-text": "Apply emanation effect",
+			"form-allies": "Allies",
+			"form-exclude-self": "Exclude Self",
+			"form-enemies": "Enemies",
+			"form-duration-title": "Will ask for effect duration when applying to support Lingering Composition",
+			"form-duration-prompt": "Prompt for effect duration",
+			"form-formatting-error": "Formatting error: Description contains no/multiple effect links.",
+			"form-fieldset-legend": "Automatic Emanation Effect",
+			"spellsheet-error": "Could not insert emanation automation into spell sheet.",
+			"dialog":{
+				"error-spell-uuid": "resolving spell UUID failed",
+				"error-effect-uuid": "resolving effect UUID failed",
+				"error-origin-uuid": "resolving origin UUID failed",
+				"error-token-no-actor": "origin token has no actor",
+				"effect-title": "Emanation Effect"
+			}
+		},
+		"flat": {
+			"flat-check-label": "Flat Check: {label}",
+			"flat-check": "Flat Check",
+			"error-bad-button-dc": "Bad button DC value {value}",
+			"target-marker-dc": "DC {dc} - {label}",
+			"target": {
+				"darkness": "Darkness",
+				"dim-light": "Dim Light"
+			},
+			"message":{
+				"perception-outdated-title": "PF2e Utility Buttons",
+				"perception-outdated-content": "pf2e-perception is outdated. Flat check integration requires version 0.40.0 or newer.",
+				"button-close": "Close",
+				"error-exception-when-rendering": "Exception occured while rendering message flat-check buttons: ",
+				"button-require-flat-check": "{count} targets require a flat check",
+				"tooltip-highest-dc": "If more than one flat check would ever cause or prevent the same thing, just roll once and use the highest DC.",
+				"error-could-not-insert": "Could not insert flat check buttons into message.",
+				"reroll-hero-point": "Reroll using a hero point",
+				"reroll-new-result": "Reroll and keep the new result",
+				"reroll-lower-result": "Reroll and keep the lower result",
+				"reroll-higher-result": "Reroll and keep the higher result",
+				"reroll-button-reroll": "Reroll",
+				"reroll-button-cancel": "Cancel",
+				"grabbed": "Grabbed",
+				"deafened": "Deafened",
+				"stupefied": "Stupefied {value}",
+				"dc": "DC {value}"
+			},
+			"more-dialog": {
+				"stupefied": "Stupefied",
+				"value": "Value",
+				"custom": "Custom",
+				"dc": "DC",
+				"title": "More Flat Checks",
+				"error-invalid-input": "Invalid input"
+			}
+		},
+		"template": {
+			"buttons": {
+				"grabbed-concealed": "Grabbed<br>Concealed",
+				"hidden-invisible-confused": "Hidden<br>Invisible<br>Confused",
+				"dc": "DC {value}"
+			},
+			"emanation-request": {
+				"effect": "Effect",
+				"duration": "Duration",
+				"rounds": "round(s)",
+				"targets": "Targets",
+				"apply": "Apply",
+				"cancel": "Cancel"
+			},
+			"message-config-check-types": "Check Types"
 		}
 	}
 }

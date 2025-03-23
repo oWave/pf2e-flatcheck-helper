@@ -2,6 +2,7 @@ import MODULE from "src/index"
 import type { CombatantPF2e } from "foundry-pf2e"
 import { tryDelay, tryReturn } from "."
 import { isDelaying } from "./utils"
+import { translate } from "src/utils"
 
 export function onRenderCombatTracker(tracker, html: JQuery, data) {
 	if (!MODULE.settings.showInCombatTracker) return
@@ -21,12 +22,12 @@ export function onRenderCombatTracker(tracker, html: JQuery, data) {
 
 function drawButton(type: "delay" | "return", combatentHtml: JQuery, combatant: CombatantPF2e) {
 	let button = $(`
-    <div id="initiative-delay" title="Delay">
+    <div id="initiative-delay" title="${translate("delay.tracker.delay-button-title")}">
       <i class="fa-solid fa-hourglass"></i>
     </div>
   `)
 	if (type === "return") {
-		const title = MODULE.settings.allowReturn ? "Return to initiative" : "Delaying"
+		const title = MODULE.settings.allowReturn ? translate("delay.tracker.return-button-title") : translate("delay.tracker.delaying-button-title")
 		const cls = MODULE.settings.allowReturn ? "initiative-return" : "initiative-delay-indicator"
 		button = $(`
       <div id="initiative-return" class="${cls}" title="${title}">

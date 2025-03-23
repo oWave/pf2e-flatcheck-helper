@@ -1,5 +1,6 @@
 import { MODULE_ID } from "src/constants"
 import type { ApplicationRenderOptions } from "foundry-pf2e/foundry/client-esm/applications/_types.js"
+import { translate } from "src/utils"
 
 export class FlatMessageConfigApplication extends foundry.applications.api.HandlebarsApplicationMixin(
 	foundry.applications.api.ApplicationV2,
@@ -19,9 +20,6 @@ export class FlatMessageConfigApplication extends foundry.applications.api.Handl
 			handler: FlatMessageConfigApplication.onSubmit,
 			submitOnChange: false,
 			closeOnSubmit: true,
-		},
-		window: {
-			title: "Flat Check Config",
 		},
 	}
 
@@ -62,7 +60,7 @@ export class FlatMessageConfigApplication extends foundry.applications.api.Handl
 				}),
 			],
 			i18n: (key: string) => {
-				return game.i18n.localize(`pf2e-fc.flat-config.${key}`)
+				return translate(`flat-config.${key}`)
 			},
 		}
 	}

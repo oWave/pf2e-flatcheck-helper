@@ -1,9 +1,9 @@
 <div class="flexcol">
   {{#each sections}}
     <div>
-      <h2 style="text-align: center;">{{this.name}}</h2>
+      <h2 style="text-align: center;">{{localize this.name}}</h2>
       <div class="flexrow" style="align-items: center;">
-        <strong>{{this.label}}</strong>
+        <strong>{{localize this.label}}</strong>
         <input
           id="{{@key}}-input"
           type="number"
