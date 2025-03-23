@@ -103,7 +103,8 @@ export class TargetInfoModule extends BaseModule {
 	settingsKey = "flat-check-targer-marker"
 
 	enable(): void {
-		this.registerHook("targetToken", (user, token: TokenPF2e, state, boolean) => {
+		this.registerHook("targetToken", (user: User, token: TokenPF2e, state, boolean) => {
+			if (user !== game.user) return
 			if (state) tokenTargetManager.target(token)
 			else tokenTargetManager.untarget(token)
 		})

@@ -4,6 +4,7 @@
 ## [Unreleased]
 ### Fixed
 - Token light source are no longer ignored
+- Another user targeting a token no longer shows/removes the marker
 
 ## [0.14.1] - 2025-03-22
 ### Changed
