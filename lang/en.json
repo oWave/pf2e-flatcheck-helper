@@ -139,7 +139,13 @@
 			"target-marker-dc": "DC {dc} - {label}",
 			"target": {
 				"darkness": "Darkness",
-				"dim-light": "Dim Light"
+				"dim-light": "Dim Light",
+				"condition": {
+					"blinded": "Blinded",
+					"concealed": "Concealed",
+					"dazzled": "Dazzled",
+					"hidden": "Hidden"
+				}
 			},
 			"message": {
 				"perception-outdated-title": "PF2e Utility Buttons",

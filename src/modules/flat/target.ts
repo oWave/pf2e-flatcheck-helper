@@ -56,10 +56,10 @@ function flatCheckDataForOrigin(origin: CreaturePF2e): ConditionData | null {
 
 	return originCondition
 		? {
-				slug: originToTargetCondition[originCondition],
-				dc: originConditionDCs[originCondition],
-				description: originCondition.capitalize(),
-			}
+			slug: originToTargetCondition[originCondition],
+			dc: originConditionDCs[originCondition],
+			description: translate(`flat.target.condition.${originCondition}`),
+		}
 		: null
 }
 
@@ -91,7 +91,7 @@ interface DisplayData {
 
 export function conditionToDisplayData(condition: ConditionData): DisplayData {
 	return {
-		label: condition.slug.capitalize(),
+		label: translate(`flat.target.condition.${condition.slug}`),
 		dc: condition.dc,
 		description: condition.description,
 	}
@@ -113,7 +113,7 @@ export function calculateFlatCheck(
 		const dc = perceptionApi.check.getFlatCheckDc(originToken, target) as number
 
 		if (dc === 0) return null
-		return { label: condition.capitalize(), dc }
+		return { label: translate(`flat.target.condition.${condition}`), dc }
 	}
 
 	const originCondition = origin ? flatCheckDataForOrigin(origin) : null
