@@ -1,3 +1,4 @@
+import { translate } from "src/utils"
 import { rollFlatCheck } from "./flat"
 
 const formSections: Record<
@@ -12,10 +13,10 @@ const formSections: Record<
 	}
 > = {
 	stupefied: {
-		name: "Stupefied",
-		label: "Value",
+		name: "pf2e-fc.flat.more-dialog.stupefied",
+		label: "pf2e-fc.flat.more-dialog.value",
 		callback: async (value, e) => {
-			rollFlatCheck(5 + value, { hidden: e.ctrlKey, label: "Stupefied" })
+			rollFlatCheck(5 + value, { hidden: e.ctrlKey, label: translate("flat.more-dialog.stupefied") })
 		},
 		default: () => {
 			let value = 0
@@ -31,8 +32,8 @@ const formSections: Record<
 		max: 15,
 	},
 	custom: {
-		name: "Custom",
-		label: "DC",
+		name: "pf2e-fc.flat.more-dialog.custom",
+		label: "pf2e-fc.flat.more-dialog.dc",
 		callback: async (value, e) => {
 			rollFlatCheck(value, { hidden: e.ctrlKey })
 		},
@@ -47,7 +48,7 @@ export class MoreDialog extends Application {
 		return "modules/pf2e-flatcheck-helper/templates/more.hbs"
 	}
 	override get title() {
-		return "More Flat Checks"
+		return translate("flat.more-dialog.title")
 	}
 
 	override getData() {

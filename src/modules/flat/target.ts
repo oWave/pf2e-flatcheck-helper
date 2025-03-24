@@ -2,6 +2,7 @@ import type { ActorPF2e, CreaturePF2e, ScenePF2e, TokenDocumentPF2e, TokenPF2e }
 import { tokenLightLevel } from "./light/token"
 import { LightLevels } from "./light/utils"
 import { flatMessageConfig } from "./message-config"
+import { translate } from "src/utils"
 
 const originConditionDCs = {
 	dazzled: 5,
@@ -55,10 +56,10 @@ function flatCheckDataForOrigin(origin: CreaturePF2e): ConditionData | null {
 
 	return originCondition
 		? {
-				slug: originToTargetCondition[originCondition],
-				dc: originConditionDCs[originCondition],
-				description: originCondition.capitalize(),
-			}
+			slug: originToTargetCondition[originCondition],
+			dc: originConditionDCs[originCondition],
+			description: translate(`flat.target.condition.${originCondition}`),
+		}
 		: null
 }
 
@@ -90,7 +91,7 @@ interface DisplayData {
 
 export function conditionToDisplayData(condition: ConditionData): DisplayData {
 	return {
-		label: condition.slug.capitalize(),
+		label: translate(`flat.target.condition.${condition.slug}`),
 		dc: condition.dc,
 		description: condition.description,
 	}
@@ -112,7 +113,7 @@ export function calculateFlatCheck(
 		const dc = perceptionApi.check.getFlatCheckDc(originToken, target) as number
 
 		if (dc === 0) return null
-		return { label: condition.capitalize(), dc }
+		return { label: translate(`flat.target.condition.${condition}`), dc }
 	}
 
 	const originCondition = origin ? flatCheckDataForOrigin(origin) : null
@@ -164,9 +165,9 @@ export function conditionFromLightLevel(
 
 	const lightLevel = tokenLightLevel(token)
 	if (lightLevel === LightLevels.DARK && !hasDarkvision)
-		return { description: "Darkness", slug: "hidden", dc: targetConditionDCs.hidden }
+		return { description: translate("flat.target.darkness"), slug: "hidden", dc: targetConditionDCs.hidden }
 	if (lightLevel === LightLevels.DIM && !hasLowLightVision)
-		return { description: "Dim Light", slug: "concealed", dc: targetConditionDCs.concealed }
+		return { description: translate("flat.target.dim-light"), slug: "concealed", dc: targetConditionDCs.concealed }
 	return null
 }
 

@@ -3,6 +3,7 @@ import MODULE from "src/index"
 import type { ChatMessagePF2e, ItemPF2e, SpellPF2e, SpellSheetPF2e } from "foundry-pf2e"
 import { BaseModule } from "../base"
 import { EmanationRequestDialog } from "./emanation-dialog"
+import { translate } from "src/utils"
 
 export class EmanationModule extends BaseModule {
 	settingsKey = "emanation-automation"
@@ -95,7 +96,7 @@ async function onChatMessage(msg: ChatMessagePF2e, html: JQuery<"div">) {
 
 	html.find("section.card-buttons").append(`
     <div class="spell-button">
-      <button type="button" data-action="emanation-automation">Apply emanation effect</button>
+      <button type="button" data-action="emanation-automation">${translate("emanation.message-text")}</button>
     </div>
   `)
 
@@ -125,29 +126,29 @@ async function spellSheetRenderInner(sheet: SpellSheetPF2e, $html: JQuery) {
     <label>Apply to</label>
     <div class="form-fields" style="justify-content: start">
       <input type="checkbox" id="field-${sheet.id}-emanation-allies" ${checked(emanationAllies)}>
-      <label for="field-${sheet.id}-emanation-allies">Allies</label>
+      <label for="field-${sheet.id}-emanation-allies">${translate("emanation.form-allies")}</label>
 
       <input type="checkbox" id="field-${sheet.id}-emanation-exclude-self" ${checked(emanationExcludeSelf)}>
-      <label for="field-${sheet.id}-emanation-self">Exclude Self</label>
+      <label for="field-${sheet.id}-emanation-self">${translate("emanation.form-exclude-self")}</label>
 
       <input type="checkbox" id="field-${sheet.id}-emanation-enemies" ${checked(emanationEnemies)}>
-      <label for="field-${sheet.id}-emanation-enemies">Enemies</label>
+      <label for="field-${sheet.id}-emanation-enemies">${translate("emanation.form-enemies")}</label>
     </div>
   </div>
-  <div class="form-group" title="Will ask for effect duration when applying to support Lingering Composition">
-    <label for="field-${sheet.id}-emanation-prompt-duration">Prompt for effect duration</label>
+  <div class="form-group" title="${translate("emanation.form-duration-title")}">
+    <label for="field-${sheet.id}-emanation-prompt-duration">${translate("emanation.form-duration-prompt")}</label>
     <div class="form-fields" style="justify-content: start">
       <input type="checkbox" id="field-${sheet.id}-emanation-prompt-duration" ${checked(emanationPromptDuration)}>
       <i class="fa-solid fa-circle-info" style="cursor: help;"></i>
     </div>
   </div>
 `
-			: "<p>Formatting error: Description contains no/multiple effect links.</p>"
+			: `<p>${translate("emanation.form-formatting-error")}</p>`
 
 	$html.find("fieldset.publication").before(`
     <fieldset class="emanation-automation">
       <legend>
-        Automatic Emanation Effect
+        ${translate("emanation.form-fieldset-legend")}
         <span style="font-weight: lighter;">(pf2e Utility Buttons)</span>
       </legend>
 

@@ -2,6 +2,7 @@ import MODULE from "src/index"
 import type { CombatantPF2e, EncounterPF2e } from "foundry-pf2e"
 import { tryDelay, tryReturn } from "."
 import { isDelaying } from "./utils"
+import { translate } from "src/utils"
 
 export function onRenderPF2eHudTracker(app, tracker: HTMLElement) {
 	if (!MODULE.settings.modifyPF2eHud) return
@@ -44,7 +45,7 @@ function parseHTML(html: string) {
 
 function makeDelayButton() {
 	const node = parseHTML(`
-    <a class="delay" data-tooltip="Delay">
+    <a class="delay" data-tooltip="${translate("delay.delay")}">
       <i class="fa-solid fa-clock"></i>
     </a>
     `)
@@ -57,11 +58,11 @@ function makeDelayButton() {
 
 function makeReturnButton(combatant: CombatantPF2e) {
 	if (!MODULE.settings.allowReturn) {
-		return parseHTML(`<i class="fa-solid fa-hourglass delay-indicator" data-tooltip="Delaying">`)
+		return parseHTML(`<i class="fa-solid fa-hourglass delay-indicator" data-tooltip="${translate("delay.delaying")}">`)
 	}
 
 	const node = parseHTML(`
-    <a class="delay-return" data-tooltip="Return to initiative">
+    <a class="delay-return" data-tooltip="${translate("delay.delaying")}">
       <i class="fa-solid fa-hourglass delay-indicator"></i>
     </a>
     `)

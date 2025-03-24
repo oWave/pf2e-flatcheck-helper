@@ -1,6 +1,6 @@
 import { MODULE_ID } from "src/constants"
 import MODULE from "src/index"
-import { combatantIsNext, isJQuery, sleep } from "src/utils"
+import { combatantIsNext, isJQuery, sleep, translate } from "src/utils"
 import { BaseModule } from "../base"
 import { onRenderPF2eHudTracker } from "./pf2e-hud"
 import { onRenderCombatTracker } from "./tracker"
@@ -45,7 +45,7 @@ function onRenderTokenHUD(app: TokenHUD, html: JQuery) {
 			if (isDelaying(combatant.actor)) {
 				if (!combatantIsNext(combatant) && MODULE.settings.allowReturn) {
 					$(`
-            <div class="control-icon" data-action="return" title="Return to initiative">
+            <div class="control-icon" data-action="return" title="${translate("delay.return-to-initiative")}">
               <i class="fa-solid fa-play"></i>
             </div>`)
 						.on("click", (e) => {
@@ -58,7 +58,7 @@ function onRenderTokenHUD(app: TokenHUD, html: JQuery) {
 				}
 			} else if (combatant.parent.combatant?.id === combatant.id) {
 				$(`
-          <div class="control-icon" data-action="delay" title="Delay">
+          <div class="control-icon" data-action="delay" title="${translate("delay.delay")}">
             <i class="fa-solid fa-hourglass"></i>
           </div>`)
 					.on("click", (e) => {
@@ -135,10 +135,10 @@ interface TryDelayOptions {
 
 export function tryDelay(opts?: TryDelayOptions) {
 	const combat = game.combat
-	if (!combat) return ui.notifications.error("No combat active")
+	if (!combat) return ui.notifications.error(translate("delay.error-no-combat"))
 	const c = combat.combatant
-	if (!c) return ui.notifications.error("No combatant")
-	if (!c.token?.isOwner) return ui.notifications.error("You do not own the current combatant")
+	if (!c) return ui.notifications.error(translate("delay.error-no-combatant"))
+	if (!c.token?.isOwner) return ui.notifications.error(translate("delay.error-combatant-not-owned"))
 
 	const combatants = combat.turns
 	const currentId = combatants.findIndex((e) => e.id === c.id)
@@ -156,7 +156,7 @@ export function tryDelay(opts?: TryDelayOptions) {
 		})
 
 	if (!MODULE.settings.delayShouldPrompt) {
-		if (!opts?.skipMessage) createMessage(c.token, "Delay")
+		if (!opts?.skipMessage) createMessage(c.token, translate("delay.delay"))
 		if (c.actor) applyDelayEffect(c.actor)
 		combat.nextTurn()
 		return
@@ -164,10 +164,10 @@ export function tryDelay(opts?: TryDelayOptions) {
 
 	new Dialog(
 		{
-			title: "Delay",
+			title: translate("delay.dialog-title"),
 			content: `
     <form style="margin: 5px 0 10px 0; text-align: center;">
-      <label for="c">Delay after: </label>
+      <label for="c">${translate("delay.dialog-delay-after")}</label>
       <select id="c">
         ${options}
       </select>
@@ -175,11 +175,11 @@ export function tryDelay(opts?: TryDelayOptions) {
     `,
 			buttons: {
 				cancel: {
-					label: "Cancel",
+					label: translate("delay.button-cancel"),
 					icon: `<i class="fa-solid fa-xmark"></i>`,
 				},
 				delay: {
-					label: "Delay",
+					label: translate("delay.delay"),
 					icon: `<i class="fa-solid fa-hourglass"></i>`,
 					callback: (html) => {
 						if (!isJQuery(html)) return
@@ -190,7 +190,7 @@ export function tryDelay(opts?: TryDelayOptions) {
 						const target = game.combat.combatants.get(id)
 						if (!target) return
 						if (c.actor) applyDelayEffect(c.actor)
-						if (!opts?.skipMessage && c.token) createMessage(c.token, "Delay")
+						if (!opts?.skipMessage && c.token) createMessage(c.token, translate("delay.delay"))
 						combat
 							.nextTurn()
 							.then(() => sleep(50))
@@ -209,7 +209,7 @@ export function tryDelay(opts?: TryDelayOptions) {
 
 export function tryReturn(combatant: CombatantPF2e, opts?: TryDelayOptions) {
 	if (game.combat?.combatant && !combatantIsNext(combatant)) {
-		if (!opts?.skipMessage && combatant.token) createMessage(combatant.token, "Return")
+		if (!opts?.skipMessage && combatant.token) createMessage(combatant.token, translate("delay.return-message-title"))
 		emitMoveAfter(game.combat.id, combatant.id, game.combat.combatant.id)
 	}
 }
@@ -218,7 +218,7 @@ async function applyDelayEffect(actor: ActorPF2e) {
 	return actor.createEmbeddedDocuments("Item", [
 		{
 			type: "effect",
-			name: "Delay",
+			name: translate("delay.delay"),
 			img: "icons/svg/clockwork.svg",
 			system: {
 				tokenIcon: { show: true },

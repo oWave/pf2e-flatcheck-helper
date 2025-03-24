@@ -3,6 +3,7 @@ import { TargetColors } from "./light/utils"
 import type { TokenPF2e } from "foundry-pf2e"
 import { calculateFlatCheck, guessOrigin } from "./target"
 import { OutlineOverlayFilterCustom } from "./filter"
+import { translate } from "src/utils"
 
 function calcScaleFromToken(token: Token, multPerSquare = 0) {
 	const gridSize = token.scene!.grid.size
@@ -78,7 +79,7 @@ class TokenTargetRenderer {
 
 		const textScale = calcScaleFromToken(this.token, 0.5)
 		const text = new PreciseText(
-			`DC ${condition.dc} - ${condition.label}`,
+			translate("flat.target-marker-dc", { dc: condition.dc, label: condition.label }),
 			textStyles.normal(textScale),
 		)
 		text.x = this.token.bounds.width / 2 - text.width / 2

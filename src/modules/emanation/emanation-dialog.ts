@@ -1,6 +1,7 @@
 import { MODULE_ID } from "src/constants"
 import type { EffectPF2e, SpellPF2e, TokenDocumentPF2e } from "foundry-pf2e"
 import { type EmanationRequestData, extractFlagData } from "./emanation"
+import { translate } from "src/utils"
 
 export class EmanationRequestDialog extends Application {
 	#request: EmanationRequestData
@@ -30,7 +31,6 @@ export class EmanationRequestDialog extends Application {
 			if (!effect) throw new Error("resolving effect UUID failed")
 			if (!origin) throw new Error("resolving origin UUID failed")
 			if (!origin.actor) throw new Error("origin token has no actor")
-
 			const options = extractFlagData(spell)
 
 			const allyAlliance = origin.actor.alliance
@@ -107,7 +107,7 @@ export class EmanationRequestDialog extends Application {
 	static override get defaultOptions(): ApplicationOptions {
 		return {
 			...super.defaultOptions,
-			title: "Emanation Effect",
+			title: translate("emanation.dialog-effect-title"),
 			template: `modules/${MODULE_ID}/templates/emanation-request.hbs`,
 			width: "auto",
 			height: "auto",

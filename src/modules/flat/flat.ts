@@ -2,6 +2,7 @@ import MODULE from "src/index"
 import { BaseModule } from "../base"
 import { MoreDialog } from "./more-dialog"
 import type { ActorPF2e, TokenPF2e } from "foundry-pf2e"
+import { translate } from "src/utils"
 
 export class ChatFlatModule extends BaseModule {
 	settingsKey = "show-global"
@@ -26,7 +27,7 @@ export async function rollFlatCheck(
 		(new Actor({ type: "npc", name: game.user.name }) as ActorPF2e)
 
 	return await game.pf2e.Check.roll(
-		new game.pf2e.StatisticModifier(label ? `Flat Check: ${label}` : "Flat Check", []),
+		new game.pf2e.StatisticModifier(label ? translate("flat.flat-check-label", { label }) : translate("flat.flat-check"), []),
 		{
 			actor,
 			type: "flat-check",

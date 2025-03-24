@@ -1,11 +1,11 @@
 <form class="flexcol">
   <div style="display: flex; align-items: center; margin: 0 auto">
     <img src="{{origin.texture.src}}" style="height: 40px; object-fit: contain; margin-right: 6px;" />
-    <span>{{origin.name}}, {{spell.system.area.value}} ft</span>
+    <span>{{localize "pf2e-fc.template.emanation-area" origin=origin.name area=spell.system.area.value}}</span>
   </div>
 
   <div style="text-align: center;">
-    <strong style="display: block;">Effect</strong>
+    <strong style="display: block;">{{localize "pf2e-fc.template.emanation-request.effect"}}</strong>
     <a class="content-link">
       <i class="fa-solid fa-person-rays"></i>
       {{effect.name}}
@@ -14,14 +14,14 @@
 
   {{#if durationOverride}}
     <div style="text-align: center;">
-      <strong style="display: block;">Duration</strong>
+      <strong style="display: block;">{{localize "pf2e-fc.template.emanation-request.duration"}}</strong>
       <input type="number" value="{{effect.system.duration.value}}" min="1" required style="width: 5ch;" />
-      <span>round(s)</span>
+      <span>{{localize "pf2e-fc.template.emanation-request.rounds"}}</span>
     </div>
   {{/if}}
 
   <div style="text-align: center;">
-    <strong>Targets</strong>
+    <strong>{{localize "pf2e-fc.template.emanation-request.targets"}}</strong>
     <div style="text-align: left; max-height: 400px; overflow: scroll">
       {{#each targets}}
         <div style="display: flex; align-items: center; margin-bottom: 2px;">
@@ -33,6 +33,6 @@
     </div>
   </div>
 
-  <button type="submit" style="margin: 3px 0;">Apply</button>
-  <button type="button" data-action="cancel">Cancel</button>
+  <button type="submit" style="margin: 3px 0;">{{localize "pf2e-fc.template.emanation-request.apply"}}</button>
+  <button type="button" data-action="cancel">{{localize "pf2e-fc.template.emanation-request.cancel"}}</button>
 </form>
