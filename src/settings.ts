@@ -91,7 +91,7 @@ export const settings = {
 			name: "Flat Check Config",
 			hint: "",
 			scope: "world",
-			config: false,
+			config: true,
 			default: {},
 			type: Object,
 		})
@@ -325,7 +325,8 @@ function onRenderSettingsConfig(app: SettingsConfig, $html: JQuery) {
 	flatConfigButton.firstChild!.addEventListener("click", () => {
 		new FlatMessageConfigApplication({}).render(true)
 	})
-	root
-		.querySelector<HTMLElement>(`input[name="${MODULE_ID}.flat-check-in-message"]`)
-		?.before(flatConfigButton)
+
+	const input = root.querySelector<HTMLElement>(`input[name="${MODULE_ID}.flat-check-config"]`)
+	input?.parentNode?.appendChild(flatConfigButton)
+	input?.remove()
 }
