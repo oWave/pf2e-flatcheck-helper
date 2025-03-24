@@ -2,6 +2,8 @@
 🥭
 
 ## [Unreleased]
+### Fixed
+- Dim light in a darkness region getting ignored
 
 ## [0.14.2] - 2025-03-23
 ### Fixed
