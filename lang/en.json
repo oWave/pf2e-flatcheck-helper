@@ -172,6 +172,24 @@
 				"title": "More Flat Checks"
 			}
 		},
+		"life-link": {
+			"error-no-target": "No target actor",
+			"error-no-source": "No source actor",
+			"error-source-is-target": "Can't transfer damage to self!",
+			"no-hp-remaining": "No HP remaining to transfer.",
+			"life-link-cooldown-effect": "Life Link CD",
+			"hp-add": "{actor} +{hp} HP",
+			"hp-sub": "{actor} -{hp} HP",
+			"spirit-link-error-bad-actor": "Bad origin actor for Spirit Linked effect on {actor}! See module readme.",
+			"spirit-link-button": "{hp} HP to {actor}",
+			"spirit-link-message": "<strong>Spirit Link</strong><br>{link}",
+			"life-link-error-bad-actor": "Bad origin actor for Life Linked effect on {actor}! See module readme.",
+			"share-life-error-bad-actor": "Bad origin actor for Share Life effect on {actor}! See module readme.",
+			"damage-button": "{damage} to {actor}",
+			"share-life-damage-button": "(Share Life) {damage} to {actor}",
+			"life-link-damage-button": "(Life Link) {damage} to {actor}",
+			"damage-transfer-message":"<strong>Damage Transfer</strong><br>{buttons}"
+		},
 		"template": {
 			"buttons": {
 				"grabbed-concealed": "Grabbed<br>Concealed",

@@ -1,5 +1,5 @@
 import MODULE from "src/index"
-import { actorEffectBySlug, actorHasEffect } from "src/utils"
+import { actorEffectBySlug, actorHasEffect, translate } from "src/utils"
 import type { ActorPF2e, ChatMessagePF2e, CombatantPF2e, EffectPF2e, ItemPF2e } from "foundry-pf2e"
 import { BaseModule } from "./base"
 
@@ -56,9 +56,9 @@ async function handleTransferButton(args: ButtonArgs) {
 
 	const source = fromUuidSync(args.source)
 	const target = fromUuidSync(args.target)
-	if (!target) return ui.notifications.error("No target actor")
-	if (!source) return ui.notifications.error("No source actor")
-	if (source.id === target.id) return ui.notifications.error("Can't transfer damage to self!")
+	if (!target) return ui.notifications.error(translate("life-link.error-no-target"))
+	if (!source) return ui.notifications.error(translate("life-link.error-no-source"))
+	if (source.id === target.id) return ui.notifications.error(translate("life-link.error-source-is-target"))
 
 	let transfer = 0
 
@@ -72,7 +72,7 @@ async function handleTransferButton(args: ButtonArgs) {
 		const hpRemaining = source.system.attributes.hp.value
 		transfer = Math.min(maxTransfer, hpRemaining)
 
-		if (transfer <= 0) return ui.notifications.warn("No HP remaining to transfer.")
+		if (transfer <= 0) return ui.notifications.warn(translate("life-link.no-hp-remaining"))
 	}
 
 	let heal = transfer
@@ -91,7 +91,7 @@ async function handleTransferButton(args: ButtonArgs) {
 		await target.createEmbeddedDocuments("Item", [
 			{
 				type: "effect",
-				name: "Life Link CD",
+				name: translate("life-link.life-link-cooldown-effect"),
 				img: "systems/pf2e/icons/spells/life-link.webp",
 				system: {
 					tokenIcon: { show: true },
@@ -110,9 +110,9 @@ async function handleTransferButton(args: ButtonArgs) {
 	// @ts-expect-error Using uuids as keys doesn't work, but this does. Only question is when does this break
 	await ChatMessage.create({
 		content: `<span class="undo-text">
-    <span style="background-color: rgba(0,255,0,0.2);padding: 1px 3px;">${target.name} +${heal} HP</span>
+    <span style="background-color: rgba(0,255,0,0.2);padding: 1px 3px;">${translate("life-link.hp-add", { actor: String(target.name), hp: heal })}</span>
     🡰
-    <span style="background-color: rgba(255,0,0,0.2);padding: 1px 3px;">${source.name} -${dmg} HP</span>
+    <span style="background-color: rgba(255,0,0,0.2);padding: 1px 3px;">${translate("life-link.hp-sub", { actor: String(source.name), hp: dmg })}</span>
     </span>
     ${UNDO_BUTTON_MARKUP}
     `,
@@ -133,8 +133,7 @@ function handleSpiritLink(effect: EffectPF2e) {
 	}
 
 	if (!origin || origin.id === actor.id) {
-		ui.notifications.error(
-			`Bad origin actor for Spirit Linked effect on ${actor.name}! See module readme.`,
+		ui.notifications.error(translate("life-link.spirit-link-error-bad-actor", { actor: actor.name }),
 		)
 		return null
 	}
@@ -143,7 +142,7 @@ function handleSpiritLink(effect: EffectPF2e) {
 	const missingHP = actor.system.attributes.hp!.max - actor.system.attributes.hp!.value
 	if (missingHP <= 0) return null
 
-	return makeButton(`${transfer} HP to ${actor.name}`, {
+	return makeButton(translate("life-link.spirit-link-button", { hp: transfer, actor: actor.name }), {
 		transfer,
 		source: origin.uuid,
 		target: actor.uuid,
@@ -165,7 +164,7 @@ async function onStartTurn(combatant: CombatantPF2e) {
 		if (link) links.push(link)
 	})
 
-	const content = `<strong>Spirit Link</strong><br>${links.join("<br>")}`
+	const content = translate("life-link.spirit-link-message", { link: links.join("<br>") })
 
 	if (links.length) {
 		await ChatMessage.create({
@@ -181,7 +180,7 @@ async function onCreateItem(item: ItemPF2e) {
 		const link = handleSpiritLink(item)
 		if (link) {
 			await ChatMessage.create({
-				content: `<strong>Spirit Link</strong><br>${link}`,
+				content: translate("life-link.spirit-link-message", { link }),
 				whisper: ChatMessage.getWhisperRecipients("GM").map((u) => u.id),
 				speaker: ChatMessage.getSpeaker({ actor: item.actor }),
 			})
@@ -206,8 +205,7 @@ async function onCreateMessage(msg: ChatMessagePF2e) {
 	if (lifeLinkEffect && !actorHasEffect(actor, "life-link-cd")) {
 		lifeLinkTransfer = (() => {
 			if (!lifeLinkEffect.origin || lifeLinkEffect.origin.id === actor.id) {
-				ui.notifications.error(
-					`Bad origin actor for Life Linked effect on ${actor.name}! See module readme.`,
+				ui.notifications.error(translate("life-link.life-link-error-bad-actor", { actor: actor.name }),
 					{
 						permanent: true,
 					},
@@ -232,71 +230,71 @@ async function onCreateMessage(msg: ChatMessagePF2e) {
 
 	if (shareLifeEffect && !shareLifeEffect?.origin)
 		ui.notifications.error(
-			`Bad origin actor for Share Life effect on ${actor.name}! See module readme.`,
+			translate("life-link.share-life-error-bad-actor", { actor: actor.name }),
 			{
 				permanent: true,
 			},
 		)
 
 	const buttons: string[] = []
-	;(() => {
-		if (shareLifeEffect && lifeLinkTransfer) {
-			const remainingDmg = dmg - lifeLinkTransfer
+		; (() => {
+			if (shareLifeEffect && lifeLinkTransfer) {
+				const remainingDmg = dmg - lifeLinkTransfer
 
-			if (
-				shareLifeEffect?.origin &&
-				lifeLinkEffect?.origin &&
-				shareLifeEffect.origin.uuid === lifeLinkEffect.origin.uuid
-			) {
-				// Both effects from the same source -> One Button
-				buttons.push(
-					makeButton(
-						`${Math.ceil(remainingDmg / 2) + lifeLinkTransfer} to ${lifeLinkEffect.origin.name}`,
-						{
-							transfer: lifeLinkTransfer,
-							heal: remainingDmg === 1 ? 1 : Math.floor(remainingDmg / 2),
-							dmg: Math.ceil(remainingDmg / 2),
-							cd: 1,
-							source: lifeLinkEffect.origin.uuid,
-							target: actor.uuid,
-						},
-					),
-				)
-				return
+				if (
+					shareLifeEffect?.origin &&
+					lifeLinkEffect?.origin &&
+					shareLifeEffect.origin.uuid === lifeLinkEffect.origin.uuid
+				) {
+					// Both effects from the same source -> One Button
+					buttons.push(
+						makeButton(
+							translate("life-link.damage-button", { damage: Math.ceil(remainingDmg / 2) + lifeLinkTransfer, actor: lifeLinkEffect.origin.name }),
+							{
+								transfer: lifeLinkTransfer,
+								heal: remainingDmg === 1 ? 1 : Math.floor(remainingDmg / 2),
+								dmg: Math.ceil(remainingDmg / 2),
+								cd: 1,
+								source: lifeLinkEffect.origin.uuid,
+								target: actor.uuid,
+							},
+						),
+					)
+					return
+				}
 			}
-		}
-		// return above means this is unreachable if both effects are from the same source
-		if (shareLifeEffect?.origin) {
-			const remainingDmg = dmg - lifeLinkTransfer
-			// Button for Share Life
-			if (remainingDmg)
+			// return above means this is unreachable if both effects are from the same source
+			if (shareLifeEffect?.origin) {
+				const remainingDmg = dmg - lifeLinkTransfer
+				// Button for Share Life
+				if (remainingDmg)
+					buttons.push(
+						makeButton(
+							translate("life-link.share-life-damage-button", { damage: Math.ceil(remainingDmg / 2), actor: shareLifeEffect.origin.name }),
+							{
+								heal: remainingDmg === 1 ? 1 : Math.floor(remainingDmg / 2),
+								dmg: Math.ceil(remainingDmg / 2),
+								source: shareLifeEffect.origin.uuid,
+								target: actor.uuid,
+							},
+						),
+					)
+			}
+			if (lifeLinkEffect?.origin && lifeLinkTransfer) {
 				buttons.push(
-					makeButton(
-						`(Share Life) ${Math.ceil(remainingDmg / 2)} to ${shareLifeEffect.origin.name}`,
-						{
-							heal: remainingDmg === 1 ? 1 : Math.floor(remainingDmg / 2),
-							dmg: Math.ceil(remainingDmg / 2),
-							source: shareLifeEffect.origin.uuid,
-							target: actor.uuid,
-						},
-					),
+					makeButton(translate("life-link.life-link-damage-button", { damage: lifeLinkTransfer, actor: lifeLinkEffect.origin.name }), {
+						transfer: lifeLinkTransfer,
+						cd: 1,
+						source: lifeLinkEffect.origin.uuid,
+						target: actor.uuid,
+					}),
 				)
-		}
-		if (lifeLinkEffect?.origin && lifeLinkTransfer) {
-			buttons.push(
-				makeButton(`(Life Link) ${lifeLinkTransfer} to ${lifeLinkEffect.origin.name}`, {
-					transfer: lifeLinkTransfer,
-					cd: 1,
-					source: lifeLinkEffect.origin.uuid,
-					target: actor.uuid,
-				}),
-			)
-		}
-	})()
+			}
+		})()
 
 	if (buttons.length) {
 		await ChatMessage.create({
-			content: `<strong>Damage Transfer</strong><br>${buttons.join("<br>")}`,
+			content: translate("life-link.damage-transfer-message", { buttons: buttons.join("<br>") }),
 			whisper: ChatMessage.getWhisperRecipients("GM").map((u) => u.id),
 			speaker: ChatMessage.getSpeaker(actor),
 		})
