@@ -3,6 +3,11 @@
 
 ## [Unreleased]
 
+## [0.14.4] - 2025-04-08
+### Added
+- Full localization support by @Cuingamehtar
+- Polish translation by @Lioheart
+
 ## [0.14.3] - 2025-03-24
 ### Fixed
 - Dim light in a darkness region getting ignored
@@ -30,7 +35,8 @@
 ### Fixed
 - Flat checks showing on damage/healing received messages
 
-[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.14.3...HEAD
+[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.14.4...HEAD
+[0.14.4]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.14.3...v0.14.4
 [0.14.3]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.14.2...v0.14.3
 [0.14.2]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.14.1...v0.14.2
 [0.14.1]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.14.0...v0.14.1
