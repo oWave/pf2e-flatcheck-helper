@@ -2,6 +2,8 @@
 🥭
 
 ## [Unreleased]
+### Changed
+- Alternative Roll Breakdowns: Show to GMs which modifiers players can see
 
 ## [0.14.4] - 2025-04-08
 ### Added
