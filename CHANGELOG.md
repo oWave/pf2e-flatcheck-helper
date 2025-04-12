@@ -2,6 +2,8 @@
 🥭
 
 ## [Unreleased]
+### Changed
+- Switched the "Flat Checks in Messages" setting from client to world
 
 ## [0.14.4] - 2025-04-08
 ### Added

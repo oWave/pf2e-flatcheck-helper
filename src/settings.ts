@@ -80,7 +80,7 @@ export const settings = {
 		register("flat-check-in-message", {
 			name: "pf2e-fc.settings.flat-check-in-message.name",
 			hint: "pf2e-fc.settings.flat-check-in-message.hint",
-			scope: "client",
+			scope: "world",
 			config: true,
 			default: true,
 			type: Boolean,
