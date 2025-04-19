@@ -172,6 +172,24 @@
 				"title": "Więcej Płaskich Testów"
 			}
 		},
+		"life-link": {
+			"error-no-target": "Brak aktora docelowego",
+			"error-no-source": "Brak aktora źródłowego",
+			"error-source-is-target": "Nie można przenieść obrażeń na siebie!",
+			"no-hp-remaining": "Brak PW do przeniesienia.",
+			"life-link-cooldown-effect": "Więzy Życia - czas odnowienia",
+			"hp-add": "{actor} +{hp} PW",
+			"hp-sub": "{actor} -{hp} PW",
+			"spirit-link-error-bad-actor": "Zły aktor początkowy dla efektu Duchowej Więzi na {actor}! Zobacz readme modułu.",
+			"spirit-link-button": "{hp} PW dla {actor}",
+			"spirit-link-message": "<strong>Duchowa Więź</strong><br>{link}",
+			"life-link-error-bad-actor": "Zły aktor początkowy dla efektu Więzów Życia na {actor}! Zobacz plik readme modułu.",
+			"share-life-error-bad-actor": "Zły aktor początkowy dla efektu Współdzielenia Życia na {aktor}! Zobacz readme modułu.",
+			"damage-button": "{damage} dla {actor}",
+			"share-life-damage-button": "(Współdzielenie Życia) {damage} dla {actor}",
+			"life-link-damage-button": "(Więzy Życia) {damage} dla {actor}",
+			"damage-transfer-message":"<strong>Transfer obrażeń</strong><br>{buttons}"
+		},
 		"template": {
 			"buttons": {
 				"grabbed-concealed": "Pochwycony<br>Przysłonięty",
