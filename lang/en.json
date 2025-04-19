@@ -144,7 +144,9 @@
 					"blinded": "Blinded",
 					"concealed": "Concealed",
 					"dazzled": "Dazzled",
-					"hidden": "Hidden"
+					"hidden": "Hidden",
+          "undetected": "Undetected",
+          "unnoticed": "Unnoticed"
 				}
 			},
 			"message": {
