@@ -145,8 +145,9 @@
 					"concealed": "Concealed",
 					"dazzled": "Dazzled",
 					"hidden": "Hidden",
-          "undetected": "Undetected",
-          "unnoticed": "Unnoticed"
+					"undetected": "Undetected",
+					"unnoticed": "Unnoticed",
+					"invisible": "Invisible"
 				}
 			},
 			"message": {
@@ -190,7 +191,7 @@
 			"damage-button": "{damage} to {actor}",
 			"share-life-damage-button": "(Share Life) {damage} to {actor}",
 			"life-link-damage-button": "(Life Link) {damage} to {actor}",
-			"damage-transfer-message":"<strong>Damage Transfer</strong><br>{buttons}"
+			"damage-transfer-message": "<strong>Damage Transfer</strong><br>{buttons}"
 		},
 		"template": {
 			"buttons": {
