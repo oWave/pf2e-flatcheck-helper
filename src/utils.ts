@@ -29,6 +29,7 @@ export function parseHTML(string: string) {
 	return template.content
 }
 
-export function translate(string: string, data?: { [key: string]: string | number }) {
-	return data ? game.i18n.format(`pf2e-fc.${string}`, data) : game.i18n.localize(`pf2e-fc.${string}`);
+export function translate(key: string, data?: Record<string, string | number>) {
+	if (!key.startsWith("pf2e-fc.")) key = `pf2e-fc.${key}`
+	return data ? game.i18n.format(key, data) : game.i18n.localize(key)
 }
