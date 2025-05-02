@@ -3,6 +3,9 @@ import fs from "node:fs"
 import { type Connect, type PluginOption, defineConfig } from "vite"
 import tsconfigPaths from "vite-tsconfig-paths"
 import moduleJSON from "./module.json" with { type: "json" }
+import Sonda from "sonda/vite"
+import { svelte } from "@sveltejs/vite-plugin-svelte"
+import tailwindcss from "@tailwindcss/vite"
 
 const packagePath = `modules/${moduleJSON.id}`
 // const { esmodules, styles } = moduleJSON
@@ -71,6 +74,9 @@ export default defineConfig(({ command: _buildOrServe }) => ({
 	},
 
 	plugins: [
+		svelte(),
+		tailwindcss(),
+		// Sonda(),
 		tsconfigPaths(),
 		{
 			name: "change-names",
@@ -90,6 +96,20 @@ export default defineConfig(({ command: _buildOrServe }) => ({
 				const files = [...moduleJSON.esmodules, ...moduleJSON.styles]
 				for (const name of files) {
 					fs.writeFileSync(`${name}`, "", { flag: "a" })
+				}
+			},
+		},
+		{
+			name: "tailwind-vars",
+			transform(code, id) {
+				if (id.includes("css")) {
+					code = code.replace(/:root, :host \{(.*?)\}/gms, "$1")
+					code = code.replace(/.fc-svelte :root,.fc-svelte :host/gms, ".fc-svelte")
+				}
+
+				return {
+					code,
+					map: null,
 				}
 			},
 		},

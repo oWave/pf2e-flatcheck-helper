@@ -52,7 +52,7 @@
 		"dist/module.js"
 	],
 	"styles": [
-		"dist/style.css"
+		"dist/module.css"
 	],
 	"languages": [
 		{

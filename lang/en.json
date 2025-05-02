@@ -109,6 +109,10 @@
 					"text": "Miscellaneous",
 					"hint": "This stuff has no buttons‽"
 				}
+			},
+			"docs": {
+				"description": "For a description of each feature and more details on the settings, check the documentation:",
+				"button": "Open Docs"
 			}
 		},
 		"delay": {
@@ -188,7 +192,7 @@
 			"damage-button": "{damage} to {actor}",
 			"share-life-damage-button": "(Share Life) {damage} to {actor}",
 			"life-link-damage-button": "(Life Link) {damage} to {actor}",
-			"damage-transfer-message":"<strong>Damage Transfer</strong><br>{buttons}"
+			"damage-transfer-message": "<strong>Damage Transfer</strong><br>{buttons}"
 		},
 		"template": {
 			"buttons": {

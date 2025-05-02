@@ -360,4 +360,14 @@ function onRenderSettingsConfig(app: SettingsConfig, $html: JQuery) {
 	const input = root.querySelector<HTMLElement>(`input[name="${MODULE_ID}.flat-check-config"]`)
 	input?.parentNode?.appendChild(flatConfigButton)
 	input?.remove()
+
+	const guideButton = parseHTML(
+		`<p>${translate("settings.docs.description")}</p>
+		<button type="button"><i class="fas fa-book"></i> ${translate("settings.docs.button")}</button>`,
+	)
+	guideButton.querySelector("button")?.addEventListener("click", async () => {
+		const { GuideApp } = await import("./guide/app")
+		new GuideApp().render(true)
+	})
+	tab.querySelector<HTMLElement>("h2")?.after(guideButton)
 }

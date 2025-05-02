@@ -1,4 +1,5 @@
-@import "modules/flat/message-config.css";
+@import "./modules/flat/message-config.css";
+@import "./svelte/tailwind.css";
 
 #fc-container {
 	flex: 0;
