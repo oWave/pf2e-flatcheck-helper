@@ -109,6 +109,10 @@
 					"text": "Miscellaneous",
 					"hint": "This stuff has no buttons‽"
 				}
+			},
+			"docs": {
+				"description": "For a description of each feature and more details on the settings, check the documentation:",
+				"button": "Open Docs"
 			}
 		},
 		"delay": {

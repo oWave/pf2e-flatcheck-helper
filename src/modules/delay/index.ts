@@ -164,7 +164,7 @@ export function tryDelay(opts?: TryDelayOptions) {
 
 	new Dialog(
 		{
-			title: translate("delay.dialog-title"),
+			title: translate("delay.delay"),
 			content: `
     <form style="margin: 5px 0 10px 0; text-align: center;">
       <label for="c">${translate("delay.dialog-delay-after")}</label>
@@ -175,7 +175,7 @@ export function tryDelay(opts?: TryDelayOptions) {
     `,
 			buttons: {
 				cancel: {
-					label: translate("delay.button-cancel"),
+					label: translate("delay.cancel"),
 					icon: `<i class="fa-solid fa-xmark"></i>`,
 				},
 				delay: {
@@ -209,7 +209,8 @@ export function tryDelay(opts?: TryDelayOptions) {
 
 export function tryReturn(combatant: CombatantPF2e, opts?: TryDelayOptions) {
 	if (game.combat?.combatant && !combatantIsNext(combatant)) {
-		if (!opts?.skipMessage && combatant.token) createMessage(combatant.token, translate("delay.return-message-title"))
+		if (!opts?.skipMessage && combatant.token)
+			createMessage(combatant.token, translate("delay.return-message-title"))
 		emitMoveAfter(game.combat.id, combatant.id, game.combat.combatant.id)
 	}
 }

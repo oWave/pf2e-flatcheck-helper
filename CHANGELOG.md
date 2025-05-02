@@ -2,6 +2,13 @@
 🥭
 
 ## [Unreleased]
+### Added
+- **Documentation!** The module settings now include a button to open a detailed explanation of everything in this module.
+
+### Changed
+- Switched the "Flat Checks in Messages" setting from client to world
+- Alternative Roll Breakdowns: Show GMs which modifiers players can see
+- Show Light Visualization above tiles
 
 ## [0.14.5] - 2025-04-19
 ### Changed

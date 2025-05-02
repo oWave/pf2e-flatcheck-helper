@@ -14,9 +14,12 @@ class LightVisLayer extends InteractionLayer {
 	}
 	static get layerOptions() {
 		return foundry.utils.mergeObject(super.layerOptions, {
-			elevation: 1,
 			name: "lightVis",
 		})
+	}
+
+	get sortLayer() {
+		return 501
 	}
 }
 

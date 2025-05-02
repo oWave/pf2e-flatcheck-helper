@@ -57,6 +57,10 @@ export const settings = {
 		return game.settings.get(MODULE_ID, "script-toggle-shared-vision") as boolean
 	},
 
+	get flags() {
+		return SettingFlags
+	},
+
 	init() {
 		register("show-global", {
 			name: "pf2e-fc.settings.show-global.name",
@@ -80,11 +84,14 @@ export const settings = {
 		register("flat-check-in-message", {
 			name: "pf2e-fc.settings.flat-check-in-message.name",
 			hint: "pf2e-fc.settings.flat-check-in-message.hint",
-			scope: "client",
+			scope: "world",
 			config: true,
 			default: true,
 			type: Boolean,
 			requiresReload: true,
+			flags: {
+				requiresLibwrapper: true,
+			},
 		})
 
 		register("flat-check-config", {
@@ -205,6 +212,9 @@ export const settings = {
 			config: true,
 			type: Boolean,
 			default: false,
+			flags: {
+				requiresLibwrapper: true,
+			},
 		})
 
 		register("script-alt-roll-breakdown", {
@@ -240,18 +250,28 @@ export const settings = {
 	},
 }
 
+interface SettingFlagsType {
+	requiresLibwrapper?: true
+}
 type SettingsParamater = Parameters<typeof game.settings.register>[2]
 interface SettingRegistration extends SettingsParamater {
 	onChange?: (newValue: unknown) => void | Promise<void>
+	flags?: SettingFlagsType
 }
 
-function register(key: string, data: SettingRegistration) {
+const SettingFlags = new Map<string, SettingFlagsType>()
+
+function register(key: string, { flags, ...data }: SettingRegistration) {
+	if (flags) SettingFlags.set(key, flags)
+
 	game.settings.register(MODULE_ID, key, {
 		...data,
 		onChange() {
 			const value = game.settings.get(MODULE_ID, key) as any
 			data.onChange?.(value)
 			settings.callListener(key, value)
+
+			Hooks.callAll(`${MODULE_ID}.updateSetting`, { key, value })
 
 			if (data.scope === "client") {
 				onUpdateSetting({ key: `${MODULE_ID}.${key}` }, { value: value.toString() })
@@ -301,17 +321,24 @@ function onRenderSettingsConfig(app: SettingsConfig, $html: JQuery) {
 	createHeading("delay-combat-tracker", "settings.headings.delay-combat-tracker")
 	createHeading("lifelink", "settings.headings.lifelink")
 	createHeading("emanation-automation", "settings.headings.emanation-automation")
-	createHeading("script-alt-roll-breakdown", "settings.headings.script-alt-roll-breakdown.text", "settings.headings.script-alt-roll-breakdown.hint")
+	createHeading(
+		"script-alt-roll-breakdown",
+		"settings.headings.script-alt-roll-breakdown.text",
+		"settings.headings.script-alt-roll-breakdown.hint",
+	)
 
 	if (!game.modules.get("lib-wrapper")?.active) {
-		for (const s of ["emanation-automation", "flat-check-in-message"]) {
+		const settingRequiringLibwrapper = SettingFlags.entries()
+			.filter(([k, v]) => v.requiresLibwrapper)
+			.map(([k, v]) => k)
+		for (const key of settingRequiringLibwrapper) {
 			root
-				.querySelector<HTMLElement>(`div.form-group[data-setting-id="${MODULE_ID}.${s}"] p.notes`)
+				.querySelector<HTMLElement>(`div.form-group[data-setting-id="${MODULE_ID}.${key}"] p.notes`)
 				?.insertAdjacentHTML(
 					"afterbegin",
 					`<span style="color: var(--color-level-error)">Requires libwrapper. </span>`,
 				)
-			const input = root.querySelector<HTMLInputElement>(`input[name="${MODULE_ID}.${s}"]`)
+			const input = root.querySelector<HTMLInputElement>(`input[name="${MODULE_ID}.${key}"]`)
 			if (input) {
 				input.title = "Requires lib-wrapper"
 				input.disabled = true
@@ -326,11 +353,21 @@ function onRenderSettingsConfig(app: SettingsConfig, $html: JQuery) {
 		new FlatMessageConfigApplication({
 			window: {
 				title: translate("settings.flat-check-config.name"),
-			}
+			},
 		}).render(true)
 	})
 
 	const input = root.querySelector<HTMLElement>(`input[name="${MODULE_ID}.flat-check-config"]`)
 	input?.parentNode?.appendChild(flatConfigButton)
 	input?.remove()
+
+	const guideButton = parseHTML(
+		`<p>${translate("settings.docs.description")}</p>
+		<button type="button"><i class="fas fa-book"></i> ${translate("settings.docs.button")}</button>`,
+	)
+	guideButton.querySelector("button")?.addEventListener("click", async () => {
+		const { GuideApp } = await import("./guide/app")
+		new GuideApp().render(true)
+	})
+	tab.querySelector<HTMLElement>("h2")?.after(guideButton)
 }

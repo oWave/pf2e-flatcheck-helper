@@ -78,6 +78,8 @@ Hooks.on("ready", () => {
 		if (module.enabled) module.onReady()
 	}
 
-	/* // @ts-expect-error
-	window.__PIXI_DEVTOOLS__ = { renderer: canvas.app.renderer, stage: canvas.app.stage } */
+	if (import.meta.env.DEV) {
+		// @ts-expect-error
+		window.__PIXI_DEVTOOLS__ = { renderer: canvas.app.renderer, stage: canvas.app.stage }
+	}
 })
