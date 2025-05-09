@@ -2,7 +2,9 @@
 🥭
 
 ## [Unreleased]
-## Fixed
+
+## [0.15.1] - 2025-05-09
+### Fixed
 - A square in dim light from a light source being considered dim even if the scene is brighter
 - Light Visualization breaking if the scene is wider than it is tall
 
@@ -53,7 +55,8 @@
 ### Fixed
 - Flat checks showing on damage/healing received messages
 
-[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.15.0...HEAD
+[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.15.1...HEAD
+[0.15.1]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.15.0...v0.15.1
 [0.15.0]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.14.5...v0.15.0
 [0.14.5]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.14.4...v0.14.5
 [0.14.4]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.14.3...v0.14.4
