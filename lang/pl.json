@@ -109,6 +109,10 @@
 					"text": "Różne",
 					"hint": "To coś nie ma przycisków‽"
 				}
+			},
+			"docs": {
+				"description": "Aby uzyskać opis każdej funkcji i więcej szczegółów na temat ustawień, zapoznaj się z dokumentacją:",
+				"button": "Otwórz dokumentację"
 			}
 		},
 		"delay": {
