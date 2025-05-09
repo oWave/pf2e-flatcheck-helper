@@ -82,9 +82,12 @@ export function darknessAtPoint(x: number, y: number) {
 		if (d <= l.data.dim) darkness = LightLevels.DIM.darknessBreakpoint
 	}
 
-	if (darkness < LightLevels.DARK.darknessBreakpoint) return darkness
-
 	const globalLevel = canvas.environment.darknessLevel
+	if (darkness < LightLevels.DARK.darknessBreakpoint) {
+		// point is in at least dim light from a light source
+		// darkness areas do not affect light sources
+		return Math.min(darkness, globalLevel)
+	}
 
 	// TODO: Check if this whole mess can be replaced with canvas.effects.getDarknessLevel
 

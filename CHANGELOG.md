@@ -2,6 +2,8 @@
 🥭
 
 ## [Unreleased]
+## Fixed
+- A square in dim light from a light source being considered dim even if the scene is brighter
 
 ## [0.15.0] - 2025-05-02
 ### Added
