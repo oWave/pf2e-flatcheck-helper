@@ -4,6 +4,7 @@
 ## [Unreleased]
 ## Fixed
 - A square in dim light from a light source being considered dim even if the scene is brighter
+- Light Visualization breaking if the scene is wider than it is tall
 
 ## [0.15.0] - 2025-05-02
 ### Added

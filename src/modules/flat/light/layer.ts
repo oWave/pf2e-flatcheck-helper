@@ -89,7 +89,7 @@ class HighlightRenderer {
 				if (l !== LightLevels.BRIGHT) {
 					const color = l.color
 					highlightGraphics.lineStyle(0)
-					highlightGraphics.beginFill(color, 0.25).drawRect(px, py, gridSize, gridSize)
+					highlightGraphics.beginFill(color, 0.25).drawRect(px, py, gridSize, gridSize).endFill()
 				}
 			}
 		}
@@ -159,7 +159,6 @@ class HighlightRenderer {
 	draw() {
 		this.destroy()
 		this.drawMesh()
-		// this.drawPoints()
 		// this.drawPoints()
 	}
 }

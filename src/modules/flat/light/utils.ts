@@ -11,7 +11,7 @@ export const Grid = class<T> {
 	}
 
 	index(x: number, y: number) {
-		return y * this.height + x
+		return y * this.width + x
 	}
 
 	get(x: number, y: number) {
