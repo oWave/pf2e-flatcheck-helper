@@ -27,14 +27,6 @@
 			}
 		},
 		"settings": {
-			"show-global": {
-				"name": "Włącz przyciski Płaskich Testów pod czatem",
-				"hint": "Ustawienie globalne: Włącza przyciski Płaskich Testów pod czatem."
-			},
-			"show": {
-				"name": "Pokaż przyciski Płaskich Testów pod czatem",
-				"hint": "Ustawienie klienta: Wyłącz, aby ukryć przyciski Płaskich Testów tylko dla Ciebie."
-			},
 			"flat-check-in-message": {
 				"name": "Przyciski Płaskich Testów w wiadomościach",
 				"hint": "Dodaje płaskie testy dla obsługiwanych stanów w wiadomościach czatu."
@@ -73,10 +65,6 @@
 				"name": "Usunięcie przełącznika walki z tokena Hud",
 				"hint": "Usunięto przycisk „Przełącz stan walki” dla tokenów w walce."
 			},
-			"pf2e-hud-enable": {
-				"name": "Modyfikacja PF2e HUD",
-				"hint": "Zastępuje obsługę opóźnień PF2e HUD z implementacją tego modułu. Proszę o zgłaszanie problemów z tym do mnie, a nie do PF2e HUD!"
-			},
 			"lifelink": {
 				"name": "Włącz przyciski automatyzacji Więzy Życia/Duchowa Więź",
 				"hint": "Sprawdź readme modułu dla kroków konfiguracji."
@@ -101,14 +89,11 @@
 				"hint": "Automatycznie wyłącza ustawienie metagry \" Wspólna wizja drużyny\" po rozpoczęciu walki i włącza je ponownie po jej zakończeniu. Ta opcja zastąpi to ustawienie, więc włącz ją tylko wtedy, gdy chcesz korzystać ze wspólnej wizji."
 			},
 			"headings": {
-				"show-global": "Przyciski Płaskiego Testu",
-				"delay-combat-tracker": "Opóźnienie",
+				"flat": "Przyciski Płaskiego Testu",
+				"delay": "Opóźnienie",
 				"lifelink": "Więzy Życia",
 				"emanation-automation": "Automatyzacja Emanacji",
-				"script-alt-roll-breakdown": {
-					"text": "Różne",
-					"hint": "To coś nie ma przycisków‽"
-				}
+				"misc": "Różne"
 			},
 			"docs": {
 				"description": "Aby uzyskać opis każdej funkcji i więcej szczegółów na temat ustawień, zapoznaj się z dokumentacją:",

@@ -27,14 +27,6 @@
 			}
 		},
 		"settings": {
-			"show-global": {
-				"name": "Enable Flat Check Buttons below Chat",
-				"hint": "Global setting: Enables flat check buttons below the chat box."
-			},
-			"show": {
-				"name": "Show Flat Check Buttons below Chat",
-				"hint": "Client setting: Turn off to hide the flat check buttons just for you."
-			},
 			"flat-check-in-message": {
 				"name": "Flat Check Buttons in Messages",
 				"hint": "Adds flat checks for supported conditions in chat messages."
@@ -73,10 +65,6 @@
 				"name": "Remove Combat Toggle from Token Hud",
 				"hint": "Removes the 'Toggle Combat State' button for tokens in combat."
 			},
-			"pf2e-hud-enable": {
-				"name": "Modify PF2e HUD",
-				"hint": "Overrides PF2e HUDs delay handling with this modules implementation. Please report issue with this to me and not to PF2e HUD!"
-			},
 			"lifelink": {
 				"name": "Enable Life/Spirit Link Automation Buttons",
 				"hint": "Check the module readme for setup steps."
@@ -101,14 +89,11 @@
 				"hint": "Automaticlly turns the \"Shared Party Vision\" metagame setting off when combat starts, and enables it again when combat ends. This will override that setting, so only enable if you want to use shared vision."
 			},
 			"headings": {
-				"show-global": "Flat Check Buttons",
-				"delay-combat-tracker": "Delay",
+				"flat": "Flat Check Buttons",
+				"delay": "Delay",
 				"lifelink": "Life Link",
 				"emanation-automation": "Emanation Automation",
-				"script-alt-roll-breakdown": {
-					"text": "Miscellaneous",
-					"hint": "This stuff has no buttons‽"
-				}
+				"misc": "Miscellaneous"
 			},
 			"docs": {
 				"description": "For a description of each feature and more details on the settings, check the documentation:",

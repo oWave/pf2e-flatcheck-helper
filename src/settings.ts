@@ -277,11 +277,11 @@ function onRenderSettingsConfig(app: SettingsConfig, html: HTMLFormElement) {
 		el.before(heading)
 	}
 
-	createHeading("flat-check-in-message", "settings.headings.show-global")
-	createHeading("delay-combat-tracker", "settings.headings.delay-combat-tracker")
+	createHeading("flat-check-in-message", "settings.headings.flat")
+	createHeading("delay-combat-tracker", "settings.headings.delay")
 	createHeading("lifelink", "settings.headings.lifelink")
 	createHeading("emanation-automation", "settings.headings.emanation-automation")
-	createHeading("script-alt-roll-breakdown", "settings.headings.script-alt-roll-breakdown.text")
+	createHeading("script-alt-roll-breakdown", "settings.headings.misc")
 
 	if (!game.modules.get("lib-wrapper")?.active) {
 		const settingRequiringLibwrapper = SettingFlags.entries()
