@@ -1,21 +1,23 @@
-# pf2e Utility Buttons
+# PF2e Utility Buttons
+
+Some automation for PF2e, just a button click away.
+
+For a detailed description of the features listed here and how to configure them, check out the documentation in foundry. You can find it in the module settings.
 
 ## Flat Check Helpers
 ![image](https://github.com/user-attachments/assets/10af24ea-a11c-4a30-97cf-bab7eff45d23)
 
-2 variants for rolling flat checks:
-- On messages (strikes/checks/spells) for supported flat checks
-  - Requires libwrapper
-  - Supported:
-    - Concealed/Hidden + Dazzled/Blinded
-    - Stupefied when casting a spell
-    - Manipulate while Grabbed
-    - Auditory while Deafened (including non-subtle spells)
-- Below the chat box 
+Add buttons for supported flat checks on messages
+- Requires libwrapper
+- Supported:
+  - Concealed/Hidden + Dazzled/Blinded
+  - Stupefied when casting a spell
+  - Manipulate while Grabbed
+  - Auditory while Deafened (including non-subtle spells)
 
 Also shows flat checks when targetting a token. You can hold ALT to highlight squares that have no/dim light.
 ![image](https://github.com/user-attachments/assets/bf9f7c53-4c85-4658-854d-0746719df2d2)
-The dim light/darkness flat checks are not enabled by default (yet). You can turn them on in the flat check settings.
+**The dim light/darkness flat checks are not enabled by default (yet). You can turn them on in the flat check settings.**
 
 If **pf2e-perception** is installed, that module will be used to calculate DCs.
 
