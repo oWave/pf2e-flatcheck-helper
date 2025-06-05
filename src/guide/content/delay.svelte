@@ -47,15 +47,6 @@
 			<div>Makes delaying just a marker.</div>
 		</div>
 	</div>
-
-	<div class="col-span-2 mx-[10%]">
-		<h5 class="text-center">Compatibility</h5>
-		<div>
-			<SettingInput key="pf2e-hud-enable" label="Modify PF2e HUD" />
-			<div>Overrides PF2e HUD's delay handling. The delay button in PF2e HUD's combat tracker will work similarly to the one in the default tracker.</div>
-			<strong>Please do not report issues to PF2e HUD with this setting enabled!</strong>
-		</div>
-	</div>
 </div>
 
 <script lang="ts">

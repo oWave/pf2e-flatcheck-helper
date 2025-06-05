@@ -1,16 +1,6 @@
 <h3>Flat Checks</h3>
 
 <div class="grid grid-cols-2 gap-2 gap-y-4 items-center">
-	<img src="{FlatBelowChat}">
-	<div>
-		<h5>Flat Checks Button below Chat</h5>
-		<p>
-			Adds some buttons below the chat box to quickly roll common flat checks. The third one opens a menu that contains more checks.
-		</p>
-		<SettingInput key="show-global" label="Enabled" />
-		<SettingInput key="show" label="Enabled (Client)" />
-	</div>
-
 	<img src="{FlatInMessage}">
 	<div class="justify-self-start">
 		<h5>Flat Checks in Messages</h5>
@@ -61,7 +51,6 @@
 </div>
 
 <script lang="ts">
-import FlatBelowChat from "./img/flat-below-chat.webp"
 import FlatInMessage from "./img/flat-in-message.webp"
 import FlatOnTarget from "./img/flat-on-target.webp"
 import LightVis from "./img/light-vis.webp"

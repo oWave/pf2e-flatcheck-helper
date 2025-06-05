@@ -7,10 +7,6 @@ type Callback = (value: unknown) => void
 const listeners: Record<string, Callback> = {}
 
 export const settings = {
-	get fcButtonsEnabled() {
-		return (game.settings.get(MODULE_ID, "show-global") &&
-			game.settings.get(MODULE_ID, "show")) as boolean
-	},
 	get delayShouldPrompt() {
 		const s = game.settings.get(MODULE_ID, "delay-prompt") as boolean
 		return s
@@ -27,9 +23,6 @@ export const settings = {
 	},
 	get showInTokenHUD() {
 		return game.settings.get(MODULE_ID, "delay-token-hud") as boolean
-	},
-	get modifyPF2eHud() {
-		return game.settings.get(MODULE_ID, "pf2e-hud-enable") as boolean
 	},
 	get removeCombatToggle() {
 		return game.settings.get(MODULE_ID, "token-hud-remove-combat-toggle") as boolean
@@ -62,25 +55,6 @@ export const settings = {
 	},
 
 	init() {
-		register("show-global", {
-			name: "pf2e-fc.settings.show-global.name",
-			hint: "pf2e-fc.settings.show-global.hint",
-			scope: "world",
-			config: true,
-			default: true,
-			type: Boolean,
-			requiresReload: true,
-		})
-		register("show", {
-			name: "pf2e-fc.settings.show.name",
-			hint: "pf2e-fc.settings.show.hint",
-			scope: "client",
-			config: true,
-			default: true,
-			type: Boolean,
-			requiresReload: true,
-		})
-
 		register("flat-check-in-message", {
 			name: "pf2e-fc.settings.flat-check-in-message.name",
 			hint: "pf2e-fc.settings.flat-check-in-message.hint",
@@ -168,15 +142,6 @@ export const settings = {
 		register("token-hud-remove-combat-toggle", {
 			name: "pf2e-fc.settings.token-hud-remove-combat-toggle.name",
 			hint: "pf2e-fc.settings.token-hud-remove-combat-toggle.hint",
-			scope: "world",
-			config: true,
-			default: false,
-			type: Boolean,
-		})
-
-		register("pf2e-hud-enable", {
-			name: "pf2e-fc.settings.pf2e-hud-enable.name",
-			hint: "pf2e-fc.settings.pf2e-hud-enable.hint",
 			scope: "world",
 			config: true,
 			default: false,
@@ -312,7 +277,7 @@ function onRenderSettingsConfig(app: SettingsConfig, html: HTMLFormElement) {
 		el.before(heading)
 	}
 
-	createHeading("show-global", "settings.headings.show-global")
+	createHeading("flat-check-in-message", "settings.headings.show-global")
 	createHeading("delay-combat-tracker", "settings.headings.delay-combat-tracker")
 	createHeading("lifelink", "settings.headings.lifelink")
 	createHeading("emanation-automation", "settings.headings.emanation-automation")

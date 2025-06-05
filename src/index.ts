@@ -1,7 +1,6 @@
 import { MODULE_ID } from "./constants"
 import { DelayModule } from "./modules/delay"
 import { EmanationModule } from "./modules/emanation/emanation"
-import { ChatFlatModule } from "./modules/flat/flat"
 import { LightVisModule } from "./modules/flat/light/layer"
 import { MessageFlatCheckModule } from "./modules/flat/message"
 import { TargetInfoModule } from "./modules/flat/target-marker"
@@ -45,7 +44,6 @@ const MODULE = {
 	socketHandler: new SocketHandler(),
 	settings,
 	modules: {
-		flat: new ChatFlatModule(),
 		flatMessageButtons: new MessageFlatCheckModule(),
 		lightVis: new LightVisModule(),
 		targetInfo: new TargetInfoModule(),

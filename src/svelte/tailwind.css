@@ -21,6 +21,7 @@
 		h6 {
 			color: var(--color-text-primary);
 			text-shadow: unset;
+			font-family: var(--font-h3);
 		}
 
 		/* Foundry applies user-select: none to all (via *) */
