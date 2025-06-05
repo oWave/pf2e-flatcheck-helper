@@ -2,7 +2,6 @@ import { BaseModule } from "../base"
 import { TargetColors } from "./light/utils"
 import type { TokenPF2e } from "foundry-pf2e"
 import { calculateFlatCheck, guessOrigin } from "./target"
-import { OutlineOverlayFilterCustom } from "./filter"
 import { translate } from "src/utils"
 
 function calcScaleFromToken(token: Token, multPerSquare = 0) {
@@ -54,12 +53,12 @@ const textStyles = {
 
 class TokenTargetRenderer {
 	#layer: PIXI.Container
-	#filter: OutlineOverlayFilterCustom
+	#filter: foundry.canvas.rendering.filters.OutlineOverlayFilter
 	constructor(public token: TokenPF2e) {
 		this.#layer = new PIXI.Container()
 		this.#layer.alpha = 0.9
 		const outlineScale = calcScaleFromToken(token, 0.5)
-		this.#filter = OutlineOverlayFilterCustom.create({
+		this.#filter = foundry.canvas.rendering.filters.OutlineOverlayFilter.create({
 			knockout: false,
 			wave: false,
 		})
@@ -83,7 +82,7 @@ class TokenTargetRenderer {
 		this.#filter.enabled = true
 
 		const textScale = calcScaleFromToken(this.token, 0.5)
-		const text = new PreciseText(
+		const text = new foundry.canvas.containers.PreciseText(
 			translate("flat.target-marker-dc", { dc: condition.dc, label: condition.label }),
 			textStyles.normal(textScale),
 		)
@@ -91,7 +90,10 @@ class TokenTargetRenderer {
 		text.y = this.token.bounds.height * 0.95 - text.height
 		this.#layer.addChild(text)
 		if ("description" in condition && condition.description) {
-			const smallText = new PreciseText(condition.description, textStyles.small(textScale))
+			const smallText = new foundry.canvas.containers.PreciseText(
+				condition.description,
+				textStyles.small(textScale),
+			)
 			smallText.x = this.token.bounds.width / 2 - smallText.width / 2
 			smallText.y = text.y - smallText.height * 0.75
 			this.#layer.addChild(smallText)

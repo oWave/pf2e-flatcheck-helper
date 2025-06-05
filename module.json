@@ -6,9 +6,9 @@
 	"library": "false",
 	"socket": true,
 	"compatibility": {
-		"minimum": 13,
-		"verified": 13,
-		"maximum": 13
+		"minimum": "13.344",
+		"verified": "13",
+		"maximum": "13"
 	},
 	"authors": [
 		{

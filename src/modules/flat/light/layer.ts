@@ -8,7 +8,7 @@ declare global {
 	}
 }
 
-class LightVisLayer extends InteractionLayer {
+class LightVisLayer extends foundry.canvas.layers.InteractionLayer {
 	protected _draw(options: object): Promise<void> {
 		return super._draw(options)
 	}
