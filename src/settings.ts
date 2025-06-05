@@ -294,51 +294,44 @@ function onUpdateSetting(setting: { key: string }, data) {
 	}
 }
 
-function onRenderSettingsConfig(app: SettingsConfig, $html: JQuery) {
-	const root = $html[0]
-	const tab = root.querySelector(`.tab[data-tab="${MODULE_ID}"]`)
+function onRenderSettingsConfig(app: SettingsConfig, html: HTMLFormElement) {
+	const tab = html.querySelector(`.tab[data-tab="${MODULE_ID}"]`)
 	if (!tab) return
 
-	const createHeading = (settingId: string, text: string, hint?: string) => {
-		const el = root.querySelector(`div[data-setting-id="${MODULE_ID}.${settingId}"]`)
+	const createHeading = (settingId: string, text: string) => {
+		const label = tab.querySelector(`label[for="settings-config-${MODULE_ID}.${settingId}"]`)
+		const el = label?.parentElement
 		if (!el) return
 
-		const heading = document.createElement("h3")
+		const heading = document.createElement("strong")
 		heading.textContent = translate(text)
+		heading.style.fontSize = "var(--font-h5-size)"
+		heading.style.borderWidth = "0 0 1px 0"
+		heading.style.borderColor = "var(--color-tabs-border)"
+		heading.style.borderStyle = "solid"
 		el.before(heading)
-
-		if (hint) {
-			heading.style.marginBottom = "0"
-			const text = document.createElement("p")
-			text.textContent = translate(hint)
-			text.style.color = "var(--color-text-dark-secondary)"
-			text.style.marginTop = "0"
-			el.before(text)
-		}
 	}
 
 	createHeading("show-global", "settings.headings.show-global")
 	createHeading("delay-combat-tracker", "settings.headings.delay-combat-tracker")
 	createHeading("lifelink", "settings.headings.lifelink")
 	createHeading("emanation-automation", "settings.headings.emanation-automation")
-	createHeading(
-		"script-alt-roll-breakdown",
-		"settings.headings.script-alt-roll-breakdown.text",
-		"settings.headings.script-alt-roll-breakdown.hint",
-	)
+	createHeading("script-alt-roll-breakdown", "settings.headings.script-alt-roll-breakdown.text")
 
 	if (!game.modules.get("lib-wrapper")?.active) {
 		const settingRequiringLibwrapper = SettingFlags.entries()
 			.filter(([k, v]) => v.requiresLibwrapper)
 			.map(([k, v]) => k)
 		for (const key of settingRequiringLibwrapper) {
-			root
-				.querySelector<HTMLElement>(`div.form-group[data-setting-id="${MODULE_ID}.${key}"] p.notes`)
+			const label = tab.querySelector(`label[for="settings-config-${MODULE_ID}.${key}"]`)
+			const formGroup = label?.parentElement
+			formGroup
+				?.querySelector<HTMLElement>("p.hint")
 				?.insertAdjacentHTML(
 					"afterbegin",
 					`<span style="color: var(--color-level-error)">Requires libwrapper. </span>`,
 				)
-			const input = root.querySelector<HTMLInputElement>(`input[name="${MODULE_ID}.${key}"]`)
+			const input = tab.querySelector<HTMLInputElement>(`input[name="${MODULE_ID}.${key}"]`)
 			if (input) {
 				input.title = "Requires lib-wrapper"
 				input.disabled = true
@@ -357,17 +350,23 @@ function onRenderSettingsConfig(app: SettingsConfig, $html: JQuery) {
 		}).render(true)
 	})
 
-	const input = root.querySelector<HTMLElement>(`input[name="${MODULE_ID}.flat-check-config"]`)
+	const input = tab.querySelector<HTMLElement>(`input[name="${MODULE_ID}.flat-check-config"]`)
 	input?.parentNode?.appendChild(flatConfigButton)
 	input?.remove()
 
 	const guideButton = parseHTML(
-		`<p>${translate("settings.docs.description")}</p>
-		<button type="button"><i class="fas fa-book"></i> ${translate("settings.docs.button")}</button>`,
+		`<div>
+		  <p>${translate("settings.docs.description")}</p>
+		  <button type="button" style="width: 100%;">
+			  <i class="fas fa-book"></i>
+				${translate("settings.docs.button")}
+			</button>
+		</div>`,
 	)
 	guideButton.querySelector("button")?.addEventListener("click", async () => {
 		const { GuideApp } = await import("./guide/app")
 		new GuideApp().render(true)
 	})
-	tab.querySelector<HTMLElement>("h2")?.after(guideButton)
+
+	tab.prepend(guideButton)
 }

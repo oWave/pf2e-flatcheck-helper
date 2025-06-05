@@ -16,6 +16,9 @@ export class FlatMessageConfigApplication extends foundry.applications.api.Handl
 	static DEFAULT_OPTIONS = {
 		id: "fc-flat-check-config",
 		tag: "form",
+		window: {
+			title: "Flat Check Config",
+		},
 		form: {
 			handler: FlatMessageConfigApplication.onSubmit,
 			submitOnChange: false,

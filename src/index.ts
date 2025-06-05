@@ -6,7 +6,7 @@ import { LightVisModule } from "./modules/flat/light/layer"
 import { MessageFlatCheckModule } from "./modules/flat/message"
 import { TargetInfoModule } from "./modules/flat/target-marker"
 import { LifeLinkModule } from "./modules/life-link"
-import { AltRolLBreakdownModule } from "./modules/misc/alt-roll-breakdown"
+import { AltRollBreakdownModule } from "./modules/misc/alt-roll-breakdown"
 import { SharedVisionModule } from "./modules/misc/toggle-vision"
 import { settings } from "./settings"
 
@@ -52,7 +52,7 @@ const MODULE = {
 		delay: new DelayModule(),
 		emanation: new EmanationModule(),
 		lifeLink: new LifeLinkModule(),
-		altRollBreakdown: new AltRolLBreakdownModule(),
+		altRollBreakdown: new AltRollBreakdownModule(),
 		sharedVision: new SharedVisionModule(),
 	},
 }

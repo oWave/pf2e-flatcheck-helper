@@ -1,51 +1,47 @@
 @custom-variant dark (&:where(.theme-dark, .theme-dark *));
 
-.fc-svelte {
-	@layer theme, base, components, utilities;
+@layer modules.pf2e-fc {
+	.fc-svelte {
+		@import "tailwindcss/theme.css" layer(tailwind);
+		@import "tailwindcss/utilities.css" layer(tailwind);
 
-	/* @layer theme {
-		@reference "tailwindcss/theme.css"
-	} */
-
-	@import "tailwindcss/theme.css" layer(theme);
-	@import "tailwindcss/utilities.css" layer(utilities);
-
-	.window-content {
-		padding: 0;
-		ul,
-		ol,
-		li {
+		.window-content {
 			padding: 0;
-			margin: 0;
+			ul,
+			ol,
+			li {
+				padding: 0;
+				margin: 0;
+			}
+		}
+
+		h3,
+		h4,
+		h5,
+		h6 {
+			color: var(--color-text-primary);
+			text-shadow: unset;
+		}
+
+		/* Foundry applies user-select: none to all (via *) */
+		.select-text * {
+			user-select: text;
+			-webkit-user-select: text;
+		}
+
+		input[type="checkbox"]:disabled::after {
+			color: var(--color-form-hint);
 		}
 	}
 
-	h3,
-	h4,
-	h5,
-	h6 {
-		color: var(--color-text-primary);
-		text-shadow: unset;
-	}
-
-	/* Foundry applies user-select: none to all (via *) */
-	.select-text * {
-		user-select: text;
-		-webkit-user-select: text;
-	}
-
-	input[type="checkbox"]:disabled::after {
-		color: var(--color-form-hint);
-	}
-}
-
-body.theme-light .fc-svelte {
-	hr {
-		background-image: linear-gradient(
-			90deg,
-			transparent 0%,
-			var(--color-dark-3) 50%,
-			transparent 100%
-		);
+	body.theme-light .fc-svelte {
+		hr {
+			background-image: linear-gradient(
+				90deg,
+				transparent 0%,
+				var(--color-dark-3) 50%,
+				transparent 100%
+			);
+		}
 	}
 }

@@ -2,7 +2,7 @@
 	<div class="pt-4 px-2 flex flex-col gap-1 border-r">
 		{#each tabs as t, i}
 			{#if !t.hidden}
-				<button class={[i == selected && "active"]} style="line-height: 1.2; padding: 0.3rem 0;" onclick={() => handleClick(i)}>{t.name}</button>
+				<button class={[i == selected && "active", "h-auto"]} style="line-height: 1.2; padding: 0.3rem 0;" onclick={() => handleClick(i)}>{t.name}</button>
 			{/if}
 		{/each}
 	</div>

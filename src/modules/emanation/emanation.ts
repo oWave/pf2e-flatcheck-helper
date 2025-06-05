@@ -3,7 +3,7 @@ import MODULE from "src/index"
 import type { ChatMessagePF2e, ItemPF2e, SpellPF2e, SpellSheetPF2e } from "foundry-pf2e"
 import { BaseModule } from "../base"
 import { EmanationRequestDialog } from "./emanation-dialog"
-import { translate } from "src/utils"
+import { parseHTML, translate } from "src/utils"
 
 export class EmanationModule extends BaseModule {
 	settingsKey = "emanation-automation"
@@ -13,7 +13,7 @@ export class EmanationModule extends BaseModule {
 
 		super.enable()
 
-		this.registerHook("renderChatMessage", onChatMessage)
+		this.registerHook("renderChatMessageHTML", onChatMessage)
 	}
 
 	onReady(): void {
@@ -80,7 +80,7 @@ async function extractEffects(item: SpellPF2e) {
 	return effects
 }
 
-async function onChatMessage(msg: ChatMessagePF2e, html: JQuery<"div">) {
+async function onChatMessage(msg: ChatMessagePF2e, html: HTMLElement) {
 	if (!MODULE.settings.emanationAutomation) return
 	if (!game.user.isGM) return
 	if (!msg.item || !msg.item.isOfType("spell")) return
@@ -94,19 +94,18 @@ async function onChatMessage(msg: ChatMessagePF2e, html: JQuery<"div">) {
 
 	if (!effect || !(options.emanationAllies || options.emanationEnemies)) return
 
-	html.find("section.card-buttons").append(`
-    <div class="spell-button">
-      <button type="button" data-action="emanation-automation">${translate("emanation.message-text")}</button>
-    </div>
-  `)
-
-	html.find('button[data-action="emanation-automation"]').on("click", async () => {
+	const buttonElement = parseHTML(`<div class="spell-button">
+		<button type="button" data-action="emanation-automation">${translate("emanation.message-text")}</button>
+	</div>`)
+	buttonElement.querySelector("button")?.addEventListener("click", () => {
 		new EmanationRequestDialog({
 			spellUuid: spell.uuid,
 			effectUuid: effect.uuid,
 			originToken: token.document.uuid,
 		}).render(true)
 	})
+
+	html.querySelector("section.card-buttons")?.append(buttonElement)
 }
 
 async function spellSheetRenderInner(sheet: SpellSheetPF2e, $html: JQuery) {

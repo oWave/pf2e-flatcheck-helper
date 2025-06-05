@@ -1,8 +1,7 @@
 import { MODULE_ID } from "src/constants"
 import MODULE from "src/index"
-import { combatantIsNext, isJQuery, sleep, translate } from "src/utils"
+import { combatantIsNext, isJQuery, parseHTML, sleep, translate } from "src/utils"
 import { BaseModule } from "../base"
-import { onRenderPF2eHudTracker } from "./pf2e-hud"
 import { onRenderCombatTracker } from "./tracker"
 import { isDelaying, setInitiativeFromDrop } from "./utils"
 import type {
@@ -20,16 +19,15 @@ export class DelayModule extends BaseModule {
 	enable() {
 		super.enable()
 
-		this.registerHook("renderEncounterTrackerPF2e", onRenderCombatTracker)
+		this.registerHook("renderEncounterTracker", onRenderCombatTracker)
 		this.registerHook("renderTokenHUD", onRenderTokenHUD)
-		this.registerHook("renderPF2eHudTracker", onRenderPF2eHudTracker)
 		this.registerHook("updateCombat", onUpdateCombat)
 		this.registerHook("createChatMessage", onCreateMessage)
 
 		this.registerSocket("moveAfter", socketMoveAfter)
 	}
 }
-function onRenderTokenHUD(app: TokenHUD, html: JQuery) {
+function onRenderTokenHUD(app: TokenHUD, html: HTMLElement) {
 	if (MODULE.settings.showInTokenHUD) {
 		const token = app.object
 		const combatant = token?.combatant as CombatantPF2e
@@ -40,32 +38,36 @@ function onRenderTokenHUD(app: TokenHUD, html: JQuery) {
 			combatant.actor &&
 			combatant.isOwner
 		) {
-			const column = html.find("div.col.right")
+			const column = html.querySelector("div.col.right")
+			if (!column) return
 
+			let delayButtonHTML: DocumentFragment | null = null
 			if (isDelaying(combatant.actor)) {
 				if (!combatantIsNext(combatant) && MODULE.settings.allowReturn) {
-					$(`
-            <div class="control-icon" data-action="return" title="${translate("delay.return-to-initiative")}">
+					delayButtonHTML = parseHTML(`
+            <div class="control-icon" style="display: flex;" data-action="return" title="${translate("delay.return-to-initiative")}">
               <i class="fa-solid fa-play"></i>
             </div>`)
-						.on("click", (e) => {
-							if (combatant.actor && isDelaying(combatant.actor) && !combatantIsNext(combatant)) {
-								tryReturn(combatant)
-								e.currentTarget.style.display = "none"
-							}
-						})
-						.appendTo(column)
+
+					delayButtonHTML.firstElementChild?.addEventListener("click", (event) => {
+						if (combatant.actor && isDelaying(combatant.actor) && !combatantIsNext(combatant)) {
+							tryReturn(combatant)
+							if (event.currentTarget instanceof HTMLElement)
+								event.currentTarget.style.display = "none"
+						}
+					})
 				}
 			} else if (combatant.parent.combatant?.id === combatant.id) {
-				$(`
-          <div class="control-icon" data-action="delay" title="${translate("delay.delay")}">
+				delayButtonHTML = parseHTML(`
+          <div class="control-icon" style="display: flex;" data-action="delay" title="${translate("delay.delay")}">
             <i class="fa-solid fa-hourglass"></i>
           </div>`)
-					.on("click", (e) => {
-						if (combatant.parent?.combatant?.id === combatant.id) tryDelay()
-					})
-					.appendTo(column)
+
+				delayButtonHTML.firstElementChild?.addEventListener("click", () => {
+					if (combatant.parent?.combatant?.id === combatant.id) tryDelay()
+				})
 			}
+			if (delayButtonHTML) column.append(delayButtonHTML)
 		}
 	}
 
@@ -73,8 +75,10 @@ function onRenderTokenHUD(app: TokenHUD, html: JQuery) {
 		const token = app.object
 		const combatant = token?.combatant
 		if (combatant?.parent.started && !!combatant && combatant.initiative != null) {
-			const toggleCombatButton = html.find("div.control-icon[data-action=combat]")
-			toggleCombatButton?.hide()
+			const toggleCombatButton = html.querySelector<HTMLElement>(
+				"button.control-icon[data-action=combat]",
+			)
+			if (toggleCombatButton) toggleCombatButton.style.display = "none"
 		}
 	}
 }

@@ -2,6 +2,7 @@ import MODULE from "src/index"
 import { actorEffectBySlug, actorHasEffect, translate } from "src/utils"
 import type { ActorPF2e, ChatMessagePF2e, CombatantPF2e, EffectPF2e, ItemPF2e } from "foundry-pf2e"
 import { BaseModule } from "./base"
+import { MODULE_ID } from "src/constants"
 
 export class LifeLinkModule extends BaseModule {
 	settingsKey = "lifelink"
@@ -12,7 +13,7 @@ export class LifeLinkModule extends BaseModule {
 		this.registerHook("pf2e.startTurn", onStartTurn)
 		this.registerHook("createItem", onCreateItem)
 		this.registerHook("createChatMessage", onCreateMessage)
-		this.registerHook("renderChatMessage", onRenderChatMessage)
+		this.registerHook("renderChatMessageHTML", onRenderChatMessage)
 	}
 }
 
@@ -58,7 +59,8 @@ async function handleTransferButton(args: ButtonArgs) {
 	const target = fromUuidSync(args.target)
 	if (!target) return ui.notifications.error(translate("life-link.error-no-target"))
 	if (!source) return ui.notifications.error(translate("life-link.error-no-source"))
-	if (source.id === target.id) return ui.notifications.error(translate("life-link.error-source-is-target"))
+	if (source.id === target.id)
+		return ui.notifications.error(translate("life-link.error-source-is-target"))
 
 	let transfer = 0
 
@@ -107,7 +109,6 @@ async function handleTransferButton(args: ButtonArgs) {
 		])
 	}
 
-	// @ts-expect-error Using uuids as keys doesn't work, but this does. Only question is when does this break
 	await ChatMessage.create({
 		content: `<span class="undo-text">
     <span style="background-color: rgba(0,255,0,0.2);padding: 1px 3px;">${translate("life-link.hp-add", { actor: String(target.name), hp: heal })}</span>
@@ -117,10 +118,12 @@ async function handleTransferButton(args: ButtonArgs) {
     ${UNDO_BUTTON_MARKUP}
     `,
 		flags: {
-			undo: [
-				[source.uuid, dmg],
-				[target.uuid, -heal],
-			],
+			[MODULE_ID]: {
+				undo: [
+					[source.uuid, dmg],
+					[target.uuid, -heal],
+				],
+			},
 		},
 	})
 }
@@ -133,7 +136,8 @@ function handleSpiritLink(effect: EffectPF2e) {
 	}
 
 	if (!origin || origin.id === actor.id) {
-		ui.notifications.error(translate("life-link.spirit-link-error-bad-actor", { actor: actor.name }),
+		ui.notifications.error(
+			translate("life-link.spirit-link-error-bad-actor", { actor: actor.name }),
 		)
 		return null
 	}
@@ -142,11 +146,14 @@ function handleSpiritLink(effect: EffectPF2e) {
 	const missingHP = actor.system.attributes.hp!.max - actor.system.attributes.hp!.value
 	if (missingHP <= 0) return null
 
-	return makeButton(translate("life-link.spirit-link-button", { hp: transfer, actor: actor.name }), {
-		transfer,
-		source: origin.uuid,
-		target: actor.uuid,
-	})
+	return makeButton(
+		translate("life-link.spirit-link-button", { hp: transfer, actor: actor.name }),
+		{
+			transfer,
+			source: origin.uuid,
+			target: actor.uuid,
+		},
+	)
 }
 
 async function onStartTurn(combatant: CombatantPF2e) {
@@ -205,7 +212,8 @@ async function onCreateMessage(msg: ChatMessagePF2e) {
 	if (lifeLinkEffect && !actorHasEffect(actor, "life-link-cd")) {
 		lifeLinkTransfer = (() => {
 			if (!lifeLinkEffect.origin || lifeLinkEffect.origin.id === actor.id) {
-				ui.notifications.error(translate("life-link.life-link-error-bad-actor", { actor: actor.name }),
+				ui.notifications.error(
+					translate("life-link.life-link-error-bad-actor", { actor: actor.name }),
 					{
 						permanent: true,
 					},
@@ -237,60 +245,72 @@ async function onCreateMessage(msg: ChatMessagePF2e) {
 		)
 
 	const buttons: string[] = []
-		; (() => {
-			if (shareLifeEffect && lifeLinkTransfer) {
-				const remainingDmg = dmg - lifeLinkTransfer
+	;(() => {
+		if (shareLifeEffect && lifeLinkTransfer) {
+			const remainingDmg = dmg - lifeLinkTransfer
 
-				if (
-					shareLifeEffect?.origin &&
-					lifeLinkEffect?.origin &&
-					shareLifeEffect.origin.uuid === lifeLinkEffect.origin.uuid
-				) {
-					// Both effects from the same source -> One Button
-					buttons.push(
-						makeButton(
-							translate("life-link.damage-button", { damage: Math.ceil(remainingDmg / 2) + lifeLinkTransfer, actor: lifeLinkEffect.origin.name }),
-							{
-								transfer: lifeLinkTransfer,
-								heal: remainingDmg === 1 ? 1 : Math.floor(remainingDmg / 2),
-								dmg: Math.ceil(remainingDmg / 2),
-								cd: 1,
-								source: lifeLinkEffect.origin.uuid,
-								target: actor.uuid,
-							},
-						),
-					)
-					return
-				}
-			}
-			// return above means this is unreachable if both effects are from the same source
-			if (shareLifeEffect?.origin) {
-				const remainingDmg = dmg - lifeLinkTransfer
-				// Button for Share Life
-				if (remainingDmg)
-					buttons.push(
-						makeButton(
-							translate("life-link.share-life-damage-button", { damage: Math.ceil(remainingDmg / 2), actor: shareLifeEffect.origin.name }),
-							{
-								heal: remainingDmg === 1 ? 1 : Math.floor(remainingDmg / 2),
-								dmg: Math.ceil(remainingDmg / 2),
-								source: shareLifeEffect.origin.uuid,
-								target: actor.uuid,
-							},
-						),
-					)
-			}
-			if (lifeLinkEffect?.origin && lifeLinkTransfer) {
+			if (
+				shareLifeEffect?.origin &&
+				lifeLinkEffect?.origin &&
+				shareLifeEffect.origin.uuid === lifeLinkEffect.origin.uuid
+			) {
+				// Both effects from the same source -> One Button
 				buttons.push(
-					makeButton(translate("life-link.life-link-damage-button", { damage: lifeLinkTransfer, actor: lifeLinkEffect.origin.name }), {
+					makeButton(
+						translate("life-link.damage-button", {
+							damage: Math.ceil(remainingDmg / 2) + lifeLinkTransfer,
+							actor: lifeLinkEffect.origin.name,
+						}),
+						{
+							transfer: lifeLinkTransfer,
+							heal: remainingDmg === 1 ? 1 : Math.floor(remainingDmg / 2),
+							dmg: Math.ceil(remainingDmg / 2),
+							cd: 1,
+							source: lifeLinkEffect.origin.uuid,
+							target: actor.uuid,
+						},
+					),
+				)
+				return
+			}
+		}
+		// return above means this is unreachable if both effects are from the same source
+		if (shareLifeEffect?.origin) {
+			const remainingDmg = dmg - lifeLinkTransfer
+			// Button for Share Life
+			if (remainingDmg)
+				buttons.push(
+					makeButton(
+						translate("life-link.share-life-damage-button", {
+							damage: Math.ceil(remainingDmg / 2),
+							actor: shareLifeEffect.origin.name,
+						}),
+						{
+							heal: remainingDmg === 1 ? 1 : Math.floor(remainingDmg / 2),
+							dmg: Math.ceil(remainingDmg / 2),
+							source: shareLifeEffect.origin.uuid,
+							target: actor.uuid,
+						},
+					),
+				)
+		}
+		if (lifeLinkEffect?.origin && lifeLinkTransfer) {
+			buttons.push(
+				makeButton(
+					translate("life-link.life-link-damage-button", {
+						damage: lifeLinkTransfer,
+						actor: lifeLinkEffect.origin.name,
+					}),
+					{
 						transfer: lifeLinkTransfer,
 						cd: 1,
 						source: lifeLinkEffect.origin.uuid,
 						target: actor.uuid,
-					}),
-				)
-			}
-		})()
+					},
+				),
+			)
+		}
+	})()
 
 	if (buttons.length) {
 		await ChatMessage.create({
@@ -301,21 +321,22 @@ async function onCreateMessage(msg: ChatMessagePF2e) {
 	}
 }
 
-function onRenderChatMessage(msg: ChatMessagePF2e, html: JQuery) {
+function onRenderChatMessage(msg: ChatMessagePF2e, html: HTMLElement) {
 	if (!game.user?.isGM) return
-	html.find("a.life-link").on("click", async (event) => {
+	html.querySelector("a.life-link")?.addEventListener("click", async (event) => {
+		if (!(event.target instanceof HTMLElement)) return
 		const args = JSON.parse(event.target.dataset.args!) as ButtonArgs
 		await handleTransferButton(args)
 	})
-	html.find("button.fc-undo-button").on("click", async () => {
-		const data = msg.flags.undo as unknown as [string, number][]
+	html.querySelector("button.fc-undo-button")?.addEventListener("click", async () => {
+		const data = msg.flags[MODULE_ID]?.undo as [string, number][]
 		for (const [uuid, dmg] of data) {
 			const actor = await fromUuid(uuid)
 			await updateHP(actor, dmg)
 		}
-		html.find(".undo-text").addClass("undo")
+		html.querySelector<HTMLElement>(".undo-text")?.classList.add("undo")
 		await msg.update({
-			content: html.find(".message-content").html(),
+			content: html.querySelector(".message-content")?.innerHTML,
 		})
 	})
 }

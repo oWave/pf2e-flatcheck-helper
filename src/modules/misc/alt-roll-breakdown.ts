@@ -3,13 +3,13 @@ import type { ChatMessagePF2e } from "foundry-pf2e"
 import { BaseModule } from "../base"
 import { parseHTML } from "src/utils"
 
-export class AltRolLBreakdownModule extends BaseModule {
+export class AltRollBreakdownModule extends BaseModule {
 	settingsKey = "script-alt-roll-breakdown"
 
 	enable() {
 		super.enable()
 
-		this.registerHook("renderChatMessage", onRenderChatMessage)
+		this.registerHook("renderChatMessageHTML", onRenderChatMessage)
 	}
 
 	onReady() {
@@ -26,8 +26,7 @@ function shouldHide(msg: ChatMessagePF2e) {
 	)
 }
 
-async function onRenderChatMessage(msg: ChatMessagePF2e, $html: JQuery) {
-	const html = $html[0]
+async function onRenderChatMessage(msg: ChatMessagePF2e, html: HTMLElement) {
 	if (!shouldHide(msg)) return
 	if (!msg.flags.pf2e.modifiers) return
 
@@ -46,9 +45,9 @@ async function onRenderChatMessage(msg: ChatMessagePF2e, $html: JQuery) {
 				?.removeAttribute("data-visibility")
 		}
 	} else {
-		// Sanity check: Testing if the message already has modifiers the lazy way
+		// Sanity check: Testing if the message already has modifiers
 		// Don't add more modifiers if the message has some for whatever reason
-		if (!$html.find("div.tags.modifiers").is(":empty")) return
+		if (html.querySelector("div.tags.modifiers")?.childNodes.length !== 0) return
 		const modifiersHTML = toReveal.map((m) => {
 			const mod = m.modifier < 0 ? m.modifier : `+${m.modifier}`
 			return `<span class="tag tag_transparent" data-slug="${m.slug}">${m.label} ${mod}</span>`

@@ -31,13 +31,13 @@ export default defineConfig(({ command: _buildOrServe }) => ({
 		port: 30001,
 		proxy: {
 			// Serves static files from main Foundry server.
-			[`^(/${packagePath}/(assets|lang|packs|${skippedFiles}))`]: "http://localhost:30000",
+			[`^(/${packagePath}/(assets|lang|packs|${skippedFiles}))`]: "http://localhost:40000",
 
 			// All other paths besides package ID path are served from main Foundry server.
-			[`^(?!/${packagePath}/)`]: "http://localhost:30000",
+			[`^(?!/${packagePath}/)`]: "http://localhost:40000",
 
 			// Enable socket.io from main Foundry server.
-			"/socket.io": { target: "ws://localhost:30000", ws: true },
+			"/socket.io": { target: "ws://localhost:40000", ws: true },
 		},
 	},
 

@@ -42,9 +42,14 @@ const tokenTargetManager = {
 
 const style: Partial<PIXI.ITextStyle> = { align: "center", dropShadow: false, strokeThickness: 2 }
 const textStyles = {
-	normal: (scale: number) => PreciseText.getTextStyle({ fontSize: 14 * scale, ...style }),
+	normal: (scale: number) =>
+		foundry.canvas.containers.PreciseText.getTextStyle({ fontSize: 14 * scale, ...style }),
 	small: (scale: number) =>
-		PreciseText.getTextStyle({ fontSize: 12 * scale, fill: "#eeeeee", ...style }),
+		foundry.canvas.containers.PreciseText.getTextStyle({
+			fontSize: 12 * scale,
+			fill: "#eeeeee",
+			...style,
+		}),
 }
 
 class TokenTargetRenderer {

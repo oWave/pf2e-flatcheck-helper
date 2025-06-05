@@ -6,9 +6,9 @@
 	"library": "false",
 	"socket": true,
 	"compatibility": {
-		"minimum": 12,
-		"verified": 12,
-		"maximum": 12
+		"minimum": 13,
+		"verified": 13,
+		"maximum": 13
 	},
 	"authors": [
 		{
@@ -42,7 +42,7 @@
 				"id": "pf2e",
 				"type": "system",
 				"compatibility": {
-					"minimum": "6.1.0"
+					"minimum": "7.1.0"
 				}
 			}
 		],

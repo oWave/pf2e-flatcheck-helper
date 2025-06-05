@@ -14,7 +14,7 @@ export class MessageFlatCheckModule extends BaseModule {
 		super.enable()
 
 		this.registerHook("preCreateChatMessage", preCreateMessage)
-		this.registerWrapper("ChatMessage.prototype.getHTML", messageGetHTMLWrapper, "WRAPPER")
+		this.registerWrapper("ChatMessage.prototype.renderHTML", messageGetHTMLWrapper, "WRAPPER")
 		this.registerSocket("flat-dsn", handleDSNSocket)
 	}
 	disable() {
@@ -31,8 +31,7 @@ export class MessageFlatCheckModule extends BaseModule {
 			) {
 				foundry.applications.api.DialogV2.prompt({
 					window: { title: translate("flat.message.perception-outdated-title") },
-					content:
-						translate("flat.message.perception-outdated-content"),
+					content: translate("flat.message.perception-outdated-content"),
 					ok: {
 						label: translate("flat.message.button-close"),
 						icon: "fas fa-close",
@@ -69,7 +68,7 @@ interface ButtonsFlags {
 }
 
 export async function messageGetHTMLWrapper(this: ChatMessagePF2e, wrapper, ...args) {
-	const html: JQuery = await wrapper(...args)
+	const html: HTMLElement = await wrapper(...args)
 
 	try {
 		if (this.isContentVisible) renderButtons(this, html)
@@ -80,7 +79,7 @@ export async function messageGetHTMLWrapper(this: ChatMessagePF2e, wrapper, ...a
 	return html
 }
 
-function renderButtons(msg: ChatMessagePF2e, html: JQuery) {
+function renderButtons(msg: ChatMessagePF2e, html: HTMLElement) {
 	const buttons: Array<(ButtonData & { key: string }) | { text: string }> = []
 	const data = msg.flags[MODULE_ID]?.flatchecks as ButtonsFlags | undefined
 	if (data) {
@@ -89,7 +88,9 @@ function renderButtons(msg: ChatMessagePF2e, html: JQuery) {
 		if (data.deafened) buttons.push({ key: "deafened", ...data.deafened })
 		if (data.targets) {
 			if ("count" in data.targets)
-				buttons.push({ text: translate("flat.message.button-require-flat-check", { count: data.targets.count }) })
+				buttons.push({
+					text: translate("flat.message.button-require-flat-check", { count: data.targets.count }),
+				})
 			else buttons.push({ key: "targets", ...data.targets })
 		}
 	} else {
@@ -105,7 +106,7 @@ function renderButtons(msg: ChatMessagePF2e, html: JQuery) {
 			const buttonIcon = data.roll ? "fa-rotate rotate" : "fa-dice-d20 die"
 			const buttonClass =
 				msg.canUserModify(game.user as unknown as foundry.documents.BaseUser, "update") &&
-					!data.reroll
+				!data.reroll
 					? ""
 					: "hidden"
 
@@ -156,27 +157,27 @@ function renderButtons(msg: ChatMessagePF2e, html: JQuery) {
 					<span data-tooltip='"${translate("flat.message.tooltip-highest-dc")}"'><i class="fa-solid fa-circle-info"></i></span>
 				</div>`)
 		}
-		; (() => {
-			let section = html.find("section.card-buttons")
-			if (section.length) {
+		;(() => {
+			let section = html.querySelector("section.card-buttons")
+			if (section) {
 				section.append(buttonNode)
 				return
 			}
 
-			section = html.find("div.dice-roll")
-			if (section.length) {
+			section = html.querySelector("div.dice-roll")
+			if (section) {
 				section.after(buttonNode)
 				return
 			}
 
-			section = html.find("footer")
-			if (section.length) {
+			section = html.querySelector("footer")
+			if (section) {
 				section.before(buttonNode)
 				return
 			}
 
-			section = html.find("div.message-content")
-			if (section.length) {
+			section = html.querySelector("div.message-content")
+			if (section) {
 				section.append(buttonNode)
 				return
 			}
@@ -184,11 +185,16 @@ function renderButtons(msg: ChatMessagePF2e, html: JQuery) {
 			console.error("Could not insert flat check buttons into message.", msg)
 		})()
 
-		html.on("click", 'button[data-action="roll-flatcheck"]', function (this: HTMLButtonElement) {
-			const key = this.dataset.key!
-			const dc = Number(this.dataset.dc)
-
-			handleFlatButtonClick(msg, key, dc)
+		html.addEventListener("click", (event) => {
+			const element = event.target
+			if (
+				element instanceof HTMLElement &&
+				element.matches('button[data-action="roll-flatcheck"]')
+			) {
+				const key = element.dataset.key!
+				const dc = Number(element.dataset.dc)
+				handleFlatButtonClick(msg, key, dc)
+			}
 		})
 	}
 }
@@ -311,7 +317,10 @@ export async function preCreateMessage(msg: ChatMessagePF2e) {
 	if (!ignored.has("stupefied") && msg.flags?.pf2e?.origin?.type === "spell") {
 		const stupefied = msg.actor?.conditions.stupefied?.value
 		if (stupefied) {
-			data.stupefied = { label: translate("flat.message.stupefied", { value: stupefied }), dc: 5 + stupefied }
+			data.stupefied = {
+				label: translate("flat.message.stupefied", { value: stupefied }),
+				dc: 5 + stupefied,
+			}
 		}
 	}
 

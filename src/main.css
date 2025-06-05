@@ -1,5 +1,4 @@
 @import "./modules/flat/message-config.css";
-@import "./svelte/tailwind.css";
 
 #fc-container {
 	flex: 0;
@@ -25,32 +24,29 @@
 	}
 }
 
-#initiative-delay,
-#initiative-return {
-	/* padding: 4px 12px; */
-	margin: 4px;
-	text-align: center;
+.initiative-delay,
+.initiative-return {
+	height: var(--input-height);
+	width: var(--input-height);
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
 	color: white;
-	background-color: rgba(255, 255, 255, 0.2);
+	background: var(--color-cool-4);
 	outline: black solid 1px;
 	border-radius: 4px;
-}
 
-#initiative-delay,
-.initiative-return {
 	cursor: pointer;
 }
 
-#initiative-return .fa-play {
+.initiative-return .fa-play {
 	display: none;
 }
-#initiative-return .delay-indicator {
+.initiative-return .delay-indicator {
 	animation: rotating 4s linear infinite;
-	width: 25px;
-	height: 25px;
-	display: inline-block;
-	position: relative;
-	top: 8.5px;
+	padding: 4px;
 }
 
 .initiative-return:hover .fa-play {
@@ -83,21 +79,6 @@
 	}
 }
 
-#pf2e-hud-tracker .combatant .initiative {
-	.delay-indicator {
-		animation: rotating 4s linear infinite;
-	}
-
-	.delay-return .delay-indicator:hover {
-		animation: unset;
-
-		&:before {
-			/* fa-play */
-			content: "\f04b";
-		}
-	}
-}
-
 .fc-flatcheck-buttons {
 	display: flex;
 	flex-direction: column;
@@ -107,10 +88,10 @@
 		align-items: center;
 		font-size: var(--font-size-14);
 		font-family: var(--font-primary);
-		background: rgba(255, 255, 240, 0.2);
-		border: 1px solid var(--color-border-light-primary);
+		background: rgba(0, 0, 0, 0.1);
+		border: 1px solid #999;
 		border-radius: 3px;
-		margin: var(--space-2) 0;
+		margin: 5px 0 0 0;
 		line-height: 28px;
 
 		> span {
@@ -121,7 +102,7 @@
 			justify-content: center;
 
 			&:not(:last-child) {
-				border-right: 1px solid var(--color-border-light-primary);
+				border-right: 1px solid #999;
 			}
 		}
 		.fc-label {
@@ -138,7 +119,7 @@
 			max-width: 20%;
 		}
 		.fc-roll {
-			background: rgba(0, 0, 0, 0.1);
+			/* background: rgba(0, 0, 0, 0.1); */
 			font-size: var(--font-size-20);
 			font-weight: bold;
 
@@ -183,6 +164,10 @@
 			border-top-left-radius: 0;
 			border-bottom-left-radius: 0;
 
+			height: unset !important;
+			min-height: unset !important;
+			align-self: stretch;
+
 			&.hidden {
 				display: none;
 			}
@@ -199,8 +184,9 @@
 		justify-content: center;
 		align-items: center;
 
-		background: rgba(255, 255, 240, 0.2);
-		border: 1px solid var(--color-border-light-primary);
+		background: rgba(0, 0, 0, 0.1);
+		margin: 5px 0 0 0;
+		border: 1px solid #999;
 		border-radius: 3px;
 
 		i {
@@ -215,6 +201,12 @@
 		cursor: help;
 		display: flex;
 		justify-content: center;
+	}
+}
+
+#fc-flat-check-config {
+	.form-group {
+		display: block;
 	}
 }
 
