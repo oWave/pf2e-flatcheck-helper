@@ -89,51 +89,5 @@ export function darknessAtPoint(x: number, y: number) {
 		return Math.min(darkness, globalLevel)
 	}
 
-	// TODO: Check if this whole mess can be replaced with canvas.effects.getDarknessLevel
-
-	const AdjustDarknessLevelRegionBehaviorType =
-		foundry.data.regionBehaviors.AdjustDarknessLevelRegionBehaviorType
-
-	const point = new PIXI.Point(x, y)
-	const adjustDarknessBehaviors = R.pipe(
-		canvas.scene!.regions.contents,
-		R.filter((r) => r.behaviors.some((b) => !b.disabled && b.type === "adjustDarknessLevel")),
-		R.filter((r) => r.object.testPoint(point, 0)),
-		R.flatMap((r) => r.behaviors.contents),
-		R.filter((b) => !b.disabled && b.type === "adjustDarknessLevel" && b.system.mode !== null),
-		R.map((b) => b.system as foundry.data.regionBehaviors.AdjustDarknessLevelRegionBehaviorType),
-	)
-
-	if (adjustDarknessBehaviors.length === 0) {
-		return Math.min(darkness, globalLevel)
-	}
-
-	const adjustDarknessBehaviorGroups = R.pipe(
-		adjustDarknessBehaviors,
-		R.groupBy((b) => b.mode!),
-	)
-
-	if (adjustDarknessBehaviorGroups[AdjustDarknessLevelRegionBehaviorType.MODES.BRIGHTEN]?.length) {
-		const max = R.pipe(
-			adjustDarknessBehaviorGroups[AdjustDarknessLevelRegionBehaviorType.MODES.BRIGHTEN]!,
-			R.firstBy([(b) => b.modifier, "desc"]),
-		)
-		return globalLevel * (1 - max.modifier)
-	}
-	if (adjustDarknessBehaviorGroups[AdjustDarknessLevelRegionBehaviorType.MODES.DARKEN]?.length) {
-		const min = R.pipe(
-			adjustDarknessBehaviorGroups[AdjustDarknessLevelRegionBehaviorType.MODES.DARKEN]!,
-			R.firstBy([(b) => b.modifier, "asc"]),
-		)
-		return 1 - (1 - globalLevel) * (1 - min.modifier)
-	}
-	if (adjustDarknessBehaviorGroups[AdjustDarknessLevelRegionBehaviorType.MODES.OVERRIDE]?.length) {
-		const min = R.pipe(
-			adjustDarknessBehaviorGroups[AdjustDarknessLevelRegionBehaviorType.MODES.OVERRIDE]!,
-			R.firstBy([(b) => b.modifier, "asc"]),
-		)
-		return min.modifier
-	}
-
-	return darkness
+	return canvas.effects.getDarknessLevel({ x, y, elevation: 0 })
 }

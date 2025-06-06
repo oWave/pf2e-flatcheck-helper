@@ -2,6 +2,8 @@
 🥭
 
 ## [Unreleased]
+### Fixed
+- Switch to foundry's calculation for darkness regions
 
 ## [0.16.0] - 2025-06-05
 Foundry v13 release
