@@ -2,9 +2,12 @@
 🥭
 
 ## [Unreleased]
+
+## [0.16.1] - 2025-07-17
 ### Fixed
 - Switch to foundry's calculation for darkness regions
 - Delay button not showing in the combat tracker
+- Flat checks showing on rolls that don't need any
 
 ## [0.16.0] - 2025-06-05
 Foundry v13 release
@@ -64,7 +67,8 @@ Foundry v13 release
 ### Fixed
 - Flat checks showing on damage/healing received messages
 
-[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.16.0...HEAD
+[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.16.1...HEAD
+[0.16.1]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.16.0...v0.16.1
 [0.16.0]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.15.1...v0.16.0
 [0.15.1]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.15.0...v0.15.1
 [0.15.0]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.14.5...v0.15.0
