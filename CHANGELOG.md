@@ -4,6 +4,7 @@
 ## [Unreleased]
 ### Fixed
 - Switch to foundry's calculation for darkness regions
+- Delay button not showing in the combat tracker
 
 ## [0.16.0] - 2025-06-05
 Foundry v13 release

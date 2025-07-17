@@ -12,9 +12,9 @@ export function onRenderCombatTracker(tracker, html: HTMLElement, data) {
 	const combatantElements = html.querySelectorAll<HTMLElement>("li.combatant")
 	for (const el of combatantElements) {
 		const id = el.dataset.combatantId
-		if (!id) return
+		if (!id) continue
 		const combatant = combat.combatants.get(id)
-		if (!combatant?.isOwner || combatant.initiative == null) return
+		if (!combatant?.isOwner || combatant.initiative == null) continue
 
 		if (combat.combatant?.id === combatant.id) drawButton("delay", el, combatant)
 		else if (combatant.actor && isDelaying(combatant.actor)) drawButton("return", el, combatant)
