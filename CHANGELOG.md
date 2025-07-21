@@ -2,6 +2,8 @@
 🥭
 
 ## [Unreleased]
+### Fixed
+- Greater Darkvision not counting as Darkvision
 
 ## [0.16.1] - 2025-07-17
 ### Fixed

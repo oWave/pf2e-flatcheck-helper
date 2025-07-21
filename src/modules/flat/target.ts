@@ -143,31 +143,30 @@ export function calculateFlatCheck(
 
 export function conditionFromLightLevel(
 	origin: ActorPF2e | null,
-	token: Token,
+	token: TokenPF2e,
 ): { description: string; slug: TargetConditionSlug; dc: number } | null {
 	let hasDarkvision = false
 	let hasLowLightVision = false
 	if (origin?.isOfType("creature")) {
-		// TODO: Is this a good idea?
-		/* const hasOtherPreciseSense = origin.system.perception.senses.some(
-			(sense) =>
-				sense.acuity === "precise" && !["low-light-vision", "darkvision"].includes(sense.type),
-		)
-		if (hasOtherPreciseSense) return null */
-
-		hasDarkvision = origin.system.perception.senses.some((sense) => sense.type === "darkvision")
+		hasDarkvision = origin.hasDarkvision
 		if (hasDarkvision) return null
 
-		hasLowLightVision =
-			hasDarkvision ||
-			origin.system.perception.senses.some((sense) => sense.type === "low-light-vision")
+		hasLowLightVision = origin.hasLowLightVision
 	}
 
 	const lightLevel = tokenLightLevel(token)
 	if (lightLevel === LightLevels.DARK && !hasDarkvision)
-		return { description: translate("flat.target.darkness"), slug: "hidden", dc: targetConditionDCs.hidden }
+		return {
+			description: translate("flat.target.darkness"),
+			slug: "hidden",
+			dc: targetConditionDCs.hidden,
+		}
 	if (lightLevel === LightLevels.DIM && !hasLowLightVision)
-		return { description: translate("flat.target.dim-light"), slug: "concealed", dc: targetConditionDCs.concealed }
+		return {
+			description: translate("flat.target.dim-light"),
+			slug: "concealed",
+			dc: targetConditionDCs.concealed,
+		}
 	return null
 }
 
