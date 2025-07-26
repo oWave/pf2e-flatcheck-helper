@@ -51,9 +51,6 @@
 	"esmodules": [
 		"dist/module.js"
 	],
-	"styles": [
-		"dist/module.css"
-	],
 	"languages": [
 		{
 			"lang": "en",

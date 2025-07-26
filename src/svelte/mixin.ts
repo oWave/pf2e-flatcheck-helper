@@ -2,36 +2,39 @@ import type {
 	ApplicationConfiguration,
 	ApplicationRenderContext,
 	ApplicationRenderOptions,
-} from "foundry-pf2e/foundry/client-esm/applications/_types.js"
-import type ApplicationV2 from "foundry-pf2e/foundry/client-esm/applications/api/application.js"
+} from "foundry-pf2e/foundry/client/applications/_types.mjs"
+import type ApplicationV2 from "foundry-pf2e/foundry/client/applications/api/application.mjs"
 import * as svelte from "svelte"
 
 export function SvelteMixin<TBase extends AbstractConstructorOf<ApplicationV2>>(
 	BaseApplication: TBase,
 ) {
 	abstract class SvelteApp extends BaseApplication {
-		abstract component: svelte.Component
+		abstract component: svelte.Component<any>
 
 		static DEFAULT_OPTIONS: DeepPartial<ApplicationConfiguration> = {
 			classes: ["fc-svelte"],
 		}
 
-		protected async _renderHTML(
-			context: ApplicationRenderContext,
-			options: ApplicationRenderOptions,
-		) {
-			return context
+		async _renderHTML(context: ApplicationRenderContext, options: ApplicationRenderOptions) {
+			return { props: await this.getProps() }
 		}
-		protected _replaceHTML(
-			result: ApplicationRenderContext,
+		_replaceHTML(
+			result: Awaited<ReturnType<typeof this._renderHTML>>,
 			content: HTMLElement,
 			options: ApplicationRenderOptions,
 		): void {
 			if (options.isFirstRender) {
-				svelte.mount(this.component, { target: content })
+				svelte.mount(this.component, { target: content, props: { ...result.props, shell: this } })
 			}
+		}
+
+		async getProps(): Promise<svelte.ComponentProps<typeof this.component> | undefined> {
+			return undefined
 		}
 	}
 
 	return SvelteApp
 }
+
+export const SvelteApp = SvelteMixin(foundry.applications.api.ApplicationV2)

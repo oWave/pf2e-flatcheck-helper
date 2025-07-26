@@ -31,13 +31,13 @@ export default defineConfig(({ command: _buildOrServe }) => ({
 		port: 30001,
 		proxy: {
 			// Serves static files from main Foundry server.
-			[`^(/${packagePath}/(assets|lang|packs|${skippedFiles}))`]: "http://localhost:40000",
+			[`^(/${packagePath}/(assets|lang|packs|${skippedFiles}))`]: "http://localhost:30000",
 
 			// All other paths besides package ID path are served from main Foundry server.
-			[`^(?!/${packagePath}/)`]: "http://localhost:40000",
+			[`^(?!/${packagePath}/)`]: "http://localhost:30000",
 
 			// Enable socket.io from main Foundry server.
-			"/socket.io": { target: "ws://localhost:40000", ws: true },
+			"/socket.io": { target: "ws://localhost:30000", ws: true },
 		},
 	},
 
@@ -93,9 +93,11 @@ export default defineConfig(({ command: _buildOrServe }) => ({
 			name: "create-dist-files",
 			apply: "serve",
 			buildStart() {
-				const files = [...moduleJSON.esmodules, ...moduleJSON.styles]
+				const files = [...moduleJSON.esmodules]
 				for (const name of files) {
-					fs.writeFileSync(`${name}`, "", { flag: "a" })
+					// Files need to exist for foundry to not complain
+					// But also empty or code/css will be loaded twice
+					fs.writeFileSync(`${name}`, "")
 				}
 			},
 		},

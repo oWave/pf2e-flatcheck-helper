@@ -1,6 +1,9 @@
 import type { Action } from "svelte/action"
 
-export const tooltip: Action<HTMLElement, { text: string }> = (node, { text }) => {
+export const tooltip: Action<HTMLElement, { text: string; align?: "center" | "right" }> = (
+	node,
+	{ text, align = "right" },
+) => {
 	if (!text) return
 	let div: HTMLDivElement | null = null
 
@@ -16,16 +19,34 @@ export const tooltip: Action<HTMLElement, { text: string }> = (node, { text }) =
 			color: "hsl(0, 0%, 90%)",
 			opacity: "0",
 			transition: "opacity 0.5s",
-			whiteSpace: "pre-wrap",
+			whiteSpace: "nowrap",
 			zIndex: "9999",
 		}
 
 		Object.assign(div.style, style)
-
-		const bounds = node.getBoundingClientRect()
-		div.style.top = `${bounds.bottom}px`
-		div.style.left = `${bounds.right}px`
 		document.body.appendChild(div)
+
+		const parentBounds = node.getBoundingClientRect()
+		let divBounds = div.getBoundingClientRect()
+		const viewBounds = document.body.getBoundingClientRect()
+		div.style.top = `${parentBounds.bottom}px`
+		if (align === "right") {
+			div.style.left = `${parentBounds.right}px`
+		} else {
+			div.style.left = `${parentBounds.left + parentBounds.width / 2 - divBounds.width / 2}px`
+		}
+
+		divBounds = div.getBoundingClientRect()
+
+		const padding = 5
+
+		if (divBounds.right > viewBounds.right - padding) {
+			const diff = divBounds.right - viewBounds.right + padding
+			div.style.left = `${divBounds.left - diff}px`
+		} else if (divBounds.left < viewBounds.left + padding) {
+			const diff = viewBounds.left - divBounds.left + padding
+			div.style.left = `${divBounds.left - diff}px`
+		}
 
 		setTimeout(() => {
 			if (div) div.style.opacity = "1"

@@ -204,12 +204,6 @@
 	}
 }
 
-#fc-flat-check-config {
-	.form-group {
-		display: block;
-	}
-}
-
 [id="pf2e-flatcheck-helper.flatcheck.reroll"] .dialog-content {
 	gap: 8px;
 }

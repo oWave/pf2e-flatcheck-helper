@@ -3,7 +3,7 @@ import { darknessAtPoint, Grid, type LightLevel, LightLevels } from "./utils"
 import { MODULE_ID } from "src/constants"
 
 declare global {
-	interface Canvas {
+	interface CanvasPF2e {
 		lightVis: LightVisLayer
 	}
 }
@@ -27,7 +27,7 @@ class HighlightRenderer {
 	#layer: PIXI.Graphics | null = null
 	#addLayer() {
 		this.#layer = new PIXI.Graphics()
-		canvas.lightVis.addChild(this.#layer)
+		;((canvas as any).lightVis as LightVisLayer).addChild(this.#layer)
 		return this.#layer
 	}
 	get layer() {

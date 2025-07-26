@@ -56,10 +56,10 @@ function flatCheckDataForOrigin(origin: CreaturePF2e): ConditionData | null {
 
 	return originCondition
 		? {
-			slug: originToTargetCondition[originCondition],
-			dc: originConditionDCs[originCondition],
-			description: translate(`flat.target.condition.${originCondition}`),
-		}
+				slug: originToTargetCondition[originCondition],
+				dc: originConditionDCs[originCondition],
+				description: translate(`flat.target.condition.${originCondition}`),
+			}
 		: null
 }
 

@@ -1,3 +1,4 @@
+import type Token from "foundry-pf2e/foundry/client/canvas/placeables/token.mjs"
 import { darknessAtPoint, LightLevels } from "./utils"
 
 export function tokenExposure(token: Token) {

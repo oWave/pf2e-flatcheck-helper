@@ -1,5 +1,6 @@
-import type PointLightSource from "foundry-pf2e/foundry/client-esm/canvas/sources/point-light-source.js"
-import * as R from "remeda"
+import type { Token } from "foundry-pf2e/foundry/client/canvas/placeables/_module.mjs"
+import type AmbientLight from "foundry-pf2e/foundry/client/canvas/placeables/light.mjs"
+import type PointLightSource from "foundry-pf2e/foundry/client/canvas/sources/point-light-source.mjs"
 
 export const Grid = class<T> {
 	#elements: Array<T>
@@ -63,8 +64,9 @@ export const TargetColors = Object.freeze({
 
 export type LightLevel = typeof LightLevels.DARK
 
-export function darknessAtPoint(x: number, y: number) {
+export function darknessAtPoint(x: number, y: number): number {
 	for (const source of (canvas.effects as any).darknessSources as Collection<
+		string,
 		PointLightSource<AmbientLight | Token>
 	>) {
 		if (!source.shape.contains(x, y)) continue
@@ -89,5 +91,6 @@ export function darknessAtPoint(x: number, y: number) {
 		return Math.min(darkness, globalLevel)
 	}
 
+	// @ts-expect-error
 	return canvas.effects.getDarknessLevel({ x, y, elevation: 0 })
 }
