@@ -1,9 +1,9 @@
-import { MODULE_ID } from "src/constants"
 import type { EffectPF2e, SpellPF2e, TokenDocumentPF2e } from "foundry-pf2e"
-import { type EmanationRequestData, extractFlagData } from "./emanation"
+import { MODULE_ID } from "src/constants"
 import { translate } from "src/utils"
+import { type EmanationRequestData, extractFlagData } from "./emanation"
 
-export class EmanationRequestDialog extends Application {
+export class EmanationRequestDialog extends foundry.appv1.api.Application {
 	#request: EmanationRequestData
 
 	cache?: {
@@ -82,7 +82,7 @@ export class EmanationRequestDialog extends Application {
 
 		const durationOverride = this.element.find('input[type="number"]').val() as number | undefined
 		const excludedIds = new Set<string>()
-		this.element.find<HTMLInputElement>('input[type="checkbox"]').each((i, el) => {
+		this.element.find<HTMLInputElement>('input[type="checkbox"]').each((_i, el) => {
 			if (!el.checked) excludedIds.add(el.dataset.id!)
 		})
 
@@ -104,7 +104,7 @@ export class EmanationRequestDialog extends Application {
 		this.close()
 	}
 
-	static override get defaultOptions(): ApplicationOptions {
+	static override get defaultOptions(): foundry.appv1.api.ApplicationV1Options {
 		return {
 			...super.defaultOptions,
 			title: translate("emanation.dialog-effect-title"),

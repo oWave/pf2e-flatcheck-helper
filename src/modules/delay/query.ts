@@ -1,6 +1,6 @@
-import type { CombatantPF2e, EncounterPF2e, RolledCombatant } from "foundry-pf2e"
+import type { EncounterPF2e, RolledCombatant } from "foundry-pf2e"
 import { QUERIES } from "src/constants"
-import { sleep, translate } from "src/utils"
+import { translate } from "src/utils"
 import { setInitiativeFromDrop } from "./utils"
 
 interface GmMoveQueryData {

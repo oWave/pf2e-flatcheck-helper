@@ -12,11 +12,7 @@
 		/* "typeRoots": [
 			"./node_modules/@types"
 		], */
-		"types": [
-			"foundry-pf2e",
-			"jquery",
-			"vite/client"
-		],
+		"types": ["foundry-pf2e", "jquery", "vite/client"],
 		"allowSyntheticDefaultImports": true,
 		"allowImportingTsExtensions": true,
 		"esModuleInterop": true,
@@ -25,15 +21,9 @@
 		"verbatimModuleSyntax": true,
 		"baseUrl": ".",
 		"paths": {
-			"src": [
-				"./src/index"
-			],
-			"src/*": [
-				"./src/*"
-			]
+			"src": ["./src/index"],
+			"src/*": ["./src/*"]
 		}
 	},
-	"include": [
-		"./src/**/*",
-	],
+	"include": ["./src/**/*"]
 }

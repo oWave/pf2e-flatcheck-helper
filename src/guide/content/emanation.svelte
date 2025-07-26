@@ -28,10 +28,10 @@
 </div>
 
 <script lang="ts">
-import Important from "./component/important.svelte"
-import ImgConfig from "src/guide/content/img/emanation-config.webp"
 import ImgChatCard from "src/guide/content/img/emanation-chat-card.webp"
+import ImgConfig from "src/guide/content/img/emanation-config.webp"
 import ImgDialog from "src/guide/content/img/emanation-dialog.webp"
+import Important from "./component/important.svelte"
 import SettingInput from "./component/setting-input.svelte"
 </script>
 

@@ -23,11 +23,11 @@
 
 <script lang="ts">
 import { fly, slide } from "svelte/transition"
-import Intro from "./content/intro.svelte"
-import Flat from "./content/flat.svelte"
 import Delay from "./content/delay.svelte"
-import HpTransfer from "./content/hp-transfer.svelte"
 import Emanation from "./content/emanation.svelte"
+import Flat from "./content/flat.svelte"
+import HpTransfer from "./content/hp-transfer.svelte"
+import Intro from "./content/intro.svelte"
 import Misc from "./content/misc.svelte"
 import { getStore } from "./setting.svelte"
 

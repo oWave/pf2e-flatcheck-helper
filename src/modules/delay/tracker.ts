@@ -1,8 +1,8 @@
-import MODULE from "src/index"
 import type { CombatantPF2e } from "foundry-pf2e"
-import { isDelaying } from "./utils"
+import MODULE from "src/index"
 import { parseHTML, translate } from "src/utils"
 import { handleRequest } from "./delay"
+import { isDelaying } from "./utils"
 
 export function onRenderCombatTracker(_tracker, html: HTMLElement, _data) {
 	if (!MODULE.settings.showInCombatTracker) return

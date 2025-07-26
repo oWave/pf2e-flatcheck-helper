@@ -1,8 +1,8 @@
-import type { ActorPF2e, CreaturePF2e, ScenePF2e, TokenDocumentPF2e, TokenPF2e } from "foundry-pf2e"
+import type { ActorPF2e, CreaturePF2e, TokenPF2e } from "foundry-pf2e"
+import { translate } from "src/utils"
 import { tokenLightLevel } from "./light/token"
 import { LightLevels } from "./light/utils"
 import { flatMessageConfig } from "./message-config"
-import { translate } from "src/utils"
 
 const originConditionDCs = {
 	dazzled: 5,

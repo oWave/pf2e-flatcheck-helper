@@ -1,8 +1,8 @@
+import type { ActorPF2e, ChatMessagePF2e, CombatantPF2e, EffectPF2e, ItemPF2e } from "foundry-pf2e"
+import { MODULE_ID } from "src/constants"
 import MODULE from "src/index"
 import { actorEffectBySlug, actorHasEffect, translate } from "src/utils"
-import type { ActorPF2e, ChatMessagePF2e, CombatantPF2e, EffectPF2e, ItemPF2e } from "foundry-pf2e"
 import { BaseModule } from "./base"
-import { MODULE_ID } from "src/constants"
 
 export class LifeLinkModule extends BaseModule {
 	settingsKey = "lifelink"

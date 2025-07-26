@@ -26,7 +26,7 @@
 </div>
 
 <script lang="ts">
-import Important from "./component/important.svelte"
 import Img from "src/guide/content/img/hp-transfer.webp"
+import Important from "./component/important.svelte"
 import SettingInput from "./component/setting-input.svelte"
 </script>

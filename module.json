@@ -20,9 +20,7 @@
 		{
 			"name": "PF2e Utility Buttons",
 			"sorting": "a",
-			"packs": [
-				"Effects"
-			]
+			"packs": ["Effects"]
 		}
 	],
 	"packs": [
@@ -48,9 +46,7 @@
 		],
 		"requires": []
 	},
-	"esmodules": [
-		"dist/module.js"
-	],
+	"esmodules": ["dist/module.js"],
 	"languages": [
 		{
 			"lang": "en",
@@ -65,16 +61,8 @@
 	],
 	"flags": {
 		"hotReload": {
-			"extensions": [
-				"css",
-				"hbs",
-				"json"
-			],
-			"paths": [
-				"templates",
-				"styles",
-				"lang"
-			]
+			"extensions": ["css", "hbs", "json"],
+			"paths": ["templates", "styles", "lang"]
 		}
 	},
 	"url": "This is auto replaced",

@@ -1,8 +1,9 @@
+import type { TokenPF2e } from "foundry-pf2e"
+import type Token from "foundry-pf2e/foundry/client/canvas/placeables/token.mjs"
+import { translate } from "src/utils"
 import { BaseModule } from "../base"
 import { TargetColors } from "./light/utils"
-import type { TokenPF2e } from "foundry-pf2e"
 import { calculateFlatCheck, guessOrigin } from "./target"
-import { translate } from "src/utils"
 
 function calcScaleFromToken(token: Token, multPerSquare = 0) {
 	const gridSize = token.scene!.grid.size
@@ -111,7 +112,7 @@ export class TargetInfoModule extends BaseModule {
 	settingsKey = "flat-check-targer-marker"
 
 	enable(): void {
-		this.registerHook("targetToken", (user: User, token: TokenPF2e, state, boolean) => {
+		this.registerHook("targetToken", (user: User, token: TokenPF2e, state: boolean) => {
 			if (user !== game.user) return
 			if (state) tokenTargetManager.target(token)
 			else tokenTargetManager.untarget(token)

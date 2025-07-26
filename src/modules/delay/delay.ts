@@ -1,8 +1,8 @@
 import type { ActorPF2e, CombatantPF2e, TokenDocumentPF2e } from "foundry-pf2e"
 import MODULE from "src"
 import { combatantIsNext, translate } from "src/utils"
-import { isDelaying } from "./utils"
 import { sendGmMoveQuery } from "./query"
+import { isDelaying } from "./utils"
 
 interface RequestOpts {
 	combatant: CombatantPF2e

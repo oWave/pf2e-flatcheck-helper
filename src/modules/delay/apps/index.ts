@@ -1,9 +1,9 @@
+import type { CombatantPF2e } from "foundry-pf2e"
 import type { ApplicationConfiguration } from "foundry-pf2e/foundry/client/applications/_types.mjs"
 import { MODULE_ID } from "src/constants"
 import { SvelteMixin } from "src/svelte/mixin"
 import { translate } from "src/utils"
 import Prompt from "./prompt.svelte"
-import type { CombatantPF2e } from "foundry-pf2e"
 
 export class DelayPromptDialog extends SvelteMixin(foundry.applications.api.ApplicationV2) {
 	component = Prompt

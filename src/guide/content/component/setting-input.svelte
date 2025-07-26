@@ -34,11 +34,11 @@
 </div>
 
 <script lang="ts">
+import MODULE from "src"
 import { MODULE_ID } from "src/constants"
+import { translate } from "src/utils"
 import { getStore } from "../../setting.svelte"
 import { tooltip } from "./tooltip.svelte"
-import { translate } from "src/utils"
-import MODULE from "src"
 
 interface Props {
 	label: string

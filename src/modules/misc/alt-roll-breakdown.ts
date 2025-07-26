@@ -1,7 +1,7 @@
-import { MODULE_ID } from "src/constants"
 import type { ChatMessagePF2e } from "foundry-pf2e"
-import { BaseModule } from "../base"
+import { MODULE_ID } from "src/constants"
 import { parseHTML } from "src/utils"
+import { BaseModule } from "../base"
 
 export class AltRollBreakdownModule extends BaseModule {
 	settingsKey = "script-alt-roll-breakdown"

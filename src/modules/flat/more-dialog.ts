@@ -16,7 +16,10 @@ const formSections: Record<
 		name: "pf2e-fc.flat.more-dialog.stupefied",
 		label: "pf2e-fc.flat.more-dialog.value",
 		callback: async (value, e) => {
-			rollFlatCheck(5 + value, { hidden: e.ctrlKey, label: translate("flat.more-dialog.stupefied") })
+			rollFlatCheck(5 + value, {
+				hidden: e.ctrlKey,
+				label: translate("flat.more-dialog.stupefied"),
+			})
 		},
 		default: () => {
 			let value = 0

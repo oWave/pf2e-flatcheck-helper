@@ -1,9 +1,9 @@
+import type { ChatMessagePF2e, ItemPF2e, SpellPF2e, SpellSheetPF2e } from "foundry-pf2e"
 import { MODULE_ID } from "src/constants"
 import MODULE from "src/index"
-import type { ChatMessagePF2e, ItemPF2e, SpellPF2e, SpellSheetPF2e } from "foundry-pf2e"
+import { parseHTML, translate } from "src/utils"
 import { BaseModule } from "../base"
 import { EmanationRequestDialog } from "./emanation-dialog"
-import { parseHTML, translate } from "src/utils"
 
 export class EmanationModule extends BaseModule {
 	settingsKey = "emanation-automation"

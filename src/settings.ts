@@ -1,7 +1,8 @@
+import type SettingsConfig from "foundry-pf2e/foundry/client/applications/settings/config.mjs"
 import MODULE from "src"
 import { MODULE_ID } from "./constants"
-import { parseHTML, translate } from "./utils"
 import { FlatMessageConfigApplication } from "./modules/flat/message-config"
+import { parseHTML, translate } from "./utils"
 
 type Callback = (value: unknown) => void
 const listeners: Record<string, Callback> = {}

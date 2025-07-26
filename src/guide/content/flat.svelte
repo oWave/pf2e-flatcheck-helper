@@ -51,12 +51,11 @@
 </div>
 
 <script lang="ts">
+import { FlatMessageConfigApplication } from "src/modules/flat/message-config"
+import SettingInput from "./component/setting-input.svelte"
 import FlatInMessage from "./img/flat-in-message.webp"
 import FlatOnTarget from "./img/flat-on-target.webp"
 import LightVis from "./img/light-vis.webp"
-
-import SettingInput from "./component/setting-input.svelte"
-import { FlatMessageConfigApplication } from "src/modules/flat/message-config"
 </script>
 
 <style scoped>

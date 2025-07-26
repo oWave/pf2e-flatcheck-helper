@@ -1,6 +1,5 @@
 import { BaseModule } from "src/modules/base"
 import { darknessAtPoint, Grid, type LightLevel, LightLevels } from "./utils"
-import { MODULE_ID } from "src/constants"
 
 declare global {
 	interface CanvasPF2e {

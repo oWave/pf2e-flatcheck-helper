@@ -16,10 +16,21 @@
 				"noThisInStatic": "off",
 				"noBannedTypes": "off"
 			},
+			"correctness": {
+				"noUnusedFunctionParameters": "off"
+			},
 			"style": {
 				"noNonNullAssertion": "off",
 				"noUselessElse": "off",
-				"noParameterAssign": "off"
+				"noParameterAssign": "off",
+				"noDescendingSpecificity": "off"
+			}
+		}
+	},
+	"assist": {
+		"actions": {
+			"source": {
+				"organizeImports": "on"
 			}
 		}
 	},

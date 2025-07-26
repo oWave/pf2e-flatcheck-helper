@@ -1,10 +1,10 @@
+import type { ChatMessagePF2e, SpellPF2e } from "foundry-pf2e"
 import { MODULE_ID } from "src/constants"
 import MODULE from "src/index"
+import { translate } from "src/utils"
 import { BaseModule } from "../base"
 import { flatMessageConfig } from "./message-config"
-import type { ChatMessagePF2e, SpellPF2e } from "foundry-pf2e"
 import { flatCheckForUserTargets } from "./target"
-import { translate } from "src/utils"
 
 export class MessageFlatCheckModule extends BaseModule {
 	settingsKey = "flat-check-in-message"

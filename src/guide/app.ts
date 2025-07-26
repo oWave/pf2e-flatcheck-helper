@@ -1,7 +1,7 @@
+import type { ApplicationConfiguration } from "foundry-pf2e/foundry/client/applications/_types.mjs"
+import { MODULE_ID } from "src/constants"
 import { SvelteMixin } from "src/svelte/mixin"
 import Guide from "./guide.svelte"
-import { MODULE_ID } from "src/constants"
-import type { ApplicationConfiguration } from "foundry-pf2e/foundry/client/applications/_types.mjs"
 
 export class GuideApp extends SvelteMixin(foundry.applications.api.ApplicationV2) {
 	component = Guide

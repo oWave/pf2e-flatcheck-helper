@@ -1,22 +1,10 @@
-import { MODULE_ID, QUERIES } from "src/constants"
-import MODULE from "src/index"
-import { combatantIsNext, isJQuery, parseHTML, sleep, translate } from "src/utils"
+import type { ChatMessagePF2e, EncounterPF2e } from "foundry-pf2e"
+import { QUERIES } from "src/constants"
 import { BaseModule } from "../base"
-import { onRenderCombatTracker } from "./tracker"
-import { isDelaying, setInitiativeFromDrop } from "./utils"
-import type {
-	ActorPF2e,
-	ChatMessagePF2e,
-	CombatantPF2e,
-	EncounterPF2e,
-	RolledCombatant,
-	TokenDocumentPF2e,
-	TokenPF2e,
-} from "foundry-pf2e"
-import { handleGmMoveQuery } from "./query"
-import type TokenHUD from "foundry-pf2e/foundry/client/applications/hud/token-hud.mjs"
 import { handleRequest, removeDelayEffect } from "./delay"
+import { handleGmMoveQuery } from "./query"
 import { onRenderTokenHUD } from "./token-hud"
+import { onRenderCombatTracker } from "./tracker"
 
 export class DelayModule extends BaseModule {
 	settingsKey = null

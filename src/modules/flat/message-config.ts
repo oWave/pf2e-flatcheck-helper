@@ -1,5 +1,5 @@
+import type { ApplicationRenderOptions } from "foundry-pf2e/foundry/client/applications/_types.mjs"
 import { MODULE_ID } from "src/constants"
-import type { ApplicationRenderOptions } from "foundry-pf2e/foundry/client-esm/applications/_types.js"
 import { translate } from "src/utils"
 
 export class FlatMessageConfigApplication extends foundry.applications.api.HandlebarsApplicationMixin(

@@ -35,8 +35,8 @@
 </div>
 
 	<script lang="ts">
-import ImgGM from "./img/alt-roll-gm.webp"
-import ImgPlayer from "./img/alt-roll-player.webp"
 import Important from "./component/important.svelte"
 import SettingInput from "./component/setting-input.svelte"
+import ImgGM from "./img/alt-roll-gm.webp"
+import ImgPlayer from "./img/alt-roll-player.webp"
 </script>
