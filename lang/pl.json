@@ -103,13 +103,20 @@
 		"delay": {
 			"return-to-initiative": "Powrót do inicjatywy",
 			"delay": "Opóźnienie",
-			"error-no-combat": "Brak aktywnej walki",
-			"error-no-combatant": "Brak bojownika",
-			"error-combatant-not-owned": "Nie jesteś właścicielem aktualnego bojownika",
 			"delaying": "Opóźnienie",
-			"dialog-delay-after": "Opóźnienie po: ",
-			"cancel": "Anuluj",
-			"return-message-title": "Powrót"
+			"errors": {
+				"combat-not-started": "Brak aktywnej walki",
+				"combatant-not-owned": "Nie jesteś właścicielem aktualnego bojownika"
+			},
+			"dialog": {
+				"delay-after": "Opóźnienie po:",
+				"confirm": "Opóźnienie",
+				"cancel": "Anuluj"
+			},
+			"actions": {
+				"delay": "Opóźnienie",
+				"return": "Powrót"
+			}
 		},
 		"emanation": {
 			"message-text": "Zastosuj efekt emanacji",

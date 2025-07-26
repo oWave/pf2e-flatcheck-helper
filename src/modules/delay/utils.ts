@@ -9,7 +9,7 @@ export function setInitiativeFromDrop(
 	combat: EncounterPF2e,
 	newOrder: RolledCombatant<NonNullable<EncounterPF2e>>[],
 	dropped: RolledCombatant<NonNullable<EncounterPF2e>>,
-): void {
+) {
 	const aboveDropped = newOrder.find((c) => newOrder.indexOf(c) === newOrder.indexOf(dropped) - 1)
 	const belowDropped = newOrder.find((c) => newOrder.indexOf(c) === newOrder.indexOf(dropped) + 1)
 
@@ -25,7 +25,7 @@ export function setInitiativeFromDrop(
 	const wasDraggedDown = !!aboveDropped && !wasDraggedUp
 
 	// Set a new initiative intuitively, according to allegedly commonplace intuitions
-	dropped.initiative =
+	const newInitiative =
 		hasBelowAndNoAbove || (aboveIsHigherThanBelow && wasDraggedUp)
 			? belowDropped.initiative + 1
 			: hasAboveAndNoBelow || (belowIsHigherThanAbove && wasDraggedDown)
@@ -34,10 +34,24 @@ export function setInitiativeFromDrop(
 					? belowDropped.initiative
 					: dropped.initiative
 
-	const withSameInitiative = newOrder.filter((c) => c.initiative === dropped.initiative)
+	const updates: Record<string, { initiative?: number; overridePriority?: number }> = {
+		[dropped.id]: { initiative: newInitiative },
+	}
+
+	const withSameInitiative = newOrder.filter((c) => c.initiative === newInitiative)
 	if (withSameInitiative.length > 1) {
 		for (let priority = 0; priority < withSameInitiative.length; priority++) {
-			withSameInitiative[priority].flags.pf2e.overridePriority[dropped.initiative] = priority
+			const c = withSameInitiative[priority]
+			updates[c.id] ??= {}
+			updates[c.id].overridePriority = priority
 		}
 	}
+
+	return Object.entries(updates).map(([id, data]) => {
+		const updates: EmbeddedDocumentUpdateData = { _id: id }
+		if (data.initiative !== undefined) updates.initiative = data.initiative
+		if (data.overridePriority !== undefined)
+			updates[`flags.pf2e.overridePriority.${newInitiative}`] = data.overridePriority
+		return updates
+	})
 }

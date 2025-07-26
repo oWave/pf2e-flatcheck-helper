@@ -1,3 +1,4 @@
+import type { HookCallback } from "foundry-pf2e/foundry/client/helpers/hooks.mjs"
 import { MODULE_ID } from "src/constants"
 import MODULE from "src/index"
 
@@ -7,6 +8,7 @@ export abstract class BaseModule {
 	wrappers: number[] = []
 	sockets: string[] = []
 	settingListeners: string[] = []
+	queries: string[] = []
 
 	abstract readonly settingsKey: string | null
 
@@ -33,6 +35,11 @@ export abstract class BaseModule {
 		}
 		this.sockets = []
 
+		for (const name of this.queries) {
+			delete CONFIG.queries[name]
+		}
+		this.queries = []
+
 		for (const key of this.settingListeners) {
 			MODULE.settings.removeListener(key)
 		}
@@ -54,6 +61,10 @@ export abstract class BaseModule {
 	registerSocket(type: string, callback: (data: any) => void) {
 		this.sockets.push(type)
 		MODULE.socketHandler.register(type, callback)
+	}
+
+	registerQuery(name: string, callback: (data: any) => Promise<any>) {
+		CONFIG.queries[name] = callback
 	}
 
 	registerSettingListener(key: string, callback: (value: unknown) => void) {

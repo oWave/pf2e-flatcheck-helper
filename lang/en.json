@@ -103,13 +103,21 @@
 		"delay": {
 			"return-to-initiative": "Return to initiative",
 			"delay": "Delay",
-			"error-no-combat": "No combat active",
-			"error-no-combatant": "No combatant",
-			"error-combatant-not-owned": "You do not own the current combatant",
 			"delaying": "Delaying",
-			"dialog-delay-after": "Delay after: ",
-			"cancel": "Cancel",
-			"return-message-title": "Return"
+			"errors": {
+				"combat-not-started": "No active combat",
+				"combatant-not-owned": "You do not own the current combatant",
+				"no-active-gm": "No GM connected"
+			},
+			"dialog": {
+				"delay-after": "Delay after:",
+				"confirm": "Delay",
+				"cancel": "Cancel"
+			},
+			"actions": {
+				"delay": "Delay",
+				"return": "Return"
+			}
 		},
 		"emanation": {
 			"message-text": "Apply emanation effect",

@@ -1,10 +1,10 @@
 import MODULE from "src/index"
 import type { CombatantPF2e } from "foundry-pf2e"
-import { tryDelay, tryReturn } from "."
 import { isDelaying } from "./utils"
 import { parseHTML, translate } from "src/utils"
+import { handleRequest } from "./delay"
 
-export function onRenderCombatTracker(tracker, html: HTMLElement, data) {
+export function onRenderCombatTracker(_tracker, html: HTMLElement, _data) {
 	if (!MODULE.settings.showInCombatTracker) return
 	const combat = game.combat
 	if (!combat || !combat.started) return
@@ -48,8 +48,7 @@ function drawButton(
 
 	buttonHTML.firstElementChild?.addEventListener("click", (e) => {
 		e.stopPropagation()
-		if (type === "delay") tryDelay()
-		else if (MODULE.settings.allowReturn) tryReturn(combatant)
+		handleRequest({ combatant, type })
 	})
 
 	const initiativeDiv = combatantHtml.querySelector<HTMLElement>(".token-initiative")

@@ -20,5 +20,9 @@ declare global {
 		)
 		static getTextStyle(opts: { anchor?: number } & Partial<PIXI.ITextStyle>): PIXI.TextStyle
 	}
+
+	interface ConfigPF2e {
+		queries: Record<string, (data: any, options: any) => Promise<any>>
+	}
 }
 export type {}
