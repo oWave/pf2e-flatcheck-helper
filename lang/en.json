@@ -65,6 +65,10 @@
 				"name": "Remove Combat Toggle from Token Hud",
 				"hint": "Removes the 'Toggle Combat State' button for tokens in combat."
 			},
+			"pf2e-hud-enable": {
+				"name": "Modify PF2e HUD",
+				"hint": "Overrides PF2e HUDs delay handling with this modules implementation. Please report issue with this to me and not to PF2e HUD!"
+			},
 			"lifelink": {
 				"name": "Enable Life/Spirit Link Automation Buttons",
 				"hint": "Check the module readme for setup steps."

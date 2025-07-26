@@ -25,6 +25,9 @@ export const settings = {
 	get showInTokenHUD() {
 		return game.settings.get(MODULE_ID, "delay-token-hud") as boolean
 	},
+	get modifyPF2eHud() {
+		return game.settings.get(MODULE_ID, "pf2e-hud-enable") as boolean
+	},
 	get removeCombatToggle() {
 		return game.settings.get(MODULE_ID, "token-hud-remove-combat-toggle") as boolean
 	},
@@ -143,6 +146,15 @@ export const settings = {
 		register("token-hud-remove-combat-toggle", {
 			name: "pf2e-fc.settings.token-hud-remove-combat-toggle.name",
 			hint: "pf2e-fc.settings.token-hud-remove-combat-toggle.hint",
+			scope: "world",
+			config: true,
+			default: false,
+			type: Boolean,
+		})
+
+		register("pf2e-hud-enable", {
+			name: "pf2e-fc.settings.pf2e-hud-enable.name",
+			hint: "pf2e-fc.settings.pf2e-hud-enable.hint",
 			scope: "world",
 			config: true,
 			default: false,

@@ -13,7 +13,6 @@ interface RequestOpts {
 export async function handleRequest(opts: RequestOpts) {
 	const combatant = opts.combatant
 	const combat = opts.combatant.parent
-	if (combatant !== combat?.combatant) return
 	if (!combat?.started) return ui.notifications.error(translate("delay.errors.combat-not-started"))
 	if (!combatant.isOwner)
 		return ui.notifications.error(translate("delay.errors.combatant-not-owned"))
@@ -21,7 +20,7 @@ export async function handleRequest(opts: RequestOpts) {
 	let type = opts?.type
 	if (!type) {
 		if (combatant?.actor && isDelaying(combatant.actor)) type = "return"
-		else type = "delay"
+		else if (combatant === combat.combatant) type = "delay"
 	}
 
 	if (type === "delay") tryDelay(opts)

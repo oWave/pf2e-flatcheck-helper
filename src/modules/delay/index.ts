@@ -2,6 +2,7 @@ import type { ChatMessagePF2e, EncounterPF2e } from "foundry-pf2e"
 import { QUERIES } from "src/constants"
 import { BaseModule } from "../base"
 import { handleRequest, removeDelayEffect } from "./delay"
+import { onRenderPF2eHudTracker } from "./pf2e-hud"
 import { handleGmMoveQuery } from "./query"
 import { onRenderTokenHUD } from "./token-hud"
 import { onRenderCombatTracker } from "./tracker"
@@ -16,6 +17,7 @@ export class DelayModule extends BaseModule {
 		this.registerHook("renderTokenHUD", onRenderTokenHUD)
 		this.registerHook("updateCombat", onUpdateCombat)
 		this.registerHook("createChatMessage", onCreateMessage)
+		this.registerHook("renderTrackerPF2eHUD", onRenderPF2eHudTracker)
 
 		this.registerQuery(QUERIES.delay.gmMoveAfter, handleGmMoveQuery)
 	}
