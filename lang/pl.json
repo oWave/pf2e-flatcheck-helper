@@ -110,7 +110,8 @@
 			"delaying": "Opóźnienie",
 			"errors": {
 				"combat-not-started": "Brak aktywnej walki",
-				"combatant-not-owned": "Nie jesteś właścicielem aktualnego bojownika"
+				"combatant-not-owned": "Nie jesteś właścicielem aktualnego bojownika",
+				"no-active-gm": "MG nie podłączony"
 			},
 			"dialog": {
 				"delay-after": "Opóźnienie po:",
