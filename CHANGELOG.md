@@ -2,6 +2,8 @@
 🥭
 
 ## [Unreleased]
+### Added
+- Show initiative value for turns in the delay after dialog
 
 ## [0.17.0] - 2025-07-26
 ### Added
