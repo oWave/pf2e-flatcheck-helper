@@ -1,4 +1,5 @@
 @import "./modules/flat/message.css";
+@import "./modules/effect/effect.css";
 
 #fc-container {
 	flex: 0;
