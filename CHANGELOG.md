@@ -5,6 +5,9 @@
 ### Added
 - Show initiative value for turns in the delay after dialog
 
+### Fixed
+- Unable to delay to last turn when first in initiative
+
 ## [0.17.0] - 2025-07-26
 ### Added
 - Override setting for the PF2e HUD combat tracker is back

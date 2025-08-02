@@ -55,7 +55,7 @@ const combat = combatant.parent
 const turns = combat.turns.filter((t) => t.initiative !== null)
 const currentTurn = turns.findIndex((t) => t === combatant)
 const disabledTurns = [currentTurn]
-disabledTurns.push(currentTurn === 0 ? turns.length - 1 : currentTurn - 1)
+if (currentTurn > 0) disabledTurns.push(currentTurn - 1)
 
 let loading = $state(false)
 
