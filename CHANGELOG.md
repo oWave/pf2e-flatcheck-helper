@@ -2,6 +2,8 @@
 🥭
 
 ## [Unreleased]
+
+## [0.17.1] - 2025-08-02
 ### Added
 - Show initiative value for turns in the delay after dialog
 
@@ -85,7 +87,8 @@ Foundry v13 release
 ### Fixed
 - Flat checks showing on damage/healing received messages
 
-[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.17.0...HEAD
+[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.17.1...HEAD
+[0.17.1]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.17.0...v0.17.1
 [0.17.0]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.16.1...v0.17.0
 [0.16.1]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.16.0...v0.16.1
 [0.16.0]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.15.1...v0.16.0
