@@ -1,6 +1,7 @@
 import type { ActorPF2e, ChatMessagePF2e, TokenDocumentPF2e } from "foundry-pf2e"
 import { flatMessageConfig } from "./message-config"
 import { FlatCheckModePriorities, type ModifyFlatDCRuleElement } from "./rules/modify"
+import { flatCheckRollOptions } from "./rules/options"
 import { calculateTargetFlatCheck } from "./target"
 
 interface AdjustmentData {
@@ -90,28 +91,17 @@ function collectAdjustments(actor: ActorPF2e, affects: ModifyFlatDCRuleElement["
 export function collectFlatChecks(msg: ChatMessagePF2e) {
 	if (!msg.author) return null
 
-	return FlatCheckHelper.fromMessage(msg)
+	let target: TokenDocumentPF2e | undefined
+	if (!msg.target?.token) {
+		target = game.user.targets.first()?.document
+	}
+
+	return FlatCheckHelper.fromMessage(msg, target)
 }
 
 export class FlatCheckHelper {
 	static fromMessage(msg: ChatMessagePF2e, target?: TokenDocumentPF2e) {
 		if (!msg.actor) throw new Error("Message has no actor")
-
-		const rollOptions: string[] = []
-		if (
-			msg.flags.pf2e.context &&
-			"contextualOptions" in msg.flags.pf2e.context &&
-			msg.flags.pf2e.context.contextualOptions?.postRoll?.length
-		) {
-			rollOptions.push(...msg.flags.pf2e.context.contextualOptions.postRoll)
-		}
-		if (
-			msg.flags.pf2e.context &&
-			"options" in msg.flags.pf2e.context &&
-			msg.flags.pf2e.context.options?.length
-		) {
-			rollOptions.push(...msg.flags.pf2e.context.options)
-		}
 
 		const msgTarget = msg.target?.token
 		if (msgTarget && target && msgTarget !== target)
@@ -123,7 +113,7 @@ export class FlatCheckHelper {
 
 		if (!checkTarget) return null
 
-		const instance = new FlatCheckHelper(msg, checkTarget, rollOptions)
+		const instance = new FlatCheckHelper(msg, checkTarget)
 		return instance.mergedChecks
 	}
 
@@ -139,10 +129,10 @@ export class FlatCheckHelper {
 
 	public originChecks: Record<string, FlatCheckData>
 	public targetCheck: FlatCheckData | null
+	private rollOptions: string[]
 	constructor(
 		origin: ChatMessagePF2e | TokenDocumentPF2e | null,
 		private target: TokenDocumentPF2e | null,
-		private rollOptions: string[],
 	) {
 		if (origin instanceof getDocumentClass("ChatMessage")) {
 			this.msg = origin
@@ -155,6 +145,17 @@ export class FlatCheckHelper {
 			if (!this.token.actor) throw new Error("Token has no actor")
 			this.actor = this.token.actor
 		}
+
+		let options: string[] = []
+		if (this.msg) options = flatCheckRollOptions.forRollMessage(this.msg)
+		if (options.length === 0)
+			options = flatCheckRollOptions.forMixed({
+				msg: this.msg,
+				origin: this.token,
+				target: this.target ?? undefined,
+			})
+
+		this.rollOptions = options
 
 		const originAdjustments = this.actor ? collectAdjustments(this.actor, "self") : []
 		const targetAdjustments = this.target?.actor
@@ -214,11 +215,11 @@ export class FlatCheckHelper {
 		const data: Record<string, FlatCheckData> = {}
 		for (const source of sources) {
 			const key = source.condition
-			const { finalDc, adjustments } = this.adjustments.calculate(
-				key,
-				this.rollOptions,
-				source.baseDc,
-			)
+
+			const options = [...this.rollOptions, ...flatCheckRollOptions.forCheck(source)]
+			console.debug(`RollOptions for ${source.condition} flat check: `, options)
+
+			const { finalDc, adjustments } = this.adjustments.calculate(key, options, source.baseDc)
 			data[key] = { ...source, finalDc: finalDc ?? source.baseDc, adjustments }
 		}
 		return data
@@ -229,9 +230,12 @@ export class FlatCheckHelper {
 		const check = calculateTargetFlatCheck(this.token ?? null, this.target)
 		if (!check) return null
 
+		const options = [...this.rollOptions, ...flatCheckRollOptions.forCheck(check)]
+		console.debug(`RollOptions for target (${check.condition}) flat check: `, options)
+
 		const { finalDc, adjustments } = this.adjustments.calculate(
 			check.condition,
-			this.rollOptions,
+			options,
 			check.baseDc,
 		)
 		return { ...check, finalDc: finalDc ?? check.baseDc, adjustments }
