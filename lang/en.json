@@ -138,18 +138,13 @@
 			"flat-check-label": "Flat Check: {label}",
 			"flat-check": "Flat Check",
 			"target-marker-dc": "DC {dc} - {label}",
-			"target": {
+			"source": {
+				"blinded": "Blinded",
 				"darkness": "Darkness",
+				"hidden": "Hidden",
 				"dim-light": "Dim Light",
-				"condition": {
-					"blinded": "Blinded",
-					"concealed": "Concealed",
-					"dazzled": "Dazzled",
-					"hidden": "Hidden",
-					"undetected": "Undetected",
-					"unnoticed": "Unnoticed",
-					"invisible": "Invisible"
-				}
+				"dazzled": "Dazzled",
+				"concealed": "Concealed"
 			},
 			"message": {
 				"perception-outdated-title": "PF2e Utility Buttons",
@@ -210,6 +205,11 @@
 			},
 			"message-config-check-types": "Check Types",
 			"emanation-area": "{origin}, {area} ft"
+		}
+	},
+	"PF2E": {
+		"RuleElement": {
+			"fc-ModifyFlatDC": "Modify Flat DC"
 		}
 	}
 }

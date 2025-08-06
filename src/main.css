@@ -117,6 +117,22 @@
 		}
 		.fc-dc {
 			max-width: 20%;
+
+			.fc-dcs {
+				margin-left: 2px;
+				display: flex;
+				flex-direction: column;
+				text-align: center;
+
+				span {
+					line-height: 1;
+				}
+
+				span:has(+ span) {
+					font-size: var(--font-size-10);
+					opacity: 0.8;
+				}
+			}
 		}
 		.fc-roll {
 			/* background: rgba(0, 0, 0, 0.1); */

@@ -2,6 +2,18 @@
 🥭
 
 ## [Unreleased]
+### Added
+- Custom Rule Elements
+  - `fc-ModifyFlatDC` to change the DCs of flat checks
+- Support for PF2e Visioneer
+
+### Changed
+- Flat checks are now calculated only for the primary target
+  - For rolls, the target is the same the roll uses
+  - TODO: Otherwise, it uses the first target
+
+### Removed
+- PF2e Perception support
 
 ## [0.17.1] - 2025-08-02
 ### Added

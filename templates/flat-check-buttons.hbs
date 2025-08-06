@@ -1,0 +1,44 @@
+<section class="fc-flatcheck-buttons">
+	{{#each @root.buttons}}
+	<div class="fc-check">
+		<span class="fc-label">
+			<span>{{ @root.localizeCondition this.condition }}</span>
+			{{#unless (eq this.condition this.source)}}
+			<span class="fc-description">{{ @root.localizeSource this.source }}</span>
+			{{/unless}}
+		</span>
+		<span class="fc-dc" data-tooltip="{{ this.adjustments }}">
+			<span>DC</span>
+			<span class="fc-dcs">
+				{{#unless (eq this.baseDc this.finalDc)}}
+				<span>{{this.baseDc}}</span>
+				{{/unless}}
+				<span>{{this.finalDc}}</span>
+			</span>
+		</span>
+		<span class="fc-roll">
+			<span class="fc-rolls">
+				{{#each this.rolls}}
+				<span class="{{this.class}}">{{this.value}}</span>
+				{{/each}}
+				{{#if this.rerollIcon}}
+				<span class="fc-icon">
+					<i class="{{this.rerollIcon}}"></i>
+				</span>
+				{{/if}}
+			</span>
+		</span>
+		{{#if this.showRollButton}}
+		<button data-action="roll-flatcheck" data-key="{{this.key}}" data-dc="{{this.finalDc}}">
+			{{#if this.rolls.length}}
+			<i class="fa-solid fa-rotate rotate"></i>
+			{{else}}
+			<i class="fa-solid fa-dice-d20 die"></i>
+			{{/if}}
+		</button>
+		{{/if}}
+		</button>
+	</div>
+	{{/each}}
+	</div>
+</section>

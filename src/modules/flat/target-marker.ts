@@ -2,8 +2,10 @@ import type { TokenPF2e } from "foundry-pf2e"
 import type Token from "foundry-pf2e/foundry/client/canvas/placeables/token.mjs"
 import { translate } from "src/utils"
 import { BaseModule } from "../base"
+import { FlatCheckHelper } from "./data"
+import { localizeCondition, localizeSource } from "./i18n"
 import { TargetColors } from "./light/utils"
-import { calculateFlatCheck, guessOrigin } from "./target"
+import { guessOrigin } from "./target"
 
 function calcScaleFromToken(token: Token, multPerSquare = 0) {
 	const gridSize = token.scene!.grid.size
@@ -71,28 +73,31 @@ class TokenTargetRenderer {
 
 	draw() {
 		this.#layer.removeChildren()
-		const condition = calculateFlatCheck(guessOrigin(), this.token)
+		const check = FlatCheckHelper.fromTokens(guessOrigin(), this.token.document).target
 
-		if (!condition) {
+		if (!check || check.finalDc <= 1) {
 			this.#filter.enabled = false
 			return
 		}
 
-		const color = TargetColors.fromDC(condition.dc)
+		const color = TargetColors.fromDC(check.finalDc)
 		this.#filter.uniforms.outlineColor = color.toArray()
 		this.#filter.enabled = true
 
 		const textScale = calcScaleFromToken(this.token, 0.5)
 		const text = new foundry.canvas.containers.PreciseText(
-			translate("flat.target-marker-dc", { dc: condition.dc, label: condition.label }),
+			translate("flat.target-marker-dc", {
+				dc: check.finalDc,
+				label: localizeCondition(check.condition),
+			}),
 			textStyles.normal(textScale),
 		)
 		text.x = this.token.bounds.width / 2 - text.width / 2
 		text.y = this.token.bounds.height * 0.95 - text.height
 		this.#layer.addChild(text)
-		if ("description" in condition && condition.description) {
+		if (check.condition !== check.source) {
 			const smallText = new foundry.canvas.containers.PreciseText(
-				condition.description,
+				localizeSource(check.source),
 				textStyles.small(textScale),
 			)
 			smallText.x = this.token.bounds.width / 2 - smallText.width / 2
