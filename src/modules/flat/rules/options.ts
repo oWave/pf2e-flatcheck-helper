@@ -1,12 +1,13 @@
-import type { ChatMessagePF2e, ItemPF2e, TokenDocumentPF2e } from "foundry-pf2e"
+import type { ChatMessagePF2e, TokenDocumentPF2e } from "foundry-pf2e"
 import type { FlatCheckSource } from "../data"
 
-function forCheck(source: FlatCheckSource) {
-	return [
-		`fc:condition:${source.condition}`,
-		`fc:source:${source.source}`,
-		`fc:base-dc:${source.baseDc}`,
-	]
+function forCheck(source: Partial<FlatCheckSource>) {
+	const options: string[] = []
+	if (source.source) options.push(`fc:source:${source.source}`)
+	if (source.baseDc != null) options.push(`fc:base-dc:${source.baseDc}`)
+	if (source.origin) options.push(`fc:origin:${game.pf2e.system.sluggify(source.origin)}`)
+
+	return options
 }
 
 function forRollMessage(msg: ChatMessagePF2e) {
@@ -42,6 +43,7 @@ function forMixed(data: {
 	if (data.origin?.object && data.target?.object) {
 		const distance = data.origin.object.distanceTo(data.target.object)
 		if (Number.isInteger(distance)) options.push(`target:distance:${distance}`)
+		options.push("target")
 	}
 
 	return options

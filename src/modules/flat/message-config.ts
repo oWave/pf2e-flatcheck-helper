@@ -1,4 +1,5 @@
 import type { ApplicationRenderOptions } from "foundry-pf2e/foundry/client/applications/_types.mjs"
+import type FormDataExtended from "foundry-pf2e/foundry/client/applications/ux/form-data-extended.mjs"
 import { MODULE_ID } from "src/constants"
 import { translate } from "src/utils"
 

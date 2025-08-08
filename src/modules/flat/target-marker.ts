@@ -68,7 +68,7 @@ class TokenTargetRenderer {
 		this.#filter.thickness = 3 * outlineScale
 
 		this.token.addChild(this.#layer)
-		this.token.mesh?.filters?.push(this.#filter)
+		this.token.mesh?.filters?.unshift(this.#filter)
 	}
 
 	draw() {
@@ -88,16 +88,16 @@ class TokenTargetRenderer {
 		const text = new foundry.canvas.containers.PreciseText(
 			translate("flat.target-marker-dc", {
 				dc: check.finalDc,
-				label: localizeCondition(check.condition),
+				label: localizeCondition(check.source),
 			}),
 			textStyles.normal(textScale),
 		)
 		text.x = this.token.bounds.width / 2 - text.width / 2
 		text.y = this.token.bounds.height * 0.95 - text.height
 		this.#layer.addChild(text)
-		if (check.condition !== check.source) {
+		if (check.origin && check.source !== check.origin) {
 			const smallText = new foundry.canvas.containers.PreciseText(
-				localizeSource(check.source),
+				localizeSource(check.origin),
 				textStyles.small(textScale),
 			)
 			smallText.x = this.token.bounds.width / 2 - smallText.width / 2

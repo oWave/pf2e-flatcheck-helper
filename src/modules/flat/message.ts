@@ -15,7 +15,7 @@ export class MessageFlatCheckModule extends BaseModule {
 		super.enable()
 
 		this.registerHook("preCreateChatMessage", preCreateMessage)
-		this.registerWrapper("ChatMessage.prototype.renderHTML", messageGetHTMLWrapper, "WRAPPER")
+		this.registerWrapper("ChatMessage.prototype.renderHTML", messageRenderHTMLWrapper, "WRAPPER")
 		this.registerSocket("flat-dsn", handleDSNSocket)
 
 		setupRuleElements()
@@ -43,7 +43,7 @@ type MsgFlagDataEntry = FlatCheckData & {
 
 type MsgFlagData = Record<string, MsgFlagDataEntry>
 
-export async function messageGetHTMLWrapper(this: ChatMessagePF2e, wrapper, ...args) {
+export async function messageRenderHTMLWrapper(this: ChatMessagePF2e, wrapper, ...args) {
 	const html: HTMLElement = await wrapper(...args)
 
 	try {
@@ -58,11 +58,11 @@ export async function messageGetHTMLWrapper(this: ChatMessagePF2e, wrapper, ...a
 async function renderButtons(msg: ChatMessagePF2e, html: HTMLElement) {
 	interface ButtonData {
 		key: string
-		condition: string
 		source: string
+		label?: string
 		baseDc: number
 		finalDc: number
-		adjustments?: string
+		dcAdjustments?: string
 		rolls: { class: string; value: number }[]
 		rerollIcon?: string
 		showRollButton: boolean
@@ -101,9 +101,9 @@ async function renderButtons(msg: ChatMessagePF2e, html: HTMLElement) {
 		buttons.push({
 			baseDc: check.baseDc,
 			finalDc: check.finalDc,
-			adjustments: check.adjustments?.map((a) => `${a.label} ${a.value}`).join("<br>"),
-			condition: check.condition,
+			dcAdjustments: check.dcAdjustments?.map((a) => `${a.label} ${a.value}`).join("<br>"),
 			source: check.source,
+			label: check.origin,
 			rolls: rollData,
 			rerollIcon: check.reroll?.keep ? REROLL_ICONS[check.reroll?.keep] : undefined,
 			showRollButton:

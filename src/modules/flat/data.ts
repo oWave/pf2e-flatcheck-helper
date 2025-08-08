@@ -1,92 +1,23 @@
 import type { ActorPF2e, ChatMessagePF2e, TokenDocumentPF2e } from "foundry-pf2e"
+import * as R from "remeda"
 import { flatMessageConfig } from "./message-config"
-import { FlatCheckModePriorities, type ModifyFlatDCRuleElement } from "./rules/modify"
+import { Adjustments, type DcAdjustment, type TreatAsAdjustment } from "./rules/common"
 import { flatCheckRollOptions } from "./rules/options"
-import { calculateTargetFlatCheck } from "./target"
-
-interface AdjustmentData {
-	label: string
-	value: string
-}
+import { type BaseTargetFlatCheck, TargetFlatCheckHelper } from "./target"
 
 export interface FlatCheckSource {
-	condition: string
 	source: string
+	origin?: string
 	baseDc: number
 }
 
 export interface FlatCheckData extends FlatCheckSource {
 	finalDc: number
-	adjustments?: AdjustmentData[]
+	dcAdjustments?: DcAdjustment[]
+	conditionAdjustment?: TreatAsAdjustment
 }
 
 export type FlatCheckRecord = Record<string, FlatCheckData>
-
-class FlatCheckAdjustments {
-	rules: ModifyFlatDCRuleElement[]
-	constructor(originRules: ModifyFlatDCRuleElement[], targetRules?: ModifyFlatDCRuleElement[]) {
-		const merged = [...originRules, ...(targetRules ?? [])]
-		merged.sort((a, b) => {
-			if (a.priority === b.priority) {
-				// Use the default priority if for some reason two different modes have the same
-				if (a.mode !== b.mode) {
-					return FlatCheckModePriorities[a.mode] - FlatCheckModePriorities[b.mode]
-				}
-				// Put the higher override last
-				if (a.mode === "override") {
-					return a.resolvedValue - b.resolvedValue
-				}
-				// For anything else the order doesn't matter
-				// Sort by label for a stable order
-				return a.label.localeCompare(b.label)
-			}
-			return a.priority - b.priority
-		})
-		this.rules = merged
-	}
-
-	calculate(type: string, rollOptions: string[], baseDc: number) {
-		const modifiers = this.rules.filter((r) => r.type === type && r.predicate.test(rollOptions))
-		let currentDc = baseDc
-		let adjustments: AdjustmentData[] = []
-		for (const m of modifiers) {
-			const value = m.resolvedValue
-			switch (m.mode) {
-				case "add":
-					if (value === 0) continue
-					currentDc += value
-					adjustments.push({ label: m.label, value: `${value > 0 ? "+" : ""}${value}` })
-					break
-				case "upgrade":
-					if (currentDc < value) {
-						currentDc = value
-						adjustments = [{ label: m.label, value: value.toString() }]
-					}
-					break
-				case "downgrade":
-					if (currentDc > value) {
-						currentDc = value
-						adjustments = [{ label: m.label, value: value.toString() }]
-					}
-					break
-				case "override":
-					currentDc = value
-					adjustments = [{ label: m.label, value: value.toString() }]
-					break
-			}
-		}
-
-		return { finalDc: currentDc, adjustments }
-	}
-}
-
-function collectAdjustments(actor: ActorPF2e, affects: ModifyFlatDCRuleElement["affects"]) {
-	const modifiers = actor.rules
-		.filter((r): r is ModifyFlatDCRuleElement => r.key === "fc-ModifyFlatDC")
-		.filter((r) => r.affects === affects)
-
-	return modifiers
-}
 
 export function collectFlatChecks(msg: ChatMessagePF2e) {
 	if (!msg.author) return null
@@ -100,6 +31,8 @@ export function collectFlatChecks(msg: ChatMessagePF2e) {
 }
 
 export class FlatCheckHelper {
+	originSources: FlatCheckSource[]
+	targetSources: BaseTargetFlatCheck[] | null
 	static fromMessage(msg: ChatMessagePF2e, target?: TokenDocumentPF2e) {
 		if (!msg.actor) throw new Error("Message has no actor")
 
@@ -111,24 +44,20 @@ export class FlatCheckHelper {
 
 		const checkTarget = msgTarget ?? target
 
-		if (!checkTarget) return null
-
-		const instance = new FlatCheckHelper(msg, checkTarget)
-		return instance.mergedChecks
+		const instance = new FlatCheckHelper(msg, checkTarget ?? null)
+		return instance.calculateChecks()
 	}
 
 	static fromTokens(origin: TokenDocumentPF2e | null, target: TokenDocumentPF2e | null) {
-		const instance = new FlatCheckHelper(origin, target, [])
-		return instance.mergedChecks
+		const instance = new FlatCheckHelper(origin, target)
+		return instance.calculateChecks()
 	}
 
-	private adjustments: FlatCheckAdjustments
+	private adjustments: Adjustments
 	private msg?: ChatMessagePF2e
 	private token?: TokenDocumentPF2e
 	private actor?: ActorPF2e
 
-	public originChecks: Record<string, FlatCheckData>
-	public targetCheck: FlatCheckData | null
 	private rollOptions: string[]
 	constructor(
 		origin: ChatMessagePF2e | TokenDocumentPF2e | null,
@@ -157,24 +86,13 @@ export class FlatCheckHelper {
 
 		this.rollOptions = options
 
-		const originAdjustments = this.actor ? collectAdjustments(this.actor, "self") : []
-		const targetAdjustments = this.target?.actor
-			? collectAdjustments(this.target.actor, "origin")
-			: []
+		this.adjustments = new Adjustments(this.actor ?? null, this.target?.actor ?? null)
 
-		this.adjustments = new FlatCheckAdjustments(originAdjustments, targetAdjustments)
-
-		this.originChecks = this.#collectOriginChecks()
-		this.targetCheck = this.#collectTargetChecks()
+		this.originSources = this.#collectOriginSources()
+		this.targetSources = this.#collectTargetSources()
 	}
 
-	get mergedChecks() {
-		const checks = this.originChecks
-		if (this.targetCheck) checks.target = this.targetCheck
-		return checks
-	}
-
-	#collectOriginChecks() {
+	#collectOriginSources() {
 		const sources: FlatCheckSource[] = []
 
 		const { ignored } = flatMessageConfig.toSets()
@@ -185,7 +103,7 @@ export class FlatCheckHelper {
 				this.actor.conditions.stored.some((c) => c.slug === "grabbed") &&
 				this.msg.item?.system.traits.value?.some((t) => t === "manipulate")
 			) {
-				sources.push({ condition: "grabbed", source: "manipulate", baseDc: 5 })
+				sources.push({ source: "grabbed", origin: "manipulate", baseDc: 5 })
 			}
 
 			if (
@@ -193,7 +111,7 @@ export class FlatCheckHelper {
 				this.actor.conditions.stored.some((c) => c.slug === "deafened") &&
 				this.msg.item?.system.traits.value?.some((t) => t === "auditory")
 			) {
-				sources.push({ condition: "deafened", source: "auditory", baseDc: 5 })
+				sources.push({ source: "deafened", origin: "auditory", baseDc: 5 })
 			}
 			if (
 				!ignored.has("deafened-spellcasting") &&
@@ -201,43 +119,86 @@ export class FlatCheckHelper {
 				this.msg.flags?.pf2e?.origin?.type === "spell" &&
 				!this.msg.item?.system.traits.value?.some((t) => t === "subtle")
 			) {
-				sources.push({ condition: "deafened", source: "spell", baseDc: 5 })
+				sources.push({ source: "deafened", origin: "spell", baseDc: 5 })
 			}
 
 			if (!ignored.has("stupefied") && this.msg.flags?.pf2e?.origin?.type === "spell") {
 				const stupefied = this.actor.conditions.stupefied?.value
 				if (stupefied) {
-					sources.push({ condition: "stupefied", source: "spell", baseDc: 5 + stupefied })
+					sources.push({ source: "stupefied", origin: "spell", baseDc: 5 + stupefied })
 				}
 			}
 		}
 
-		const data: Record<string, FlatCheckData> = {}
-		for (const source of sources) {
-			const key = source.condition
-
-			const options = [...this.rollOptions, ...flatCheckRollOptions.forCheck(source)]
-			console.debug(`RollOptions for ${source.condition} flat check: `, options)
-
-			const { finalDc, adjustments } = this.adjustments.calculate(key, options, source.baseDc)
-			data[key] = { ...source, finalDc: finalDc ?? source.baseDc, adjustments }
-		}
-		return data
+		return sources
 	}
 
-	#collectTargetChecks() {
-		if (!this.target) return null
-		const check = calculateTargetFlatCheck(this.token ?? null, this.target)
-		if (!check) return null
+	#collectTargetSources() {
+		if (!this.target) return []
 
-		const options = [...this.rollOptions, ...flatCheckRollOptions.forCheck(check)]
-		console.debug(`RollOptions for target (${check.condition}) flat check: `, options)
-
-		const { finalDc, adjustments } = this.adjustments.calculate(
-			check.condition,
-			options,
-			check.baseDc,
+		const helper = new TargetFlatCheckHelper(
+			this.token,
+			this.target,
+			this.adjustments,
+			this.rollOptions,
 		)
-		return { ...check, finalDc: finalDc ?? check.baseDc, adjustments }
+		const sources = helper.collectedSources()
+		return sources
+	}
+
+	#collectAdditionalSources() {
+		return this.adjustments.getAdditionalSources(this.rollOptions)
+	}
+
+	calculateChecks() {
+		const slots: Record<string, FlatCheckSource[]> & { target: BaseTargetFlatCheck[] } = {
+			target: [],
+		}
+
+		for (const source of this.#collectOriginSources()) {
+			const key = source.source
+			if (key in slots) slots[key].push(source)
+			else slots[key] = [source]
+		}
+
+		for (const source of this.#collectAdditionalSources()) {
+			const key = source.slot
+			if (key in slots) slots[key].push(source)
+			else slots[key] = [source]
+		}
+
+		for (const source of this.#collectTargetSources()) {
+			slots.target.push(source)
+		}
+
+		const checks: FlatCheckRecord = {}
+		for (const [k, v] of Object.entries(slots)) {
+			const check = this.#sourcesToHighestCheck(v)
+			if (check) checks[k] = check
+		}
+
+		return checks
+	}
+
+	#sourcesToHighestCheck(
+		sources: FlatCheckSource[] | BaseTargetFlatCheck[],
+	): FlatCheckData | undefined {
+		return R.pipe(
+			sources,
+			R.map((s) => {
+				const options = [this.rollOptions, flatCheckRollOptions.forCheck(s)].flat()
+				const { finalDc, adjustments } = this.adjustments.getDcAdjustment(
+					s.source,
+					options,
+					s.baseDc,
+				)
+				return {
+					...s,
+					finalDc: finalDc,
+					dcAdjustments: adjustments,
+				}
+			}),
+			R.firstBy([R.prop("finalDc"), "desc"]),
+		)
 	}
 }

@@ -5,15 +5,25 @@
 ### Added
 - Custom Rule Elements
   - `fc-ModifyFlatDC` to change the DCs of flat checks
+  - `fc-AddCheck` to add custom flat checks
+  - `fc-TreatAs` to change what a condition counts as
 - Support for PF2e Visioneer
 
 ### Changed
-- Flat checks are now calculated only for the primary target
-  - For rolls, the target is the same the roll uses
-  - TODO: Otherwise, it uses the first target
+- Flat checks are shown only for the primary target
+
+### Fixed
+- Outline filter making an invisble token disappear
 
 ### Removed
 - PF2e Perception support
+  
+### TODO
+- Multi-target for non-roll messages
+- Auto roll flat checks
+- Update readme/docs
+- TreatAs adjustment tooltip
+- Expend Modify RE allowed types
 
 ## [0.17.1] - 2025-08-02
 ### Added

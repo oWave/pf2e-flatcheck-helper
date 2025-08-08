@@ -35,7 +35,9 @@ export const FlatCheckModePriorities: Record<SchemaProps["mode"], number> = {
 
 export function buildModifyFlatDCRuleElement() {
 	// biome-ignore lint/correctness/noUnusedVariables: neccesary evil
-	interface ModifyFlatDCRuleElementImpl extends SchemaProps {}
+	interface ModifyFlatDCRuleElementImpl extends SchemaProps {
+		key: "fc-ModifyFlatDC"
+	}
 
 	// biome-ignore lint/suspicious/noUnsafeDeclarationMerging: this should be a crime
 	class ModifyFlatDCRuleElementImpl extends game.pf2e.RuleElement {

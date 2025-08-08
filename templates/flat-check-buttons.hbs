@@ -2,12 +2,12 @@
 	{{#each @root.buttons}}
 	<div class="fc-check">
 		<span class="fc-label">
-			<span>{{ @root.localizeCondition this.condition }}</span>
-			{{#unless (eq this.condition this.source)}}
-			<span class="fc-description">{{ @root.localizeSource this.source }}</span>
+			<span>{{ @root.localizeCondition this.source }}</span>
+			{{#unless (eq this.source this.label)}}
+			<span class="fc-description">{{ @root.localizeSource this.label }}</span>
 			{{/unless}}
 		</span>
-		<span class="fc-dc" data-tooltip="{{ this.adjustments }}">
+		<span class="fc-dc" data-tooltip="{{ this.dcAdjustments }}">
 			<span>DC</span>
 			<span class="fc-dcs">
 				{{#unless (eq this.baseDc this.finalDc)}}

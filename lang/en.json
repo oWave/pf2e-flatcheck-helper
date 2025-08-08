@@ -209,7 +209,9 @@
 	},
 	"PF2E": {
 		"RuleElement": {
-			"fc-ModifyFlatDC": "Modify Flat DC"
+			"fc-ModifyFlatDC": "Modify Flat DC",
+			"fc-AddCheck": "Add Check",
+			"fc-TreatAs": "Treat Condition As"
 		}
 	}
 }
