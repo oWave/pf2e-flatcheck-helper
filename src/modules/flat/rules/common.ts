@@ -153,7 +153,7 @@ export class Adjustments {
 		if (!Object.keys(VisiblityLevelPriorities).includes(check.type)) return null
 
 		const checkOptions = [rollOptions, flatCheckRollOptions.forCheck(check)].flat()
-		logOptions(`fc-TreatAs (${check.type})`, rollOptions)
+		logOptions(`fc-TreatAs (${check.type})`, checkOptions)
 
 		const rules = this.treatAs
 			.map((rule) => rule.getData(checkOptions))
