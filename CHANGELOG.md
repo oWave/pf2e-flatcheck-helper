@@ -22,8 +22,8 @@
 - Multi-target for non-roll messages
 - Auto roll flat checks
 - Update readme/docs
-- TreatAs adjustment tooltip
-- Expend Modify RE allowed types
+- Test priorities and tiebreakers
+- Fix PF2e HUD delay button for players
 
 ## [0.17.1] - 2025-08-02
 ### Added

@@ -1,4 +1,5 @@
 import type { ModelPropFromDataField } from "foundry-pf2e/foundry/common/data/fields.mjs"
+import { PRIORITIES } from "./common"
 import { ValueField } from "./fields"
 
 const fields = foundry.data.fields
@@ -6,12 +7,11 @@ const fields = foundry.data.fields
 const schema = {
 	type: new fields.StringField({
 		required: true,
-		choices: ["concealed", "hidden"],
+		blank: false,
 	}),
 	mode: new fields.StringField({
 		required: true,
 		blank: false,
-		initial: undefined,
 		choices: ["add", "upgrade", "downgrade", "override"],
 	}),
 	value: new ValueField({ required: true }),
@@ -26,12 +26,6 @@ type SchemaType = typeof schema
 type SchemaProps = {
 	[k in keyof SchemaType]: ModelPropFromDataField<SchemaType[k]>
 }
-export const FlatCheckModePriorities: Record<SchemaProps["mode"], number> = {
-	add: 20,
-	downgrade: 30,
-	upgrade: 40,
-	override: 50,
-}
 
 export function buildModifyFlatDCRuleElement() {
 	// biome-ignore lint/correctness/noUnusedVariables: neccesary evil
@@ -43,17 +37,33 @@ export function buildModifyFlatDCRuleElement() {
 	class ModifyFlatDCRuleElementImpl extends game.pf2e.RuleElement {
 		static override defineSchema() {
 			const base = super.defineSchema()
-			base.priority.initial = (d) => FlatCheckModePriorities[String(d.mode)] ?? 50
+			base.priority.initial = (d) => PRIORITIES[String(d.mode)] ?? PRIORITIES.override
 			return {
 				...base,
 				...schema,
 			}
 		}
 
-		get resolvedValue(): number {
-			const resolved = this.resolveValue(this.value)
-			if (typeof resolved !== "number") return 0
-			return resolved
+		get tiebreakPriority() {
+			return Number(this.resolveValue(this.value)) || 0
+		}
+
+		getData(options: string[]) {
+			if (!this.test(options)) return null
+
+			const resolvedValue = Number(this.resolveValue(this.value)) || 0
+			if (!resolvedValue) return null
+
+			const data = {
+				label: this.label,
+				type: this.resolveInjectedProperties(this.type),
+				mode: this.mode,
+				value: resolvedValue,
+				affects: this.affects,
+			}
+
+			if (this.ignored) return null
+			return data
 		}
 	}
 
@@ -61,3 +71,5 @@ export function buildModifyFlatDCRuleElement() {
 }
 
 export type ModifyFlatDCRuleElement = InstanceType<ReturnType<typeof buildModifyFlatDCRuleElement>>
+
+export type ModifyFlatDCData = NonNullable<ReturnType<ModifyFlatDCRuleElement["getData"]>>

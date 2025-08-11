@@ -3,9 +3,9 @@ import type { FlatCheckSource } from "../data"
 
 function forCheck(source: Partial<FlatCheckSource>) {
 	const options: string[] = []
-	if (source.source) options.push(`fc:source:${source.source}`)
+	if (source.type) options.push(`fc:type:${source.type}`)
 	if (source.baseDc != null) options.push(`fc:base-dc:${source.baseDc}`)
-	if (source.origin) options.push(`fc:origin:${game.pf2e.system.sluggify(source.origin)}`)
+	if (source.origin) options.push(`fc:origin:${source.origin.slug}`)
 
 	return options
 }

@@ -80,7 +80,9 @@ export function darknessAtPoint(x: number, y: number): number {
 		if (!l.shape.contains(x, y)) continue
 		const d = Math.sqrt(Math.abs(l.x - x) ** 2 + Math.abs(l.y - y) ** 2)
 
+		//@ts-expect-error
 		if (d <= l.data.bright) return LightLevels.BRIGHT.darknessBreakpoint
+		//@ts-expect-error
 		if (d <= l.data.dim) darkness = LightLevels.DIM.darknessBreakpoint
 	}
 

@@ -114,6 +114,10 @@
 				font-size: var(--font-size-12);
 				opacity: 0.9;
 			}
+
+			.adjusted {
+				text-decoration: underline dotted;
+			}
 		}
 		.fc-dc {
 			max-width: 20%;

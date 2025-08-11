@@ -1,6 +1,4 @@
 import type { ModelPropFromDataField } from "foundry-pf2e/foundry/common/data/fields.mjs"
-import type { VisibilityLevels } from "../constants"
-import { sortRuleElements } from "./common"
 
 const fields = foundry.data.fields
 
@@ -48,23 +46,49 @@ export function buildTreatAsRuleElement() {
 	// biome-ignore lint/correctness/noUnusedVariables: neccesary evil
 	interface TreatAsRuleElementImpl extends SchemaProps {
 		key: "fc-TreatAs"
+		slug: string
 	}
 
 	// biome-ignore lint/suspicious/noUnsafeDeclarationMerging: this should be a crime
 	class TreatAsRuleElementImpl extends game.pf2e.RuleElement {
+		static override validateJoint(data: any) {
+			if (data.condition === data.treatAs) {
+				throw new Error("condition can't be the same as treatAs")
+			}
+			if (data.condition === "observed" && data.slug == null) {
+				throw new Error("slug is required when changing observed")
+			}
+		}
+
 		static override defineSchema() {
 			const base = super.defineSchema()
 			base.priority.initial = (d) => TreatAsModePriorities[String(d.mode)] ?? 50
+			base.slug.required = true
+			base.slug.nullable = false
 			return {
 				...base,
 				...schema,
 			}
 		}
 
-		get conditionPriority() {
+		get tiebreakPriority() {
 			const p = conditionPriorities[this.treatAs]
 			if (this.mode === "downgrade") return -p
 			return p
+		}
+
+		getData(options: string[]) {
+			if (!this.test(options)) return null
+
+			return {
+				slug: this.slug,
+				label: this.label,
+				affects: this.affects,
+				mode: this.mode,
+				condition: this.condition,
+				treatAs: this.treatAs,
+				priority: this.tiebreakPriority,
+			}
 		}
 	}
 
@@ -73,32 +97,4 @@ export function buildTreatAsRuleElement() {
 
 export type TreatAsRuleElement = InstanceType<ReturnType<typeof buildTreatAsRuleElement>>
 
-export interface TreatAsAdjustment {
-	old: VisibilityLevels
-	new: VisibilityLevels
-	label: string
-}
-
-export class TreatAsCollection {
-	private rules: TreatAsRuleElement[]
-	constructor(rules: TreatAsRuleElement[]) {
-		rules.sort(sortRuleElements)
-		this.rules = rules
-	}
-
-	getAdjustment(condition: VisibilityLevels): TreatAsAdjustment | null {
-		const conditionPrio = conditionPriorities[condition]
-		let adjustment: { new: VisibilityLevels; label: string } | null = null
-		for (const r of this.rules) {
-			if (r.condition !== condition) continue
-			const rulePrio = r.conditionPriority
-			if (r.mode === "downgrade" && conditionPrio > rulePrio)
-				adjustment = { new: r.treatAs, label: r.label }
-			else if (r.mode === "upgrade" && conditionPrio < rulePrio)
-				adjustment = { new: r.treatAs, label: r.label }
-			else adjustment = { new: r.treatAs, label: r.label }
-		}
-		if (adjustment) return { old: condition, ...adjustment }
-		return null
-	}
-}
+export type TreatAsData = ReturnType<TreatAsRuleElement["getData"]>

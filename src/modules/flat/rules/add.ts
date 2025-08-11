@@ -5,7 +5,7 @@ import { ValueField } from "./fields"
 const fields = foundry.data.fields
 
 const schema = {
-	source: new fields.StringField({
+	type: new fields.StringField({
 		required: true,
 		blank: false,
 	}),
@@ -32,22 +32,31 @@ export function buildAddCheckRuleElement() {
 	// biome-ignore lint/correctness/noUnusedVariables: neccesary evil
 	interface AddCheckRuleElementImpl extends SchemaProps {
 		key: "fc-AddCheck"
+		slug: string
 	}
 
 	// biome-ignore lint/suspicious/noUnsafeDeclarationMerging: this should be a crime
 	class AddCheckRuleElementImpl extends game.pf2e.RuleElement {
 		static override defineSchema() {
-			return { ...super.defineSchema(), ...schema }
+			const base = super.defineSchema()
+			base.slug.required = true
+			base.slug.nullable = false
+
+			return { ...base, ...schema }
 		}
 
-		toSource(): AdditionalFlatCheckSource | null {
+		toSource(options: string[]): AdditionalFlatCheckSource | null {
+			if (!this.test(options)) return null
 			const dc = this.resolveValue(this.baseDC)
 			if (typeof dc !== "number") return null
 
 			return {
-				source: this.source,
-				origin: this.label,
-				slot: this.slot ?? game.pf2e.system.sluggify(this.label),
+				type: this.type,
+				origin: {
+					slug: this.slug,
+					label: this.label,
+				},
+				slot: this.slot ?? this.slug,
 				baseDc: dc,
 			}
 		}

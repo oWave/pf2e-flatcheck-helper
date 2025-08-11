@@ -4,7 +4,7 @@ import { type VisibilityLevels, VisiblityLevelPriorities } from "../constants"
 import type { FlatCheckSource } from "../data"
 import type { TargetFlatCheckSource } from "../target"
 import type { AddCheckRuleElement } from "./add"
-import type { ModifyFlatDCRuleElement } from "./modify"
+import type { ModifyFlatDCData, ModifyFlatDCRuleElement } from "./modify"
 import { flatCheckRollOptions } from "./options"
 import type { TreatAsRuleElement } from "./treat-as"
 
@@ -29,12 +29,12 @@ export function sortRuleElements<T extends FlatCheckRuleElements>(a: T, b: T) {
 
 		// Put the higher override last
 		if (a.key === "fc-ModifyFlatDC" && b.key === "fc-ModifyFlatDC" && a.mode === "override") {
-			const delta = a.resolvedValue - b.resolvedValue
+			const delta = a.tiebreakPriority - b.tiebreakPriority
 			if (delta) return delta
 		}
 
 		if (a.key === "fc-TreatAs" && b.key === "fc-TreatAs") {
-			const delta = a.conditionPriority - b.conditionPriority
+			const delta = a.tiebreakPriority - b.tiebreakPriority
 			if (delta) return delta
 		}
 
@@ -84,6 +84,7 @@ export interface DcAdjustment {
 export interface TreatAsAdjustment {
 	old: VisibilityLevels
 	new: VisibilityLevels
+	slug: string
 	label: string
 }
 
@@ -105,32 +106,40 @@ export class Adjustments {
 	}
 
 	getDcAdjustment(type: string, rollOptions: string[], baseDc: number) {
-		const modifiers = this.modify.filter((r) => r.type === type && r.predicate.test(rollOptions))
+		logOptions(`fc-ModifyDC (${type})`, rollOptions)
+		const rules = this.modify.reduce<ModifyFlatDCData[]>((acc, rule) => {
+			if (rule.type === type) {
+				const data = rule.getData(rollOptions)
+				if (data) acc.push(data)
+			}
+			return acc
+		}, [])
+
 		let currentDc = baseDc
 		let adjustments: DcAdjustment[] = []
-		for (const m of modifiers) {
-			const value = m.resolvedValue
-			switch (m.mode) {
+		for (const rule of rules) {
+			const value = rule.value
+			switch (rule.mode) {
 				case "add":
 					if (value === 0) continue
 					currentDc += value
-					adjustments.push({ label: m.label, value: `${value > 0 ? "+" : ""}${value}` })
+					adjustments.push({ label: rule.label, value: `${value > 0 ? "+" : ""}${value}` })
 					break
 				case "upgrade":
 					if (currentDc < value) {
 						currentDc = value
-						adjustments = [{ label: m.label, value: value.toString() }]
+						adjustments = [{ label: rule.label, value: value.toString() }]
 					}
 					break
 				case "downgrade":
 					if (currentDc > value) {
 						currentDc = value
-						adjustments = [{ label: m.label, value: value.toString() }]
+						adjustments = [{ label: rule.label, value: value.toString() }]
 					}
 					break
 				case "override":
 					currentDc = value
-					adjustments = [{ label: m.label, value: value.toString() }]
+					adjustments = [{ label: rule.label, value: value.toString() }]
 					break
 			}
 		}
@@ -141,33 +150,44 @@ export class Adjustments {
 		check: TargetFlatCheckSource,
 		rollOptions: string[],
 	): TreatAsAdjustment | null {
-		if (!Object.keys(VisiblityLevelPriorities).includes(check.source)) return null
-		const condition = check.source as VisibilityLevels
+		if (!Object.keys(VisiblityLevelPriorities).includes(check.type)) return null
 
-		const conditionPrio = VisiblityLevelPriorities[condition]
-		let adjustment: { new: VisibilityLevels; label: string } | null = null
-		for (const r of this.treatAs) {
-			const checkOptions = [rollOptions, flatCheckRollOptions.forCheck(check)].flat()
+		const checkOptions = [rollOptions, flatCheckRollOptions.forCheck(check)].flat()
+		logOptions(`fc-TreatAs (${check.type})`, rollOptions)
 
-			if (r.condition !== condition || !r.predicate.test(checkOptions)) continue
-			const rulePrio = r.conditionPriority
-			if (r.mode === "downgrade" && conditionPrio > rulePrio)
-				adjustment = { new: r.treatAs, label: r.label }
-			else if (r.mode === "upgrade" && conditionPrio < rulePrio)
-				adjustment = { new: r.treatAs, label: r.label }
-			else adjustment = { new: r.treatAs, label: r.label }
+		const rules = this.treatAs
+			.map((rule) => rule.getData(checkOptions))
+			.filter((rule) => rule != null)
+
+		const originalCondition = check.type
+		const conditionPriority = VisiblityLevelPriorities[originalCondition]
+		let adjustment: { new: VisibilityLevels; label: string; slug: string } | null = null
+		for (const rule of rules) {
+			if (rule.condition !== originalCondition) continue
+			const rulePriority = rule.priority
+			if (
+				(rule.mode === "downgrade" && conditionPriority > rulePriority) ||
+				(rule.mode === "upgrade" && conditionPriority < rulePriority) ||
+				rule.mode === "upgrade"
+			) {
+				adjustment = { new: rule.treatAs, label: rule.label, slug: rule.slug }
+			}
 		}
-		if (adjustment) return { old: condition, ...adjustment }
+		if (adjustment) return { old: originalCondition, ...adjustment }
 		return null
 	}
 
 	getAdditionalSources(rollOptions: string[]) {
+		logOptions("fc-AddCheck", rollOptions)
 		const sources: AdditionalFlatCheckSource[] = []
 		for (const rule of this.add) {
-			if (!rule.predicate.test(rollOptions)) continue
-			const source = rule.toSource()
+			const source = rule.toSource(rollOptions)
 			if (source) sources.push(source)
 		}
 		return sources
 	}
+}
+
+function logOptions(rule: string, options: string[]) {
+	console.log(`RollOptions for ${rule} RE: `, options)
 }

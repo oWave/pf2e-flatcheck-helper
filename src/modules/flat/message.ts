@@ -4,7 +4,8 @@ import MODULE from "src/index"
 import { parseHTML, translate } from "src/utils"
 import { BaseModule } from "../base"
 import { collectFlatChecks, type FlatCheckData } from "./data"
-import { localizeCondition, localizeSource } from "./i18n"
+import { localizeOrigin, localizeType } from "./i18n"
+import type { TreatAsAdjustment } from "./rules/common"
 import { setupRuleElements } from "./rules/setup"
 
 export class MessageFlatCheckModule extends BaseModule {
@@ -58,11 +59,12 @@ export async function messageRenderHTMLWrapper(this: ChatMessagePF2e, wrapper, .
 async function renderButtons(msg: ChatMessagePF2e, html: HTMLElement) {
 	interface ButtonData {
 		key: string
-		source: string
-		label?: string
+		type: string
+		origin?: { slug: string; label?: string }
 		baseDc: number
 		finalDc: number
 		dcAdjustments?: string
+		conditionAdjustment?: TreatAsAdjustment
 		rolls: { class: string; value: number }[]
 		rerollIcon?: string
 		showRollButton: boolean
@@ -101,9 +103,10 @@ async function renderButtons(msg: ChatMessagePF2e, html: HTMLElement) {
 		buttons.push({
 			baseDc: check.baseDc,
 			finalDc: check.finalDc,
-			dcAdjustments: check.dcAdjustments?.map((a) => `${a.label} ${a.value}`).join("<br>"),
-			source: check.source,
-			label: check.origin,
+			dcAdjustments: check.dcAdjustments?.map((a) => `${a.label}: ${a.value}`).join("<br>"),
+			type: check.type,
+			conditionAdjustment: check.conditionAdjustment,
+			origin: check.origin,
 			rolls: rollData,
 			rerollIcon: check.reroll?.keep ? REROLL_ICONS[check.reroll?.keep] : undefined,
 			showRollButton:
@@ -119,8 +122,8 @@ async function renderButtons(msg: ChatMessagePF2e, html: HTMLElement) {
 			i18n: (key: string) => {
 				return translate(`flat.${key}`)
 			},
-			localizeCondition,
-			localizeSource,
+			localizeType: localizeType,
+			localizeOrigin: localizeOrigin,
 		}
 
 		const buttonHtml = await foundry.applications.handlebars.renderTemplate(

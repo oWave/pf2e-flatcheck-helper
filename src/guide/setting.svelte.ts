@@ -34,13 +34,15 @@ class SettingsStore {
 
 		for (const [key, value] of this.uncommitted.entries()) {
 			const setting = game.settings.settings.get(`${MODULE_ID}.${key}`)
+			if (!setting) continue
 			game.settings.set(MODULE_ID, key, value)
 			if (setting.requiresReload) {
 				if (setting.scope === "world") worldReload = true
 				else clientReload = true
 			}
 		}
-		if (clientReload || worldReload) SettingsConfig.reloadConfirm({ world: worldReload })
+		if (clientReload || worldReload)
+			foundry.applications.settings.SettingsConfig.reloadConfirm({ world: worldReload })
 	}
 }
 

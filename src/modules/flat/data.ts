@@ -6,8 +6,8 @@ import { flatCheckRollOptions } from "./rules/options"
 import { type BaseTargetFlatCheck, TargetFlatCheckHelper } from "./target"
 
 export interface FlatCheckSource {
-	source: string
-	origin?: string
+	type: string
+	origin?: { label?: string; slug: string }
 	baseDc: number
 }
 
@@ -103,7 +103,7 @@ export class FlatCheckHelper {
 				this.actor.conditions.stored.some((c) => c.slug === "grabbed") &&
 				this.msg.item?.system.traits.value?.some((t) => t === "manipulate")
 			) {
-				sources.push({ source: "grabbed", origin: "manipulate", baseDc: 5 })
+				sources.push({ type: "grabbed", origin: { slug: "manipulate" }, baseDc: 5 })
 			}
 
 			if (
@@ -111,7 +111,7 @@ export class FlatCheckHelper {
 				this.actor.conditions.stored.some((c) => c.slug === "deafened") &&
 				this.msg.item?.system.traits.value?.some((t) => t === "auditory")
 			) {
-				sources.push({ source: "deafened", origin: "auditory", baseDc: 5 })
+				sources.push({ type: "deafened", origin: { slug: "auditory" }, baseDc: 5 })
 			}
 			if (
 				!ignored.has("deafened-spellcasting") &&
@@ -119,13 +119,13 @@ export class FlatCheckHelper {
 				this.msg.flags?.pf2e?.origin?.type === "spell" &&
 				!this.msg.item?.system.traits.value?.some((t) => t === "subtle")
 			) {
-				sources.push({ source: "deafened", origin: "spell", baseDc: 5 })
+				sources.push({ type: "deafened", origin: { slug: "spell" }, baseDc: 5 })
 			}
 
 			if (!ignored.has("stupefied") && this.msg.flags?.pf2e?.origin?.type === "spell") {
 				const stupefied = this.actor.conditions.stupefied?.value
 				if (stupefied) {
-					sources.push({ source: "stupefied", origin: "spell", baseDc: 5 + stupefied })
+					sources.push({ type: "stupefied", origin: { slug: "spell" }, baseDc: 5 + stupefied })
 				}
 			}
 		}
@@ -156,7 +156,7 @@ export class FlatCheckHelper {
 		}
 
 		for (const source of this.#collectOriginSources()) {
-			const key = source.source
+			const key = source.type
 			if (key in slots) slots[key].push(source)
 			else slots[key] = [source]
 		}
@@ -187,11 +187,7 @@ export class FlatCheckHelper {
 			sources,
 			R.map((s) => {
 				const options = [this.rollOptions, flatCheckRollOptions.forCheck(s)].flat()
-				const { finalDc, adjustments } = this.adjustments.getDcAdjustment(
-					s.source,
-					options,
-					s.baseDc,
-				)
+				const { finalDc, adjustments } = this.adjustments.getDcAdjustment(s.type, options, s.baseDc)
 				return {
 					...s,
 					finalDc: finalDc,

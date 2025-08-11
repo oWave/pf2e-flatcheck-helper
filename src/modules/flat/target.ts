@@ -1,6 +1,7 @@
 import type { ActorPF2e, TokenDocumentPF2e, TokenPF2e } from "foundry-pf2e"
 import * as R from "remeda"
 import { OriginToTargetCondition, type TargetConditionSlug, TargetConditionToDC } from "./constants"
+import type { FlatCheckSource } from "./data"
 import { tokenLightLevel } from "./light/token"
 import { LightLevels } from "./light/utils"
 import { flatMessageConfig } from "./message-config"
@@ -16,9 +17,8 @@ const originPriorities = {
 	concealed: 6,
 } as const
 
-export interface TargetFlatCheckSource {
-	source: TargetConditionSlug
-	origin?: string
+export interface TargetFlatCheckSource extends Omit<FlatCheckSource, "baseDc"> {
+	type: TargetConditionSlug
 }
 
 export interface BaseTargetFlatCheck extends TargetFlatCheckSource {
@@ -28,8 +28,8 @@ export interface BaseTargetFlatCheck extends TargetFlatCheckSource {
 
 function keepHigherSource(...sources: (TargetFlatCheckSource | null | undefined)[]) {
 	return R.firstBy(sources, (s) => {
-		if (s?.origin == null) return Infinity
-		const p = originPriorities[s.origin] ?? -1
+		if (s?.origin?.slug == null) return Infinity
+		const p = originPriorities[s.origin.slug] ?? -1
 		return p
 	})
 }
@@ -37,20 +37,22 @@ function keepHigherSource(...sources: (TargetFlatCheckSource | null | undefined)
 function flatCheckDataFromOrigin(origin: ActorPF2e): TargetFlatCheckSource | null {
 	for (const slug of ["blinded", "dazzled"] as const) {
 		if (origin.conditions.bySlug(slug).length)
-			return { source: OriginToTargetCondition[slug], origin: slug }
+			return { type: OriginToTargetCondition[slug], origin: { slug } }
 	}
 	return null
 }
 
 export function flatCheckDataForTarget(target: ActorPF2e): TargetFlatCheckSource | null {
-	// Todo: Invisibility
 	for (const slug of ["hidden", "concealed"] as const) {
-		if (target.conditions.bySlug(slug).length) return { source: slug }
+		if (target.conditions.bySlug(slug).length) return { type: slug }
 	}
 	return null
 }
 
-export function visioneerFlatCheck(origin: TokenDocumentPF2e, target: TokenDocumentPF2e) {
+export function visionerFlatCheck(
+	origin: TokenDocumentPF2e,
+	target: TokenDocumentPF2e,
+): TargetFlatCheckSource | null {
 	const visioneerApi:
 		| { getVisibility: (observerId: string, targetId: string) => string | null }
 		| undefined =
@@ -69,7 +71,7 @@ export function visioneerFlatCheck(origin: TokenDocumentPF2e, target: TokenDocum
 		else safeCondition = "hidden"
 
 		if (safeCondition) {
-			return { source: safeCondition }
+			return { type: safeCondition }
 		}
 	}
 	return null
@@ -94,11 +96,11 @@ export function calculateTargetFlatCheck(
 	}
 
 	if (origin && target) {
-		const check = visioneerFlatCheck(origin, target)
+		const check = visionerFlatCheck(origin, target)
 		if (check) source = keepHigherSource(source, check)
 	}
 
-	if (source) return { ...source, baseDc: TargetConditionToDC[source.source] }
+	if (source) return { ...source, baseDc: TargetConditionToDC[source.type] }
 
 	return null
 }
@@ -119,13 +121,13 @@ export function conditionFromLightLevel(
 	const lightLevel = tokenLightLevel(token)
 	if (lightLevel === LightLevels.DARK && !hasDarkvision)
 		return {
-			origin: "darkness",
-			source: "hidden",
+			origin: { slug: "darkness" },
+			type: "hidden",
 		}
 	if (lightLevel === LightLevels.DIM && !hasLowLightVision)
 		return {
-			origin: "dim-light",
-			source: "concealed",
+			origin: { slug: "dim-light" },
+			type: "concealed",
 		}
 	return null
 }
@@ -161,7 +163,7 @@ export class TargetFlatCheckHelper {
 		const sources: TargetFlatCheckSource[] = []
 		for (const slug of ["blinded", "dazzled"] as const) {
 			if (this.origin?.actor?.conditions.bySlug(slug).length)
-				sources.push({ source: OriginToTargetCondition[slug], origin: slug })
+				sources.push({ type: OriginToTargetCondition[slug], origin: { slug } })
 		}
 
 		return sources
@@ -170,11 +172,11 @@ export class TargetFlatCheckHelper {
 	#collectTargetSources() {
 		const sources: TargetFlatCheckSource[] = []
 		for (const slug of ["hidden", "concealed"] as const) {
-			if (this.target.actor?.conditions.bySlug(slug).length) sources.push({ source: slug })
+			if (this.target.actor?.conditions.bySlug(slug).length) sources.push({ type: slug })
 		}
 
 		if (this.target.actor?.conditions.bySlug("invisible").length) {
-			sources.push({ source: "hidden", origin: "invisible" })
+			sources.push({ type: "hidden", origin: { slug: "invisible" } })
 		}
 
 		return sources
@@ -184,7 +186,7 @@ export class TargetFlatCheckHelper {
 		const sources: TargetFlatCheckSource[] = []
 
 		if (this.origin && this.target) {
-			const visioneerCheck = visioneerFlatCheck(this.origin, this.target)
+			const visioneerCheck = visionerFlatCheck(this.origin, this.target)
 			if (visioneerCheck) sources.push(visioneerCheck)
 		}
 
@@ -196,11 +198,28 @@ export class TargetFlatCheckHelper {
 		return sources
 	}
 
+	#collectExtraConditions(): TargetFlatCheckSource[] {
+		const adjustment = this.adjustments.getTreatAsAdjustment({ type: "observed" }, this.rollOptions)
+		if (adjustment) {
+			return [
+				{
+					type: adjustment.new,
+					origin: {
+						slug: adjustment.slug,
+						label: adjustment.label,
+					},
+				},
+			]
+		}
+		return []
+	}
+
 	collectedSources() {
 		const merged = [
 			this.#collectOriginSources(),
 			this.#collectTargetSources(),
 			this.#collectMergedSources(),
+			this.#collectExtraConditions(),
 		].flat()
 
 		const sources: BaseTargetFlatCheck[] = []
@@ -208,29 +227,16 @@ export class TargetFlatCheckHelper {
 		for (const source of merged) {
 			const check: BaseTargetFlatCheck = {
 				...source,
-				baseDc: TargetConditionToDC[source.source],
+				baseDc: TargetConditionToDC[source.type],
 			}
 			const adjustments = this.adjustments.getTreatAsAdjustment(check, this.rollOptions)
 			if (adjustments) {
 				if (adjustments.new === "observed") continue
-				check.source = adjustments.new
+				check.type = adjustments.new
 				check.conditionAdjustment = adjustments
-				check.baseDc = TargetConditionToDC[check.source]
+				check.baseDc = TargetConditionToDC[check.type]
 			}
 			sources.push(check)
-		}
-
-		const observedAdjustment = this.adjustments.getTreatAsAdjustment(
-			{ source: "observed" },
-			this.rollOptions,
-		)
-		if (observedAdjustment) {
-			sources.push({
-				source: observedAdjustment.new,
-				origin: observedAdjustment.label,
-				baseDc: TargetConditionToDC[observedAdjustment.new],
-				conditionAdjustment: observedAdjustment,
-			})
 		}
 
 		return sources
