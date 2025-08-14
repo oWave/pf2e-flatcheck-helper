@@ -2,6 +2,8 @@
 🥭
 
 ## [Unreleased]
+
+## [0.18.0] - 2025-08-14
 ### Added
 - Custom Rule Elements
   - `fc-ModifyFlatDC` to change the DCs of flat checks
@@ -14,15 +16,12 @@
 ### Changed
 - Flat checks on messages with a target (like attack rolls) only show flat checks for that target
 
+### Removed
+- PF2e Perception support
+
 ### Fixed
 - Outline filter making an invisble token disappear
 - Delay button not showing in the PF2e HUD combat tracker for players
-
-### Removed
-- PF2e Perception support
-  
-### TODO
-- Update readme/docs
 
 ## [0.17.1] - 2025-08-02
 ### Added
@@ -108,7 +107,8 @@ Foundry v13 release
 ### Fixed
 - Flat checks showing on damage/healing received messages
 
-[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.17.1...HEAD
+[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.18.0...HEAD
+[0.18.0]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.17.1...v0.18.0
 [0.17.1]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.17.0...v0.17.1
 [0.17.0]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.16.1...v0.17.0
 [0.16.1]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.16.0...v0.16.1
