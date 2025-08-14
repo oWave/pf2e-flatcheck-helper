@@ -7,23 +7,22 @@
   - `fc-ModifyFlatDC` to change the DCs of flat checks
   - `fc-AddCheck` to add custom flat checks
   - `fc-TreatAs` to change what a condition counts as
+  - Details in the wiki: https://github.com/oWave/pf2e-flatcheck-helper/wiki
+- Setting to auto-roll flat checks
 - Support for PF2e Visioneer
 
 ### Changed
-- Flat checks are shown only for the primary target
+- Flat checks on messages with a target (like attack rolls) only show flat checks for that target
 
 ### Fixed
 - Outline filter making an invisble token disappear
+- Delay button not showing in the PF2e HUD combat tracker for players
 
 ### Removed
 - PF2e Perception support
   
 ### TODO
-- Multi-target for non-roll messages
-- Auto roll flat checks
 - Update readme/docs
-- Test priorities and tiebreakers
-- Fix PF2e HUD delay button for players
 
 ## [0.17.1] - 2025-08-02
 ### Added

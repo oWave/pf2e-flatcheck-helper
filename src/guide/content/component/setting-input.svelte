@@ -47,12 +47,16 @@ interface Props {
 }
 const { label, key, invert }: Props = $props()
 
-const setting = game.settings.settings.get(`${MODULE_ID}.${key}`)
-const icon = setting.scope === "world" ? "fa-earth" : "fa-user"
-const tooltipText =
-	setting.scope === "world"
-		? "World setting"
-		: "Client setting: Changing this setting only affects you."
+const setting = game.settings.settings.get(`${MODULE_ID}.${key}`)!
+let icon = "fas fa-earth"
+let tooltipText = "World setting"
+if (setting.scope === "client") {
+	icon = "fas fa-browser"
+	tooltipText = "Client setting: Changing this setting only affects you, and only in this browser."
+} else if ((setting.scope as string) === "user") {
+	icon = "fas fa-user"
+	tooltipText = "User setting: Changing this setting only affects you."
+}
 const requiresReload = setting.requiresReload
 
 const missingLibwrapper =

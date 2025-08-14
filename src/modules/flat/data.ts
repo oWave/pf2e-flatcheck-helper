@@ -1,5 +1,6 @@
 import type { ActorPF2e, ChatMessagePF2e, TokenDocumentPF2e } from "foundry-pf2e"
 import * as R from "remeda"
+import type { MsgFlagData } from "./message"
 import { flatMessageConfig } from "./message-config"
 import { Adjustments, type DcAdjustment, type TreatAsAdjustment } from "./rules/common"
 import { flatCheckRollOptions } from "./rules/options"
@@ -8,32 +9,50 @@ import { type BaseTargetFlatCheck, TargetFlatCheckHelper } from "./target"
 export interface FlatCheckSource {
 	type: string
 	origin?: { label?: string; slug: string }
-	baseDc: number
+	baseDc: number | null
 }
 
 export interface FlatCheckData extends FlatCheckSource {
-	finalDc: number
+	finalDc: number | null
 	dcAdjustments?: DcAdjustment[]
 	conditionAdjustment?: TreatAsAdjustment
 }
 
 export type FlatCheckRecord = Record<string, FlatCheckData>
 
-export function collectFlatChecks(msg: ChatMessagePF2e) {
+export function collectFlatChecks(msg: ChatMessagePF2e): MsgFlagData | null {
 	if (!msg.author) return null
 
-	let target: TokenDocumentPF2e | undefined
-	if (!msg.target?.token) {
-		target = game.user.targets.first()?.document
+	if (msg.target?.token) {
+		return FlatCheckHelper.fromMessage(msg, msg.target.token)
 	}
 
-	return FlatCheckHelper.fromMessage(msg, target)
+	const checks = [...game.user.targets].map((t) => FlatCheckHelper.fromMessage(msg, t.document))
+	if (checks.length === 0) return null
+	if (checks.length === 1) return checks[0]
+
+	const merged: MsgFlagData = {}
+	let targetCount = 0
+	for (const check of checks) {
+		for (const [key, slot] of Object.entries(check)) {
+			if (slot.finalDc == null || slot.finalDc <= 1) continue
+			if (key === "target") {
+				targetCount++
+			} else if ((merged[key]?.finalDc ?? 0) < slot.finalDc) {
+				merged[key] = slot
+			}
+		}
+	}
+
+	if (targetCount > 0) {
+		merged.target = { targetCount }
+	}
+
+	return merged
 }
 
 export class FlatCheckHelper {
-	originSources: FlatCheckSource[]
-	targetSources: BaseTargetFlatCheck[] | null
-	static fromMessage(msg: ChatMessagePF2e, target?: TokenDocumentPF2e) {
+	static fromMessage(msg: ChatMessagePF2e, target: TokenDocumentPF2e) {
 		if (!msg.actor) throw new Error("Message has no actor")
 
 		const msgTarget = msg.target?.token
@@ -87,9 +106,6 @@ export class FlatCheckHelper {
 		this.rollOptions = options
 
 		this.adjustments = new Adjustments(this.actor ?? null, this.target?.actor ?? null)
-
-		this.originSources = this.#collectOriginSources()
-		this.targetSources = this.#collectTargetSources()
 	}
 
 	#collectOriginSources() {
@@ -187,6 +203,13 @@ export class FlatCheckHelper {
 			sources,
 			R.map((s) => {
 				const options = [this.rollOptions, flatCheckRollOptions.forCheck(s)].flat()
+
+				if (s.baseDc == null)
+					return {
+						...s,
+						finalDc: null,
+					}
+
 				const { finalDc, adjustments } = this.adjustments.getDcAdjustment(s.type, options, s.baseDc)
 				return {
 					...s,
@@ -194,7 +217,7 @@ export class FlatCheckHelper {
 					dcAdjustments: adjustments,
 				}
 			}),
-			R.firstBy([R.prop("finalDc"), "desc"]),
+			R.firstBy([(d) => d.finalDc ?? -Infinity, "desc"]),
 		)
 	}
 }

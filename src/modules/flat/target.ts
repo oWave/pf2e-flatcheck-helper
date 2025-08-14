@@ -23,7 +23,7 @@ export interface TargetFlatCheckSource extends Omit<FlatCheckSource, "baseDc"> {
 
 export interface BaseTargetFlatCheck extends TargetFlatCheckSource {
 	conditionAdjustment?: TreatAsAdjustment
-	baseDc: number
+	baseDc: FlatCheckSource["baseDc"]
 }
 
 function keepHigherSource(...sources: (TargetFlatCheckSource | null | undefined)[]) {
@@ -43,7 +43,7 @@ function flatCheckDataFromOrigin(origin: ActorPF2e): TargetFlatCheckSource | nul
 }
 
 export function flatCheckDataForTarget(target: ActorPF2e): TargetFlatCheckSource | null {
-	for (const slug of ["hidden", "concealed"] as const) {
+	for (const slug of ["unnoticed", "undetected", "hidden", "concealed"] as const) {
 		if (target.conditions.bySlug(slug).length) return { type: slug }
 	}
 	return null
@@ -62,46 +62,11 @@ export function visionerFlatCheck(
 	if (visioneerApi) {
 		const condition = visioneerApi.getVisibility(origin.id, target.id)
 
-		if (condition === "observed" || condition == null) return null
+		if (condition == null || condition === "observed" || !(condition in TargetConditionToDC))
+			return null
 
-		// visioner also return undetected (and who knows what else)
-		// Make sure to only return concealed/hidden or everything explodes
-		let safeCondition: "hidden" | "concealed" | null = null
-		if (condition === "concealed" || condition === "hidden") safeCondition = condition
-		else safeCondition = "hidden"
-
-		if (safeCondition) {
-			return { type: safeCondition }
-		}
+		return { type: condition as TargetConditionSlug }
 	}
-	return null
-}
-
-export function calculateTargetFlatCheck(
-	origin: TokenDocumentPF2e | null,
-	target: TokenDocumentPF2e,
-) {
-	const originCondition = origin?.actor ? flatCheckDataFromOrigin(origin.actor) : null
-	const targetCondition = target.actor ? flatCheckDataForTarget(target.actor) : null
-
-	let source = keepHigherSource(originCondition, targetCondition)
-
-	if (
-		flatMessageConfig.toSets().experimental.has("light-level") &&
-		target.object &&
-		origin?.actor
-	) {
-		const lightLevelCondition = conditionFromLightLevel(origin.actor, target.object)
-		source = keepHigherSource(source, lightLevelCondition)
-	}
-
-	if (origin && target) {
-		const check = visionerFlatCheck(origin, target)
-		if (check) source = keepHigherSource(source, check)
-	}
-
-	if (source) return { ...source, baseDc: TargetConditionToDC[source.type] }
-
 	return null
 }
 
@@ -171,7 +136,7 @@ export class TargetFlatCheckHelper {
 
 	#collectTargetSources() {
 		const sources: TargetFlatCheckSource[] = []
-		for (const slug of ["hidden", "concealed"] as const) {
+		for (const slug of ["unnoticed", "undetected", "hidden", "concealed"] as const) {
 			if (this.target.actor?.conditions.bySlug(slug).length) sources.push({ type: slug })
 		}
 

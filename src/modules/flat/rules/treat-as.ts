@@ -46,7 +46,6 @@ export function buildTreatAsRuleElement() {
 	// biome-ignore lint/correctness/noUnusedVariables: neccesary evil
 	interface TreatAsRuleElementImpl extends SchemaProps {
 		key: "fc-TreatAs"
-		slug: string
 	}
 
 	// biome-ignore lint/suspicious/noUnsafeDeclarationMerging: this should be a crime
@@ -55,7 +54,7 @@ export function buildTreatAsRuleElement() {
 			if (data.condition === data.treatAs) {
 				throw new Error("condition can't be the same as treatAs")
 			}
-			if (data.condition === "observed" && data.slug == null) {
+			if (data.condition === "observed" && data.slug == null && data.slug === "") {
 				throw new Error("slug is required when changing observed")
 			}
 		}
@@ -63,8 +62,6 @@ export function buildTreatAsRuleElement() {
 		static override defineSchema() {
 			const base = super.defineSchema()
 			base.priority.initial = (d) => TreatAsModePriorities[String(d.mode)] ?? 50
-			base.slug.required = true
-			base.slug.nullable = false
 			return {
 				...base,
 				...schema,
@@ -81,7 +78,7 @@ export function buildTreatAsRuleElement() {
 			if (!this.test(options)) return null
 
 			return {
-				slug: this.slug,
+				slug: this.slug ?? "null",
 				label: this.label,
 				affects: this.affects,
 				mode: this.mode,

@@ -1,4 +1,5 @@
 import type { ChatMessagePF2e, SpellPF2e } from "foundry-pf2e"
+import type { RollJSON } from "foundry-pf2e/foundry/client/dice/roll.mjs"
 import { MODULE_ID } from "src/constants"
 import MODULE from "src/index"
 import { parseHTML, translate } from "src/utils"
@@ -6,7 +7,6 @@ import { BaseModule } from "../base"
 import { collectFlatChecks, type FlatCheckData } from "./data"
 import { localizeOrigin, localizeType } from "./i18n"
 import type { TreatAsAdjustment } from "./rules/common"
-import { setupRuleElements } from "./rules/setup"
 
 export class MessageFlatCheckModule extends BaseModule {
 	settingsKey = "flat-check-in-message"
@@ -16,10 +16,9 @@ export class MessageFlatCheckModule extends BaseModule {
 		super.enable()
 
 		this.registerHook("preCreateChatMessage", preCreateMessage)
+		this.registerHook("createChatMessage", onChatMessage)
 		this.registerWrapper("ChatMessage.prototype.renderHTML", messageRenderHTMLWrapper, "WRAPPER")
 		this.registerSocket("flat-dsn", handleDSNSocket)
-
-		setupRuleElements()
 	}
 	disable() {
 		super.disable()
@@ -34,7 +33,7 @@ const REROLL_ICONS: Record<RerollModes, string> = {
 	high: "fa-solid fa-dice-six",
 }
 
-type MsgFlagDataEntry = FlatCheckData & {
+interface MsgFlagCheckData extends FlatCheckData {
 	roll?: number
 	reroll?: {
 		oldRoll: number
@@ -42,7 +41,13 @@ type MsgFlagDataEntry = FlatCheckData & {
 	}
 }
 
-type MsgFlagData = Record<string, MsgFlagDataEntry>
+interface MsgFlagTargetCountData {
+	targetCount: number
+}
+
+export type MsgFlagData = Record<string, MsgFlagCheckData> & {
+	target?: MsgFlagCheckData | MsgFlagTargetCountData
+}
 
 export async function messageRenderHTMLWrapper(this: ChatMessagePF2e, wrapper, ...args) {
 	const html: HTMLElement = await wrapper(...args)
@@ -61,26 +66,31 @@ async function renderButtons(msg: ChatMessagePF2e, html: HTMLElement) {
 		key: string
 		type: string
 		origin?: { slug: string; label?: string }
-		baseDc: number
-		finalDc: number
+		baseDc: number | null
+		finalDc: number | null
 		dcAdjustments?: string
 		conditionAdjustment?: TreatAsAdjustment
 		rolls: { class: string; value: number }[]
 		rerollIcon?: string
-		showRollButton: boolean
+		secret: "gm" | "hide" | false
+		rollButton: string
+	}
+	interface NoteData {
+		icon: string
+		text: string
 	}
 
-	const data = msg.flags[MODULE_ID]?.flatchecks as MsgFlagData | undefined
-	if (!data) return
-
-	const buttons: ButtonData[] = []
-
-	for (const [key, check] of Object.entries(data)) {
+	function checkToData(key: string, check: MsgFlagCheckData): ButtonData {
 		const rollData: { class: string; value: number }[] = []
 		const rolls: [number | undefined, number | undefined] = [check.reroll?.oldRoll, check.roll]
 
-		const rollClasses: [string, string] = ["strikethrough", "strikethrough"]
-		if (check.reroll?.keep === "high") {
+		let rollClasses: [string, string] = ["strikethrough", "strikethrough"]
+		if (check.finalDc == null) {
+			rollClasses = ["", ""]
+			if (check.reroll?.keep && ["hero", "new"].includes(check.reroll?.keep)) {
+				rollClasses[0] = "strikethrough"
+			}
+		} else if (check.reroll?.keep === "high") {
 			const higherIndex = check.reroll.oldRoll < check.roll! ? 1 : 0
 			const outcome = rolls[higherIndex]! >= check.finalDc ? "success" : "failure"
 			rollClasses[higherIndex] = outcome
@@ -100,7 +110,17 @@ async function renderButtons(msg: ChatMessagePF2e, html: HTMLElement) {
 			rollData.push({ class: rollClasses[1], value: check.roll })
 		}
 
-		buttons.push({
+		let rollButton = "hide"
+		if (check.finalDc != null && check.finalDc <= 1) rollButton = "auto"
+		else if (check.finalDc != null && check.finalDc >= 20) rollButton = "impossible"
+		else if (msg.canUserModify(game.user, "update") && !check.reroll) rollButton = "show"
+
+		const secret =
+			["undetected", "unnoticed"].includes(check.type) && (game.user.isGM ? "gm" : "hide")
+		if (secret && !msg.hasPlayerOwner && game.user.isGM) rollButton = "gm-only"
+
+		return {
+			key,
 			baseDc: check.baseDc,
 			finalDc: check.finalDc,
 			dcAdjustments: check.dcAdjustments?.map((a) => `${a.label}: ${a.value}`).join("<br>"),
@@ -109,16 +129,36 @@ async function renderButtons(msg: ChatMessagePF2e, html: HTMLElement) {
 			origin: check.origin,
 			rolls: rollData,
 			rerollIcon: check.reroll?.keep ? REROLL_ICONS[check.reroll?.keep] : undefined,
-			showRollButton:
-				msg.canUserModify(game.user as unknown as foundry.documents.BaseUser, "update") &&
-				!check.reroll,
-			key,
-		})
+			secret,
+			rollButton,
+		}
 	}
 
-	if (buttons.length) {
+	function targetCountToData(key: string, check: MsgFlagTargetCountData): NoteData {
+		return {
+			icon: "fa-solid fa-circle-question",
+			text: translate("flat.message.button-require-flat-check", { count: check.targetCount }),
+		}
+	}
+
+	const data = msg.flags[MODULE_ID]?.flatchecks as MsgFlagData | undefined
+	if (!data) return
+
+	const buttons: ButtonData[] = []
+	const notes: NoteData[] = []
+
+	for (const [key, check] of Object.entries(data)) {
+		if ("type" in check) {
+			buttons.push(checkToData(key, check))
+		} else if ("targetCount" in check) {
+			notes.push(targetCountToData(key, check))
+		}
+	}
+
+	if (buttons.length || notes.length) {
 		const renderData = {
 			buttons,
+			notes,
 			i18n: (key: string) => {
 				return translate(`flat.${key}`)
 			},
@@ -239,7 +279,7 @@ async function handleFlatButtonClick(msg: ChatMessagePF2e, key: string, dc: numb
 		emitSocket({
 			msgId: msg.id,
 			userId: game.user.id,
-			roll: JSON.stringify(roll.toJSON()),
+			rolls: JSON.stringify([roll.toJSON()]),
 		})
 
 		msg.update(updates)
@@ -268,7 +308,7 @@ function shouldShowFlatChecks(msg: ChatMessagePF2e): boolean {
 	return msg.item.isOfType("action", "consumable", "equipment", "feat", "melee", "weapon")
 }
 
-export async function preCreateMessage(msg: ChatMessagePF2e) {
+export function preCreateMessage(msg: ChatMessagePF2e) {
 	if (!msg.actor || !shouldShowFlatChecks(msg)) return
 
 	const data = collectFlatChecks(msg) as MsgFlagData
@@ -278,10 +318,35 @@ export async function preCreateMessage(msg: ChatMessagePF2e) {
 	})
 }
 
+async function onChatMessage(msg: ChatMessagePF2e) {
+	if (MODULE.settings.flatAutoRoll) await autoRoll(msg)
+}
+
+async function autoRoll(msg: ChatMessagePF2e) {
+	const data = msg.flags[MODULE_ID]?.flatchecks as MsgFlagData | undefined
+	if (!data) return
+	const updates: Record<string, number> = {}
+	const rolls: RollJSON[] = []
+
+	for (const [key, check] of Object.entries(data)) {
+		if (!("finalDc" in check)) continue
+		if (check.finalDc == null || check.finalDc <= 1 || check.finalDc >= 20) continue
+
+		const roll = await new Roll("d20").roll()
+		rolls.push(roll.toJSON())
+		updates[`flags.${MODULE_ID}.flatchecks.${key}.roll`] = roll.total
+	}
+
+	if (rolls.length)
+		emitSocket({ msgId: msg.id, userId: game.user.id, rolls: JSON.stringify(rolls) })
+
+	await msg.update(updates)
+}
+
 interface SocketData {
 	msgId: string
 	userId: string
-	roll: string
+	rolls: string
 }
 
 function emitSocket(data: SocketData) {
@@ -294,10 +359,11 @@ function handleDSNSocket(data: SocketData) {
 
 	const msg = game.messages.get(data.msgId)
 	const user = game.users.get(data.userId)
-	const roll = Roll.fromJSON(data.roll)
-
 	if (!user || !msg) return
 
-	// @ts-expect-error
-	game.dice3d.showForRoll(roll, user, false, null, false, data.msgId)
+	for (const rollJson of JSON.parse(data.rolls)) {
+		const roll = Roll.fromData(rollJson)
+		// @ts-expect-error
+		game.dice3d.showForRoll(roll, user, false, null, false, data.msgId)
+	}
 }

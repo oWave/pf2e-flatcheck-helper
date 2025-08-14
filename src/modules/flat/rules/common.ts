@@ -168,7 +168,7 @@ export class Adjustments {
 			if (
 				(rule.mode === "downgrade" && conditionPriority > rulePriority) ||
 				(rule.mode === "upgrade" && conditionPriority < rulePriority) ||
-				rule.mode === "upgrade"
+				rule.mode === "override"
 			) {
 				adjustment = { new: rule.treatAs, label: rule.label, slug: rule.slug }
 			}

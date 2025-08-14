@@ -8,6 +8,10 @@
 			Adds flat checks on Strikes, Spells and some other chat messages.
 		</p>
 		<SettingInput key="flat-check-in-message" label="Enabled" />
+
+		<h5>Auto-Roll Flat Checks</h5>
+		<SettingInput key="flat-check-auto-roll" label="Mode" />
+		<SettingInput key="flat-check-auto-roll-user" label="Enabled" />
 	</div>
 
 	<img src="{FlatOnTarget}">
@@ -41,10 +45,9 @@
 
 	<div class="col-span-2 mx-[10%]">
 		<h5 class="text-center">Compatibility</h5>
-		<strong>PF2e Perception Support</strong>
+		<strong>PF2e Visioner Support</strong>
 		<p>
-			If PF2e Perception is enabled, that module's calculation will be used for the on message and on token flat checks. <br>
-			The on token information will only show with a token selected.
+			If PF2e Visioner is enabled and target flat checks are enabled, Visioner's detection states will also be used for flat checks.
 		</p>
 	</div>
 

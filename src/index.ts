@@ -3,6 +3,7 @@ import { DelayModule } from "./modules/delay"
 import { EmanationModule } from "./modules/emanation/emanation"
 import { LightVisModule } from "./modules/flat/light/layer"
 import { MessageFlatCheckModule } from "./modules/flat/message"
+import { setupRuleElements } from "./modules/flat/rules/setup"
 import { TargetInfoModule } from "./modules/flat/target-marker"
 import { LifeLinkModule } from "./modules/life-link"
 import { AltRollBreakdownModule } from "./modules/misc/alt-roll-breakdown"
@@ -60,6 +61,8 @@ export default MODULE
 Hooks.on("init", () => {
 	MODULE.settings.init()
 	MODULE.socketHandler.init()
+
+	setupRuleElements()
 
 	for (const [name, module] of Object.entries(MODULE.modules)) {
 		const enabled =

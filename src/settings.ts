@@ -34,7 +34,12 @@ export const settings = {
 	get delayCreatesMessage() {
 		return game.settings.get(MODULE_ID, "delay-create-message") as boolean
 	},
-
+	get flatAutoRoll() {
+		const world = game.settings.get(MODULE_ID, "flat-check-auto-roll")
+		if (world === "always") return true
+		else if (world === "never") return false
+		return game.settings.get(MODULE_ID, "flat-check-auto-roll-user") as Boolean
+	},
 	get lifeLinkEnabled() {
 		return game.settings.get(MODULE_ID, "lifelink") as boolean
 	},
@@ -79,6 +84,29 @@ export const settings = {
 			config: true,
 			default: {},
 			type: Object,
+		})
+
+		register("flat-check-auto-roll", {
+			name: "pf2e-fc.settings.flat-check-auto-roll.name",
+			hint: "pf2e-fc.settings.flat-check-auto-roll.hint",
+			scope: "world",
+			config: true,
+			default: "user",
+			choices: {
+				always: "pf2e-fc.settings.flat-check-auto-roll.choices.always",
+				user: "pf2e-fc.settings.flat-check-auto-roll.choices.user",
+				never: "pf2e-fc.settings.flat-check-auto-roll.choices.never",
+			},
+			type: String,
+		})
+
+		register("flat-check-auto-roll-user", {
+			name: "pf2e-fc.settings.flat-check-auto-roll-user.name",
+			hint: "pf2e-fc.settings.flat-check-auto-roll-user.hint",
+			scope: "user",
+			config: true,
+			default: false,
+			type: Boolean,
 		})
 
 		register("flat-check-targer-marker", {

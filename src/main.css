@@ -94,9 +94,12 @@
 		margin: 5px 0 0 0;
 		line-height: 28px;
 
+		> * {
+			flex: 0 0 0px;
+		}
+
 		> span {
 			display: flex;
-			flex: 1 0 0px;
 			align-self: stretch;
 			align-items: center;
 			justify-content: center;
@@ -120,7 +123,7 @@
 			}
 		}
 		.fc-dc {
-			max-width: 20%;
+			min-width: 20%;
 
 			.fc-dcs {
 				margin-left: 2px;
@@ -138,10 +141,17 @@
 				}
 			}
 		}
+
+		.secret {
+			background: var(--visibility-gm-bg);
+			outline: 1px dotted rgba(75, 74, 68, 0.5);
+		}
+
 		.fc-roll {
 			/* background: rgba(0, 0, 0, 0.1); */
 			font-size: var(--font-size-20);
 			font-weight: bold;
+			flex-grow: 1;
 
 			.fc-rolls {
 				flex-grow: 1;

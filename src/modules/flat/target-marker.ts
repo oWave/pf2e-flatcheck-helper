@@ -79,7 +79,7 @@ class TokenTargetRenderer {
 		this.#layer.removeChildren()
 		const check = FlatCheckHelper.fromTokens(guessOrigin(), this.token.document).target
 
-		if (!check || check.finalDc <= 1) {
+		if (!check || (check.finalDc != null && check.finalDc <= 1)) {
 			this.#filter.enabled = false
 			return
 		}
@@ -91,7 +91,7 @@ class TokenTargetRenderer {
 		const textScale = calcScaleFromToken(this.token, 0.5)
 		const text = new foundry.canvas.containers.PreciseText(
 			translate("flat.target-marker-dc", {
-				dc: check.finalDc,
+				dc: check.finalDc ?? "?",
 				label: localizeType(check.type),
 			}),
 			textStyles.normal(textScale),
