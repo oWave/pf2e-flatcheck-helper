@@ -1,5 +1,6 @@
 import type { ActorPF2e } from "foundry-pf2e"
 import * as R from "remeda"
+import MODULE from "src"
 import { type VisibilityLevels, VisiblityLevelPriorities } from "../constants"
 import type { FlatCheckSource } from "../data"
 import type { TargetFlatCheckSource } from "../target"
@@ -189,5 +190,5 @@ export class Adjustments {
 }
 
 function logOptions(rule: string, options: string[]) {
-	console.log(`RollOptions for ${rule} RE: `, options)
+	if (MODULE.debug.re) console.log(`RollOptions for ${rule} RE: `, options)
 }

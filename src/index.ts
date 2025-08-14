@@ -54,6 +54,9 @@ const MODULE = {
 		altRollBreakdown: new AltRollBreakdownModule(),
 		sharedVision: new SharedVisionModule(),
 	},
+	debug: {
+		re: false,
+	},
 }
 
 export default MODULE
@@ -72,6 +75,8 @@ Hooks.on("init", () => {
 
 		if (enabled) module.enable()
 	}
+
+	;(game.modules.get(MODULE_ID) as any).debug = MODULE.debug
 })
 
 Hooks.on("ready", () => {
