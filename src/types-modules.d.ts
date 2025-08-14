@@ -25,4 +25,3 @@ declare global {
 		queries: Record<string, (data: any, options: any) => Promise<any>>
 	}
 }
-export type {}

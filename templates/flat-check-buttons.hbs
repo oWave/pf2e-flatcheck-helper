@@ -1,0 +1,74 @@
+<section class="fc-flatcheck-buttons">
+	{{#each @root.buttons}}
+		<div class="fc-check">
+			<span class="fc-label" {{#if this.conditionAdjustment}}
+				data-tooltip="{{this.conditionAdjustment.label}}: {{ @root.localizeType this.conditionAdjustment.old }} → {{ @root.localizeType this.conditionAdjustment.new }}"
+				{{/if}}>
+				<span {{#if this.conditionAdjustment }} class="adjusted" {{/if}}>{{ @root.localizeType this.type }}</span>
+				{{#if this.origin}}
+					{{#unless (eq this.type this.origin.slug)}}
+						<span class="fc-description">{{ @root.localizeOrigin this.origin }}</span>
+					{{/unless}}
+				{{/if}}
+			</span>
+			<span class="fc-dc" data-tooltip="{{ this.dcAdjustments }}">
+				<span>DC</span>
+				<span class="fc-dcs">
+					{{#if (eq this.finalDc null)}}
+						<span>?</span>
+					{{else}}
+						{{#unless (eq this.baseDc this.finalDc)}}
+							<span>{{this.baseDc}}</span>
+						{{/unless}}
+						<span>{{this.finalDc}}</span>
+					{{/if}}
+				</span>
+			</span>
+			<span class="fc-roll">
+				<span class="fc-rolls {{#if this.secret}}secret{{/if}}">
+					{{#if (eq this.secret "hide")}}
+						<span>
+							<i class="fa-solid fa-eye-slash" data-tooltip="{{localize 'PF2E.TraitSecret'}}"></i>
+						</span>
+					{{else}}
+						{{#if (eq this.rollButton "auto")}}
+							<i class="fa-solid fa-check success"></i>
+						{{/if}}
+						{{#if (eq this.rollButton "impossible")}}
+							<i class="fa-solid fa-xmark failure"><i/>
+						{{/if}}
+						{{#each this.rolls}}
+							<span class="{{this.class}}">{{this.value}}</span>
+						{{/each}}
+					{{/if}}
+					{{#if this.rerollIcon}}
+						<span class="fc-icon">
+							<i class="{{this.rerollIcon}}"></i>
+						</span>
+					{{/if}}
+				</span>
+			</span>
+			{{#if (or (eq this.rollButton "show") (eq this.rollButton "gm-only"))}}
+				<button {{#if (eq this.rollButton "gm-only")}}class="secret"{{/if}} data-action="roll-flatcheck" data-key="{{this.key}}" data-dc="{{this.finalDc}}">
+					{{#if this.rolls.length}}
+						<i class="fa-solid fa-rotate rotate"></i>
+					{{else}}
+						<i class="fa-solid fa-dice-d20 die"></i>
+					{{/if}}
+					</button>
+			{{/if}}
+			</button>
+		</div>
+	{{/each}}
+
+	{{#each @root.notes}}
+		<div class="fc-note">
+			<span>
+				<i class="fa-solid {{this.icon}}"></i>
+			</span>
+			<span>
+				{{this.text}}
+			</span>
+		</div>
+	{{/each}}
+</section>

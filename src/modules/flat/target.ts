@@ -1,142 +1,71 @@
-import type { ActorPF2e, CreaturePF2e, TokenPF2e } from "foundry-pf2e"
-import { translate } from "src/utils"
+import type { ActorPF2e, TokenDocumentPF2e, TokenPF2e } from "foundry-pf2e"
+import * as R from "remeda"
+import { OriginToTargetCondition, type TargetConditionSlug, TargetConditionToDC } from "./constants"
+import type { FlatCheckSource } from "./data"
 import { tokenLightLevel } from "./light/token"
 import { LightLevels } from "./light/utils"
 import { flatMessageConfig } from "./message-config"
+import type { Adjustments, TreatAsAdjustment } from "./rules/common"
 
-const originConditionDCs = {
+const originPriorities = {
+	invisible: 0,
+	blinded: 1,
+	darkness: 2,
+	hidden: 3,
+	"dim-light": 4,
 	dazzled: 5,
-	blinded: 11,
-}
-type OriginConditionSlug = keyof typeof originConditionDCs
+	concealed: 6,
+} as const
 
-const originToTargetCondition = Object.freeze({
-	dazzled: "concealed",
-	blinded: "hidden",
-})
-
-export const targetConditionDCs = {
-	concealed: 5,
-	hidden: 11,
-	invisible: 11,
-	undetected: 11,
-	unnoticed: 11,
-}
-type TargetConditionSlug = keyof typeof targetConditionDCs
-
-export function flatCheckForUserTargets(origin: CreaturePF2e) {
-	if (game.user.targets.size > 1) {
-		const count = game.user.targets.reduce(
-			(acc, t) => (calculateFlatCheck(origin, t) !== null ? acc + 1 : acc),
-			0,
-		)
-		if (count) return { count }
-	} else if (game.user.targets.size === 1) {
-		const target = game.user.targets.first()
-		if (target) {
-			const targetDC = calculateFlatCheck(origin, target)
-			if (targetDC) {
-				return targetDC
-			}
-		}
-	}
+export interface TargetFlatCheckSource extends Omit<FlatCheckSource, "baseDc"> {
+	type: TargetConditionSlug
 }
 
-function flatCheckDataForOrigin(origin: CreaturePF2e): ConditionData | null {
-	let originCondition = null as OriginConditionSlug | null
-	origin.conditions.stored.forEach((c) => {
-		const slug = c.system.slug
-		if (
-			slug in originConditionDCs &&
-			(!originCondition || originConditionDCs[originCondition] < originConditionDCs[slug])
-		) {
-			originCondition = slug as OriginConditionSlug
-		}
+export interface BaseTargetFlatCheck extends TargetFlatCheckSource {
+	conditionAdjustment?: TreatAsAdjustment
+	baseDc: FlatCheckSource["baseDc"]
+}
+
+function keepHigherSource(...sources: (TargetFlatCheckSource | null | undefined)[]) {
+	return R.firstBy(sources, (s) => {
+		if (s?.origin?.slug == null) return Infinity
+		const p = originPriorities[s.origin.slug] ?? -1
+		return p
 	})
-
-	return originCondition
-		? {
-				slug: originToTargetCondition[originCondition],
-				dc: originConditionDCs[originCondition],
-				description: translate(`flat.target.condition.${originCondition}`),
-			}
-		: null
 }
 
-export function flatCheckDataForTarget(target: TokenPF2e): ConditionData | null {
-	let targetCondition = null as TargetConditionSlug | null
-	target.actor?.conditions?.stored.forEach((c) => {
-		const slug = c.system.slug
-		if (
-			slug in targetConditionDCs &&
-			(!targetCondition || targetConditionDCs[targetCondition] < targetConditionDCs[slug])
-		)
-			targetCondition = slug as TargetConditionSlug
-	})
-
-	return targetCondition ? { slug: targetCondition, dc: targetConditionDCs[targetCondition] } : null
-}
-
-interface ConditionData {
-	slug: OriginConditionSlug | TargetConditionSlug
-	dc: number
-	description?: string
-}
-
-interface DisplayData {
-	label: string
-	dc: number
-	description?: string
-}
-
-export function conditionToDisplayData(condition: ConditionData): DisplayData {
-	return {
-		label: translate(`flat.target.condition.${condition.slug}`),
-		dc: condition.dc,
-		description: condition.description,
+function flatCheckDataFromOrigin(origin: ActorPF2e): TargetFlatCheckSource | null {
+	for (const slug of ["blinded", "dazzled"] as const) {
+		if (origin.conditions.bySlug(slug).length)
+			return { type: OriginToTargetCondition[slug], origin: { slug } }
 	}
+	return null
 }
 
-export function calculateFlatCheck(
-	origin: CreaturePF2e | null,
-	target: TokenPF2e,
-): DisplayData | null {
-	const perceptionActive = game.modules.get("pf2e-perception")?.active
-	// Flat check with no origin is not supported by pf2e-perception
-	if (!origin && perceptionActive) return null
-	if (origin && perceptionActive) {
-		const perceptionApi = (game.modules.get("pf2e-perception") as any).api
-		const originToken = canvas.tokens.placeables.find((t) => t.actor?.uuid === origin.uuid)
-		const condition = perceptionApi.token.getVisibility(target, originToken, {
-			affects: "target",
-		}) as TargetConditionSlug
-		const dc = perceptionApi.check.getFlatCheckDc(originToken, target) as number
-
-		if (dc === 0) return null
-		return { label: translate(`flat.target.condition.${condition}`), dc }
+export function flatCheckDataForTarget(target: ActorPF2e): TargetFlatCheckSource | null {
+	for (const slug of ["unnoticed", "undetected", "hidden", "concealed"] as const) {
+		if (target.conditions.bySlug(slug).length) return { type: slug }
 	}
+	return null
+}
 
-	const originCondition = origin ? flatCheckDataForOrigin(origin) : null
-	let targetCondition = flatCheckDataForTarget(target)
+export function visionerFlatCheck(
+	origin: TokenDocumentPF2e,
+	target: TokenDocumentPF2e,
+): TargetFlatCheckSource | null {
+	const visioneerApi:
+		| { getVisibility: (observerId: string, targetId: string) => string | null }
+		| undefined =
+		// @ts-expect-error
+		game.modules.get("pf2e-visioner")?.api
 
-	if (flatMessageConfig.toSets().experimental.has("light-level")) {
-		const lightLevelCondition = conditionFromLightLevel(origin, target)
-		if (lightLevelCondition && (!targetCondition || targetCondition.dc < lightLevelCondition.dc)) {
-			targetCondition = {
-				slug: lightLevelCondition.slug,
-				dc: lightLevelCondition.dc,
-				description: lightLevelCondition.description,
-			}
-		}
-	}
+	if (visioneerApi) {
+		const condition = visioneerApi.getVisibility(origin.id, target.id)
 
-	if (
-		(targetCondition && !originCondition) ||
-		(targetCondition && originCondition && originCondition.dc < targetCondition.dc)
-	) {
-		return conditionToDisplayData(targetCondition)
-	} else if (originCondition) {
-		return conditionToDisplayData(originCondition)
+		if (condition == null || condition === "observed" || !(condition in TargetConditionToDC))
+			return null
+
+		return { type: condition as TargetConditionSlug }
 	}
 	return null
 }
@@ -144,7 +73,7 @@ export function calculateFlatCheck(
 export function conditionFromLightLevel(
 	origin: ActorPF2e | null,
 	token: TokenPF2e,
-): { description: string; slug: TargetConditionSlug; dc: number } | null {
+): TargetFlatCheckSource | null {
 	let hasDarkvision = false
 	let hasLowLightVision = false
 	if (origin?.isOfType("creature")) {
@@ -157,33 +86,124 @@ export function conditionFromLightLevel(
 	const lightLevel = tokenLightLevel(token)
 	if (lightLevel === LightLevels.DARK && !hasDarkvision)
 		return {
-			description: translate("flat.target.darkness"),
-			slug: "hidden",
-			dc: targetConditionDCs.hidden,
+			origin: { slug: "darkness" },
+			type: "hidden",
 		}
 	if (lightLevel === LightLevels.DIM && !hasLowLightVision)
 		return {
-			description: translate("flat.target.dim-light"),
-			slug: "concealed",
-			dc: targetConditionDCs.concealed,
+			origin: { slug: "dim-light" },
+			type: "concealed",
 		}
 	return null
 }
 
-export function guessOrigin(): CreaturePF2e | null {
+export function guessOrigin(): TokenDocumentPF2e | null {
 	if (canvas.tokens.controlled.length === 1) {
 		const token = canvas.tokens.controlled[0]
-		return token.actor?.isOfType("creature") ? token.actor : null
+		return token.actor?.isOfType("creature") ? token.document : null
 	} else if (canvas.tokens.controlled.length > 1) {
 		return null
 	}
 	if (game.user.isGM) return null
 
-	let actor: CreaturePF2e | null = null
+	// If there is only one token on the scene the user owns, use that one
+	let token: TokenDocumentPF2e | null = null
 	for (const t of canvas.tokens.placeables) {
 		if (!t.actor?.isOwner || !t.actor?.isOfType("creature")) continue
-		if (actor) return null
-		actor = t.actor
+		if (token) return null
+		token = t.document
 	}
-	return actor
+	return token
+}
+
+export class TargetFlatCheckHelper {
+	constructor(
+		private origin: TokenDocumentPF2e | null | undefined,
+		private target: TokenDocumentPF2e,
+		private adjustments: Adjustments,
+		private rollOptions: string[],
+	) {}
+
+	#collectOriginSources() {
+		const sources: TargetFlatCheckSource[] = []
+		for (const slug of ["blinded", "dazzled"] as const) {
+			if (this.origin?.actor?.conditions.bySlug(slug).length)
+				sources.push({ type: OriginToTargetCondition[slug], origin: { slug } })
+		}
+
+		return sources
+	}
+
+	#collectTargetSources() {
+		const sources: TargetFlatCheckSource[] = []
+		for (const slug of ["unnoticed", "undetected", "hidden", "concealed"] as const) {
+			if (this.target.actor?.conditions.bySlug(slug).length) sources.push({ type: slug })
+		}
+
+		if (this.target.actor?.conditions.bySlug("invisible").length) {
+			sources.push({ type: "hidden", origin: { slug: "invisible" } })
+		}
+
+		return sources
+	}
+
+	#collectMergedSources() {
+		const sources: TargetFlatCheckSource[] = []
+
+		if (this.origin && this.target) {
+			const visioneerCheck = visionerFlatCheck(this.origin, this.target)
+			if (visioneerCheck) sources.push(visioneerCheck)
+		}
+
+		if (this.target.object) {
+			const lightCheck = conditionFromLightLevel(this.origin?.actor ?? null, this.target.object)
+			if (lightCheck) sources.push(lightCheck)
+		}
+
+		return sources
+	}
+
+	#collectExtraConditions(): TargetFlatCheckSource[] {
+		const adjustment = this.adjustments.getTreatAsAdjustment({ type: "observed" }, this.rollOptions)
+		if (adjustment) {
+			return [
+				{
+					type: adjustment.new,
+					origin: {
+						slug: adjustment.slug,
+						label: adjustment.label,
+					},
+				},
+			]
+		}
+		return []
+	}
+
+	collectedSources() {
+		const merged = [
+			this.#collectOriginSources(),
+			this.#collectTargetSources(),
+			this.#collectMergedSources(),
+			this.#collectExtraConditions(),
+		].flat()
+
+		const sources: BaseTargetFlatCheck[] = []
+
+		for (const source of merged) {
+			const check: BaseTargetFlatCheck = {
+				...source,
+				baseDc: TargetConditionToDC[source.type],
+			}
+			const adjustments = this.adjustments.getTreatAsAdjustment(check, this.rollOptions)
+			if (adjustments) {
+				if (adjustments.new === "observed") continue
+				check.type = adjustments.new
+				check.conditionAdjustment = adjustments
+				check.baseDc = TargetConditionToDC[check.type]
+			}
+			sources.push(check)
+		}
+
+		return sources
+	}
 }

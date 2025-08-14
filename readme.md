@@ -2,24 +2,17 @@
 
 Some automation for PF2e, just a button click away.
 
-For a detailed description of the features listed here and how to configure them, check out the documentation in foundry. You can find it in the module settings.
+**For a detailed description of the features listed here and how to configure them, check out the documentation in foundry. You can find it in the module settings.**
 
 ## Flat Check Helpers
-![image](https://github.com/user-attachments/assets/10af24ea-a11c-4a30-97cf-bab7eff45d23)
-
-Add buttons for supported flat checks on messages
-- Requires libwrapper
-- Supported:
-  - Concealed/Hidden + Dazzled/Blinded
-  - Stupefied when casting a spell
-  - Manipulate while Grabbed
-  - Auditory while Deafened (including non-subtle spells)
+![flat-in-message](https://github.com/user-attachments/assets/af0ff054-b1d9-4400-8986-f24ecd9a1ebb)
 
 Also shows flat checks when targetting a token. You can hold ALT to highlight squares that have no/dim light.
 ![image](https://github.com/user-attachments/assets/bf9f7c53-4c85-4658-854d-0746719df2d2)
 **The dim light/darkness flat checks are not enabled by default (yet). You can turn them on in the flat check settings.**
 
-If **pf2e-perception** is installed, that module will be used to calculate DCs.
+### Custom Rule Elements
+To modify flat check DCs or add custom checks, use the [rule elements](https://github.com/oWave/pf2e-flatcheck-helper/wiki#rule-elements) added by this module
 
 ## Delay Button
 ![image](https://github.com/oWave/pf2e-flatcheck-helper/assets/9253349/df782d32-50ec-45fd-93f2-f40d0b63932d)

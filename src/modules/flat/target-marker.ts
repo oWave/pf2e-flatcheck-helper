@@ -2,8 +2,10 @@ import type { TokenPF2e } from "foundry-pf2e"
 import type Token from "foundry-pf2e/foundry/client/canvas/placeables/token.mjs"
 import { translate } from "src/utils"
 import { BaseModule } from "../base"
+import { FlatCheckHelper } from "./data"
+import { localizeOrigin, localizeType } from "./i18n"
 import { TargetColors } from "./light/utils"
-import { calculateFlatCheck, guessOrigin } from "./target"
+import { guessOrigin } from "./target"
 
 function calcScaleFromToken(token: Token, multPerSquare = 0) {
 	const gridSize = token.scene!.grid.size
@@ -38,6 +40,9 @@ const tokenTargetManager = {
 	refreshTargets() {
 		for (const t of game.user.targets) this.target(t)
 	},
+	debouncedRefresh: foundry.utils.debounce(() => {
+		tokenTargetManager.refreshTargets()
+	}, 100),
 }
 
 const style: Partial<PIXI.ITextStyle> = { align: "center", dropShadow: false, strokeThickness: 2 }
@@ -64,35 +69,39 @@ class TokenTargetRenderer {
 			wave: false,
 		})
 		this.#filter.thickness = 3 * outlineScale
+		this.#filter.animated = false
 
 		this.token.addChild(this.#layer)
-		this.token.mesh?.filters?.push(this.#filter)
+		this.token.mesh?.filters?.unshift(this.#filter)
 	}
 
 	draw() {
 		this.#layer.removeChildren()
-		const condition = calculateFlatCheck(guessOrigin(), this.token)
+		const check = FlatCheckHelper.fromTokens(guessOrigin(), this.token.document).target
 
-		if (!condition) {
+		if (!check || (check.finalDc != null && check.finalDc <= 1)) {
 			this.#filter.enabled = false
 			return
 		}
 
-		const color = TargetColors.fromDC(condition.dc)
+		const color = TargetColors.fromDC(check.finalDc)
 		this.#filter.uniforms.outlineColor = color.toArray()
 		this.#filter.enabled = true
 
 		const textScale = calcScaleFromToken(this.token, 0.5)
 		const text = new foundry.canvas.containers.PreciseText(
-			translate("flat.target-marker-dc", { dc: condition.dc, label: condition.label }),
+			translate("flat.target-marker-dc", {
+				dc: check.finalDc ?? "?",
+				label: localizeType(check.type),
+			}),
 			textStyles.normal(textScale),
 		)
 		text.x = this.token.bounds.width / 2 - text.width / 2
 		text.y = this.token.bounds.height * 0.95 - text.height
 		this.#layer.addChild(text)
-		if ("description" in condition && condition.description) {
+		if (check.origin && check.type !== check.origin.slug) {
 			const smallText = new foundry.canvas.containers.PreciseText(
-				condition.description,
+				localizeOrigin(check.origin),
 				textStyles.small(textScale),
 			)
 			smallText.x = this.token.bounds.width / 2 - smallText.width / 2
@@ -118,7 +127,7 @@ export class TargetInfoModule extends BaseModule {
 			else tokenTargetManager.untarget(token)
 		})
 		this.registerHook("controlToken", () => {
-			tokenTargetManager.refreshTargets()
+			tokenTargetManager.debouncedRefresh()
 		})
 		const refreshTimeoutIds = new Map<string, NodeJS.Timeout>()
 		this.registerHook("refreshToken", (token: TokenPF2e, args: Record<string, boolean>) => {
@@ -137,7 +146,7 @@ export class TargetInfoModule extends BaseModule {
 			tokenTargetManager.destroyAll()
 		})
 		this.registerHook("lightingRefresh", () => {
-			tokenTargetManager.refreshTargets()
+			tokenTargetManager.debouncedRefresh()
 		})
 	}
 

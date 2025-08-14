@@ -60,7 +60,8 @@ export function onRenderPF2eHudTracker(app, tracker: HTMLElement) {
 			button.firstElementChild?.addEventListener("click", () => {
 				handleRequest({ combatant: c, type: type! })
 			})
-			delayElement.replaceWith(button)
+			delayElement.after(button)
+			delayElement.remove()
 		}
 	}
 }

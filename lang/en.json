@@ -19,7 +19,7 @@
 			},
 			"target": {
 				"label": "Target",
-				"note": "Concealed/Hidden/Dazzled/Blinded/etc. Supports PF2e Perception"
+				"note": "Concealed/Hidden/Dazzled/Blinded/etc. Supports PF2e Visioner"
 			},
 			"light-level": {
 				"label": "Target - Light Level",
@@ -33,6 +33,19 @@
 			},
 			"flat-check-config": {
 				"name": "Flat Check Config"
+			},
+			"flat-check-auto-roll": {
+				"name": "Auto-Roll Flat Checks",
+				"hint": "Rolls any flat checks on a message automatically",
+				"choices": {
+					"always": "Always",
+					"user": "User Setting",
+					"never": "Never"
+				}
+			},
+			"flat-check-auto-roll-user": {
+				"name": "Auto-Roll Flat Checks",
+				"hint": "User setting: Behaviour depends on the world setting"
 			},
 			"flat-check-targer-marker": {
 				"name": "Show Flat Check on Token",
@@ -138,22 +151,15 @@
 			"flat-check-label": "Flat Check: {label}",
 			"flat-check": "Flat Check",
 			"target-marker-dc": "DC {dc} - {label}",
-			"target": {
+			"source": {
+				"blinded": "Blinded",
 				"darkness": "Darkness",
+				"hidden": "Hidden",
 				"dim-light": "Dim Light",
-				"condition": {
-					"blinded": "Blinded",
-					"concealed": "Concealed",
-					"dazzled": "Dazzled",
-					"hidden": "Hidden",
-					"undetected": "Undetected",
-					"unnoticed": "Unnoticed",
-					"invisible": "Invisible"
-				}
+				"dazzled": "Dazzled",
+				"concealed": "Concealed"
 			},
 			"message": {
-				"perception-outdated-title": "PF2e Utility Buttons",
-				"perception-outdated-content": "pf2e-perception is outdated. Flat check integration requires version 0.40.0 or newer.",
 				"button-close": "Close",
 				"button-require-flat-check": "{count} targets require a flat check",
 				"tooltip-highest-dc": "If more than one flat check would ever cause or prevent the same thing, just roll once and use the highest DC.",
@@ -210,6 +216,13 @@
 			},
 			"message-config-check-types": "Check Types",
 			"emanation-area": "{origin}, {area} ft"
+		}
+	},
+	"PF2E": {
+		"RuleElement": {
+			"fc-ModifyFlatDC": "Modify Flat DC",
+			"fc-AddCheck": "Add Check",
+			"fc-TreatAs": "Treat Condition As"
 		}
 	}
 }

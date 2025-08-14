@@ -94,9 +94,12 @@
 		margin: 5px 0 0 0;
 		line-height: 28px;
 
+		> * {
+			flex: 0 0 0px;
+		}
+
 		> span {
 			display: flex;
-			flex: 1 0 0px;
 			align-self: stretch;
 			align-items: center;
 			justify-content: center;
@@ -114,14 +117,41 @@
 				font-size: var(--font-size-12);
 				opacity: 0.9;
 			}
+
+			.adjusted {
+				text-decoration: underline dotted;
+			}
 		}
 		.fc-dc {
-			max-width: 20%;
+			min-width: 20%;
+
+			.fc-dcs {
+				margin-left: 2px;
+				display: flex;
+				flex-direction: column;
+				text-align: center;
+
+				span {
+					line-height: 1;
+				}
+
+				span:has(+ span) {
+					font-size: var(--font-size-10);
+					opacity: 0.8;
+				}
+			}
 		}
+
+		.secret {
+			background: var(--visibility-gm-bg);
+			outline: 1px dotted rgba(75, 74, 68, 0.5);
+		}
+
 		.fc-roll {
 			/* background: rgba(0, 0, 0, 0.1); */
 			font-size: var(--font-size-20);
 			font-weight: bold;
+			flex-grow: 1;
 
 			.fc-rolls {
 				flex-grow: 1;

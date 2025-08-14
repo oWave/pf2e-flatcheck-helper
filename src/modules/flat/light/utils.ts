@@ -49,12 +49,14 @@ export const LightLevels = Object.freeze({
 })
 
 export const TargetColors = Object.freeze({
+	UNKNOWN: new PIXI.Color(0xbb00ff),
 	HIDDEN: new PIXI.Color(0xff0000),
 	INBETWEEN: new PIXI.Color(0xff8000),
 	CONCEALED: new PIXI.Color(0xffff00),
 	BETTER: new PIXI.Color(0xd0ff00),
 
-	fromDC(dc: number) {
+	fromDC(dc: number | null) {
+		if (dc == null) return this.UNKNOWN
 		if (dc < 5) return this.BETTER
 		if (dc === 5) return this.CONCEALED
 		if (dc < 11) return this.INBETWEEN
@@ -80,7 +82,9 @@ export function darknessAtPoint(x: number, y: number): number {
 		if (!l.shape.contains(x, y)) continue
 		const d = Math.sqrt(Math.abs(l.x - x) ** 2 + Math.abs(l.y - y) ** 2)
 
+		//@ts-expect-error
 		if (d <= l.data.bright) return LightLevels.BRIGHT.darknessBreakpoint
+		//@ts-expect-error
 		if (d <= l.data.dim) darkness = LightLevels.DIM.darknessBreakpoint
 	}
 
