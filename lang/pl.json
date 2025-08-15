@@ -19,7 +19,7 @@
 			},
 			"target": {
 				"label": "Cel",
-				"note": "Przysłonięty / Ukryty / Zamroczony / Oślepiony / itd. Wspiera PF2e Perception"
+				"note": "Przysłonięty / Ukryty / Zamroczony / Oślepiony / itd. Wspiera PF2e Visioner"
 			},
 			"light-level": {
 				"label": "Cel - Poziom oświetlenia",
@@ -33,6 +33,19 @@
 			},
 			"flat-check-config": {
 				"name": "Konfiguracja Płaskich Testów"
+			},
+			"flat-check-auto-roll": {
+				"name": "Automatyczny rzut na Płaskie Testy",
+				"hint": "Automatycznie rzuca wszelkie płaskie testy",
+				"choices": {
+					"always": "Zawsze",
+					"user": "Ustawienia użytkownika",
+					"never": "Nigdy"
+				}
+			},
+			"flat-check-auto-roll-user": {
+				"name": "Automatyczny rzut na Płaskie Testy",
+				"hint": "Ustawienia użytkownika: Zachowanie zależy od ustawień świata."
 			},
 			"flat-check-targer-marker": {
 				"name": "Pokaż Płaskie Testy na tokenie",
@@ -138,22 +151,15 @@
 			"flat-check-label": "Płaski Test: {label}",
 			"flat-check": "Płaski Test",
 			"target-marker-dc": "ST {dc} - {label}",
-			"target": {
+			"source": {
+				"blinded": "Oślepiony",
 				"darkness": "Ciemność",
+				"hidden": "Ukryty",
 				"dim-light": "Słabe światło",
-				"condition": {
-					"blinded": "Oślepiony",
-					"concealed": "Przysłonięty",
-					"dazzled": "Zamroczony",
-					"hidden": "Ukryty",
-					"undetected": "Niewykryty",
-					"unnoticed": "Niezauważony",
-					"invisible": "Niewidzialny"
-				}
+				"dazzled": "Zamroczony",
+				"concealed": "Przysłonięty"
 			},
 			"message": {
-				"perception-outdated-title": "PF2e Utility Buttons",
-				"perception-outdated-content": "pf2e-perception jest przestarzałe. Integracja płaskiego testu wymaga wersji 0.40.0 lub nowszej.",
 				"button-close": "Zamknij",
 				"button-require-flat-check": "{count} celów wymaga płaskiego testu",
 				"tooltip-highest-dc": "Jeśli więcej niż jeden płaski test miałby spowodować lub zapobiec tej samej rzeczy, wystarczy rzucić raz i użyć najwyższego ST.",
@@ -210,6 +216,13 @@
 			},
 			"message-config-check-types": "Typy testów",
 			"emanation-area": "{origin}, {area} stóp"
+		}
+	},
+	"PF2E": {
+		"RuleElement": {
+			"fc-ModifyFlatDC": "Modyfikacja ST płaskiego testu",
+			"fc-AddCheck": "Dodaj test",
+			"fc-TreatAs": "Traktuj stan jako"
 		}
 	}
 }
