@@ -75,7 +75,7 @@ export function darknessAtPoint(x: number, y: number): number {
 		return LightLevels.DARK.darknessBreakpoint
 	}
 
-	let darkness = LightLevels.DARK.darknessBreakpoint
+	let lightSourceLevel = LightLevels.DARK.darknessBreakpoint
 	for (const l of canvas.effects.lightSources) {
 		if (!l.active || l instanceof foundry.canvas.sources.GlobalLightSource) continue
 
@@ -85,16 +85,11 @@ export function darknessAtPoint(x: number, y: number): number {
 		//@ts-expect-error
 		if (d <= l.data.bright) return LightLevels.BRIGHT.darknessBreakpoint
 		//@ts-expect-error
-		if (d <= l.data.dim) darkness = LightLevels.DIM.darknessBreakpoint
-	}
-
-	const globalLevel = canvas.environment.darknessLevel
-	if (darkness < LightLevels.DARK.darknessBreakpoint) {
-		// point is in at least dim light from a light source
-		// darkness areas do not affect light sources
-		return Math.min(darkness, globalLevel)
+		if (d <= l.data.dim) lightSourceLevel = LightLevels.DIM.darknessBreakpoint
 	}
 
 	// @ts-expect-error
-	return canvas.effects.getDarknessLevel({ x, y, elevation: 0 })
+	const globalIlluminationLevel = canvas.effects.getDarknessLevel({ x, y, elevation: 0 })
+
+	return Math.min(lightSourceLevel, globalIlluminationLevel)
 }

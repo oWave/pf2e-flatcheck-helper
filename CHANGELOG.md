@@ -3,6 +3,9 @@
 
 ## [Unreleased]
 
+## Fixed
+- Global illumination overriding dim light even if a scene region makes it dark
+
 ## [0.18.0] - 2025-08-14
 ### Added
 - Custom Rule Elements
