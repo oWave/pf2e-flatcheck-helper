@@ -27,7 +27,9 @@ export function collectFlatChecks(msg: ChatMessagePF2e): MsgFlagData | null {
 		return FlatCheckHelper.fromMessage(msg, msg.target.token)
 	}
 
-	const checks = [...game.user.targets].map((t) => FlatCheckHelper.fromMessage(msg, t.document))
+	const checks = game.user.targets.size
+		? [...game.user.targets].map((t) => FlatCheckHelper.fromMessage(msg, t.document))
+		: [FlatCheckHelper.fromMessage(msg)]
 	if (checks.length === 0) return null
 	if (checks.length === 1) return checks[0]
 
@@ -52,7 +54,7 @@ export function collectFlatChecks(msg: ChatMessagePF2e): MsgFlagData | null {
 }
 
 export class FlatCheckHelper {
-	static fromMessage(msg: ChatMessagePF2e, target: TokenDocumentPF2e) {
+	static fromMessage(msg: ChatMessagePF2e, target?: TokenDocumentPF2e) {
 		if (!msg.actor) throw new Error("Message has no actor")
 
 		const msgTarget = msg.target?.token
