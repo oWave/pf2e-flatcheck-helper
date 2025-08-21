@@ -291,6 +291,7 @@ function shouldShowFlatChecks(msg: ChatMessagePF2e): boolean {
 	const blacklist: (typeof contextType)[] = [
 		"damage-roll",
 		"damage-taken",
+		"flat-check",
 		"initiative",
 		"saving-throw",
 	]
