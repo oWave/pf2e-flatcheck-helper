@@ -56,6 +56,20 @@
 	display: none !important;
 }
 
+#pf2e-hud-tracker {
+	i.delay-indicator {
+		animation: rotating 4s linear infinite;
+
+		&:hover {
+			animation: none;
+
+			&::before {
+				--fa: "\f04b";
+			}
+		}
+	}
+}
+
 .fc-undo-button {
 	align-items: center;
 	background: var(--bg-dark);

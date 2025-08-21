@@ -8,6 +8,7 @@
 ## Fixed
 - Global illumination overriding dim light even if a scene region makes it dark
 - Flat checks showing in the wrong place on reroll messages
+- Delay button not showing in the PF2e HUD combat tracker for real this time
 
 ## [0.18.0] - 2025-08-14
 ### Added

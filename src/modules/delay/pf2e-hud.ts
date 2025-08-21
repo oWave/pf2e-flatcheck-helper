@@ -17,11 +17,14 @@ export function onRenderPF2eHudTracker(app, tracker: HTMLElement) {
 		if (!c || !c.isOwner || c.initiative == null) continue
 
 		let delayElement: HTMLElement | null = null
-		if (game.user.isGM) delayElement = el.querySelector<HTMLLinkElement>("a.delay")
-		else
+		if (game.user.isGM) delayElement = el.querySelector<HTMLLinkElement>("div.extras a.delay")
+		else {
+			const container = el.querySelector("div.extras span.entry.initiative")
+			if (!container) continue
 			delayElement =
-				el.querySelector<HTMLElement>("i.fa-solid.fa-hourglass-start") ??
-				el.querySelector<HTMLElement>("i.fa-solid.fa-dice-d20")
+				container.querySelector<HTMLElement>("i.fa-solid.fa-hourglass-start") ??
+				container.querySelector<HTMLElement>("i.fa-solid.fa-dice-d20")
+		}
 
 		if (!delayElement) continue
 
@@ -60,8 +63,7 @@ export function onRenderPF2eHudTracker(app, tracker: HTMLElement) {
 			button.firstElementChild?.addEventListener("click", () => {
 				handleRequest({ combatant: c, type: type! })
 			})
-			delayElement.after(button)
-			delayElement.remove()
+			delayElement.replaceWith(button)
 		}
 	}
 }
