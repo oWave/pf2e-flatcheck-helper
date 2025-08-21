@@ -1,10 +1,13 @@
 # Changelog
 🥭
 
+- Blacklist Flat checks
+
 ## [Unreleased]
 
 ## Fixed
 - Global illumination overriding dim light even if a scene region makes it dark
+- Flat checks showing in the wrong place on reroll messages
 
 ## [0.18.0] - 2025-08-14
 ### Added

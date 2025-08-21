@@ -180,13 +180,13 @@ async function renderButtons(msg: ChatMessagePF2e, html: HTMLElement) {
 			buttonNode.append(note)
 		}
 		;(() => {
-			let section = html.querySelector("section.card-buttons")
+			let section: Element | null | undefined = html.querySelector("section.card-buttons")
 			if (section) {
 				section.append(buttonNode)
 				return
 			}
 
-			section = html.querySelector("div.dice-roll")
+			section = [...html.querySelectorAll("div.dice-roll")].at(-1)
 			if (section) {
 				section.after(buttonNode)
 				return
