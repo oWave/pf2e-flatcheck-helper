@@ -1,14 +1,15 @@
 # Changelog
 🥭
 
-- Blacklist Flat checks
-
 ## [Unreleased]
 
-## Fixed
+## [0.18.1] - 2025-08-21
+### Fixed
 - Global illumination overriding dim light even if a scene region makes it dark
 - Flat checks showing in the wrong place on reroll messages
-- Delay button not showing in the PF2e HUD combat tracker for real this time
+- Flat checks showing on flat checks
+- Some flat checks not showing if no token is targeted
+- Delay button not showing in the PF2e HUD combat tracker (for real this time)
 
 ## [0.18.0] - 2025-08-14
 ### Added
@@ -114,7 +115,8 @@ Foundry v13 release
 ### Fixed
 - Flat checks showing on damage/healing received messages
 
-[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.18.0...HEAD
+[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.18.1...HEAD
+[0.18.1]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.18.0...v0.18.1
 [0.18.0]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.17.1...v0.18.0
 [0.17.1]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.17.0...v0.17.1
 [0.17.0]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.16.1...v0.17.0
