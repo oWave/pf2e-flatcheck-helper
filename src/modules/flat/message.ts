@@ -320,6 +320,8 @@ export function preCreateMessage(msg: ChatMessagePF2e) {
 }
 
 async function onChatMessage(msg: ChatMessagePF2e) {
+	if (msg.author !== game.user) return
+
 	if (MODULE.settings.flatAutoRoll) await autoRoll(msg)
 }
 

@@ -2,6 +2,8 @@
 🥭
 
 ## [Unreleased]
+### Fixed
+- Auto Roll Flat Checks throwing permission errors
 
 ## [0.18.1] - 2025-08-21
 ### Fixed
