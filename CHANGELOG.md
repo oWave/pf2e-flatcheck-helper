@@ -2,6 +2,8 @@
 🥭
 
 ## [Unreleased]
+
+## [0.18.2] - 2025-08-22
 ### Fixed
 - Auto Roll Flat Checks throwing permission errors
 
@@ -117,7 +119,8 @@ Foundry v13 release
 ### Fixed
 - Flat checks showing on damage/healing received messages
 
-[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.18.1...HEAD
+[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.18.2...HEAD
+[0.18.2]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.18.1...v0.18.2
 [0.18.1]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.18.0...v0.18.1
 [0.18.0]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.17.1...v0.18.0
 [0.17.1]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.17.0...v0.17.1
