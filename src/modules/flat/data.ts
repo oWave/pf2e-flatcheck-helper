@@ -16,6 +16,7 @@ export interface FlatCheckData extends FlatCheckSource {
 	finalDc: number | null
 	dcAdjustments?: DcAdjustment[]
 	conditionAdjustment?: TreatAsAdjustment
+	secret?: true
 }
 
 export type FlatCheckRecord = Record<string, FlatCheckData>
@@ -192,7 +193,12 @@ export class FlatCheckHelper {
 		const checks: FlatCheckRecord = {}
 		for (const [k, v] of Object.entries(slots)) {
 			const check = this.#sourcesToHighestCheck(v)
-			if (check) checks[k] = check
+			if (check) {
+				checks[k] = check
+				if (["undetected", "unnoticed"].includes(check.type)) {
+					check.secret = true
+				}
+			}
 		}
 
 		return checks

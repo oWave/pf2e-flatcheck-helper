@@ -72,7 +72,7 @@ async function renderButtons(msg: ChatMessagePF2e, html: HTMLElement) {
 		conditionAdjustment?: TreatAsAdjustment
 		rolls: { class: string; value: number }[]
 		rerollIcon?: string
-		secret: "gm" | "hide" | false
+		secret?: "gm" | "hide"
 		rollButton: string
 	}
 	interface NoteData {
@@ -115,8 +115,7 @@ async function renderButtons(msg: ChatMessagePF2e, html: HTMLElement) {
 		else if (check.finalDc != null && check.finalDc >= 20) rollButton = "impossible"
 		else if (msg.canUserModify(game.user, "update") && !check.reroll) rollButton = "show"
 
-		const secret =
-			["undetected", "unnoticed"].includes(check.type) && (game.user.isGM ? "gm" : "hide")
+		const secret = check.secret && (game.user.isGM ? "gm" : "hide")
 		if (secret && !msg.hasPlayerOwner && game.user.isGM) rollButton = "gm-only"
 
 		return {
