@@ -2,6 +2,9 @@
 🥭
 
 ## [Unreleased]
+### Added
+- Workbench integration: Don't auto-roll damage if the message requires flat checks
+  - If Auto-roll flat checks is enabled, auto-roll damage still triggers if all flat checks pass
 
 ## [0.18.2] - 2025-08-22
 ### Fixed

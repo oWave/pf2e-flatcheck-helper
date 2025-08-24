@@ -308,20 +308,33 @@ function shouldShowFlatChecks(msg: ChatMessagePF2e): boolean {
 	return msg.item.isOfType("action", "consumable", "equipment", "feat", "melee", "weapon")
 }
 
-export function preCreateMessage(msg: ChatMessagePF2e) {
+export function preCreateMessage(msg: ChatMessagePF2e, _data, options: Record<string, any>) {
 	if (!msg.actor || !shouldShowFlatChecks(msg)) return
 
 	const data = collectFlatChecks(msg) as MsgFlagData
 
-	msg.updateSource({
-		[`flags.${MODULE_ID}.flatchecks`]: data,
-	})
+	if (data != null && Object.keys(data).length) {
+		const updates: Record<string, JSONValue> = {
+			[`flags.${MODULE_ID}.flatchecks`]: data,
+		}
+		if (game.modules.get("xdy-pf2e-workbench")?.active) {
+			updates["flags.xdy-pf2e-workbench.noAutoDamageRoll"] = true
+		}
+
+		msg.updateSource(updates)
+	}
 }
 
 async function onChatMessage(msg: ChatMessagePF2e) {
 	if (msg.author !== game.user) return
 
-	if (MODULE.settings.flatAutoRoll) await autoRoll(msg)
+	if (MODULE.settings.flatAutoRoll && msg.flags[MODULE_ID]?.flatchecks != null) {
+		await autoRoll(msg)
+		if (game.modules.get("xdy-pf2e-workbench")?.active && passedAllFlatChecks(msg, false)) {
+			// @ts-expect-error
+			await game.PF2eWorkbench?.autoRollDamage?.(msg)
+		}
+	}
 }
 
 async function autoRoll(msg: ChatMessagePF2e) {
@@ -343,6 +356,26 @@ async function autoRoll(msg: ChatMessagePF2e) {
 		emitSocket({ msgId: msg.id, userId: game.user.id, rolls: JSON.stringify(rolls) })
 
 	await msg.update(updates)
+}
+
+function passedAllFlatChecks(msg: ChatMessagePF2e, passIfNoChecks = true) {
+	const checks = msg.flags[MODULE_ID]?.flatchecks as MsgFlagData | undefined
+	if (checks == null || Object.keys(checks).length === 0) return passIfNoChecks
+
+	for (const check of Object.values(checks)) {
+		if (!("finalDc" in check)) continue
+		// Unknown or impossible check
+		if (check.finalDc == null || check.finalDc >= 20) return false
+		// Auto-success
+		if (check.finalDc <= 1) continue
+
+		// Player doesn't know if roll succeeded without GM saying so
+		if (check.secret && !game.user.isGM) return false
+
+		// TODO: Rerolls
+		if (check.roll == null || check.roll < check.finalDc) return false
+	}
+	return true
 }
 
 interface SocketData {
