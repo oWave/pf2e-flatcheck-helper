@@ -2,10 +2,12 @@
 🥭
 
 ## [Unreleased]
+
+## [0.18.3] - 2025-08-26
 ### Added
 - Workbench integration: Don't auto-roll damage if the message requires flat checks
   - If Auto-roll flat checks is enabled, auto-roll damage still triggers if all flat checks pass
-  
+
 ### Fixed
 - Target and light level flat checks ignoring the their setting and always being enabled
   - Reminder: Light level checks are disabled by default, so if you aren't seeing them after this update, you need to enable them
@@ -126,7 +128,8 @@ Foundry v13 release
 ### Fixed
 - Flat checks showing on damage/healing received messages
 
-[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.18.2...HEAD
+[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.18.3...HEAD
+[0.18.3]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.18.2...v0.18.3
 [0.18.2]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.18.1...v0.18.2
 [0.18.1]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.18.0...v0.18.1
 [0.18.0]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.17.1...v0.18.0
