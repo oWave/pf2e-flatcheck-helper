@@ -9,6 +9,7 @@ import { LifeLinkModule } from "./modules/life-link"
 import { AltRollBreakdownModule } from "./modules/misc/alt-roll-breakdown"
 import { SharedVisionModule } from "./modules/misc/toggle-vision"
 import { settings } from "./settings"
+import { ChatActionHandler } from "./shared/chat-button-handler"
 
 type Callback = (data: any) => void
 
@@ -62,12 +63,13 @@ const MODULE = {
 export default MODULE
 
 Hooks.on("init", () => {
+	// CONFIG.debug.hooks = true
 	MODULE.settings.init()
 	MODULE.socketHandler.init()
 
 	setupRuleElements()
 
-	for (const [name, module] of Object.entries(MODULE.modules)) {
+	for (const module of Object.values(MODULE.modules)) {
 		const enabled =
 			module.settingsKey == null
 				? true
@@ -80,9 +82,11 @@ Hooks.on("init", () => {
 })
 
 Hooks.on("ready", () => {
-	for (const [name, module] of Object.entries(MODULE.modules)) {
+	for (const module of Object.values(MODULE.modules)) {
 		if (module.enabled) module.onReady()
 	}
+
+	ChatActionHandler.init()
 
 	if (import.meta.env.DEV) {
 		// @ts-expect-error

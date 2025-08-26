@@ -1,4 +1,4 @@
-import type { ChatMessagePF2e, SpellPF2e } from "foundry-pf2e"
+import type { ChatMessagePF2e, ChatMessageSourcePF2e, SpellPF2e } from "foundry-pf2e"
 import type { RollJSON } from "foundry-pf2e/foundry/client/dice/roll.mjs"
 import { MODULE_ID } from "src/constants"
 import MODULE from "src/index"
@@ -16,9 +16,10 @@ export class MessageFlatCheckModule extends BaseModule {
 		super.enable()
 
 		this.registerHook("preCreateChatMessage", preCreateMessage)
-		this.registerHook("createChatMessage", onChatMessage)
+		this.registerHook("createChatMessage", onCreateChatMessage)
 		this.registerWrapper("ChatMessage.prototype.renderHTML", messageRenderHTMLWrapper, "WRAPPER")
 		this.registerSocket("flat-dsn", handleDSNSocket)
+		this.registerChatAction("fc-reveal-hidden-message", handleRevealClick)
 	}
 	disable() {
 		super.disable()
@@ -53,7 +54,10 @@ export async function messageRenderHTMLWrapper(this: ChatMessagePF2e, wrapper, .
 	const html: HTMLElement = await wrapper(...args)
 
 	try {
-		if (this.isContentVisible) await renderButtons(this, html)
+		if (this.isContentVisible) {
+			if ("hiddenMsg" in this.flags[MODULE_ID]) renderHiddenRollMessage(this, html)
+			await renderButtons(this, html)
+		}
 	} catch (e) {
 		console.error("Exception occured while rendering message flat-check buttons: ", e)
 	}
@@ -199,6 +203,12 @@ async function renderButtons(msg: ChatMessagePF2e, html: HTMLElement) {
 				return
 			}
 
+			section = html.querySelector("div.message-buttons")
+			if (section) {
+				section.before(buttonNode)
+				return
+			}
+
 			section = html.querySelector("div.message-content")
 			if (section) {
 				section.append(buttonNode)
@@ -311,7 +321,7 @@ function shouldShowFlatChecks(msg: ChatMessagePF2e): boolean {
 }
 
 export function preCreateMessage(msg: ChatMessagePF2e, _data, options: Record<string, any>) {
-	if (!msg.actor || !shouldShowFlatChecks(msg)) return
+	if (!msg.actor || !shouldShowFlatChecks(msg) || msg.flags[MODULE_ID]?.revealed) return
 
 	const data = collectFlatChecks(msg) as MsgFlagData
 
@@ -324,10 +334,46 @@ export function preCreateMessage(msg: ChatMessagePF2e, _data, options: Record<st
 		}
 
 		msg.updateSource(updates)
+
+		const flavorEl = parseHTML(msg.flavor)
+		flavorEl.querySelector<HTMLElement>("div.result.degree-of-success")?.remove()
+		const flavorText = new XMLSerializer().serializeToString(flavorEl)
+
+		getDocumentClass("ChatMessage").create({
+			author: msg.author?.id,
+			speaker: msg.speaker,
+			content: `
+				<div class="message-header fc-hidden-roll">
+					<span class="flavor-text">
+						${flavorText}
+					</span>
+				</div>
+				<h4 class="fc-dice-placeholder">
+					<i class="fa-solid fa-eye-slash"></i>
+				</h4>
+			`,
+			flags: {
+				[MODULE_ID]: {
+					hiddenMsg: msg.toJSON(),
+					flatchecks: data,
+				},
+			},
+		})
+
+		return false
 	}
 }
 
-async function onChatMessage(msg: ChatMessagePF2e) {
+function renderHiddenRollMessage(msg: ChatMessagePF2e, html: HTMLElement) {
+	const buttons = parseHTML(`
+		<div class="message-buttons">
+			<button type="button" data-action="fc-reveal-hidden-message" ${game.user.isGM ? "" : "disabled"}>Reveal Roll</button>
+		</div>`)
+
+	html.querySelector(".fc-dice-placeholder")?.after(buttons)
+}
+
+async function onCreateChatMessage(msg: ChatMessagePF2e) {
 	if (msg.author !== game.user) return
 
 	if (MODULE.settings.flatAutoRoll && msg.flags[MODULE_ID]?.flatchecks != null) {
@@ -402,5 +448,16 @@ function handleDSNSocket(data: SocketData) {
 		const roll = Roll.fromData(rollJson)
 		// @ts-expect-error
 		game.dice3d.showForRoll(roll, user, false, null, false, data.msgId)
+	}
+}
+
+async function handleRevealClick(msg: ChatMessagePF2e) {
+	const msgData = msg.flags[MODULE_ID].hiddenMsg as ChatMessageSourcePF2e | undefined
+
+	if (msgData) {
+		msgData.flags[MODULE_ID].revealed = true
+		msgData.flags[MODULE_ID].flatchecks = msg.flags[MODULE_ID].flatchecks as MsgFlagData
+		await getDocumentClass("ChatMessage").create(msgData)
+		await msg.delete()
 	}
 }

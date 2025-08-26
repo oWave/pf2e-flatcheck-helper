@@ -1,6 +1,7 @@
 import type { HookCallback } from "foundry-pf2e/foundry/client/helpers/hooks.mjs"
 import { MODULE_ID } from "src/constants"
 import MODULE from "src/index"
+import { type ChatActionCallback, ChatActionHandler } from "src/shared/chat-button-handler"
 
 export abstract class BaseModule {
 	enabled = false
@@ -9,6 +10,7 @@ export abstract class BaseModule {
 	sockets: string[] = []
 	settingListeners: string[] = []
 	queries: string[] = []
+	chatActions: string[] = []
 
 	abstract readonly settingsKey: string | null
 
@@ -44,6 +46,11 @@ export abstract class BaseModule {
 			MODULE.settings.removeListener(key)
 		}
 		this.settingListeners = []
+
+		for (const key of this.chatActions) {
+			ChatActionHandler.unregister(key)
+		}
+		this.chatActions = []
 	}
 
 	registerHook(hook: string, callback: HookCallback<any[]>) {
@@ -69,5 +76,10 @@ export abstract class BaseModule {
 
 	registerSettingListener(key: string, callback: (value: unknown) => void) {
 		MODULE.settings.addListener(key, callback)
+	}
+
+	registerChatAction(key: string, callback: ChatActionCallback) {
+		this.chatActions.push(key)
+		ChatActionHandler.register(key, callback)
 	}
 }
