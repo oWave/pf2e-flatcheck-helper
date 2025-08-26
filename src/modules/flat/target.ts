@@ -1,21 +1,10 @@
 import type { ActorPF2e, TokenDocumentPF2e, TokenPF2e } from "foundry-pf2e"
-import * as R from "remeda"
 import { OriginToTargetCondition, type TargetConditionSlug, TargetConditionToDC } from "./constants"
 import type { FlatCheckSource } from "./data"
 import { tokenLightLevel } from "./light/token"
 import { LightLevels } from "./light/utils"
 import { flatMessageConfig } from "./message-config"
 import type { Adjustments, TreatAsAdjustment } from "./rules/common"
-
-const originPriorities = {
-	invisible: 0,
-	blinded: 1,
-	darkness: 2,
-	hidden: 3,
-	"dim-light": 4,
-	dazzled: 5,
-	concealed: 6,
-} as const
 
 export interface TargetFlatCheckSource extends Omit<FlatCheckSource, "baseDc"> {
 	type: TargetConditionSlug
@@ -24,22 +13,6 @@ export interface TargetFlatCheckSource extends Omit<FlatCheckSource, "baseDc"> {
 export interface BaseTargetFlatCheck extends TargetFlatCheckSource {
 	conditionAdjustment?: TreatAsAdjustment
 	baseDc: FlatCheckSource["baseDc"]
-}
-
-function keepHigherSource(...sources: (TargetFlatCheckSource | null | undefined)[]) {
-	return R.firstBy(sources, (s) => {
-		if (s?.origin?.slug == null) return Infinity
-		const p = originPriorities[s.origin.slug] ?? -1
-		return p
-	})
-}
-
-function flatCheckDataFromOrigin(origin: ActorPF2e): TargetFlatCheckSource | null {
-	for (const slug of ["blinded", "dazzled"] as const) {
-		if (origin.conditions.bySlug(slug).length)
-			return { type: OriginToTargetCondition[slug], origin: { slug } }
-	}
-	return null
 }
 
 export function flatCheckDataForTarget(target: ActorPF2e): TargetFlatCheckSource | null {
@@ -155,7 +128,7 @@ export class TargetFlatCheckHelper {
 			if (visioneerCheck) sources.push(visioneerCheck)
 		}
 
-		if (this.target.object) {
+		if (this.target.object && flatMessageConfig.toSets().experimental.has("light-level")) {
 			const lightCheck = conditionFromLightLevel(this.origin?.actor ?? null, this.target.object)
 			if (lightCheck) sources.push(lightCheck)
 		}
@@ -180,6 +153,8 @@ export class TargetFlatCheckHelper {
 	}
 
 	collectedSources() {
+		if (flatMessageConfig.toSets().ignored.has("target")) return []
+
 		const merged = [
 			this.#collectOriginSources(),
 			this.#collectTargetSources(),

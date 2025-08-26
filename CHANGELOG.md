@@ -5,6 +5,10 @@
 ### Added
 - Workbench integration: Don't auto-roll damage if the message requires flat checks
   - If Auto-roll flat checks is enabled, auto-roll damage still triggers if all flat checks pass
+  
+### Fixed
+- Target and light level flat checks ignoring the their setting and always being enabled
+  - Reminder: Light level checks are disabled by default, so if you aren't seeing them after this update, you need to enable them
 
 ## [0.18.2] - 2025-08-22
 ### Fixed
