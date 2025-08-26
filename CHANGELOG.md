@@ -9,7 +9,7 @@
   - If Auto-roll flat checks is enabled, auto-roll damage still triggers if all flat checks pass
 
 ### Fixed
-- Target and light level flat checks ignoring the their setting and always being enabled
+- Target and light level flat checks ignoring their setting and always being enabled
   - Reminder: Light level checks are disabled by default, so if you aren't seeing them after this update, you need to enable them
 
 ## [0.18.2] - 2025-08-22
