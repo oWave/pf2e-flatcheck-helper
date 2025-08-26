@@ -1,0 +1,25 @@
+@import "./message-config.css";
+
+.chat-message {
+	.fc-hidden-roll {
+		h4 {
+			margin: 0;
+			line-height: 1.5em;
+		}
+	}
+	.fc-dice-placeholder {
+		font-size: var(--font-size-16);
+		font-weight: bold;
+
+		margin: 0;
+		margin-top: 5px;
+
+		line-height: 24px;
+		text-align: center;
+		background: rgba(0, 0, 0, 0.1);
+		border: 1px solid #999;
+		border-radius: 3px;
+		box-shadow: 0 0 2px #fff inset;
+		word-break: break-all;
+	}
+}
