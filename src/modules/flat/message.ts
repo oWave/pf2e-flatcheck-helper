@@ -140,6 +140,8 @@ async function renderButtons(msg: ChatMessagePF2e, html: HTMLElement) {
 		}
 	}
 
+	// @ts-expect-error
+	if (msg.flags["pf2e-toolbelt"]?.targetHelper?.type === "check") return
 	const data = msg.flags[MODULE_ID]?.flatchecks as MsgFlagData | undefined
 	if (!data) return
 
