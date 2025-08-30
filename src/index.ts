@@ -70,12 +70,7 @@ Hooks.on("init", () => {
 	setupRuleElements()
 
 	for (const module of Object.values(MODULE.modules)) {
-		const enabled =
-			module.settingsKey == null
-				? true
-				: (game.settings.get(MODULE_ID, module.settingsKey) as boolean)
-
-		if (enabled) module.enable()
+		if (module.hasSettingEnabled()) module.enable()
 	}
 
 	;(game.modules.get(MODULE_ID) as any).debug = MODULE.debug

@@ -1,4 +1,4 @@
-<h3>Emanation Automation</h3>
+<h3 class="ml-4">Emanation Automation</h3>
 
 <div class="grid grid-cols-2 gap-2 gap-y-4 items-center">
 

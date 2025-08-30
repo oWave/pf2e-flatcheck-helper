@@ -7,7 +7,7 @@
 		{/each}
 	</div>
 	<div class="w-full relative">
-		<div class="overflow-y-scroll h-full pt-4 pl-2 pr-1 pb-16 select-text">
+		<div class="overflow-y-scroll h-full pb-16 select-text">
 			<Content />
 		</div>
 		{#if store.dirty}

@@ -47,13 +47,13 @@
 				"name": "Automatyczny rzut na Płaskie Testy",
 				"hint": "Ustawienia użytkownika: Zachowanie zależy od ustawień świata."
 			},
-			"flat-check-targer-marker": {
+			"flat-check-target-marker": {
 				"name": "Pokaż Płaskie Testy na tokenie",
-				"hint": "Ustawienie klienta: Wyświetla informacje o Płaskim Teście tokena podczas celowania."
+				"hint": "Ustawienie użytkownika: Wyświetla informacje o Płaskim Teście tokena podczas celowania."
 			},
 			"light-level-vis": {
 				"name": "Wizualizacja poziomów oświetlenia",
-				"hint": "Ustawienie klienta: Przytrzymaj alt, aby podświetlić kwadraty bez światła/przyciemnione."
+				"hint": "Ustawienie użytkownika: Przytrzymaj alt, aby podświetlić kwadraty bez światła/przyciemnione."
 			},
 			"delay-combat-tracker": {
 				"name": "Pokaż przycisk Opóźnienia akcji w śledzeniu walki",

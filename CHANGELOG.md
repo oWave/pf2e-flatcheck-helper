@@ -1,7 +1,19 @@
 # Changelog
 🥭
 
+TODO:
+- i18n
+
 ## [Unreleased]
+### Added
+- New setting: Flat Checks Hide Results
+  - Disabled by default
+  - Check the module documentation in Foundry for details and related settings
+
+### Changed
+- All client (browser) settings are now user settings
+- "Show Flat Check on Token" has a new variant: Only with origin
+  - Will only show the target flat check when you have a token selected
 
 ## [0.18.3] - 2025-08-26
 ### Added
