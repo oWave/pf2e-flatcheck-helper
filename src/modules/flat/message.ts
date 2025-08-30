@@ -18,7 +18,7 @@ export class MessageFlatCheckModule extends BaseModule {
 		this.registerHook("preCreateChatMessage", preCreateMessage)
 		this.registerHook("createChatMessage", onCreateChatMessage)
 		this.registerWrapper("ChatMessage.prototype.renderHTML", messageRenderHTMLWrapper, "WRAPPER")
-		this.registerSocket("flat-dsn", handleDSNSocket)
+		this.registerSocket("flat-dice", handleDiceRollSocket)
 		this.registerChatAction("fc-reveal-hidden-message", handleRevealClick)
 	}
 	disable() {
@@ -55,7 +55,7 @@ export async function messageRenderHTMLWrapper(this: ChatMessagePF2e, wrapper, .
 
 	try {
 		if (this.isContentVisible) {
-			if ("hiddenMsg" in this.flags[MODULE_ID]) renderHiddenRollMessage(this, html)
+			if (this.flags[MODULE_ID]?.hiddenMsg != null) renderHiddenRollMessage(this, html)
 			await renderButtons(this, html)
 		}
 	} catch (e) {
@@ -230,6 +230,227 @@ async function renderButtons(msg: ChatMessagePF2e, html: HTMLElement) {
 	}
 }
 
+function renderHiddenRollMessage(msg: ChatMessagePF2e, html: HTMLElement) {
+	const allowReveal = game.user.isGM || MODULE.settings.flatPlayersCanReveal
+	const disabled = allowReveal ? "" : "disabled"
+	const tooltip = allowReveal ? "" : 'data-tooltip="GM only"'
+
+	const buttons = parseHTML(`
+		<div class="message-buttons">
+			<button type="button" data-action="fc-reveal-hidden-message" ${disabled} ${tooltip}>Reveal Roll</button>
+		</div>`)
+
+	html.querySelector(".fc-dice-placeholder")?.after(buttons)
+}
+
+function shouldShowFlatChecks(msg: ChatMessagePF2e): boolean {
+	const contextType = msg.flags?.pf2e?.context?.type
+	const blacklist: (typeof contextType)[] = [
+		"damage-roll",
+		"damage-taken",
+		"flat-check",
+		"initiative",
+		"saving-throw",
+	]
+
+	if (contextType && blacklist.includes(contextType)) return false
+
+	// If the spell has an attack roll, don't show flat checks on the spell card, but only on the attack roll itself
+	if (contextType === "spell-cast") return (msg.item as SpellPF2e).isAttack === msg.isRoll
+
+	// If message is a roll, only show flat checks if it has a DC
+	if (msg.isRoll) return !!msg.flags?.pf2e?.context && "dc" in msg.flags.pf2e.context
+
+	if (!msg.item) return false
+
+	return msg.item.isOfType("action", "consumable", "equipment", "feat", "melee", "weapon")
+}
+
+export function preCreateMessage(msg: ChatMessagePF2e, _data, options: Record<string, any>) {
+	if (!msg.actor || !shouldShowFlatChecks(msg) || msg.flags[MODULE_ID]?.revealed) return
+
+	const data = collectFlatChecks(msg) as MsgFlagData
+
+	if (data != null && Object.keys(data).length) {
+		msg.updateSource({
+			[`flags.${MODULE_ID}.flatchecks`]: data,
+		})
+
+		if (MODULE.settings.flatAutoRoll) {
+			const rollUpdates = autoRoll(msg)
+			msg.updateSource(rollUpdates)
+		}
+
+		const shouldHide =
+			MODULE.settings.flatHideRoll && (!MODULE.settings.flatAutoReveal || !passedAllFlatChecks(msg))
+
+		if (shouldHide && msg.isCheckRoll && !msg.isReroll) {
+			const flavorEl = parseHTML(msg.flavor)
+			flavorEl.querySelector<HTMLElement>("div.result.degree-of-success")?.remove()
+			const flavorText = new XMLSerializer().serializeToString(flavorEl)
+
+			getDocumentClass("ChatMessage").create({
+				author: msg.author?.id,
+				speaker: msg.speaker,
+				sound: (MODULE.settings.flatAutoRoll ? CONFIG.sounds.dice : CONFIG.sounds.lock) as any,
+				content: `
+				<div class="message-header fc-hidden-roll">
+					<span class="flavor-text">
+						${flavorText}
+					</span>
+				</div>
+				<h4 class="fc-dice-placeholder">
+					<i class="fa-solid fa-eye-slash"></i>
+				</h4>
+			`,
+				flags: {
+					[MODULE_ID]: {
+						hiddenMsg: msg.toJSON(),
+						flatchecks: msg.flags[MODULE_ID].flatchecks as JSONValue,
+					},
+					"xdy-pf2e-workbench": {
+						noAutoDamageRoll: true,
+					},
+				},
+			})
+
+			return false
+		}
+
+		if (!shouldHide && game.modules.get("xdy-pf2e-workbench")?.active) {
+			msg.updateSource({
+				"flags.xdy-pf2e-workbench.noAutoDamageRoll": true,
+			})
+		}
+	}
+}
+
+async function onCreateChatMessage(msg: ChatMessagePF2e) {
+	if (msg.author !== game.user) return
+
+	if (MODULE.settings.flatAutoRoll && msg.flags[MODULE_ID]?.flatchecks != null) {
+		await autoRoll(msg)
+		if (game.modules.get("xdy-pf2e-workbench")?.active && passedAllFlatChecks(msg, false)) {
+			// @ts-expect-error
+			await game.PF2eWorkbench?.autoRollDamage?.(msg)
+		}
+	}
+}
+
+function autoRoll(msg: ChatMessagePF2e) {
+	const data = msg.flags[MODULE_ID]?.flatchecks as MsgFlagData | undefined
+	if (!data) return
+	const updates: Record<string, number> = {}
+	const rolls: RollJSON[] = []
+
+	for (const [key, check] of Object.entries(data)) {
+		if (!("finalDc" in check)) continue
+		if (check.finalDc == null || check.finalDc <= 1 || check.finalDc >= 20) continue
+
+		const roll = Math.floor(Math.random() * 20)
+		rolls.push(fakeRoll(roll))
+		updates[`flags.${MODULE_ID}.flatchecks.${key}.roll`] = roll
+	}
+
+	if (rolls.length)
+		emitSocket({
+			msgId: msg.id,
+			userId: game.user.id,
+			rolls: JSON.stringify(rolls),
+			sound: false,
+		})
+
+	return updates
+}
+
+function fakeRoll(total: number) {
+	return {
+		class: "Roll",
+		options: {},
+		dice: [],
+		formula: "1d20",
+		terms: [
+			{
+				class: "Die",
+				options: {
+					flavor: null,
+				},
+				evaluated: true,
+				number: 1,
+				faces: 20,
+				modifiers: [],
+				results: [
+					{
+						result: total,
+						active: true,
+					},
+				],
+				method: undefined,
+			},
+		],
+		total: total,
+		evaluated: true,
+	}
+}
+
+function passedAllFlatChecks(msg: ChatMessagePF2e, passIfNoChecks = true) {
+	const checks = msg.flags[MODULE_ID]?.flatchecks as MsgFlagData | undefined
+	if (checks == null || Object.keys(checks).length === 0) return passIfNoChecks
+
+	for (const check of Object.values(checks)) {
+		if (!("finalDc" in check)) continue
+		// Unknown or impossible check
+		if (check.finalDc == null || check.finalDc >= 20) return false
+		// Auto-success
+		if (check.finalDc <= 1) continue
+
+		// Player doesn't know if roll succeeded without GM saying so
+		if (check.secret && (msg.hasPlayerOwner || !game.user.isGM)) return false
+
+		let roll = check.roll
+		if (roll == null) return false
+
+		if (check.reroll) {
+			const keep = check.reroll.keep
+			const oldRoll = check.reroll.oldRoll
+			if (keep === "low") roll = Math.min(oldRoll, roll)
+			else if (keep === "high") roll = Math.max(oldRoll, roll)
+		}
+
+		if (roll < check.finalDc) return false
+	}
+	return true
+}
+
+interface SocketData {
+	msgId: string
+	userId: string
+	rolls: string
+	sound?: boolean
+}
+
+function emitSocket(data: SocketData) {
+	MODULE.socketHandler.emit("flat-dice", data)
+}
+
+function handleDiceRollSocket(data: SocketData) {
+	// @ts-expect-error
+	if (!game.dice3d && data.sound) {
+		game.audio.play(CONFIG.sounds.dice, { context: game.audio.interface })
+		return
+	}
+
+	const msg = game.messages.get(data.msgId)
+	const user = game.users.get(data.userId)
+	if (!user || !msg) return
+
+	for (const rollJson of JSON.parse(data.rolls)) {
+		const roll = Roll.fromData(rollJson)
+		// @ts-expect-error
+		game.dice3d.showForRoll(roll, user, false, null, false, data.msgId)
+	}
+}
+
 async function handleFlatButtonClick(msg: ChatMessagePF2e, key: string, dc: number) {
 	const roll = await new Roll("d20").roll()
 	const oldRoll = foundry.utils.getProperty(msg, `flags.${MODULE_ID}.flatchecks.${key}.roll`)
@@ -291,165 +512,17 @@ async function handleFlatButtonClick(msg: ChatMessagePF2e, key: string, dc: numb
 			rolls: JSON.stringify([roll.toJSON()]),
 		})
 
-		msg.update(updates)
-	}
-}
+		await msg.update(updates)
 
-function shouldShowFlatChecks(msg: ChatMessagePF2e): boolean {
-	const contextType = msg.flags?.pf2e?.context?.type
-	const blacklist: (typeof contextType)[] = [
-		"damage-roll",
-		"damage-taken",
-		"flat-check",
-		"initiative",
-		"saving-throw",
-	]
-
-	if (contextType && blacklist.includes(contextType)) return false
-
-	// If the spell has an attack roll, don't show flat checks on the spell card, but only on the attack roll itself
-	if (contextType === "spell-cast") return (msg.item as SpellPF2e).isAttack === msg.isRoll
-
-	// If message is a roll, only show flat checks if it has a DC
-	if (msg.isRoll) return !!msg.flags?.pf2e?.context && "dc" in msg.flags.pf2e.context
-
-	if (!msg.item) return false
-
-	return msg.item.isOfType("action", "consumable", "equipment", "feat", "melee", "weapon")
-}
-
-export function preCreateMessage(msg: ChatMessagePF2e, _data, options: Record<string, any>) {
-	if (!msg.actor || !shouldShowFlatChecks(msg) || msg.flags[MODULE_ID]?.revealed) return
-
-	const data = collectFlatChecks(msg) as MsgFlagData
-
-	if (data != null && Object.keys(data).length) {
-		const updates: Record<string, JSONValue> = {
-			[`flags.${MODULE_ID}.flatchecks`]: data,
-		}
-		if (game.modules.get("xdy-pf2e-workbench")?.active) {
-			updates["flags.xdy-pf2e-workbench.noAutoDamageRoll"] = true
-		}
-
-		msg.updateSource(updates)
-
-		const flavorEl = parseHTML(msg.flavor)
-		flavorEl.querySelector<HTMLElement>("div.result.degree-of-success")?.remove()
-		const flavorText = new XMLSerializer().serializeToString(flavorEl)
-
-		getDocumentClass("ChatMessage").create({
-			author: msg.author?.id,
-			speaker: msg.speaker,
-			content: `
-				<div class="message-header fc-hidden-roll">
-					<span class="flavor-text">
-						${flavorText}
-					</span>
-				</div>
-				<h4 class="fc-dice-placeholder">
-					<i class="fa-solid fa-eye-slash"></i>
-				</h4>
-			`,
-			flags: {
-				[MODULE_ID]: {
-					hiddenMsg: msg.toJSON(),
-					flatchecks: data,
-				},
-			},
-		})
-
-		return false
-	}
-}
-
-function renderHiddenRollMessage(msg: ChatMessagePF2e, html: HTMLElement) {
-	const buttons = parseHTML(`
-		<div class="message-buttons">
-			<button type="button" data-action="fc-reveal-hidden-message" ${game.user.isGM ? "" : "disabled"}>Reveal Roll</button>
-		</div>`)
-
-	html.querySelector(".fc-dice-placeholder")?.after(buttons)
-}
-
-async function onCreateChatMessage(msg: ChatMessagePF2e) {
-	if (msg.author !== game.user) return
-
-	if (MODULE.settings.flatAutoRoll && msg.flags[MODULE_ID]?.flatchecks != null) {
-		await autoRoll(msg)
-		if (game.modules.get("xdy-pf2e-workbench")?.active && passedAllFlatChecks(msg, false)) {
-			// @ts-expect-error
-			await game.PF2eWorkbench?.autoRollDamage?.(msg)
-		}
-	}
-}
-
-async function autoRoll(msg: ChatMessagePF2e) {
-	const data = msg.flags[MODULE_ID]?.flatchecks as MsgFlagData | undefined
-	if (!data) return
-	const updates: Record<string, number> = {}
-	const rolls: RollJSON[] = []
-
-	for (const [key, check] of Object.entries(data)) {
-		if (!("finalDc" in check)) continue
-		if (check.finalDc == null || check.finalDc <= 1 || check.finalDc >= 20) continue
-
-		const roll = await new Roll("d20").roll()
-		rolls.push(roll.toJSON())
-		updates[`flags.${MODULE_ID}.flatchecks.${key}.roll`] = roll.total
-	}
-
-	if (rolls.length)
-		emitSocket({ msgId: msg.id, userId: game.user.id, rolls: JSON.stringify(rolls) })
-
-	await msg.update(updates)
-}
-
-function passedAllFlatChecks(msg: ChatMessagePF2e, passIfNoChecks = true) {
-	const checks = msg.flags[MODULE_ID]?.flatchecks as MsgFlagData | undefined
-	if (checks == null || Object.keys(checks).length === 0) return passIfNoChecks
-
-	for (const check of Object.values(checks)) {
-		if (!("finalDc" in check)) continue
-		// Unknown or impossible check
-		if (check.finalDc == null || check.finalDc >= 20) return false
-		// Auto-success
-		if (check.finalDc <= 1) continue
-
-		// Player doesn't know if roll succeeded without GM saying so
-		if (check.secret && !game.user.isGM) return false
-
-		// TODO: Rerolls
-		if (check.roll == null || check.roll < check.finalDc) return false
-	}
-	return true
-}
-
-interface SocketData {
-	msgId: string
-	userId: string
-	rolls: string
-}
-
-function emitSocket(data: SocketData) {
-	MODULE.socketHandler.emit("flat-dsn", data)
-}
-
-function handleDSNSocket(data: SocketData) {
-	// @ts-expect-error
-	if (!game.dice3d) return
-
-	const msg = game.messages.get(data.msgId)
-	const user = game.users.get(data.userId)
-	if (!user || !msg) return
-
-	for (const rollJson of JSON.parse(data.rolls)) {
-		const roll = Roll.fromData(rollJson)
-		// @ts-expect-error
-		game.dice3d.showForRoll(roll, user, false, null, false, data.msgId)
+		if (MODULE.settings.flatAutoReveal && passedAllFlatChecks(msg)) revealMessage(msg)
 	}
 }
 
 async function handleRevealClick(msg: ChatMessagePF2e) {
+	await revealMessage(msg)
+}
+
+async function revealMessage(msg: ChatMessagePF2e) {
 	const msgData = msg.flags[MODULE_ID].hiddenMsg as ChatMessageSourcePF2e | undefined
 
 	if (msgData) {

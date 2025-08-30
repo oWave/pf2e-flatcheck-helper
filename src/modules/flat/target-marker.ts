@@ -1,5 +1,7 @@
 import type { TokenPF2e } from "foundry-pf2e"
 import type Token from "foundry-pf2e/foundry/client/canvas/placeables/token.mjs"
+import MODULE from "src"
+import { MODULE_ID } from "src/constants"
 import { translate } from "src/utils"
 import { BaseModule } from "../base"
 import { FlatCheckHelper } from "./data"
@@ -77,9 +79,14 @@ class TokenTargetRenderer {
 
 	draw() {
 		this.#layer.removeChildren()
-		const check = FlatCheckHelper.fromTokens(guessOrigin(), this.token.document).target
+		const origin = guessOrigin()
+		const check = FlatCheckHelper.fromTokens(origin, this.token.document).target
 
-		if (!check || (check.finalDc != null && check.finalDc <= 1)) {
+		if (
+			!check ||
+			(check.finalDc != null && check.finalDc <= 1) ||
+			(MODULE.settings.flatTargetMarkerMode === "onlyWithOrigin" && origin == null)
+		) {
 			this.#filter.enabled = false
 			return
 		}
@@ -118,7 +125,11 @@ class TokenTargetRenderer {
 }
 
 export class TargetInfoModule extends BaseModule {
-	settingsKey = "flat-check-targer-marker"
+	settingsKey = "flat-check-target-marker"
+
+	hasSettingEnabled() {
+		return game.settings.get(MODULE_ID, this.settingsKey) !== "disabled"
+	}
 
 	enable(): void {
 		this.registerHook("targetToken", (user: User, token: TokenPF2e, state: boolean) => {

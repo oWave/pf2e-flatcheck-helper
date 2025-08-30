@@ -38,7 +38,22 @@ export const settings = {
 		const world = game.settings.get(MODULE_ID, "flat-check-auto-roll")
 		if (world === "always") return true
 		else if (world === "never") return false
-		return game.settings.get(MODULE_ID, "flat-check-auto-roll-user") as Boolean
+		return game.settings.get(MODULE_ID, "flat-check-auto-roll-user") as boolean
+	},
+	get flatHideRoll() {
+		return game.settings.get(MODULE_ID, "flat-check-hide-roll") as boolean
+	},
+	get flatAutoReveal() {
+		return game.settings.get(MODULE_ID, "flat-check-hide-roll-auto-reveal") as boolean
+	},
+	get flatPlayersCanReveal() {
+		return game.settings.get(MODULE_ID, "flat-check-hide-roll-players-can-reveal") as boolean
+	},
+	get flatTargetMarkerMode() {
+		return game.settings.get(MODULE_ID, "flat-check-target-marker") as
+			| "enabled"
+			| "disabled"
+			| "onlyWithOrigin"
 	},
 	get lifeLinkEnabled() {
 		return game.settings.get(MODULE_ID, "lifelink") as boolean
@@ -109,19 +124,51 @@ export const settings = {
 			type: Boolean,
 		})
 
-		register("flat-check-targer-marker", {
-			name: "pf2e-fc.settings.flat-check-targer-marker.name",
-			hint: "pf2e-fc.settings.flat-check-targer-marker.hint",
-			scope: "client",
+		register("flat-check-hide-roll", {
+			name: "pf2e-fc.settings.flat-check-hide-roll.name",
+			hint: "pf2e-fc.settings.flat-check-hide-roll.hint",
+			scope: "world",
+			config: true,
+			default: false,
+			type: Boolean,
+		})
+
+		register("flat-check-hide-roll-auto-reveal", {
+			name: "pf2e-fc.settings.flat-check-hide-roll-auto-reveal.name",
+			hint: "pf2e-fc.settings.flat-check-hide-roll-auto-reveal.hint",
+			scope: "world",
 			config: true,
 			default: true,
 			type: Boolean,
 		})
 
+		register("flat-check-hide-roll-players-can-reveal", {
+			name: "pf2e-fc.settings.flat-check-hide-roll-players-can-reveal.name",
+			hint: "pf2e-fc.settings.flat-check-hide-roll-players-can-reveal.hint",
+			scope: "world",
+			config: true,
+			default: false,
+			type: Boolean,
+		})
+
+		register("flat-check-target-marker", {
+			name: "pf2e-fc.settings.flat-check-target-marker.name",
+			hint: "pf2e-fc.settings.flat-check-target-marker.hint",
+			scope: "user",
+			config: true,
+			default: "enabled",
+			choices: {
+				enabled: "pf2e-fc.settings.flat-check-target-marker.choices.enabled",
+				onlyWithOrigin: "pf2e-fc.settings.flat-check-target-marker.choices.onlyWithOrigin",
+				disabled: "pf2e-fc.settings.flat-check-target-marker.choices.disabled",
+			},
+			type: String,
+		})
+
 		register("light-level-vis", {
 			name: "pf2e-fc.settings.light-level-vis.name",
 			hint: "pf2e-fc.settings.light-level-vis.hint",
-			scope: "client",
+			scope: "user",
 			config: true,
 			default: true,
 			type: Boolean,
@@ -292,11 +339,16 @@ function onUpdateSetting(setting: { key: string }, data) {
 	const key = setting.key.split(".", 2).at(1)
 	if (!key) return
 
-	for (const m of Object.values(MODULE.modules).filter((m) => m.settingsKey === key)) {
-		if (data.value === "true") {
+	for (const m of Object.values(MODULE.modules)) {
+		if (m.settingsKey !== key) continue
+
+		const hasSettingEnabled = m.hasSettingEnabled()
+		if (hasSettingEnabled && m.enabled) {
 			m.enable()
 			if (m.enabled) m.onReady()
-		} else if (data.value === "false") m.disable()
+		} else if (!hasSettingEnabled && m.enabled) {
+			m.disable()
+		}
 	}
 }
 

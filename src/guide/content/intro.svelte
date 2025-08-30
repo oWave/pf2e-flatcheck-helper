@@ -1,4 +1,4 @@
-<h3>PF2e Utility Buttons</h3>
+<h3 class="ml-4">PF2e Utility Buttons</h3>
 
 Select a tab on the left.
 

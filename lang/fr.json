@@ -1,228 +1,228 @@
 {
-  "pf2e-fc": {
-    "flat-config": {
-      "stupefied": {
-        "label": "Stupéfié",
-        "note": "Incantation en étant Stupéfié"
-      },
-      "manipulate": {
-        "label": "Manipulation",
-        "note": "Actions de manipulation en étant Agrippé"
-      },
-      "deafened": {
-        "label": "Sourd",
-        "note": "Actions audibles en étant Sourd"
-      },
-      "deafened-spellcasting": {
-        "label": "Sourd - Incantation",
-        "note": "Les sorts non subtils nécessitent des incantations et tous les discours possèdent le trait audible."
-      },
-      "target": {
-        "label": "Cible",
-        "note": "Aveugle/Caché/Ébloui/Masqué/etc. Support PF2e Visioner"
-      },
-      "light-level": {
-        "label": "Cible - Niveau de lumière",
-        "note": "Lumière faible/Ténèbres si l'origine n'a pas vision nocturne/dans le noir"
-      }
-    },
-    "settings": {
-      "flat-check-in-message": {
-        "name": "Boutons de test nu dans les messages",
-        "hint": "Ajoute les tests nus pour les états nécessaires dans les messages de conversation."
-      },
-      "flat-check-config": {
-        "name": "Config test nu"
-      },
-      "flat-check-auto-roll": {
-        "name": "Lancer auto les tests nus",
-        "hint": "Lance automatiquement tous les tests nus d'un message",
-        "choices": {
-          "always": "Toujours",
-          "user": "Paramètres utilisateur",
-          "never": "Jamais"
-        }
-      },
-      "flat-check-auto-roll-user": {
-        "name": "Tests nus lancés automatiquement",
-        "hint": "Paramètre utilisateur : le comportement dépend du paramètrage du monde"
-      },
-      "flat-check-targer-marker": {
-        "name": "Afficher le test nu sur le jeton",
-        "hint": "Paramètre client : affiche les informations du test nu sur un jeton lors du ciblage."
-      },
-      "light-level-vis": {
-        "name": "Visualisation du niveau de lumière",
-        "hint": "Paramètre client : maintenez la touche Alt enfoncée pour mettre en surbrillance les carrés sans lumière/faiblement éclairés."
-      },
-      "delay-combat-tracker": {
-        "name": "Afficher le bouton Retarder dans le compteur de rencontre",
-        "hint": "Ajoute les boutons Retarder/Revenir au compteur de rencontre par défaut."
-      },
-      "delay-token-hud": {
-        "name": "Afficher le bouton Retarder dans le HUD du jeton",
-        "hint": "Ajoute les boutons Retarder/Revenir au menu qui apparaît lors d'un clic droit sur un jeton."
-      },
-      "delay-return": {
-        "name": "Activer le bouton pour revenir",
-        "hint": "Permet de revenir à l'initiative en appuyant à nouveau sur le bouton Retarder."
-      },
-      "delay-prompt": {
-        "name": "Demande de nouvelle initiative",
-        "hint": "Permet à l'utilisateur de sélectionner un combattant après lequel il pourra Retarder son tour. Il peut néanmoins revenir plus tôt à tout moment."
-      },
-      "delay-create-message": {
-        "name": "Retarder/revenir crée un message dans la conversation"
-      },
-      "token-hud-remove-combat-toggle": {
-        "name": "Supprimer le bouton de combat du HUD de jeton",
-        "hint": "Supprime le bouton « Basculer l'état de combat » pour les jetons en combat."
-      },
-      "pf2e-hud-enable": {
-        "name": "Modifier le HUD PF2e",
-        "hint": "Cette implémentation de modules remplace la gestion des délais du HUD PF2e. Veuillez me signaler tout problème et pas à PF2e HUD !"
-      },
-      "lifelink": {
-        "name": "Activer les boutons d'automatisation du lien vital/spirituel",
-        "hint": "Consultez le fichier readme du module pour connaître les étapes de configuration."
-      },
-      "lifelink-formular": {
-        "name": "Formulaire Lien vital",
-        "hint": "Variante de dégât d'absorption de lien vital.",
-        "choices": {
-          "apg": "Standard",
-          "plus": "Oracles+ (Intensifié (+2))"
-        }
-      },
-      "emanation-automation": {
-        "name": "Application automatique du bouton d'effet d'émanation "
-      },
-      "script-alt-roll-breakdown": {
-        "name": "Décompositions alternatives des lancers",
-        "hint": "Révèle les modificateurs de circonstances/statut/non typé aux joueurs (ex : pénalité d'attaques multiples)."
-      },
-      "script-toggle-shared-vision": {
-        "name": "Activer/désactiver la vision partagée au combat",
-        "hint": "Transforme automatiquement le réglage métajeu \"Vision du groupe partagée\" lorsque le combat démarre et activez-le lorsque le combat se termine. Cela remplacera ce réglage de sorte que vous ne l'activez que si vous voulez utiliser Vision partagée."
-      },
-      "headings": {
-        "flat": "Boutons de test nu",
-        "delay": "Retarder",
-        "lifelink": "Lien vital",
-        "emanation-automation": "Automatisation de l'émanation",
-        "misc": "Divers"
-      },
-      "docs": {
-        "description": "Pour une description de chaque fonctionnalité et plus de détails sur les paramètres, consultez la documentation :",
-        "button": "Ouvrir les documents"
-      }
-    },
-    "delay": {
-      "return-to-initiative": "Revenir dans l'initiative",
-      "delay": "Retarder",
-      "delaying": "Retarde",
-      "errors": {
-        "combat-not-started": "Pas de combat actif",
-        "combatant-not-owned": "Vous ne possédez pas le combattant actuel",
-        "no-active-gm": "Aucun MJ connecté"
-      },
-      "dialog": {
-        "delay-after": "Retarder après :",
-        "confirm": "Retarder",
-        "cancel": "Annuler"
-      },
-      "actions": {
-        "delay": "Retarder",
-        "return": "Revenir"
-      }
-    },
-    "emanation": {
-      "message-text": "Appliquer l'effet d'émanation",
-      "form-allies": "Alliés",
-      "form-exclude-self": "S'exclure soi-même",
-      "form-enemies": "Ennemis",
-      "form-duration-title": "Demandera la durée de l'effet lors de l'application de Composition prolongée.",
-      "form-duration-prompt": "Demander la durée de l'effet",
-      "form-formatting-error": "Erreur de formatage : la description ne contient aucun/plusieurs liens d'effet.",
-      "form-fieldset-legend": "Effet d'émanation automatique",
-      "dialog-effect-title": "Effet d'émanation"
-    },
-    "flat": {
-      "flat-check-label": "Test nu : {label}",
-      "flat-check": "Test nu",
-      "target-marker-dc": "DD {dc} - {label}",
-      "source": {
-        "blinded": "Aveugle",
-        "darkness": "Ténèbres",
-        "hidden": "Caché",
-        "dim-light": "Lumière faible",
-        "dazzled": "Ébloui",
-        "concealed": "Masqué"
-      },
-      "message": {
-        "button-close": "Fermer",
-        "button-require-flat-check": "{count} cibles nécessitent un test nu",
-        "tooltip-highest-dc": "Si plus d'un test nu peut provoquer ou empêcher la même chose, lancez simplement un jet et utilisez le DD le plus élevé.",
-        "reroll-hero-point": "Relancer en utilisant un point d'héroïsme",
-        "reroll-new-result": "Relancer et conserver le nouveau résultat",
-        "reroll-lower-result": "Relancer et conserver le pire résultat",
-        "reroll-higher-result": "Relancer et conserver le meilleur résultat",
-        "button-reroll": "Relancer",
-        "button-cancel": "Annuler",
-        "grabbed": "Aggripé",
-        "deafened": "Sourd",
-        "stupefied": "Stupéfié {value}",
-        "dc": "DD {value}"
-      },
-      "more-dialog": {
-        "stupefied": "Stupéfié",
-        "value": "Valeur",
-        "custom": "Personnalisé",
-        "dc": "DD",
-        "title": "Plus de tests nus"
-      }
-    },
-    "life-link": {
-      "error-no-target": "Pas d'acteur cible",
-      "error-no-source": "Pas d'acteur source",
-      "error-source-is-target": "Impossible de transférer les dégâts à soi-même !",
-      "no-hp-remaining": "Pas de PV restant à transférer.",
-      "life-link-cooldown-effect": "Récupération de Lien vital",
-      "hp-add": "{actor} +{hp} PV",
-      "hp-sub": "{actor} -{hp} PV",
-      "spirit-link-error-bad-actor": "Mauvais acteur d'origine pour l'effet Lien spirituel sur {actor} ! Voir le fichier readme du module.",
-      "spirit-link-button": "{hp} PV à {actor}",
-      "spirit-link-message": "<strong>Lien spirituel</strong><br>{link}",
-      "life-link-error-bad-actor": "Mauvais acteur d'origine pour l'effet Lien vital sur {actor} ! Voir le fichier readme du module.",
-      "share-life-error-bad-actor": "Mauvais acteur d'origine pour l'effet Partage de vie sur {actor} ! Voir le fichier readme du module.",
-      "damage-button": "{damage} à {actor}",
-      "share-life-damage-button": "(Partage de vie) {damage} à {actor}",
-      "life-link-damage-button": "(Lien vital) {damage} à {actor}",
-      "damage-transfer-message": "<strong>Transfert de dégâts</strong><br>{buttons}"
-    },
-    "template": {
-      "buttons": {
-        "grabbed-concealed": "Agrippé<br>Masqué",
-        "hidden-invisible-confused": "Caché<br>Confus<br>Invisible",
-        "dc": "DD {value}"
-      },
-      "emanation-request": {
-        "effect": "Effet",
-        "duration": "Durée",
-        "rounds": "round(s)",
-        "targets": "Cibles",
-        "apply": "Appliquer",
-        "cancel": "Annuler"
-      },
-      "message-config-check-types": "Types de test",
-      "emanation-area": "{origin}, {area} pieds"
-    }
-  },
-  "PF2E": {
-    "RuleElement": {
-      "fc-ModifyFlatDC": "Modifier le DD nu",
-      "fc-AddCheck": "Ajouter le test",
-      "fc-TreatAs": "Considérer l'état comme"
-    }
-  }
+	"pf2e-fc": {
+		"flat-config": {
+			"stupefied": {
+				"label": "Stupéfié",
+				"note": "Incantation en étant Stupéfié"
+			},
+			"manipulate": {
+				"label": "Manipulation",
+				"note": "Actions de manipulation en étant Agrippé"
+			},
+			"deafened": {
+				"label": "Sourd",
+				"note": "Actions audibles en étant Sourd"
+			},
+			"deafened-spellcasting": {
+				"label": "Sourd - Incantation",
+				"note": "Les sorts non subtils nécessitent des incantations et tous les discours possèdent le trait audible."
+			},
+			"target": {
+				"label": "Cible",
+				"note": "Aveugle/Caché/Ébloui/Masqué/etc. Support PF2e Visioner"
+			},
+			"light-level": {
+				"label": "Cible - Niveau de lumière",
+				"note": "Lumière faible/Ténèbres si l'origine n'a pas vision nocturne/dans le noir"
+			}
+		},
+		"settings": {
+			"flat-check-in-message": {
+				"name": "Boutons de test nu dans les messages",
+				"hint": "Ajoute les tests nus pour les états nécessaires dans les messages de conversation."
+			},
+			"flat-check-config": {
+				"name": "Config test nu"
+			},
+			"flat-check-auto-roll": {
+				"name": "Lancer auto les tests nus",
+				"hint": "Lance automatiquement tous les tests nus d'un message",
+				"choices": {
+					"always": "Toujours",
+					"user": "Paramètres utilisateur",
+					"never": "Jamais"
+				}
+			},
+			"flat-check-auto-roll-user": {
+				"name": "Tests nus lancés automatiquement",
+				"hint": "Paramètre utilisateur : le comportement dépend du paramètrage du monde"
+			},
+			"flat-check-target-marker": {
+				"name": "Afficher le test nu sur le jeton",
+				"hint": "Paramètre utilisateur : affiche les informations du test nu sur un jeton lors du ciblage."
+			},
+			"light-level-vis": {
+				"name": "Visualisation du niveau de lumière",
+				"hint": "Paramètre utilisateur : maintenez la touche Alt enfoncée pour mettre en surbrillance les carrés sans lumière/faiblement éclairés."
+			},
+			"delay-combat-tracker": {
+				"name": "Afficher le bouton Retarder dans le compteur de rencontre",
+				"hint": "Ajoute les boutons Retarder/Revenir au compteur de rencontre par défaut."
+			},
+			"delay-token-hud": {
+				"name": "Afficher le bouton Retarder dans le HUD du jeton",
+				"hint": "Ajoute les boutons Retarder/Revenir au menu qui apparaît lors d'un clic droit sur un jeton."
+			},
+			"delay-return": {
+				"name": "Activer le bouton pour revenir",
+				"hint": "Permet de revenir à l'initiative en appuyant à nouveau sur le bouton Retarder."
+			},
+			"delay-prompt": {
+				"name": "Demande de nouvelle initiative",
+				"hint": "Permet à l'utilisateur de sélectionner un combattant après lequel il pourra Retarder son tour. Il peut néanmoins revenir plus tôt à tout moment."
+			},
+			"delay-create-message": {
+				"name": "Retarder/revenir crée un message dans la conversation"
+			},
+			"token-hud-remove-combat-toggle": {
+				"name": "Supprimer le bouton de combat du HUD de jeton",
+				"hint": "Supprime le bouton « Basculer l'état de combat » pour les jetons en combat."
+			},
+			"pf2e-hud-enable": {
+				"name": "Modifier le HUD PF2e",
+				"hint": "Cette implémentation de modules remplace la gestion des délais du HUD PF2e. Veuillez me signaler tout problème et pas à PF2e HUD !"
+			},
+			"lifelink": {
+				"name": "Activer les boutons d'automatisation du lien vital/spirituel",
+				"hint": "Consultez le fichier readme du module pour connaître les étapes de configuration."
+			},
+			"lifelink-formular": {
+				"name": "Formulaire Lien vital",
+				"hint": "Variante de dégât d'absorption de lien vital.",
+				"choices": {
+					"apg": "Standard",
+					"plus": "Oracles+ (Intensifié (+2))"
+				}
+			},
+			"emanation-automation": {
+				"name": "Application automatique du bouton d'effet d'émanation "
+			},
+			"script-alt-roll-breakdown": {
+				"name": "Décompositions alternatives des lancers",
+				"hint": "Révèle les modificateurs de circonstances/statut/non typé aux joueurs (ex : pénalité d'attaques multiples)."
+			},
+			"script-toggle-shared-vision": {
+				"name": "Activer/désactiver la vision partagée au combat",
+				"hint": "Transforme automatiquement le réglage métajeu \"Vision du groupe partagée\" lorsque le combat démarre et activez-le lorsque le combat se termine. Cela remplacera ce réglage de sorte que vous ne l'activez que si vous voulez utiliser Vision partagée."
+			},
+			"headings": {
+				"flat": "Boutons de test nu",
+				"delay": "Retarder",
+				"lifelink": "Lien vital",
+				"emanation-automation": "Automatisation de l'émanation",
+				"misc": "Divers"
+			},
+			"docs": {
+				"description": "Pour une description de chaque fonctionnalité et plus de détails sur les paramètres, consultez la documentation :",
+				"button": "Ouvrir les documents"
+			}
+		},
+		"delay": {
+			"return-to-initiative": "Revenir dans l'initiative",
+			"delay": "Retarder",
+			"delaying": "Retarde",
+			"errors": {
+				"combat-not-started": "Pas de combat actif",
+				"combatant-not-owned": "Vous ne possédez pas le combattant actuel",
+				"no-active-gm": "Aucun MJ connecté"
+			},
+			"dialog": {
+				"delay-after": "Retarder après :",
+				"confirm": "Retarder",
+				"cancel": "Annuler"
+			},
+			"actions": {
+				"delay": "Retarder",
+				"return": "Revenir"
+			}
+		},
+		"emanation": {
+			"message-text": "Appliquer l'effet d'émanation",
+			"form-allies": "Alliés",
+			"form-exclude-self": "S'exclure soi-même",
+			"form-enemies": "Ennemis",
+			"form-duration-title": "Demandera la durée de l'effet lors de l'application de Composition prolongée.",
+			"form-duration-prompt": "Demander la durée de l'effet",
+			"form-formatting-error": "Erreur de formatage : la description ne contient aucun/plusieurs liens d'effet.",
+			"form-fieldset-legend": "Effet d'émanation automatique",
+			"dialog-effect-title": "Effet d'émanation"
+		},
+		"flat": {
+			"flat-check-label": "Test nu : {label}",
+			"flat-check": "Test nu",
+			"target-marker-dc": "DD {dc} - {label}",
+			"source": {
+				"blinded": "Aveugle",
+				"darkness": "Ténèbres",
+				"hidden": "Caché",
+				"dim-light": "Lumière faible",
+				"dazzled": "Ébloui",
+				"concealed": "Masqué"
+			},
+			"message": {
+				"button-close": "Fermer",
+				"button-require-flat-check": "{count} cibles nécessitent un test nu",
+				"tooltip-highest-dc": "Si plus d'un test nu peut provoquer ou empêcher la même chose, lancez simplement un jet et utilisez le DD le plus élevé.",
+				"reroll-hero-point": "Relancer en utilisant un point d'héroïsme",
+				"reroll-new-result": "Relancer et conserver le nouveau résultat",
+				"reroll-lower-result": "Relancer et conserver le pire résultat",
+				"reroll-higher-result": "Relancer et conserver le meilleur résultat",
+				"button-reroll": "Relancer",
+				"button-cancel": "Annuler",
+				"grabbed": "Aggripé",
+				"deafened": "Sourd",
+				"stupefied": "Stupéfié {value}",
+				"dc": "DD {value}"
+			},
+			"more-dialog": {
+				"stupefied": "Stupéfié",
+				"value": "Valeur",
+				"custom": "Personnalisé",
+				"dc": "DD",
+				"title": "Plus de tests nus"
+			}
+		},
+		"life-link": {
+			"error-no-target": "Pas d'acteur cible",
+			"error-no-source": "Pas d'acteur source",
+			"error-source-is-target": "Impossible de transférer les dégâts à soi-même !",
+			"no-hp-remaining": "Pas de PV restant à transférer.",
+			"life-link-cooldown-effect": "Récupération de Lien vital",
+			"hp-add": "{actor} +{hp} PV",
+			"hp-sub": "{actor} -{hp} PV",
+			"spirit-link-error-bad-actor": "Mauvais acteur d'origine pour l'effet Lien spirituel sur {actor} ! Voir le fichier readme du module.",
+			"spirit-link-button": "{hp} PV à {actor}",
+			"spirit-link-message": "<strong>Lien spirituel</strong><br>{link}",
+			"life-link-error-bad-actor": "Mauvais acteur d'origine pour l'effet Lien vital sur {actor} ! Voir le fichier readme du module.",
+			"share-life-error-bad-actor": "Mauvais acteur d'origine pour l'effet Partage de vie sur {actor} ! Voir le fichier readme du module.",
+			"damage-button": "{damage} à {actor}",
+			"share-life-damage-button": "(Partage de vie) {damage} à {actor}",
+			"life-link-damage-button": "(Lien vital) {damage} à {actor}",
+			"damage-transfer-message": "<strong>Transfert de dégâts</strong><br>{buttons}"
+		},
+		"template": {
+			"buttons": {
+				"grabbed-concealed": "Agrippé<br>Masqué",
+				"hidden-invisible-confused": "Caché<br>Confus<br>Invisible",
+				"dc": "DD {value}"
+			},
+			"emanation-request": {
+				"effect": "Effet",
+				"duration": "Durée",
+				"rounds": "round(s)",
+				"targets": "Cibles",
+				"apply": "Appliquer",
+				"cancel": "Annuler"
+			},
+			"message-config-check-types": "Types de test",
+			"emanation-area": "{origin}, {area} pieds"
+		}
+	},
+	"PF2E": {
+		"RuleElement": {
+			"fc-ModifyFlatDC": "Modifier le DD nu",
+			"fc-AddCheck": "Ajouter le test",
+			"fc-TreatAs": "Considérer l'état comme"
+		}
+	}
 }

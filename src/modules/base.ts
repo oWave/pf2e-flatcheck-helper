@@ -14,6 +14,12 @@ export abstract class BaseModule {
 
 	abstract readonly settingsKey: string | null
 
+	/** Assumes settingsKey is a boolean setting. Needs to be overriden if not */
+	hasSettingEnabled(): boolean {
+		if (this.settingsKey == null) return false
+		return game.settings.get(MODULE_ID, this.settingsKey) as boolean
+	}
+
 	onReady() {}
 
 	enable() {
@@ -38,6 +44,7 @@ export abstract class BaseModule {
 		this.sockets = []
 
 		for (const name of this.queries) {
+			// @ts-expect-error
 			delete CONFIG.queries[name]
 		}
 		this.queries = []
@@ -62,7 +69,7 @@ export abstract class BaseModule {
 		callback: CallableFunction,
 		mode: "MIXED" | "WRAPPER" | "OVERRIDE",
 	) {
-		this.wrappers.push(libWrapper.register(MODULE_ID, target, callback, mode))
+		this.wrappers.push(libWrapper.register(MODULE_ID, target, callback, mode as any))
 	}
 
 	registerSocket(type: string, callback: (data: any) => void) {
@@ -71,6 +78,7 @@ export abstract class BaseModule {
 	}
 
 	registerQuery(name: string, callback: (data: any) => Promise<any>) {
+		// @ts-expect-error
 		CONFIG.queries[name] = callback
 	}
 

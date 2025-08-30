@@ -1,4 +1,4 @@
-<h3>Miscellaneous</h3>
+<h3 class="ml-4">Miscellaneous</h3>
 
 <div class="mx-[10%]">
 
