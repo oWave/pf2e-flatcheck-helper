@@ -431,6 +431,9 @@ function handleDiceRollSocket(data: SocketData) {
 		return
 	}
 
+	// @ts-expect-error
+	if (!game.dice3d) return
+
 	const msg = game.messages.get(data.msgId)
 	const user = game.users.get(data.userId)
 	if (!user || !msg) return
