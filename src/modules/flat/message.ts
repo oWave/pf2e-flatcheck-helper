@@ -16,7 +16,7 @@ export class MessageFlatCheckModule extends BaseModule {
 		super.enable()
 
 		this.registerHook("preCreateChatMessage", preCreateMessage)
-		this.registerHook("createChatMessage", onCreateChatMessage)
+		// this.registerHook("createChatMessage", onCreateChatMessage)
 		this.registerWrapper("ChatMessage.prototype.renderHTML", messageRenderHTMLWrapper, "WRAPPER")
 		this.registerSocket("flat-dice", handleDiceRollSocket)
 		this.registerChatAction("fc-reveal-hidden-message", handleRevealClick)
@@ -276,13 +276,14 @@ export function preCreateMessage(msg: ChatMessagePF2e, _data, options: Record<st
 			[`flags.${MODULE_ID}.flatchecks`]: data,
 		})
 
-		if (MODULE.settings.flatAutoRoll) {
+		if (MODULE.settings.flatAutoRoll && !msg.isReroll) {
 			const rollUpdates = autoRoll(msg)
 			msg.updateSource(rollUpdates)
 		}
 
+		const passedChecks = passedAllFlatChecks(msg)
 		const shouldHide =
-			MODULE.settings.flatHideRoll && (!MODULE.settings.flatAutoReveal || !passedAllFlatChecks(msg))
+			MODULE.settings.flatHideRoll && (!MODULE.settings.flatAutoReveal || !passedChecks)
 
 		if (shouldHide && msg.isCheckRoll && !msg.isReroll) {
 			const flavorEl = parseHTML(msg.flavor)
@@ -317,22 +318,10 @@ export function preCreateMessage(msg: ChatMessagePF2e, _data, options: Record<st
 			return false
 		}
 
-		if (!shouldHide && game.modules.get("xdy-pf2e-workbench")?.active) {
+		if (!passedChecks && game.modules.get("xdy-pf2e-workbench")?.active) {
 			msg.updateSource({
 				"flags.xdy-pf2e-workbench.noAutoDamageRoll": true,
 			})
-		}
-	}
-}
-
-async function onCreateChatMessage(msg: ChatMessagePF2e) {
-	if (msg.author !== game.user) return
-
-	if (MODULE.settings.flatAutoRoll && msg.flags[MODULE_ID]?.flatchecks != null) {
-		await autoRoll(msg)
-		if (game.modules.get("xdy-pf2e-workbench")?.active && passedAllFlatChecks(msg, false)) {
-			// @ts-expect-error
-			await game.PF2eWorkbench?.autoRollDamage?.(msg)
 		}
 	}
 }
