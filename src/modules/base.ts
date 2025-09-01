@@ -16,7 +16,7 @@ export abstract class BaseModule {
 
 	/** Assumes settingsKey is a boolean setting. Needs to be overriden if not */
 	hasSettingEnabled(): boolean {
-		if (this.settingsKey == null) return false
+		if (this.settingsKey == null) return true
 		return game.settings.get(MODULE_ID, this.settingsKey) as boolean
 	}
 
