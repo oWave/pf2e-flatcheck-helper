@@ -338,13 +338,13 @@ function autoRoll(msg: ChatMessagePF2e) {
 		if (!("finalDc" in check)) continue
 		if (check.finalDc == null || check.finalDc <= 1 || check.finalDc >= 20) continue
 
-		const roll = Math.floor(Math.random() * 20)
+		const roll = Math.floor(Math.random() * 20) + 1
 		rolls.push(fakeRoll(roll))
 		updates[`flags.${MODULE_ID}.flatchecks.${key}.roll`] = roll
 	}
 
 	if (rolls.length)
-		emitSocket({
+		emitRollSocket({
 			msgId: msg.id,
 			userId: game.user.id,
 			rolls: JSON.stringify(rolls),
@@ -420,7 +420,7 @@ interface SocketData {
 	sound?: boolean
 }
 
-function emitSocket(data: SocketData) {
+function emitRollSocket(data: SocketData) {
 	MODULE.socketHandler.emit("flat-dice", data)
 }
 
@@ -497,7 +497,7 @@ async function handleFlatButtonClick(msg: ChatMessagePF2e, key: string, dc: numb
 	}
 
 	if (Object.keys(updates).length > 0) {
-		emitSocket({
+		emitRollSocket({
 			msgId: msg.id,
 			userId: game.user.id,
 			rolls: JSON.stringify([roll.toJSON()]),
