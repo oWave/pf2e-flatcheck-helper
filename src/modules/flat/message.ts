@@ -287,7 +287,9 @@ export function preCreateMessage(msg: ChatMessagePF2e, _data, options: Record<st
 
 		if (shouldHide && msg.isCheckRoll && !msg.isReroll) {
 			const flavorEl = parseHTML(msg.flavor)
-			flavorEl.querySelector<HTMLElement>("div.result.degree-of-success")?.remove()
+			for (const selector of ["div.result.degree-of-success", "ul.notes"]) {
+				flavorEl.querySelector<HTMLElement>(selector)?.remove()
+			}
 			const flavorText = new XMLSerializer().serializeToString(flavorEl)
 
 			getDocumentClass("ChatMessage").create({
