@@ -189,7 +189,11 @@
 				"grabbed": "Grabbed",
 				"deafened": "Deafened",
 				"stupefied": "Stupefied {value}",
-				"dc": "DC {value}"
+				"dc": "DC {value}",
+				"hide": {
+					"disabled-tooltip": "GM only",
+					"reveal-button": "Reveal Roll"
+				}
 			},
 			"more-dialog": {
 				"stupefied": "Stupefied",
