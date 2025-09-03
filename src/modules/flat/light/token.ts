@@ -1,7 +1,9 @@
+import type { TokenDocumentPF2e, TokenPF2e } from "foundry-pf2e"
 import type Token from "foundry-pf2e/foundry/client/canvas/placeables/token.mjs"
+import type { HookCallback } from "foundry-pf2e/foundry/client/helpers/hooks.mjs"
 import { darknessAtPoint, LightLevels } from "./utils"
 
-export function tokenExposure(token: Token) {
+function tokenExposure(token: Token) {
 	const gridSize = token.scene!.grid.size
 	const halfGrid = gridSize / 2
 	const sceneDimensions = token.scene!.dimensions
@@ -30,7 +32,74 @@ export function tokenExposure(token: Token) {
 	return tokenExposure
 }
 
-export function tokenLightLevel(token: Token) {
-	const exposure = tokenExposure(token)
+class Cache {
+	private map = new Map<TokenDocumentPF2e, number>()
+
+	private calculate(token: TokenDocumentPF2e) {
+		console.log(`Cache add ${token.name}`)
+		const exposure = token.object ? tokenExposure(token.object) : 0
+		this.map.set(token, exposure)
+		return exposure
+	}
+
+	get(token: TokenDocumentPF2e) {
+		console.log(`Cache get ${token.name}`)
+		const exposure = this.map.get(token)
+		if (exposure == null) return this.calculate(token)
+		return exposure
+	}
+
+	invalidate(token: TokenDocumentPF2e) {
+		console.log(`Cache invalidate ${token.name}`)
+		this.map.delete(token)
+	}
+
+	invalidateAll() {
+		console.log(`Cache invalidate ALL`)
+		this.map.clear()
+	}
+
+	private useCount = 0
+	enable() {
+		if (this.useCount === 0) {
+			this.registerHook("canvasTearDown", () => this.invalidateAll())
+			this.registerHook(
+				"lightingRefresh",
+				foundry.utils.debounce(() => this.invalidateAll(), 50),
+			)
+			this.registerHook("updateToken", (token: TokenDocumentPF2e, changes: any) => {
+				if (
+					"x" in changes ||
+					"y" in changes ||
+					"elevation" in changes ||
+					"width" in changes ||
+					"height" in changes
+				) {
+					this.invalidate(token)
+				}
+			})
+		}
+		this.useCount++
+	}
+
+	disable() {
+		if (this.useCount === 1) {
+			for (const [k, v] of this.hooks.entries()) Hooks.off(k, v)
+			this.hooks.clear()
+		}
+		this.useCount = Math.max(this.useCount - 1, 0)
+	}
+
+	private hooks = new Map<string, number>()
+	registerHook(type: string, callback: HookCallback<any[]>) {
+		const id = Hooks.on(type, callback)
+		this.hooks.set(type, id)
+	}
+}
+
+export const tokenExposureCache = new Cache()
+
+export function tokenLightLevel(token: TokenPF2e) {
+	const exposure = token.document ? tokenExposureCache.get(token.document) : 0
 	return LightLevels.fromExposure(exposure)
 }

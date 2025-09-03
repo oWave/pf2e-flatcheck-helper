@@ -6,6 +6,7 @@ import { parseHTML, translate } from "src/utils"
 import { BaseModule } from "../base"
 import { collectFlatChecks, type FlatCheckData } from "./data"
 import { localizeOrigin, localizeType } from "./i18n"
+import { tokenExposureCache } from "./light/token"
 import type { TreatAsAdjustment } from "./rules/common"
 
 export class MessageFlatCheckModule extends BaseModule {
@@ -20,6 +21,8 @@ export class MessageFlatCheckModule extends BaseModule {
 		this.registerWrapper("ChatMessage.prototype.renderHTML", messageRenderHTMLWrapper, "WRAPPER")
 		this.registerSocket("flat-dice", handleDiceRollSocket)
 		this.registerChatAction("fc-reveal-hidden-message", handleRevealClick)
+
+		tokenExposureCache.enable()
 	}
 	disable() {
 		super.disable()
@@ -269,7 +272,13 @@ function shouldShowFlatChecks(msg: ChatMessagePF2e): boolean {
 }
 
 export function preCreateMessage(msg: ChatMessagePF2e, _data, options: Record<string, any>) {
-	if (!msg.actor || !shouldShowFlatChecks(msg) || msg.flags[MODULE_ID]?.revealed) return
+	if (!msg.actor || !shouldShowFlatChecks(msg) || msg.flags[MODULE_ID]?.revealed) {
+		if (msg.isRoll && game.modules.get("xdy-pf2e-workbench")?.active) {
+			// Disable auto roll when manually revealed
+			msg.updateSource({ "flags.xdy-pf2e-workbench.noAutoDamageRoll": true })
+		}
+		return
+	}
 
 	const data = collectFlatChecks(msg) as MsgFlagData
 
@@ -323,9 +332,7 @@ export function preCreateMessage(msg: ChatMessagePF2e, _data, options: Record<st
 		}
 
 		if (!passedChecks && game.modules.get("xdy-pf2e-workbench")?.active) {
-			msg.updateSource({
-				"flags.xdy-pf2e-workbench.noAutoDamageRoll": true,
-			})
+			msg.updateSource({ "flags.xdy-pf2e-workbench.noAutoDamageRoll": true })
 		}
 	}
 }

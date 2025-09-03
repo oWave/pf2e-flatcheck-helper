@@ -6,6 +6,7 @@ import { translate } from "src/utils"
 import { BaseModule } from "../base"
 import { FlatCheckHelper } from "./data"
 import { localizeOrigin, localizeType } from "./i18n"
+import { tokenExposureCache } from "./light/token"
 import { TargetColors } from "./light/utils"
 import { guessOrigin } from "./target"
 
@@ -159,6 +160,8 @@ export class TargetInfoModule extends BaseModule {
 		this.registerHook("lightingRefresh", () => {
 			tokenTargetManager.debouncedRefresh()
 		})
+
+		tokenExposureCache.enable()
 	}
 
 	disable() {
