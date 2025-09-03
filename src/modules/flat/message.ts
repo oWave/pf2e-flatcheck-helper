@@ -235,11 +235,13 @@ async function renderButtons(msg: ChatMessagePF2e, html: HTMLElement) {
 function renderHiddenRollMessage(msg: ChatMessagePF2e, html: HTMLElement) {
 	const allowReveal = game.user.isGM || MODULE.settings.flatPlayersCanReveal
 	const disabled = allowReveal ? "" : "disabled"
-	const tooltip = allowReveal ? "" : 'data-tooltip="GM only"'
+	const tooltip = allowReveal
+		? ""
+		: `data-tooltip="${translate("flat.message.hide.disabled-tooltip")}"`
 
 	const buttons = parseHTML(`
 		<div class="message-buttons">
-			<button type="button" data-action="fc-reveal-hidden-message" ${disabled} ${tooltip}>Reveal Roll</button>
+			<button type="button" data-action="fc-reveal-hidden-message" ${disabled} ${tooltip}>${translate("flat.message.hide.reveal-button")}</button>
 		</div>`)
 
 	html.querySelector(".fc-dice-placeholder")?.after(buttons)
