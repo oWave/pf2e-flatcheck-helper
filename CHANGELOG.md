@@ -2,13 +2,15 @@
 🥭
 
 TODO:
-- i18n
+- RE: Add light options to wiki
+- remove console.log
 
 ## [Unreleased]
 ### Added
 - New setting: Flat Checks Hide Results
   - Disabled by default
   - Check the module documentation in Foundry for details and related settings
+- Token light exposure roll option for `ModifyFlatDC`, `TreatAs` and `AddCheck` REs
 
 ### Changed
 - All client (browser) settings are now user settings
