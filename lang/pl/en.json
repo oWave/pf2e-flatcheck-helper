@@ -1,0 +1,228 @@
+{
+  "pf2e-fc": {
+    "flat-config": {
+      "stupefied": {
+        "label": "Ogłupiony",
+        "note": "Rzucanie zaklęć w stanie Ogłupienia"
+      },
+      "manipulate": {
+        "label": "Manipulacja",
+        "note": "Akcje manipulacji podczas Pochwycenia"
+      },
+      "deafened": {
+        "label": "Ogłuchły",
+        "note": "Akcje słuchowe podczas Ogłuchły"
+      },
+      "deafened-spellcasting": {
+        "label": "Ogłuchły - Rzucanie zaklęć",
+        "note": "Niezbyt subtelne zaklęcia wymagają inkantacji, a cała mowa ma cechę słuchu."
+      },
+      "target": {
+        "label": "Cel",
+        "note": "Przysłonięty / Ukryty / Zamroczony / Oślepiony / itd. Wspiera PF2e Perception"
+      },
+      "light-level": {
+        "label": "Cel - Poziom oświetlenia",
+        "note": "Słabe światło/ciemność, jeśli pochodzenie nie ma widzenia w słabym świetle/widzenia w ciemności"
+      }
+    },
+    "settings": {
+      "flat-check-in-message": {
+        "name": "Przyciski Płaskich Testów w wiadomościach",
+        "hint": "Dodaje płaskie testy dla obsługiwanych stanów w wiadomościach czatu."
+      },
+      "flat-check-config": {
+        "name": "Konfiguracja Płaskich Testów"
+      },
+      "flat-check-auto-roll": {
+        "name": "Automatyczne rzucanie płaskich testów",
+        "hint": "Automatycznie rzuca płaskie testy",
+        "choices": {
+          "always": "Zawsze",
+          "user": "Ustawienia użytkownika",
+          "never": "Nigdy"
+        }
+      },
+      "flat-check-auto-roll-user": {
+        "name": "Automatyczne rzucanie płaskich testów",
+        "hint": "Ustawienia użytkownika: Zachowanie zależy od ustawień świata."
+      },
+      "flat-check-targer-marker": {
+        "name": "Pokaż Płaskie Testy na tokenie",
+        "hint": "Ustawienie klienta: Wyświetla informacje o Płaskim Teście tokena podczas celowania."
+      },
+      "light-level-vis": {
+        "name": "Wizualizacja poziomów oświetlenia",
+        "hint": "Ustawienie klienta: Przytrzymaj alt, aby podświetlić kwadraty bez światła/przyciemnione."
+      },
+      "delay-combat-tracker": {
+        "name": "Pokaż przycisk Opóźnienia akcji w śledzeniu walki",
+        "hint": "Dodaje przyciski opóźnienia/powrotu do domyślnego modułu śledzenia walki."
+      },
+      "delay-token-hud": {
+        "name": "Pokaż przycisk Opóźnienia w Token Hud",
+        "hint": "Dodaje przyciski opóźnienia/powrotu do menu wyświetlanego po kliknięciu tokena prawym przyciskiem myszy."
+      },
+      "delay-return": {
+        "name": "Włącz przycisk powrotu",
+        "hint": "Umożliwia powrót do inicjatywy poprzez ponowne naciśnięcie przycisku opóźnienia."
+      },
+      "delay-prompt": {
+        "name": "Komunikat o nowej inicjatywie",
+        "hint": "Pozwala użytkownikowi wybrać wojownika, po którym chce opóźnić swoją turę. Nadal może wrócić wcześniej, kiedy tylko zechce."
+      },
+      "delay-create-message": {
+        "name": "Opóźnienie/powrót tworzy wiadomość czatu"
+      },
+      "token-hud-remove-combat-toggle": {
+        "name": "Usunięcie przełącznika walki z tokena Hud",
+        "hint": "Usunięto przycisk „Przełącz stan walki” dla tokenów w walce."
+      },
+      "pf2e-hud-enable": {
+        "name": "Modyfikacja PF2e HUD",
+        "hint": "Zastępuje obsługę opóźnień PF2e HUD z implementacją tego modułu. Proszę o zgłaszanie problemów z tym do mnie, a nie do PF2e HUD!"
+      },
+      "lifelink": {
+        "name": "Włącz przyciski automatyzacji Więzy Życia/Duchowa Więź",
+        "hint": "Sprawdź readme modułu dla kroków konfiguracji."
+      },
+      "lifelink-formular": {
+        "name": "Formuła Więzów Życia",
+        "hint": "Wariant pochłaniania obrażeń przez więzy życia do wykorzystania.",
+        "choices": {
+          "apg": "Standardowy",
+          "plus": "Wyrocznie+ (Wzmocnienie (+2))"
+        }
+      },
+      "emanation-automation": {
+        "name": "Przycisk automatycznego stosowania efektu emanacji"
+      },
+      "script-alt-roll-breakdown": {
+        "name": "Alternatywne rozkłady rzutów",
+        "hint": "Ujawnia graczom modyfikatory okoliczności/stanu/nietypowego rzutu (np. karę za wielokrotny atak)."
+      },
+      "script-toggle-shared-vision": {
+        "name": "Przełączanie wspólnej wizji w walce",
+        "hint": "Automatycznie wyłącza ustawienie metagry \" Wspólna wizja drużyny\" po rozpoczęciu walki i włącza je ponownie po jej zakończeniu. Ta opcja zastąpi to ustawienie, więc włącz ją tylko wtedy, gdy chcesz korzystać ze wspólnej wizji."
+      },
+      "headings": {
+        "flat": "Przyciski Płaskiego Testu",
+        "delay": "Opóźnienie",
+        "lifelink": "Więzy Życia",
+        "emanation-automation": "Automatyzacja Emanacji",
+        "misc": "Różne"
+      },
+      "docs": {
+        "description": "Aby uzyskać opis każdej funkcji i więcej szczegółów na temat ustawień, zapoznaj się z dokumentacją:",
+        "button": "Otwórz dokumentację"
+      }
+    },
+    "delay": {
+      "return-to-initiative": "Powrót do inicjatywy",
+      "delay": "Opóźnienie",
+      "delaying": "Opóźnienie",
+      "errors": {
+        "combat-not-started": "Brak aktywnej walki",
+        "combatant-not-owned": "Nie jesteś właścicielem aktualnego bojownika",
+        "no-active-gm": "MG nie podłączony"
+      },
+      "dialog": {
+        "delay-after": "Opóźnienie po:",
+        "confirm": "Opóźnienie",
+        "cancel": "Anuluj"
+      },
+      "actions": {
+        "delay": "Opóźnienie",
+        "return": "Powrót"
+      }
+    },
+    "emanation": {
+      "message-text": "Zastosuj efekt emanacji",
+      "form-allies": "Sojusznicy",
+      "form-exclude-self": "Wyklucz siebie",
+      "form-enemies": "Wrogowie",
+      "form-duration-title": "Poprosi o podanie czasu trwania efektu podczas ubiegania się o wsparcie dla Trwałej Kompozycji.",
+      "form-duration-prompt": "Komunikat o podanie czasu trwania efektu",
+      "form-formatting-error": "Błąd formatowania: Opis nie zawiera linków do efektów lub zawiera ich wiele.",
+      "form-fieldset-legend": "Automatyczny efekt emanacji",
+      "dialog-effect-title": "Efekt emanacji"
+    },
+    "flat": {
+      "flat-check-label": "Płaski Test: {label}",
+      "flat-check": "Płaski Test",
+      "target-marker-dc": "ST {dc} - {label}",
+      "source": {
+        "blinded": "Oślepiony",
+        "darkness": "Ciemność",
+        "hidden": "Ukryty",
+        "dim-light": "Słabe światło",
+        "dazzled": "Zamroczony",
+        "concealed": "Przysłonięty"
+      },
+      "message": {
+        "button-close": "Zamknij",
+        "button-require-flat-check": "{count} celów wymaga płaskiego testu",
+        "tooltip-highest-dc": "Jeśli więcej niż jeden płaski test miałby spowodować lub zapobiec tej samej rzeczy, wystarczy rzucić raz i użyć najwyższego ST.",
+        "reroll-hero-point": "Ponowny rzut przy użyciu punktu bohaterstwa",
+        "reroll-new-result": "Przerzuć i zachowaj nowy wynik",
+        "reroll-lower-result": "Przerzuć i zachowaj niższy wynik",
+        "reroll-higher-result": "Przerzuć i zachowaj wyższy wynik",
+        "button-reroll": "Ponowny rzut",
+        "button-cancel": "Anuluj",
+        "grabbed": "Pochwycony",
+        "deafened": "Ogłuchły",
+        "stupefied": "Ogłupiony {value}",
+        "dc": "ST {value}"
+      },
+      "more-dialog": {
+        "stupefied": "Ogłupiony",
+        "value": "Wartość",
+        "custom": "Niestandardowe",
+        "dc": "ST",
+        "title": "Więcej Płaskich Testów"
+      }
+    },
+    "life-link": {
+      "error-no-target": "Brak aktora docelowego",
+      "error-no-source": "Brak aktora źródłowego",
+      "error-source-is-target": "Nie można przenieść obrażeń na siebie!",
+      "no-hp-remaining": "Brak PW do przeniesienia.",
+      "life-link-cooldown-effect": "Więzy Życia - czas odnowienia",
+      "hp-add": "{actor} +{hp} PW",
+      "hp-sub": "{actor} -{hp} PW",
+      "spirit-link-error-bad-actor": "Zły aktor początkowy dla efektu Duchowej Więzi na {actor}! Zobacz readme modułu.",
+      "spirit-link-button": "{hp} PW dla {actor}",
+      "spirit-link-message": "<strong>Duchowa Więź</strong><br>{link}",
+      "life-link-error-bad-actor": "Zły aktor początkowy dla efektu Więzów Życia na {actor}! Zobacz plik readme modułu.",
+      "share-life-error-bad-actor": "Zły aktor początkowy dla efektu Współdzielenia Życia na {aktor}! Zobacz readme modułu.",
+      "damage-button": "{damage} dla {actor}",
+      "share-life-damage-button": "(Współdzielenie Życia) {damage} dla {actor}",
+      "life-link-damage-button": "(Więzy Życia) {damage} dla {actor}",
+      "damage-transfer-message": "<strong>Transfer obrażeń</strong><br>{buttons}"
+    },
+    "template": {
+      "buttons": {
+        "grabbed-concealed": "Pochwycony<br>Przysłonięty",
+        "hidden-invisible-confused": "Ukryty<br>Niewidzialny<br>Zdezorientowany",
+        "dc": "ST {value}"
+      },
+      "emanation-request": {
+        "effect": "Efekt",
+        "duration": "Czas trwania",
+        "rounds": "runda(y)",
+        "targets": "Cele",
+        "apply": "Zastosuj",
+        "cancel": "Anuluj"
+      },
+      "message-config-check-types": "Typy testów",
+      "emanation-area": "{origin}, {area} stóp"
+    }
+  },
+  "PF2E": {
+    "RuleElement": {
+      "fc-ModifyFlatDC": "Modyfikacja ST płaskiego testu",
+      "fc-AddCheck": "Dodaj test",
+      "fc-TreatAs": "Traktuj stan jako"
+    }
+  }
+}
