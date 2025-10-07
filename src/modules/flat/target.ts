@@ -5,6 +5,7 @@ import { tokenLightLevel } from "./light/token"
 import { LightLevels } from "./light/utils"
 import { flatMessageConfig } from "./message-config"
 import type { Adjustments, TreatAsAdjustment } from "./rules/common"
+import { visionerAVSFlatCheck } from "./visioner"
 
 export interface TargetFlatCheckSource extends Omit<FlatCheckSource, "baseDc"> {
 	type: TargetConditionSlug
@@ -96,6 +97,13 @@ export class TargetFlatCheckHelper {
 		private adjustments: Adjustments,
 		private rollOptions: string[],
 	) {}
+	static useVisionerAVS(): boolean {
+		return (
+			// @ts-expect-error
+			typeof game.modules.get("pf2e-visioner")?.api?.getVisibilityFactors === "function" &&
+			(game.settings.get("pf2e-visioner", "autoVisibilityEnabled") as boolean)
+		)
+	}
 
 	#collectOriginSources() {
 		const sources: TargetFlatCheckSource[] = []
@@ -152,15 +160,28 @@ export class TargetFlatCheckHelper {
 		return []
 	}
 
-	collectedSources() {
+	async #collectVisionerAVSSource(): Promise<TargetFlatCheckSource[]> {
+		const origin = this.origin
+		if (!origin) return []
+
+		const check = await visionerAVSFlatCheck(origin, this.target)
+		if (!check) return []
+		return [check]
+	}
+
+	async collectedSources() {
 		if (flatMessageConfig.toSets().ignored.has("target")) return []
 
-		const merged = [
-			this.#collectOriginSources(),
-			this.#collectTargetSources(),
-			this.#collectMergedSources(),
-			this.#collectExtraConditions(),
-		].flat()
+		const collectors = TargetFlatCheckHelper.useVisionerAVS()
+			? [this.#collectVisionerAVSSource()]
+			: [
+					this.#collectOriginSources(),
+					this.#collectTargetSources(),
+					this.#collectMergedSources(),
+					this.#collectExtraConditions(),
+				]
+
+		const merged = (await Promise.all<TargetFlatCheckSource[]>(collectors)).flat()
 
 		const sources: BaseTargetFlatCheck[] = []
 

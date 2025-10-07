@@ -78,17 +78,18 @@ class TokenTargetRenderer {
 		this.token.mesh?.filters?.unshift(this.#filter)
 	}
 
-	draw() {
+	async draw() {
 		this.#layer.removeChildren()
+		// Start disabled to prevent flashing because of await
+		this.#filter.enabled = false
 		const origin = guessOrigin()
-		const check = FlatCheckHelper.fromTokens(origin, this.token.document).target
+		const check = (await FlatCheckHelper.fromTokens(origin, this.token.document)).target
 
 		if (
 			!check ||
 			(check.finalDc != null && check.finalDc <= 1) ||
 			(MODULE.settings.flatTargetMarkerMode === "onlyWithOrigin" && origin == null)
 		) {
-			this.#filter.enabled = false
 			return
 		}
 
