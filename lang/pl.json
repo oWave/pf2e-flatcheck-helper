@@ -19,7 +19,7 @@
 			},
 			"target": {
 				"label": "Cel",
-				"note": "Przysłonięty / Ukryty / Zamroczony / Oślepiony / itd. Wspiera PF2e Visioner"
+				"note": "Przysłonięty / Ukryty / Zamroczony / Oślepiony / itd. Wspiera PF2e Perception"
 			},
 			"light-level": {
 				"label": "Cel - Poziom oświetlenia",
@@ -35,8 +35,8 @@
 				"name": "Konfiguracja Płaskich Testów"
 			},
 			"flat-check-auto-roll": {
-				"name": "Automatyczny rzut na Płaskie Testy",
-				"hint": "Automatycznie rzuca wszelkie płaskie testy",
+				"name": "Automatyczne rzucanie płaskich testów",
+				"hint": "Automatycznie rzuca płaskie testy",
 				"choices": {
 					"always": "Zawsze",
 					"user": "Ustawienia użytkownika",
@@ -44,7 +44,7 @@
 				}
 			},
 			"flat-check-auto-roll-user": {
-				"name": "Automatyczny rzut na Płaskie Testy",
+				"name": "Automatyczne rzucanie płaskich testów",
 				"hint": "Ustawienia użytkownika: Zachowanie zależy od ustawień świata."
 			},
 			"flat-check-target-marker": {
