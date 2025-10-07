@@ -36,26 +36,22 @@ class Cache {
 	private map = new Map<TokenDocumentPF2e, number>()
 
 	private calculate(token: TokenDocumentPF2e) {
-		console.log(`Cache add ${token.name}`)
 		const exposure = token.object ? tokenExposure(token.object) : 0
 		this.map.set(token, exposure)
 		return exposure
 	}
 
 	get(token: TokenDocumentPF2e) {
-		console.log(`Cache get ${token.name}`)
 		const exposure = this.map.get(token)
 		if (exposure == null) return this.calculate(token)
 		return exposure
 	}
 
 	invalidate(token: TokenDocumentPF2e) {
-		console.log(`Cache invalidate ${token.name}`)
 		this.map.delete(token)
 	}
 
 	invalidateAll() {
-		console.log(`Cache invalidate ALL`)
 		this.map.clear()
 	}
 
