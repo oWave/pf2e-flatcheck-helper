@@ -1,11 +1,9 @@
 # Changelog
 🥭
 
-TODO:
-- RE: Add light options to wiki
-- remove console.log
-
 ## [Unreleased]
+
+## [0.19.0] - 2025-10-07
 ### Added
 - New setting: Flat Checks Hide Results
   - Disabled by default
@@ -143,7 +141,8 @@ Foundry v13 release
 ### Fixed
 - Flat checks showing on damage/healing received messages
 
-[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.18.3...HEAD
+[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.19.0...HEAD
+[0.19.0]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.18.3...v0.19.0
 [0.18.3]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.18.2...v0.18.3
 [0.18.2]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.18.1...v0.18.2
 [0.18.1]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.18.0...v0.18.1
