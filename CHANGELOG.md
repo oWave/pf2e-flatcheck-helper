@@ -11,6 +11,7 @@ TODO:
   - Disabled by default
   - Check the module documentation in Foundry for details and related settings
 - Token light exposure roll option for `ModifyFlatDC`, `TreatAs` and `AddCheck` REs
+- Support for PF2e Visioner v4 Auto-Visibility System
 
 ### Changed
 - All client (browser) settings are now user settings

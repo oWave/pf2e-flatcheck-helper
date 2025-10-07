@@ -8,7 +8,7 @@ import { type BaseTargetFlatCheck, TargetFlatCheckHelper } from "./target"
 
 export interface FlatCheckSource {
 	type: string
-	origin?: { label?: string; slug: string }
+	origin?: { label?: string; slug: string; reasons?: string[] }
 	baseDc: number | null
 }
 
@@ -21,7 +21,7 @@ export interface FlatCheckData extends FlatCheckSource {
 
 export type FlatCheckRecord = Record<string, FlatCheckData>
 
-export function collectFlatChecks(msg: ChatMessagePF2e): MsgFlagData | null {
+export async function collectFlatChecks(msg: ChatMessagePF2e): Promise<MsgFlagData | null> {
 	if (!msg.author) return null
 
 	if (msg.target?.token) {
@@ -37,7 +37,7 @@ export function collectFlatChecks(msg: ChatMessagePF2e): MsgFlagData | null {
 	const merged: MsgFlagData = {}
 	let targetCount = 0
 	for (const check of checks) {
-		for (const [key, slot] of Object.entries(check)) {
+		for (const [key, slot] of Object.entries(await check)) {
 			if (slot.finalDc == null || slot.finalDc <= 1) continue
 			if (key === "target") {
 				targetCount++
@@ -169,7 +169,7 @@ export class FlatCheckHelper {
 		return this.adjustments.getAdditionalSources(this.rollOptions)
 	}
 
-	calculateChecks() {
+	async calculateChecks() {
 		const slots: Record<string, FlatCheckSource[]> & { target: BaseTargetFlatCheck[] } = {
 			target: [],
 		}
@@ -186,7 +186,7 @@ export class FlatCheckHelper {
 			else slots[key] = [source]
 		}
 
-		for (const source of this.#collectTargetSources()) {
+		for (const source of await this.#collectTargetSources()) {
 			slots.target.push(source)
 		}
 

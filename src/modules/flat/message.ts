@@ -16,8 +16,9 @@ export class MessageFlatCheckModule extends BaseModule {
 		if (!game.modules.get("lib-wrapper")?.active) return
 		super.enable()
 
-		this.registerHook("preCreateChatMessage", preCreateMessage)
+		// this.registerHook("preCreateChatMessage", preCreateMessage)
 		// this.registerHook("createChatMessage", onCreateChatMessage)
+		this.registerWrapper("ChatMessage.prototype._preCreate", messagePreCreateWrapper, "WRAPPER")
 		this.registerWrapper("ChatMessage.prototype.renderHTML", messageRenderHTMLWrapper, "WRAPPER")
 		this.registerSocket("flat-dice", handleDiceRollSocket)
 		this.registerChatAction("fc-reveal-hidden-message", handleRevealClick)
@@ -53,6 +54,18 @@ export type MsgFlagData = Record<string, MsgFlagCheckData> & {
 	target?: MsgFlagCheckData | MsgFlagTargetCountData
 }
 
+export async function messagePreCreateWrapper(this: ChatMessagePF2e, wrapper, ...args) {
+	const data: any = await wrapper(...args)
+
+	try {
+		if ((await preCreateMessage(this)) === false) return false
+	} catch (e) {
+		console.error("Exception occured in message _preCreate wrapper: ", e)
+	}
+
+	return data
+}
+
 export async function messageRenderHTMLWrapper(this: ChatMessagePF2e, wrapper, ...args) {
 	const html: HTMLElement = await wrapper(...args)
 
@@ -75,8 +88,9 @@ async function renderButtons(msg: ChatMessagePF2e, html: HTMLElement) {
 		origin?: { slug: string; label?: string }
 		baseDc: number | null
 		finalDc: number | null
-		dcAdjustments?: string
+		reasons?: string[]
 		conditionAdjustment?: TreatAsAdjustment
+		dcAdjustments?: string
 		rolls: { class: string; value: number }[]
 		rerollIcon?: string
 		secret?: "gm" | "hide"
@@ -131,6 +145,7 @@ async function renderButtons(msg: ChatMessagePF2e, html: HTMLElement) {
 			finalDc: check.finalDc,
 			dcAdjustments: check.dcAdjustments?.map((a) => `${a.label}: ${a.value}`).join("<br>"),
 			type: check.type,
+			reasons: check.origin?.reasons,
 			conditionAdjustment: check.conditionAdjustment,
 			origin: check.origin,
 			rolls: rollData,
@@ -273,7 +288,7 @@ function shouldShowFlatChecks(msg: ChatMessagePF2e): boolean {
 	return msg.item.isOfType("action", "consumable", "equipment", "feat", "melee", "weapon")
 }
 
-export function preCreateMessage(msg: ChatMessagePF2e, _data, options: Record<string, any>) {
+export async function preCreateMessage(msg: ChatMessagePF2e) {
 	if (!msg.actor || !shouldShowFlatChecks(msg) || msg.flags[MODULE_ID]?.revealed) {
 		if (msg.isRoll && game.modules.get("xdy-pf2e-workbench")?.active) {
 			// Disable auto roll when manually revealed
@@ -282,7 +297,7 @@ export function preCreateMessage(msg: ChatMessagePF2e, _data, options: Record<st
 		return
 	}
 
-	const data = collectFlatChecks(msg) as MsgFlagData
+	const data = (await collectFlatChecks(msg)) as MsgFlagData
 
 	if (data != null && Object.keys(data).length) {
 		msg.updateSource({

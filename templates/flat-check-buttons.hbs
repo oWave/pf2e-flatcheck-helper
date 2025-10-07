@@ -1,8 +1,21 @@
 <section class="fc-flatcheck-buttons">
 	{{#each @root.buttons}}
 		<div class="fc-check">
-			<span class="fc-label" {{#if this.conditionAdjustment}}
-				data-tooltip="{{this.conditionAdjustment.label}}: {{ @root.localizeType this.conditionAdjustment.old }} → {{ @root.localizeType this.conditionAdjustment.new }}"
+			<span class="fc-label"
+			  {{#if (or this.conditionAdjustment this.reasons)}}
+				  data-tooltip="
+					  {{#if this.reasons}}
+						  {{#each this.reasons}}
+							  {{this}} <br>
+							{{/each}}
+							{{#if this.conditionAdjustment}}
+							  <br>
+							{{/if}}
+						{{/if}}
+					  {{#if this.conditionAdjustment}}
+					    {{this.conditionAdjustment.label}}: {{ @root.localizeType this.conditionAdjustment.old }} → {{ @root.localizeType this.conditionAdjustment.new }}
+						{{/if}}
+					"
 				{{/if}}>
 				<span {{#if this.conditionAdjustment }} class="adjusted" {{/if}}>{{ @root.localizeType this.type }}</span>
 				{{#if this.origin}}
@@ -11,7 +24,7 @@
 					{{/unless}}
 				{{/if}}
 			</span>
-			<span class="fc-dc" data-tooltip="{{ this.dcAdjustments }}">
+			<span class="fc-dc" data-tooltip="{{ this.tooltip }}">
 				<span>DC</span>
 				<span class="fc-dcs">
 					{{#if (eq this.finalDc null)}}
