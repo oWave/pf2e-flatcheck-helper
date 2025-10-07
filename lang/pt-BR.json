@@ -1,0 +1,227 @@
+{
+  "pf2e-fc": {
+    "flat-config": {
+      "stupefied": {
+        "label": "Estupefato",
+        "note": "Conjuração enquanto Estupefato"
+      },
+      "manipulate": {
+        "label": "Manuseio",
+        "note": "Ações de manuseio enquanto Agarrado"
+      },
+      "deafened": {
+        "label": "Ensurdecido",
+        "note": "Ações auditivas enquando Ensurdecido"
+      },
+      "deafened-spellcasting": {
+        "label": "Ensurdecido - Conjuração",
+        "note": "Magias exigem encantamentos, e toda fala tem a característica auditiva."
+      },
+      "target": {
+        "label": "Alvo",
+        "note": "Ocultado/Escondido/Ofuscado/Cegado/etc. Suporta PF2e Visioner"
+      },
+      "light-level": {
+        "label": "Alvo - Nível de Iluminação",
+        "note": "Luz fraca ou Escuridão se a origem não tiver visão em condições de visão na penumbra/escuridão"
+      }
+    },
+    "settings": {
+      "flat-check-in-message": {
+        "name": "Botões de Teste Simples em mensagens",
+        "hint": "Adiciona Testes Simples para condições suportadas em mensagens do chat."
+      },
+      "flat-check-config": {
+        "name": "Configuração de Testes Simples"
+      },
+      "flat-check-auto-roll": {
+        "name": "Rolar Testes Simples automaticamente",
+        "hint": "Rola automaticamente qualquer Teste Simples em uma mensagem",
+        "choices": {
+          "always": "Sempre",
+          "user": "Configuração do Usuário",
+          "never": "Nunca"
+        }
+      },
+      "flat-check-auto-roll-user": {
+        "name": "Rolar Testes Simples automaticamente",
+        "hint": "Configuração do Usuário: o comportamento depende da configuração do mundo"
+      },
+      "flat-check-targer-marker": {
+        "name": "Mostrar Teste Simple no token",
+        "hint": "Configuração do cliente: mostra informações de Teste Simples em um token ao marcar como alvo."
+      },
+      "light-level-vis": {
+        "name": "Visualização de Nível de Iluminação",
+        "hint": "Configuração do cliente: mantenha Alt pressionado para destacar quadrados com pouca ou nenhuma luz."
+      },
+      "delay-combat-tracker": {
+        "name": "Mostrar botão de Atrasar no Monitor de Combate",
+        "hint": "Adiciona botões de Atrasar/Retornar ao Monitor de Combate."
+      },
+      "delay-token-hud": {
+        "name": "Mostrar botão de Atrasar na HUD do Token",
+        "hint": "Adiciona botões de Atrasar/Retornar ao menu que aparece ao clicar com o botão direito em um token."
+      },
+      "delay-return": {
+        "name": "Habilitar botão de Retornar",
+        "hint": "Permite retornar à iniciativa pressionando novamente o botão de Atrasar."
+      },
+      "delay-prompt": {
+        "name": "Solicitação de Nova Iniciativa",
+        "hint": "Permite que o usuário selecione um combatente para adiar seu turno. Ele ainda pode retornar mais cedo quando quiser."
+      },
+      "delay-create-message": {
+        "name": "Atrasar/Retornar cria mensagem de chat"
+      },
+      "token-hud-remove-combat-toggle": {
+        "name": "Remover o botão de combate da HUD do Token",
+        "hint": "Remove o botão \"Alternar Estado de Combate\" para tokens em combate."
+      },
+      "pf2e-hud-enable": {
+        "name": "Modificar PF2e HUD",
+        "hint": "Substitui a forma como o PF2e HUD trata Atrasos com a implementação deste módulo. Por favor, reporte o problema para mim e não para o PF2e HUD!"
+      },
+      "lifelink": {
+        "name": "Habilitar botões de automação de Vínculo Vital/Espiritual",
+        "hint": "Verifique o arquivo README do módulo para ver as etapas de configuração."
+      },
+      "lifelink-formular": {
+        "name": "Fórmula de Vínculo Vital",
+        "hint": "Versão da absorção de dano de Vínculo Vital a ser usada.",
+        "choices": {
+          "apg": "Padrão",
+          "plus": "Livro Oracles+ (Elevada (+2))"
+        }
+      },
+      "emanation-automation": {
+        "name": "Botão de aplicação automática de efeito de emanação"
+      },
+      "script-alt-roll-breakdown": {
+        "name": "Discriminação de Rolagem Alternativa",
+        "hint": "Revela modificadores de circunstância, estado e sem tipo de rolagens (ex: PAM) aos jogadores."
+      },
+      "script-toggle-shared-vision": {
+        "name": "Alternar Visão Compartilhada em Combate",
+        "hint": "Desativa automaticamente a configuração do metagame \"Visão Compartilhada do Grupo\" quando o combate começa e a reativa quando o combate termina. Isso substituirá aquela configuração, então ative apenas se quiser estiver usando-a."
+      },
+      "headings": {
+        "flat": "Botões de Teste Simples",
+        "delay": "Atrasar",
+        "lifelink": "Vínculo Vital",
+        "emanation-automation": "Automação de Emanação",
+        "misc": "Variados"
+      },
+      "docs": {
+        "description": "Para uma descrição de cada recurso e mais detalhes sobre as configurações, consulte a documentação:",
+        "button": "Abrir Documentação"
+      }
+    },
+    "delay": {
+      "return-to-initiative": "Retornar à iniciativa",
+      "delay": "Atrasar",
+      "delaying": "Atrasando",
+      "errors": {
+        "combat-not-started": "Nenhum combate ativo",
+        "combatant-not-owned": "Você não possui o combatente atual",
+        "no-active-gm": "Nenhum Mestre conectado"
+      },
+      "dialog": {
+        "delay-after": "Atrasar após:",
+        "confirm": "Atrasar",
+        "cancel": "Cancelar"
+      },
+      "actions": {
+        "delay": "Atrasar",
+        "return": "Retornar"
+      }
+    },
+    "emanation": {
+      "message-text": "Aplicar efeito de emanação",
+      "form-allies": "Aliados",
+      "form-exclude-self": "Excluir a si mesmo",
+      "form-enemies": "Inimigos",
+      "form-duration-title": "Irá perguntar a duração do efeito ao aplicar para interagir com a Composição Prolongada",
+      "form-duration-prompt": "Solicitar duração do efeito",
+      "form-formatting-error": "Erro de formatação: a descrição não tem nenhum ou contém mais de um link de efeito.",
+      "form-fieldset-legend": "Efeito de Emanação Automática",
+      "dialog-effect-title": "Efeito de Emanação"
+    },
+    "flat": {
+      "flat-check-label": "Teste Simples: {label}",
+      "flat-check": "Teste Simples",
+      "target-marker-dc": "CD {dc} - {rótulo}",
+      "source": {
+        "blinded": "Cegado",
+        "darkness": "Escuridão",
+        "hidden": "Ocultado",
+        "dim-light": "Luz Fraca",
+        "dazzled": "Ofuscado",
+        "concealed": "Escondido"
+      },
+      "message": {
+        "button-close": "Fechar",
+        "button-require-flat-check": "{count} alvos exigem um teste simples",
+        "tooltip-highest-dc": "Se mais de um teste simples causar ou impedir a mesma coisa, role apenas uma vez e use a CD mais alta.",
+        "reroll-hero-point": "Repetir o teste usando um ponto de heroísmo",
+        "reroll-new-result": "Repetir a rolagem e manter o novo resultado",
+        "reroll-lower-result": "Repetir a rolagem e manter o resultado mais baixo",
+        "reroll-higher-result": "Repetir e manter o resultado mais alto",
+        "button-reroll": "Rerrolar",
+        "button-cancel": "Cancelar",
+        "grabbed": "Agarrado",
+        "deafened": "Ensurdecido",
+        "stupefied": "Estupefato {valor}",
+        "dc": "CD {valor}"
+      },
+      "more-dialog": {
+        "stupefied": "Estupefato",
+        "value": "Valor",
+        "custom": "Personalizado",
+        "dc": "CD",
+        "title": "Mais Testes Simples"
+      }
+    },
+    "life-link": {
+      "error-no-target": "Nenhum ator alvo",
+      "error-no-source": "Nenhum ator de origem",
+      "error-source-is-target": "Não é possível transferir dano para si mesmo!",
+      "no-hp-remaining": "Não há mais PV para transferir.",
+      "life-link-cooldown-effect": "CD de Vínculo Vital",
+      "hp-add": "{actor} +{hp} PV",
+      "hp-sub": "{actor} -{hp} PV",
+      "spirit-link-error-bad-actor": "Ator de origem incorreto para o efeito Spirit Linked em {actor}! Consulte o arquivo README do módulo.",
+      "spirit-link-button": "{hp} PV para {actor}",
+      "spirit-link-message": "<strong>Vínculo Espiritual</strong><br>{link}",
+      "life-link-error-bad-actor": "Ator de origem incorreto para o efeito Life Linked em {actor}! Consulte o arquivo README do módulo.",
+      "share-life-error-bad-actor": "Ator de origem incorreto para o efeito Share Life em {actor}! Consulte o arquivo README do módulo.",
+      "damage-button": "{damage} a {actor}",
+      "share-life-damage-button": "(Compartilhar Vida) {damage} a {actor}",
+      "life-link-damage-button": "(Vínculo Vital) {damage} a {actor}",
+      "damage-transfer-message": "<strong>Transferência de Dano</strong><br>{buttons}"
+    },
+    "template": {
+      "buttons": {
+        "hidden-invisible-confused": "Escondido<br>Invisível<br>Confuso",
+        "dc": "CD {valor}"
+      },
+      "emanation-request": {
+        "effect": "Efeito",
+        "duration": "Duração",
+        "rounds": "rodada(s)",
+        "targets": "Alvos",
+        "apply": "Aplicar",
+        "cancel": "Cancelar"
+      },
+      "message-config-check-types": "Tipos de Teste",
+      "emanation-area": "{origin}, {area} pés"
+    }
+  },
+  "PF2E": {
+    "RuleElement": {
+      "fc-ModifyFlatDC": "Modificar CD Simples",
+      "fc-AddCheck": "Adicionar Teste",
+      "fc-TreatAs": "Tratar a condição como"
+    }
+  }
+}
