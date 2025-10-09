@@ -36,10 +36,10 @@
 	}
 
 	body.theme-light {
-		img {
-			border: 1px solid #333;
-		}
 		.fc-svelte {
+			img {
+				border: 1px solid #333;
+			}
 			hr {
 				background-image: linear-gradient(
 					90deg,
