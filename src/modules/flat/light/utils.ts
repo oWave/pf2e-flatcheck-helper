@@ -35,14 +35,14 @@ export const Grid = class<T> {
 }
 
 export const LightLevels = Object.freeze({
-	DARK: { color: new PIXI.Color(0xff0000), darknessBreakpoint: 1 },
-	DIM: { color: new PIXI.Color(0xffff00), darknessBreakpoint: 0.75 },
-	BRIGHT: { color: new PIXI.Color(0x00ff00), darknessBreakpoint: 0.25 },
+	DARK: { color: new PIXI.Color(0xff0000), darknessBreakpoint: 1 } as const,
+	DIM: { color: new PIXI.Color(0xffff00), darknessBreakpoint: 0.75 } as const,
+	BRIGHT: { color: new PIXI.Color(0x00ff00), darknessBreakpoint: 0.25 } as const,
 
 	fromExposure(level: number) {
 		return level <= LightLevels.BRIGHT.darknessBreakpoint
 			? LightLevels.BRIGHT
-			: level <= LightLevels.DIM.darknessBreakpoint
+			: level < LightLevels.DIM.darknessBreakpoint
 				? LightLevels.DIM
 				: LightLevels.DARK
 	},
