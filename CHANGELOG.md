@@ -3,6 +3,15 @@
 
 ## [Unreleased]
 
+## [0.19.1] - 2025-10-09
+### Added
+- French translation (@rectulo)
+- Portuguese (Brazil) translation (@mclemente)
+
+### Fixed
+- Accidental global css rule adding a border to all images
+- Darkless level of 0.75 not counting as dark
+
 ## [0.19.0] - 2025-10-07
 ### Added
 - New setting: Flat Checks Hide Results
@@ -141,7 +150,8 @@ Foundry v13 release
 ### Fixed
 - Flat checks showing on damage/healing received messages
 
-[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.19.0...HEAD
+[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.19.1...HEAD
+[0.19.1]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.19.0...v0.19.1
 [0.19.0]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.18.3...v0.19.0
 [0.18.3]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.18.2...v0.18.3
 [0.18.2]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.18.1...v0.18.2
