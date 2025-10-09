@@ -5,7 +5,7 @@ import { tokenLightLevel } from "./light/token"
 import { LightLevels } from "./light/utils"
 import { flatMessageConfig } from "./message-config"
 import type { Adjustments, TreatAsAdjustment } from "./rules/common"
-import { visionerAVSFlatCheck } from "./visioner"
+import { visionerAVSFlatCheck, visionerVisibilityFlatCheck } from "./visioner"
 
 export interface TargetFlatCheckSource extends Omit<FlatCheckSource, "baseDc"> {
 	type: TargetConditionSlug
@@ -19,27 +19,6 @@ export interface BaseTargetFlatCheck extends TargetFlatCheckSource {
 export function flatCheckDataForTarget(target: ActorPF2e): TargetFlatCheckSource | null {
 	for (const slug of ["unnoticed", "undetected", "hidden", "concealed"] as const) {
 		if (target.conditions.bySlug(slug).length) return { type: slug }
-	}
-	return null
-}
-
-export function visionerFlatCheck(
-	origin: TokenDocumentPF2e,
-	target: TokenDocumentPF2e,
-): TargetFlatCheckSource | null {
-	const visioneerApi:
-		| { getVisibility: (observerId: string, targetId: string) => string | null }
-		| undefined =
-		// @ts-expect-error
-		game.modules.get("pf2e-visioner")?.api
-
-	if (visioneerApi) {
-		const condition = visioneerApi.getVisibility(origin.id, target.id)
-
-		if (condition == null || condition === "observed" || !(condition in TargetConditionToDC))
-			return null
-
-		return { type: condition as TargetConditionSlug }
 	}
 	return null
 }
@@ -132,7 +111,7 @@ export class TargetFlatCheckHelper {
 		const sources: TargetFlatCheckSource[] = []
 
 		if (this.origin && this.target) {
-			const visioneerCheck = visionerFlatCheck(this.origin, this.target)
+			const visioneerCheck = visionerVisibilityFlatCheck(this.origin, this.target)
 			if (visioneerCheck) sources.push(visioneerCheck)
 		}
 

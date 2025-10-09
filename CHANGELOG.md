@@ -6,6 +6,8 @@ TODO:
 - Add Quick Apply to Guide
 
 ## [Unreleased]
+### Fixed
+- Manually applied Visioner visiblity getting ignored when AVS is enabled
 
 ## [0.19.1] - 2025-10-09
 ### Added

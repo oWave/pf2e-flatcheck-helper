@@ -1,5 +1,6 @@
 import type { TokenDocumentPF2e } from "foundry-pf2e"
 import * as R from "remeda"
+import { type TargetConditionSlug, TargetConditionToDC } from "./constants"
 import type { TargetFlatCheckSource } from "./target"
 
 export type VisibilityFactorSlug =
@@ -47,6 +48,9 @@ export async function visionerAVSFlatCheck(
 	origin: TokenDocumentPF2e,
 	target: TokenDocumentPF2e,
 ): Promise<TargetFlatCheckSource | null> {
+	const visibilityCheck = visionerVisibilityFlatCheck(origin, target)
+	if (visibilityCheck) return visibilityCheck
+
 	const factors: VisibilityFactors = await game.modules
 		.get("pf2e-visioner")
 		// @ts-expect-error
@@ -66,4 +70,25 @@ export async function visionerAVSFlatCheck(
 	}
 
 	return source
+}
+
+export function visionerVisibilityFlatCheck(
+	origin: TokenDocumentPF2e,
+	target: TokenDocumentPF2e,
+): TargetFlatCheckSource | null {
+	const visioneerApi:
+		| { getVisibility: (observerId: string, targetId: string) => string | null }
+		| undefined =
+		// @ts-expect-error
+		game.modules.get("pf2e-visioner")?.api
+
+	if (visioneerApi) {
+		const condition = visioneerApi.getVisibility(origin.id, target.id)
+
+		if (condition == null || condition === "observed" || !(condition in TargetConditionToDC))
+			return null
+
+		return { type: condition as TargetConditionSlug }
+	}
+	return null
 }
