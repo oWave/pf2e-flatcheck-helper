@@ -1,16 +1,20 @@
-import type { ActorPF2e, ItemPF2e } from "foundry-pf2e"
+import type { ActorPF2e, EffectSystemData, ItemPF2e } from "foundry-pf2e"
 import type { CompendiumIndexData } from "foundry-pf2e/foundry/client/documents/collections/compendium-collection.mjs"
 import { MODULE_ID } from "src/constants"
 
 /** Minimum types for fromUuidSync */
-export type EffectIndex = Pick<CompendiumIndexData, "_id" | "uuid" | "name" | "type" | "img">
+export type EffectIndex = Pick<CompendiumIndexData, "_id" | "name" | "type" | "img"> & {
+	uuid: string
+}
 
-export interface BaseEffectData {
+export type Duration = Pick<EffectSystemData["duration"], "value" | "unit">
+
+export interface BaseApplyConfig {
 	type: "selected" | "targets"
 	promptForDuration: boolean
 }
 
-export interface EmanationEffectData extends Omit<BaseEffectData, "type"> {
+export interface EmanationApplyConfig extends Omit<BaseApplyConfig, "type"> {
 	type: "emanation"
 	emanation: {
 		affects: {
@@ -22,11 +26,11 @@ export interface EmanationEffectData extends Omit<BaseEffectData, "type"> {
 	}
 }
 
-export type EffectData = BaseEffectData | EmanationEffectData
+export type EffectData = BaseApplyConfig | EmanationApplyConfig
 
 export interface ApplyDialogData {
 	config: EffectData
-	effect: EffectIndex
+	effectIndex: EffectIndex
 	value: number | null
 	item: ItemPF2e<ActorPF2e>
 }
@@ -53,7 +57,7 @@ function defaultDataForItem(item: ItemPF2e): EffectData {
 	}
 }
 
-export function dataFromItem(parent: ItemPF2e, effect: EffectIndex) {
+export function dataFromItem(parent: ItemPF2e, effect: Pick<EffectIndex, "_id">) {
 	const data = parent.getFlag(MODULE_ID, `effects.${effect._id}`) as EffectData
 	return data ?? defaultDataForItem(parent)
 }
@@ -80,7 +84,7 @@ export function dataFromElement(containerElement: HTMLElement): ApplyDialogData 
 	if (item) {
 		return {
 			item,
-			effect,
+			effectIndex: effect,
 			value: effectValue,
 			config: dataFromItem(item, effect),
 		}

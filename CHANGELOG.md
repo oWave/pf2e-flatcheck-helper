@@ -1,6 +1,10 @@
 # Changelog
 🥭
 
+TODO:
+- Add settings
+- Add Quick Apply to Guide
+
 ## [Unreleased]
 
 ## [0.19.1] - 2025-10-09

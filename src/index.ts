@@ -1,5 +1,6 @@
 import { MODULE_ID } from "./constants"
 import { DelayModule } from "./modules/delay"
+import { EffectModule } from "./modules/effect/effect"
 import { EmanationModule } from "./modules/emanation/emanation"
 import { LightVisModule } from "./modules/flat/light/layer"
 import { MessageFlatCheckModule } from "./modules/flat/message"
@@ -50,6 +51,7 @@ const MODULE = {
 		lightVis: new LightVisModule(),
 		targetInfo: new TargetInfoModule(),
 		delay: new DelayModule(),
+		effect: new EffectModule(),
 		emanation: new EmanationModule(),
 		lifeLink: new LifeLinkModule(),
 		altRollBreakdown: new AltRollBreakdownModule(),

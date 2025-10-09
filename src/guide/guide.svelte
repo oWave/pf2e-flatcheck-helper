@@ -24,11 +24,13 @@
 <script lang="ts">
 import { fly, slide } from "svelte/transition"
 import Delay from "./content/delay.svelte"
+import Effect from "./content/effect.svelte"
 import Emanation from "./content/emanation.svelte"
 import Flat from "./content/flat.svelte"
 import HpTransfer from "./content/hp-transfer.svelte"
 import Intro from "./content/intro.svelte"
 import Misc from "./content/misc.svelte"
+import { setGuideContext } from "./context"
 import { getStore } from "./setting.svelte"
 
 const tabs = [
@@ -36,17 +38,25 @@ const tabs = [
 	{ name: "Flat Checks", content: Flat },
 	{ name: "Delay", content: Delay },
 	{ name: "HP Transfer", content: HpTransfer },
+	{ name: "Quick Apply", content: Effect },
 	{ name: "Emanation Automation", content: Emanation },
 	{ name: "Miscellaneous", content: Misc },
 ]
 let selected = $state(0)
 const Content = $derived(tabs[selected].content)
 
+const store = getStore()
+
 function handleClick(index: number) {
 	selected = index
 }
 
-const store = getStore()
+function changeTab(name: string) {
+	const index = tabs.findIndex((t) => t.name === name)
+	if (index > -1) selected = index
+}
+
+setGuideContext(changeTab)
 </script>
 
 <style>

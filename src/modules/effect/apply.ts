@@ -1,22 +1,22 @@
-import type { TokenPF2e } from "foundry-pf2e"
-import type { EffectData, EmanationEffectData } from "./data"
+import type { TokenDocumentPF2e } from "foundry-pf2e"
+import type { EffectData, EmanationApplyConfig } from "./data"
 
-export function collectTokens(data: EffectData, origin: TokenPF2e) {
+export function collectTokens(data: EffectData, origin: TokenDocumentPF2e) {
 	if (data.type === "selected") return getSelectedTokens()
 	if (data.type === "targets") return getTargetedTokens()
 	if (data.type === "emanation") return getTokensInEmanation(origin, data)
 }
 
 export function getSelectedTokens() {
-	return canvas.tokens.controlled
+	return canvas.tokens.controlled.map((t) => t.document)
 }
 
 export function getTargetedTokens() {
-	return Array.from(game.user.targets)
+	return Array.from(game.user.targets).map((t) => t.document)
 }
 
-export function getTokensInEmanation(origin: TokenPF2e, data: EmanationEffectData) {
-	const tokens: TokenPF2e[] = []
+export function getTokensInEmanation(origin: TokenDocumentPF2e, data: EmanationApplyConfig) {
+	const tokens: TokenDocumentPF2e[] = []
 
 	if (!origin.actor) return tokens
 
@@ -24,12 +24,15 @@ export function getTokensInEmanation(origin: TokenPF2e, data: EmanationEffectDat
 		if (
 			t.object &&
 			t.actor?.alliance &&
-			((data.emanation.affects.allies && t.actor.isAllyOf(origin.actor)) ||
-				(data.emanation.affects.enemies && t.actor.isEnemyOf(origin.actor)) ||
-				(!data.emanation.affects.excludeSelf && t.object === origin)) &&
-			origin.distanceTo(t.object) <= data.emanation.range
+			((data.emanation.affects.allies &&
+				(t.actor.isAllyOf(origin.actor) ||
+					(!data.emanation.affects.excludeSelf && t === origin))) ||
+				(data.emanation.affects.enemies && t.actor.isEnemyOf(origin.actor))) &&
+			origin.object &&
+			t.object &&
+			origin.object.distanceTo(t.object) <= data.emanation.range
 		)
-			tokens.push(t.object)
+			tokens.push(t)
 	}
 	return tokens
 }

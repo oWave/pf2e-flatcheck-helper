@@ -1,6 +1,7 @@
-import type { ItemPF2e } from "foundry-pf2e"
+import type { ConditionPF2e, EffectPF2e, ItemPF2e } from "foundry-pf2e"
 import { MODULE_ID } from "src/constants"
 import { parseHTML } from "src/utils"
+import { collectTokens } from "./apply"
 import { dataFromElement, type EffectData, type EffectIndex } from "./data"
 
 export const HTMLUtils = {
@@ -54,12 +55,29 @@ export const HTMLUtils = {
 				const data = dataFromElement(containerElement)
 				if (!data) return
 
+				const msgId =
+					containerElement.closest<HTMLElement>(".chat-message.message")?.dataset?.messageId
+				const msg = msgId?.length ? game.messages.get(msgId) : null
+				const token = msg?.token ?? data.item.actor.getActiveTokens().at(0)?.document
+
+				if (!token) {
+					return ui.notifications.error("Actor has no token")
+				}
+
+				const effect = await fromUuid<EffectPF2e | ConditionPF2e>(data.effectIndex.uuid)
+				if (!effect) {
+					return ui.notifications.error("Effect doesn't exist?")
+				}
+
+				const tokens = collectTokens(data.config, token) ?? []
+
 				const { ApplyEffectApp } = await import("./apps/index")
 				new ApplyEffectApp({
 					config: data.config,
-					effectUuid: data.effect.uuid,
+					effect,
 					value: data.value,
 					item: data.item,
+					tokens: tokens,
 				}).render(true)
 			})
 		}

@@ -3,7 +3,6 @@ import type { ApplicationConfiguration } from "foundry-pf2e/foundry/client/appli
 import { MODULE_ID } from "src/constants"
 import { SvelteApp, SvelteMixin } from "src/svelte/mixin"
 import type { ComponentProps } from "svelte"
-import { collectTokens } from "../apply"
 import Apply from "./apply.svelte"
 import Config from "./config.svelte"
 
@@ -31,32 +30,27 @@ export class EffectConfigApp extends SvelteMixin(foundry.applications.api.Applic
 	}
 }
 
+export interface ApplyInputs extends Omit<ComponentProps<typeof Apply>, "shell"> {}
+
 export class ApplyEffectApp extends SvelteApp {
 	component = Apply
 
-	constructor(
-		private inputs: Omit<ComponentProps<typeof Apply>, "tokens" | "shell" | "effect"> & {
-			effectUuid: string
-		},
-	) {
-		super({ id: `${MODULE_ID}.effect.apply.${inputs.item.uuid}-${inputs.effectUuid}` })
+	constructor(private inputs: ApplyInputs) {
+		super({
+			id: `${MODULE_ID}.effect.apply.${inputs.item.uuid}-${inputs.effect._id}`,
+			window: { title: inputs.request?.user ? "Apply Request" : "Apply Effect" },
+		})
 	}
 
 	async getProps() {
-		const originToken = this.inputs.item.actor?.getActiveTokens().at(0)
-		if (!originToken) {
-			throw new Error(`Origin actor ${this.inputs.item.actor?.name} has no tokens`)
-		}
-		return {
-			...this.inputs,
-			tokens: collectTokens(this.inputs.config, originToken),
-			effect: await fromUuid(this.inputs.effectUuid),
-		}
+		return this.inputs
 	}
 
-	static override DEFAULT_OPTIONS: DeepPartial<ApplicationConfiguration> = {
-		window: {
-			title: "Apply Effect",
-		},
+	static async wait(inputs: ApplyInputs) {
+		return new Promise((resolve) => {
+			const app = new ApplyEffectApp(inputs)
+			app.addEventListener("close", resolve)
+			app.render(true)
+		})
 	}
 }

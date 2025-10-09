@@ -4,4 +4,7 @@ export const QUERIES = {
 	delay: {
 		gmMoveAfter: `${MODULE_ID}.gmMoveAfter`,
 	},
+	effect: {
+		request: `${MODULE_ID}.applyRequest`,
+	},
 }
