@@ -8,7 +8,7 @@ function tokenExposure(token: Token) {
 	const halfGrid = gridSize / 2
 	const sceneDimensions = token.scene!.dimensions
 
-	let tokenExposure = LightLevels.DARK.darknessBreakpoint
+	let tokenExposure: number = LightLevels.DARK.darknessBreakpoint
 
 	if (token.bounds.width < gridSize || token.bounds.height < gridSize) {
 		const x = token.bounds.width / 2
