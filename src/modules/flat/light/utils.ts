@@ -83,9 +83,9 @@ export function darknessAtPoint(x: number, y: number): number {
 		const d = Math.sqrt(Math.abs(l.x - x) ** 2 + Math.abs(l.y - y) ** 2)
 
 		//@ts-expect-error
-		if (d <= l.data.bright) return LightLevels.BRIGHT.darknessBreakpoint
+		if (d <= l.data.bright) return 0
 		//@ts-expect-error
-		if (d <= l.data.dim) lightSourceLevel = LightLevels.DIM.darknessBreakpoint
+		if (d <= l.data.dim) lightSourceLevel = 0.5
 	}
 
 	// @ts-expect-error
