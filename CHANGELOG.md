@@ -2,8 +2,11 @@
 🥭
 
 ## [Unreleased]
+
+## [0.19.2] - 2025-10-16
 ### Fixed
 - Manually applied Visioner visiblity getting ignored when AVS is enabled
+- Dim light from light sources counting as dark
 
 ## [0.19.1] - 2025-10-09
 ### Added
@@ -152,7 +155,8 @@ Foundry v13 release
 ### Fixed
 - Flat checks showing on damage/healing received messages
 
-[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.19.1...HEAD
+[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.19.2...HEAD
+[0.19.2]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.19.1...v0.19.2
 [0.19.1]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.19.0...v0.19.1
 [0.19.0]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.18.3...v0.19.0
 [0.18.3]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.18.2...v0.18.3
