@@ -1,5 +1,10 @@
 import type { ActorPF2e, TokenDocumentPF2e, TokenPF2e } from "foundry-pf2e"
-import { OriginToTargetCondition, type TargetConditionSlug, TargetConditionToDC } from "./constants"
+import {
+	ActorTypesWithPerception,
+	OriginToTargetCondition,
+	type TargetConditionSlug,
+	TargetConditionToDC,
+} from "./constants"
 import type { FlatCheckSource } from "./data"
 import { tokenLightLevel } from "./light/token"
 import { LightLevels } from "./light/utils"
@@ -115,7 +120,12 @@ export class TargetFlatCheckHelper {
 			if (visioneerCheck) sources.push(visioneerCheck)
 		}
 
-		if (this.target.object && flatMessageConfig.toSets().experimental.has("light-level")) {
+		if (
+			this.origin?.actor &&
+			this.target.object &&
+			flatMessageConfig.toSets().experimental.has("light-level") &&
+			ActorTypesWithPerception.includes(this.origin.actor.type)
+		) {
 			const lightCheck = conditionFromLightLevel(this.origin?.actor ?? null, this.target.object)
 			if (lightCheck) sources.push(lightCheck)
 		}

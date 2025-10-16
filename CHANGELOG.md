@@ -2,6 +2,10 @@
 🥭
 
 ## [Unreleased]
+### Changed
+- Flat Checks: Added exceptions for actors without senses (like Hazards)
+  - Never roll dim light or darkness checks
+  - Don't hide results even when checks are missing or failed (to make skipping them quicker)
 
 ## [0.19.4] - 2025-11-25
 Minimum system version is now 7.7.4
