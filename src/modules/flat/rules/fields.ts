@@ -16,7 +16,7 @@ export class ValueField<
 		if (typeof input === "number") return input
 
 		const value = input.trim()
-		const num = Number.parseInt(value)
+		const num = Number.parseInt(value, 10)
 		if (Number.isNaN(num)) return value
 		return num
 	}
