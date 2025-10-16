@@ -6,6 +6,10 @@ TODO:
 - Add Quick Apply to Guide
 
 ## [Unreleased]
+### Changed
+- Added exceptions for actors with senses (like Hazards)
+  - Never roll dim light or darkness checks
+  - Don't hide results even when checks are missing or failed (to make skipping them quicker)
 
 ## [0.19.2] - 2025-10-16
 ### Fixed

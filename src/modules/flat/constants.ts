@@ -22,3 +22,5 @@ export const TargetConditionToDC = {
 	unnoticed: null,
 } as const
 export type TargetConditionSlug = keyof typeof TargetConditionToDC
+
+export const ActorTypesWithPerception = ["army", "character", "familiar", "npc"]

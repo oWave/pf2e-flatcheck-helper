@@ -4,6 +4,7 @@ import { MODULE_ID } from "src/constants"
 import MODULE from "src/index"
 import { parseHTML, translate } from "src/utils"
 import { BaseModule } from "../base"
+import { ActorTypesWithPerception } from "./constants"
 import { collectFlatChecks, type FlatCheckData } from "./data"
 import { localizeOrigin, localizeType } from "./i18n"
 import { tokenExposureCache } from "./light/token"
@@ -311,7 +312,9 @@ export async function preCreateMessage(msg: ChatMessagePF2e) {
 
 		const passedChecks = passedAllFlatChecks(msg)
 		const shouldHide =
-			MODULE.settings.flatHideRoll && (!MODULE.settings.flatAutoReveal || !passedChecks)
+			MODULE.settings.flatHideRoll &&
+			ActorTypesWithPerception.includes(msg.actor.type) &&
+			(!MODULE.settings.flatAutoReveal || !passedChecks)
 
 		if (shouldHide && msg.isCheckRoll && !msg.isReroll) {
 			const flavorEl = parseHTML(msg.flavor)
