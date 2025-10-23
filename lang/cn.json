@@ -1,0 +1,250 @@
+{
+    "pf2e-fc": {
+        "flat-config": {
+            "stupefied": {
+                "label": "呆滞",
+                "note": "呆滞时施放法术"
+            },
+            "manipulate": {
+                "label": "操作",
+                "note": "受擒时使用操作动作"
+            },
+            "deafened": {
+                "label": "耳聋",
+                "note": "耳聋时使用听觉动作"
+            },
+            "deafened-spellcasting": {
+                "label": "耳聋 - 施放法术",
+                "note": "非晦匿法术需要念咒，并且说话具备听觉特征。"
+            },
+            "target": {
+                "label": "瞄准",
+                "note": "隐蔽/藏匿/目眩/目盲/等。兼容PF2e Visioner"
+            },
+            "light-level": {
+                "label": "瞄准 - 光照等级",
+                "note": "昏暗光照/黑暗，且来源不具备昏暗视觉/黑暗视觉"
+            }
+        },
+        "settings": {
+            "flat-check-in-message": {
+                "name": "聊天信息中的纯骰检定按钮",
+                "hint": "在聊天信息中为兼容的相关状态添加纯骰检定。"
+            },
+            "flat-check-config": {
+                "name": "纯骰检定配置"
+            },
+            "flat-check-auto-roll": {
+                "name": "自动骰掷纯骰检定",
+                "hint": "自动骰掷聊天信息中的纯骰检定",
+                "choices": {
+                    "always": "总是",
+                    "user": "用户设置",
+                    "never": "从不"
+                }
+            },
+            "flat-check-auto-roll-user": {
+                "name": "自动骰掷纯骰检定",
+                "hint": "用户设置：行为由世界设置决定"
+            },
+            "flat-check-hide-roll": {
+                "name": "隐藏纯骰检定结果",
+                "hint": "如果某次掷骰需要进行纯骰检定，则结果会被隐藏直至被揭示"
+            },
+            "flat-check-hide-roll-auto-reveal": {
+                "name": "自动揭示结果",
+                "hint": "若成功通过所有纯骰检定，则结果将自动揭示"
+            },
+            "flat-check-hide-roll-players-can-reveal": {
+                "name": "允许玩家揭示结果",
+                "hint": "即使未能通过所有纯骰检定，也允许玩家手动揭示隐藏的检定结果"
+            },
+            "flat-check-target-marker": {
+                "name": "在指示物上显示纯骰检定",
+                "hint": "用户设置：选择目标时，在该指示物上方显示纯骰检定信息。",
+                "choices": {
+                    "enabled": "启用",
+                    "onlyWithOrigin": "仅显示来源方",
+                    "disabled": "禁用"
+                }
+            },
+            "light-level-vis": {
+                "name": "光照等级可视化",
+                "hint": "用户设置：长按alt键高亮处于黑暗或昏暗光照下的方格。"
+            },
+            "delay-combat-tracker": {
+                "name": "在战斗追踪板上添加延迟按钮",
+                "hint": "为默认战斗追踪板添加延迟/返回先攻按钮。"
+            },
+            "delay-token-hud": {
+                "name": "在指示物Hud上添加延迟按钮",
+                "hint": "为右键点击指示物出现的菜单添加延迟/返回先攻按钮。"
+            },
+            "delay-return": {
+                "name": "启用返回先攻",
+                "hint": "允许再次点击延迟按钮后返回先攻顺序。"
+            },
+            "delay-prompt": {
+                "name": "提示新先攻",
+                "hint": "让玩家选择一名参战角色延迟其回合。他们仍可以随时返回先攻顺序。"
+            },
+            "delay-create-message": {
+                "name": "延迟/返回先攻时发送聊天信息"
+            },
+            "token-hud-remove-combat-toggle": {
+                "name": "移除指示物Hud的战斗切换",
+                "hint": "在战斗中移除指示物右键菜单中的‘切换战斗状态’按钮。"
+            },
+            "pf2e-hud-enable": {
+                "name": "PF2e HUD修改",
+                "hint": "以本模组的延迟功能覆盖PF2e HUD的原功能。如有问题请向我，而非PF2e HUD反馈！"
+            },
+            "lifelink": {
+                "name": "启用生命链接/灵魂链接自动化按钮",
+                "hint": "点击模组readme文件逐步设置。"
+            },
+            "lifelink-formular": {
+                "name": "生命链接计算公式",
+                "hint": "生命链接的伤害吸收功能变体。",
+                "choices": {
+                    "apg": "标准",
+                    "plus": "先知+（升阶+2）"
+                }
+            },
+            "emanation-automation": {
+                "name": "自动应用弥漫效果按钮"
+            },
+            "script-alt-roll-breakdown": {
+                "name": "替代掷骰调整值拆分",
+                "hint": "向玩家揭示相关掷骰的环境/状态/无名调整值（例如多重攻击减值）。"
+            },
+            "script-toggle-shared-vision": {
+                "name": "切换战斗中共享视野",
+                "hint": "战斗开始时自动禁用“共享团队视野”超游设置，并在战斗结束时再次启用。该功能将覆盖原设置，因此仅在你要使用共享视野时再启用它。"
+            },
+            "headings": {
+                "flat": "纯骰检定按钮",
+                "delay": "延迟",
+                "lifelink": "生命链接",
+                "emanation-automation": "弥漫自动化",
+                "misc": "杂项"
+            },
+            "docs": {
+                "description": "有关各个功能的描述及相关设置的更多信息，请查阅文档说明：",
+                "button": "打开文档"
+            }
+        },
+        "delay": {
+            "return-to-initiative": "返回先攻",
+            "delay": "延迟",
+            "delaying": "延迟中",
+            "errors": {
+                "combat-not-started": "没有正在进行的战斗",
+                "combatant-not-owned": "你未拥有当前战斗的参战角色",
+                "no-active-gm": "GM未连接"
+            },
+            "dialog": {
+                "delay-after": "延迟至…后：",
+                "confirm": "确认",
+                "cancel": "取消"
+            },
+            "actions": {
+                "delay": "延迟",
+                "return": "返回"
+            }
+        },
+        "emanation": {
+            "message-text": "应用弥漫效果",
+            "form-allies": "盟友",
+            "form-exclude-self": "除自身",
+            "form-enemies": "敌人",
+            "form-duration-title": "应用对绕梁组曲的支持时，将询问弥漫效果的持续时间",
+            "form-duration-prompt": "效果持续时间提示",
+            "form-formatting-error": "格式错误：描述中未包含任何/包含多个效果链接。",
+            "form-fieldset-legend": "自动化弥漫效果",
+            "dialog-effect-title": "弥漫效果"
+        },
+        "flat": {
+            "flat-check-label": "纯骰检定：{label}",
+            "flat-check": "纯骰检定",
+            "target-marker-dc": "DC {dc} - {label}",
+            "source": {
+                "blinded": "目盲",
+                "darkness": "黑暗",
+                "hidden": "藏匿",
+                "dim-light": "昏暗光照",
+                "dazzled": "目眩",
+                "concealed": "隐蔽",
+                "magical-darkness": "魔法黑暗"
+            },
+            "message": {
+                "button-close": "关闭",
+                "button-require-flat-check": "{count}个目标需要进行纯骰检定",
+                "tooltip-highest-dc": "如果多个纯骰检定会导致或阻止相同的情况发生，则仅掷骰一次并使用检定中最高的DC。",
+                "reroll-hero-point": "消耗一英雄点重骰",
+                "reroll-new-result": "重骰并采用最新结果",
+                "reroll-lower-result": "重骰并采用较低的结果",
+                "reroll-higher-result": "重骰并采用较高的结果",
+                "button-reroll": "重骰",
+                "button-cancel": "取消",
+                "grabbed": "受擒",
+                "deafened": "耳聋",
+                "stupefied": "呆滞{value}",
+                "dc": "DC {value}",
+                "hide": {
+                    "disabled-tooltip": "仅限GM",
+                    "reveal-button": "揭示掷骰"
+                }
+            },
+            "more-dialog": {
+                "stupefied": "呆滞",
+                "value": "状态值",
+                "custom": "自定义",
+                "dc": "DC",
+                "title": "更多纯骰检定"
+            }
+        },
+        "life-link": {
+            "error-no-target": "未选择目标角色",
+            "error-no-source": "未选择来源角色",
+            "error-source-is-target": "你无法将伤害转移给自己！",
+            "no-hp-remaining": "没有多余的生命值可供转移。",
+            "life-link-cooldown-effect": "生命链接CD",
+            "hp-add": "{actor} +{hp} HP",
+            "hp-sub": "{actor} -{hp} HP",
+            "spirit-link-error-bad-actor": "{actor}身上的灵魂链接效果的来源角色有误！详见模组readme。",
+            "spirit-link-button": "{hp} HP to {actor}",
+            "spirit-link-message": "<strong>灵魂链接</strong><br>{link}",
+            "life-link-error-bad-actor": "{actor}身上的生命链接效果的来源角色有误！详见模组readme。",
+            "share-life-error-bad-actor": "{actor}身上的护卫分命效果的来源角色有误！详见模组readme。",
+            "damage-button": "{damage}给{actor}",
+            "share-life-damage-button": "（护卫分命）{damage}给{actor}",
+            "life-link-damage-button": "（生命链接）{damage}给{actor}",
+            "damage-transfer-message": "<strong>伤害转移</strong><br>{buttons}"
+        },
+        "template": {
+            "buttons": {
+                "grabbed-concealed": "受擒<br>隐蔽",
+                "hidden-invisible-confused": "藏匿<br>隐形<br>困惑",
+                "dc": "DC {value}"
+            },
+            "emanation-request": {
+                "effect": "效果",
+                "duration": "持续时间",
+                "rounds": "轮",
+                "targets": "目标",
+                "apply": "应用",
+                "cancel": "取消"
+            },
+            "message-config-check-types": "检定类型",
+            "emanation-area": "{origin}，{area}尺"
+        }
+    },
+    "PF2E": {
+        "RuleElement": {
+            "fc-ModifyFlatDC": "调整纯骰DC",
+            "fc-AddCheck": "添加检定",
+            "fc-TreatAs": "将该状态视为"
+        }
+    }
+}
