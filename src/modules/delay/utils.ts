@@ -38,7 +38,11 @@ export function setInitiativeFromDrop(
 		[dropped.id]: { initiative: newInitiative },
 	}
 
+	const originalInit = dropped.initiative
+	dropped.initiative = newInitiative
 	const withSameInitiative = newOrder.filter((c) => c.initiative === newInitiative)
+	dropped.initiative = originalInit
+
 	if (withSameInitiative.length > 1) {
 		for (let priority = 0; priority < withSameInitiative.length; priority++) {
 			const c = withSameInitiative[priority]
@@ -54,4 +58,49 @@ export function setInitiativeFromDrop(
 			updates[`flags.pf2e.overridePriority.${newInitiative}`] = data.overridePriority
 		return updates
 	})
+}
+
+export function nextCombatant(combat: EncounterPF2e) {
+	const turn = combat.turn ?? -1
+
+	let nextTurn: number | null = null
+	if (combat.settings.skipDefeated) {
+		for (let i = turn + 1; i < combat.turns.length; i++) {
+			if (!combat.turns[i].isDefeated) {
+				nextTurn = i
+				break
+			}
+		}
+	} else nextTurn = turn + 1
+
+	if (nextTurn != null && nextTurn >= combat.turns.length) nextTurn = 0
+
+	return nextTurn != null ? combat.turns[nextTurn] : null
+}
+
+export function debugCombat(msg: string, data?: { afterId: string }) {
+	console.group(msg)
+	const combat = game.combat
+	if (combat) {
+		console.log(`Round ${combat.round} Turn ${combat.turn}`)
+		for (const c of combat.turns) {
+			let label = ""
+			if (c === combat.combatant) {
+				label += "*"
+			}
+			if (data?.afterId === c.id) {
+				label += "￬"
+			}
+
+			const init = c.initiative
+			const tieBreak = (init && c.flags.pf2e.overridePriority[init]) ?? "-"
+			const lastTurn = c.flags.pf2e.roundOfLastTurn
+			const lastTurnEnd = c.flags.pf2e.roundOfLastTurnEnd
+			console.log(
+				`${label}${c.name} ${init} (${tieBreak}) lastTurn=${lastTurn} lastTurnEnd=${lastTurnEnd}`,
+			)
+		}
+	}
+
+	console.groupEnd()
 }

@@ -74,6 +74,22 @@ Hooks.on("init", () => {
 	}
 
 	;(game.modules.get(MODULE_ID) as any).debug = MODULE.debug
+
+	if (import.meta.env.DEV) {
+		;(async () => {
+			// @ts-expect-error
+			window.delay = {
+				setup: (id: number) => import("./modules/delay/test").then((m) => m.setupCase(id)),
+				run: (id: number | null = null) =>
+					import("./modules/delay/test").then((m) => m.runCase(id)),
+			}
+
+			const utils = await import("./modules/delay/utils")
+
+			// @ts-expect-error
+			window.debugCombat = () => utils.debugCombat("Debug")
+		})()
+	}
 })
 
 Hooks.on("ready", () => {

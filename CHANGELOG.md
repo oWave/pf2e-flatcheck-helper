@@ -3,6 +3,12 @@
 
 ## [Unreleased]
 
+### Fixed
+- Overhauled the way delaying updates the combat turn order again
+  - Should work with less surprises, but can also outright fail in unexpteced circumstances
+  - Probably completely incompatible with other modules that override combat turn order
+- Don't allowing delaying after upcoming defeated combatants if the "Skip Defeated" setting is enabled
+
 ## [0.19.2] - 2025-10-16
 ### Fixed
 - Manually applied Visioner visiblity getting ignored when AVS is enabled

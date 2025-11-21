@@ -38,7 +38,7 @@
 </form>
 
 <script lang="ts">
-import type { CombatantPF2e } from "foundry-pf2e"
+import type { CombatantPF2e, EncounterPF2e } from "foundry-pf2e"
 import type ApplicationV2 from "foundry-pf2e/foundry/client/applications/api/application.mjs"
 import { imgPropsForToken } from "src/svelte/utils"
 import { translate } from "src/utils"
@@ -49,13 +49,26 @@ interface Props {
 	combatant: CombatantPF2e
 	shell: ApplicationV2
 }
+
+function hasCombat(c: CombatantPF2e): c is CombatantPF2e<EncounterPF2e> {
+	return c.parent != null
+}
+
 const { combatant, shell }: Props = $props()
-if (!combatant.parent) throw new Error("Combatant has no combat!")
+if (!hasCombat(combatant)) throw new Error("Combatant has no combat!")
 const combat = combatant.parent
 const turns = combat.turns.filter((t) => t.initiative !== null)
-const currentTurn = turns.findIndex((t) => t === combatant)
+const currentTurn = turns.indexOf(combatant)
 const disabledTurns = [currentTurn]
 if (currentTurn > 0) disabledTurns.push(currentTurn - 1)
+
+// Disable any next up defeated combatants, since they would be skipped before the init updates
+if (combat.settings.skipDefeated) {
+	for (let i = currentTurn + 1; i < turns.length; i++) {
+		if (turns[i].defeated) disabledTurns.push(i)
+		else break
+	}
+}
 
 let loading = $state(false)
 
