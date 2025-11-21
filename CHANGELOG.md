@@ -3,11 +3,15 @@
 
 ## [Unreleased]
 
+## [0.19.3] - 2025-11-21
+### Added
+- Chinese translation (@AlphaStarguide)
+
 ### Fixed
 - Overhauled the way delaying updates the combat turn order again
-  - Should work with less surprises, but can also outright fail in unexpteced circumstances
+  - Should work with fewer surprises, but can also outright fail in unexpected circumstances
   - Probably completely incompatible with other modules that override combat turn order
-- Don't allowing delaying after upcoming defeated combatants if the "Skip Defeated" setting is enabled
+- Don't allow delaying after upcoming defeated combatants if the "Skip Defeated" setting is enabled
 
 ## [0.19.2] - 2025-10-16
 ### Fixed
