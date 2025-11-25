@@ -1,6 +1,5 @@
 import type { ChatMessagePF2e } from "foundry-pf2e"
 import { MODULE_ID } from "src/constants"
-import { parseHTML } from "src/utils"
 import { BaseModule } from "../base"
 
 export class AltRollBreakdownModule extends BaseModule {
@@ -38,24 +37,10 @@ async function onRenderChatMessage(msg: ChatMessagePF2e, html: HTMLElement) {
 			m.enabled,
 	)
 
-	if (game.user.isGM) {
-		for (const modifier of toReveal) {
-			html
-				.querySelector(`span.flavor-text span.tag[data-slug="${modifier.slug}"]`)
-				?.removeAttribute("data-visibility")
-		}
-	} else {
-		// Sanity check: Testing if the message already has modifiers
-		// Don't add more modifiers if the message has some for whatever reason
-		if (html.querySelector("div.tags.modifiers")?.childNodes.length !== 0) return
-		const modifiersHTML = toReveal.map((m) => {
-			const mod = m.modifier < 0 ? m.modifier : `+${m.modifier}`
-			return `<span class="tag tag_transparent" data-slug="${m.slug}">${m.label} ${mod}</span>`
-		})
-
+	for (const modifier of toReveal) {
 		html
-			.querySelector("span.flavor-text")
-			?.appendChild(parseHTML(`<div class="tags modifiers">${modifiersHTML.join("")}</div>`))
+			.querySelector(`span.flavor-text span.tag[data-slug="${modifier.slug}"]`)
+			?.removeAttribute("data-visibility")
 	}
 }
 

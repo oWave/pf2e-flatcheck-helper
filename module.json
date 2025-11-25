@@ -42,7 +42,7 @@
 				"id": "pf2e",
 				"type": "system",
 				"compatibility": {
-					"minimum": "7.1.0"
+					"minimum": "7.7.4"
 				}
 			}
 		],

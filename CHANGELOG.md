@@ -2,6 +2,10 @@
 🥭
 
 ## [Unreleased]
+### Fixed
+- Alternative Roll Breakdowns not showing modifiers to players
+
+Minimum system version is now 7.7.4
 
 ## [0.19.3] - 2025-11-21
 ### Added
