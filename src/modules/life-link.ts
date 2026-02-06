@@ -263,7 +263,7 @@ async function onCreateMessage(msg: ChatMessagePF2e) {
 						}),
 						{
 							transfer: lifeLinkTransfer,
-							heal: remainingDmg === 1 ? 1 : Math.floor(remainingDmg / 2),
+							heal: remainingDmg === 1 ? 1 : Math.ceil(remainingDmg / 2),
 							dmg: Math.ceil(remainingDmg / 2),
 							cd: 1,
 							source: lifeLinkEffect.origin.uuid,
@@ -286,7 +286,7 @@ async function onCreateMessage(msg: ChatMessagePF2e) {
 							actor: shareLifeEffect.origin.name,
 						}),
 						{
-							heal: remainingDmg === 1 ? 1 : Math.floor(remainingDmg / 2),
+							heal: remainingDmg === 1 ? 1 : Math.ceil(remainingDmg / 2),
 							dmg: Math.ceil(remainingDmg / 2),
 							source: shareLifeEffect.origin.uuid,
 							target: actor.uuid,
