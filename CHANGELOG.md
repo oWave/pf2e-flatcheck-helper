@@ -2,6 +2,9 @@
 🥭
 
 ## [Unreleased]
+### Added
+- New setting to change what part of the on-token flat check marker is displayed (everything, text only, outline only)
+
 ### Changed
 - Flat Checks: Added exceptions for actors without senses (like Hazards)
   - Never roll dim light or darkness checks

@@ -55,6 +55,17 @@ export const settings = {
 			| "disabled"
 			| "onlyWithOrigin"
 	},
+	get flatTargetMarkerDisplay() {
+		const value = game.settings.get(MODULE_ID, "flat-check-target-marker-display") as
+			| "all"
+			| "outlineOnly"
+			| "textOnly"
+
+		const text = value === "all" || value === "textOnly"
+		const outline = value === "all" || value === "outlineOnly"
+
+		return { text, outline }
+	},
 	get lifeLinkEnabled() {
 		return game.settings.get(MODULE_ID, "lifelink") as boolean
 	},
@@ -161,6 +172,20 @@ export const settings = {
 				enabled: "pf2e-fc.settings.flat-check-target-marker.choices.enabled",
 				onlyWithOrigin: "pf2e-fc.settings.flat-check-target-marker.choices.onlyWithOrigin",
 				disabled: "pf2e-fc.settings.flat-check-target-marker.choices.disabled",
+			},
+			type: String,
+		})
+
+		register("flat-check-target-marker-display", {
+			name: "pf2e-fc.settings.flat-check-target-marker-display.name",
+			hint: "pf2e-fc.settings.flat-check-target-marker-display.hint",
+			scope: "user",
+			config: true,
+			default: "all",
+			choices: {
+				all: "pf2e-fc.settings.flat-check-target-marker-display.choices.all",
+				outlineOnly: "pf2e-fc.settings.flat-check-target-marker-display.choices.outlineOnly",
+				textOnly: "pf2e-fc.settings.flat-check-target-marker-display.choices.textOnly",
 			},
 			type: String,
 		})
