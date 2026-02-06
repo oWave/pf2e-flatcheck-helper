@@ -12,6 +12,7 @@
 
 ### Fixed
 - Wrong rounding when transfering damage with Share Life
+- Spells without a defense set not having roll options for flat check REs
 
 ## [0.19.4] - 2025-11-25
 Minimum system version is now 7.7.4

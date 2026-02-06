@@ -35,13 +35,6 @@ function forRollMessage(msg: ChatMessagePF2e) {
 		options.push(msg.flags.pf2e.context.options)
 	}
 
-	if (msg.target?.token.object) {
-		options.push(lightLevelForToken("target", msg.target.token.object))
-	}
-	if (msg.token?.object) {
-		options.push(lightLevelForToken("self", msg.token.object))
-	}
-
 	return options.flat()
 }
 
@@ -61,13 +54,27 @@ function forMixed(data: {
 		options.push("target")
 	}
 
-	if (data.target?.object) {
-		options.push(lightLevelForToken("target", data.target.object))
-	}
-	if (data.origin?.object) {
-		options.push(lightLevelForToken("self", data.origin.object))
+	return options.flat()
+}
+
+function lightLevelOptions({
+	self,
+	target,
+	msg,
+}: {
+	self?: TokenPF2e | null
+	target?: TokenPF2e | null
+	msg?: ChatMessagePF2e
+}) {
+	const options: Array<string[] | string> = []
+
+	if (msg?.token?.object && msg.target?.token.object) {
+		self = msg.token.object
+		target = msg.target.token.object
 	}
 
+	if (self) options.push(lightLevelForToken("self", self))
+	if (target) options.push(lightLevelForToken("self", target))
 	return options.flat()
 }
 
@@ -75,4 +82,5 @@ export const flatCheckRollOptions = {
 	forCheck,
 	forRollMessage,
 	forMixed,
+	lightLevelOptions,
 }

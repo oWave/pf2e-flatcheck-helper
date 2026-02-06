@@ -106,6 +106,14 @@ export class FlatCheckHelper {
 				target: this.target ?? undefined,
 			})
 
+		options.push(
+			...flatCheckRollOptions.lightLevelOptions({
+				msg: this.msg,
+				self: this.token?.object,
+				target: this.target?.object,
+			}),
+		)
+
 		this.rollOptions = options
 
 		this.adjustments = new Adjustments(this.actor ?? null, this.target?.actor ?? null)

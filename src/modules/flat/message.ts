@@ -286,7 +286,7 @@ function shouldShowFlatChecks(msg: ChatMessagePF2e): boolean {
 
 	if (!msg.item) return false
 
-	return msg.item.isOfType("action", "consumable", "equipment", "feat", "melee", "weapon")
+	return msg.item.isOfType("action", "consumable", "equipment", "feat", "melee", "spell", "weapon")
 }
 
 export async function preCreateMessage(msg: ChatMessagePF2e) {
