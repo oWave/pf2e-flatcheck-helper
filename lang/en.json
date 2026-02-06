@@ -111,6 +111,19 @@
 					"plus": "Oracles+ (Heightened (+2))"
 				}
 			},
+			"quick-apply-enable": {
+				"name": "Enable Quick Apply"
+			},
+			"quick-apply-request": {
+				"name": "Allow Player Requests",
+				"hint": "Allows players to request applying effects to actors they don't control.",
+				"choices": {
+					"enable": "Enable",
+					"disable": "Disable",
+					"auto-accept-trusted": "Auto Accept from Trusted Players",
+					"auto-accept-always": "Always Auto Accept"
+				}
+			},
 			"emanation-automation": {
 				"name": "Auto-Apply Emanation Effect Button"
 			},
@@ -126,6 +139,7 @@
 				"flat": "Flat Check Buttons",
 				"delay": "Delay",
 				"lifelink": "Life Link",
+				"quick-apply": "Quick Apply",
 				"emanation-automation": "Emanation Automation",
 				"misc": "Miscellaneous"
 			},

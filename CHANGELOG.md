@@ -2,12 +2,20 @@
 🥭
 
 TODO:
-- Add settings
 - Add Quick Apply to Guide
+- Hide NPC names from player dialog
+- Hover to highlight token?
+- Hidden tokens
+- Walls
+- Flat check display setting
+  - Both
+  - Outline only
+  - Text only
+- i18n
 
 ## [Unreleased]
 ### Changed
-- Added exceptions for actors with senses (like Hazards)
+- Flat checks: Exclude actors without senses (like Hazards)
   - Never roll dim light or darkness checks
   - Don't hide results even when checks are missing or failed (to make skipping them quicker)
 
@@ -163,7 +171,9 @@ Foundry v13 release
 ### Fixed
 - Flat checks showing on damage/healing received messages
 
-[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.19.2...HEAD
+[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.19.4...HEAD
+[0.19.4]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.19.3...v0.19.4
+[0.19.3]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.19.2...v0.19.3
 [0.19.2]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.19.1...v0.19.2
 [0.19.1]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.19.0...v0.19.1
 [0.19.0]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.18.3...v0.19.0

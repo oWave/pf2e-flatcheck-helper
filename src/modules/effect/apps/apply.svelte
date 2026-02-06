@@ -96,7 +96,7 @@
 				</fieldset>
 			{/if}
 			<button class="mt-2" type="submit" disabled={!hasTokens}>
-				Apply
+				{ ownsAllTokens ? "Apply" : "Request" }
 			</button>
 		</div>
 		</form>
@@ -134,9 +134,10 @@ import {
 	type TokenDocumentPF2e,
 } from "foundry-pf2e"
 import { tooltip } from "src/guide/content/component/tooltip.svelte"
+import { canEditDocuments } from "src/utils"
 import { SvelteMap } from "svelte/reactivity"
 import { slide } from "svelte/transition"
-import { getSelectedTokens, getTargetedTokens, getTokensInEmanation } from "../apply"
+import { apply, getSelectedTokens, getTargetedTokens, getTokensInEmanation } from "../apply"
 import type { ApplyDialogData, Duration } from "../data"
 import { type RequestApplyData, sendApplyRequest } from "../request"
 
@@ -152,7 +153,17 @@ interface Props extends Omit<ApplyDialogData, "effectIndex"> {
 const props: Props = $props()
 
 const tokens = new SvelteMap<TokenDocumentPF2e, boolean>(props.tokens.map((t) => [t, true]))
-const hasTokens = $derived(tokens.values().some((t) => t))
+const selectedTokens = $derived(
+	Array.from(
+		tokens
+			.entries()
+			.filter(([token, checked]) => checked && token.actor)
+			.map(([token, checked]) => token),
+	),
+)
+const hasTokens = $derived(!!selectedTokens.length)
+// const ownsAllTokens = $derived(canEditDocuments(selectedTokens))
+const ownsAllTokens = !!props.request?.user
 
 let duration = $state(
 	props.request?.duration ?? {
@@ -211,42 +222,23 @@ async function onsubmit(event: SubmitEvent) {
 	if (!["effect", "condition"].includes(props.effect.type))
 		throw new Error(`${props.effect.uuid} is not an effect or condition`)
 
-	if (game.user.isGM) {
-		let createData = props.effect.toObject()
+	const needsRequest = !ownsAllTokens
 
-		if (createData.type === "effect") {
-			createData.system.context = {
-				origin: {
-					actor: props.item.actor.uuid,
-					item: props.item.uuid,
-					token: null,
-					rollOptions: [],
-					spellcasting: null,
-				},
-				target: null,
-				roll: null,
-			}
+	if (!needsRequest) {
+		await apply({
+			tokens: selectedTokens,
+			parent: props.item,
+			effect: props.effect,
+			duration: props.config.promptForDuration ? duration : undefined,
+		})
 
-			if (props.config.promptForDuration) Object.assign(createData.system.duration, { ...duration })
-		}
-
-		await Promise.all(
-			tokens.entries().map(([token, checked]) => {
-				return checked ? token.actor?.createEmbeddedDocuments("Item", [createData]) : null
-			}),
-		)
 		props.shell.close()
 	} else {
 		const request: RequestApplyData = {
 			user: game.user.id,
 			item: props.item.uuid,
 			effect: props.effect.uuid,
-			tokens: Array.from(
-				tokens
-					.entries()
-					.filter(([_, checked]) => checked)
-					.map(([token, _]) => token.uuid),
-			),
+			tokens: Array.from(selectedTokens.map((token) => token.uuid)),
 		}
 
 		if (props.config.promptForDuration)

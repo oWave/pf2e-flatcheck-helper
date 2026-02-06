@@ -1,4 +1,5 @@
 import type { ConditionPF2e, EffectPF2e, ItemPF2e } from "foundry-pf2e"
+import MODULE from "src"
 import { MODULE_ID } from "src/constants"
 import { parseHTML } from "src/utils"
 import { collectTokens } from "./apply"
@@ -55,6 +56,9 @@ export const HTMLUtils = {
 				const data = dataFromElement(containerElement)
 				if (!data) return
 
+				if (!game.user.isGM && MODULE.settings.quickApplyUserRequest === "disable")
+					return ui.notifications.warn("Quick Apply is disabled for players")
+
 				const msgId =
 					containerElement.closest<HTMLElement>(".chat-message.message")?.dataset?.messageId
 				const msg = msgId?.length ? game.messages.get(msgId) : null
@@ -88,6 +92,8 @@ export const HTMLUtils = {
 			| EffectData
 			| undefined
 		if (!data) return
+
+		if (!game.user.isGM && MODULE.settings.quickApplyUserRequest === "disable") return
 
 		if (linkElement.nextElementSibling instanceof HTMLAnchorElement) {
 			const buttonElement = linkElement.nextElementSibling.firstElementChild

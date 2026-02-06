@@ -61,6 +61,13 @@ export const settings = {
 	get lifeLinkVariant() {
 		return game.settings.get(MODULE_ID, "lifelink-formular") as "apg" | "plus"
 	},
+	get quickApplyUserRequest() {
+		return game.settings.get(MODULE_ID, "quick-apply-request") as
+			| "enable"
+			| "disable"
+			| "auto-accept-trusted"
+			| "auto-accept-always"
+	},
 	get emanationAutomation() {
 		return (
 			game.modules.get("lib-wrapper")?.active &&
@@ -108,9 +115,8 @@ export const settings = {
 			config: true,
 			default: "user",
 			choices: {
-				always: "pf2e-fc.settings.flat-check-auto-roll.choices.always",
-				user: "pf2e-fc.settings.flat-check-auto-roll.choices.user",
-				never: "pf2e-fc.settings.flat-check-auto-roll.choices.never",
+				langKey: "pf2e-fc.settings.flat-check-auto-roll.choices",
+				options: ["always", "user", "never"],
 			},
 			type: String,
 		})
@@ -158,9 +164,8 @@ export const settings = {
 			config: true,
 			default: "enabled",
 			choices: {
-				enabled: "pf2e-fc.settings.flat-check-target-marker.choices.enabled",
-				onlyWithOrigin: "pf2e-fc.settings.flat-check-target-marker.choices.onlyWithOrigin",
-				disabled: "pf2e-fc.settings.flat-check-target-marker.choices.disabled",
+				langKey: "pf2e-fc.settings.flat-check-target-marker.choices",
+				options: ["enabled", "onlyWithOrigin", "disabled"],
 			},
 			type: String,
 		})
@@ -253,14 +258,37 @@ export const settings = {
 			type: String,
 			default: "apg",
 			choices: {
-				apg: "pf2e-fc.settings.lifelink-formular.choices.apg",
-				plus: "pf2e-fc.settings.lifelink-formular.choices.plus",
+				langKey: "pf2e-fc.settings.lifelink-formular.choices",
+				options: ["apg", "plus"],
+			},
+		})
+
+		register("quick-apply-enable", {
+			name: "pf2e-fc.settings.quick-apply-enable.name",
+			hint: "",
+			scope: "world",
+			config: true,
+			type: Boolean,
+			default: true,
+			requiresReload: true,
+		})
+
+		register("quick-apply-request", {
+			name: "pf2e-fc.settings.quick-apply-request.name",
+			hint: "pf2e-fc.settings.quick-apply-request.hint",
+			scope: "world",
+			config: true,
+			type: String,
+			default: "enable",
+			choices: {
+				langKey: "pf2e-fc.settings.quick-apply-request.choices",
+				options: ["enable", "disable", "auto-accept-trusted", "auto-accept-always"],
 			},
 		})
 
 		register("emanation-automation", {
 			name: "pf2e-fc.settings.emanation-automation.name",
-			hint: "",
+			hint: "Deprecated! Quick Apply is this the replacement for this part, but it'll stay until it breaks.",
 			scope: "world",
 			config: true,
 			type: Boolean,
@@ -308,6 +336,10 @@ interface SettingFlagsType {
 }
 type SettingsParamater = Parameters<typeof game.settings.register>[2]
 interface SettingRegistration extends SettingsParamater {
+	choices?: {
+		langKey: string
+		options: any[]
+	}
 	onChange?: (newValue: unknown) => void | Promise<void>
 	flags?: SettingFlagsType
 }
@@ -317,8 +349,15 @@ const SettingFlags = new Map<string, SettingFlagsType>()
 function register(key: string, { flags, ...data }: SettingRegistration) {
 	if (flags) SettingFlags.set(key, flags)
 
+	let choices: Record<string, string> | undefined
+	if (data.choices) {
+		choices = {}
+		for (const option of data.choices.options) choices[option] = `${data.choices.langKey}.${option}`
+	}
+
 	game.settings.register(MODULE_ID, key, {
 		...data,
+		choices,
 		onChange() {
 			const value = game.settings.get(MODULE_ID, key) as any
 			data.onChange?.(value)
@@ -373,6 +412,7 @@ function onRenderSettingsConfig(app: SettingsConfig, html: HTMLFormElement) {
 	createHeading("flat-check-in-message", "settings.headings.flat")
 	createHeading("delay-combat-tracker", "settings.headings.delay")
 	createHeading("lifelink", "settings.headings.lifelink")
+	createHeading("quick-apply-enable", "settings.headings.quick-apply")
 	createHeading("emanation-automation", "settings.headings.emanation-automation")
 	createHeading("script-alt-roll-breakdown", "settings.headings.misc")
 

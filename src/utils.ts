@@ -1,4 +1,4 @@
-import type { ActorPF2e, CombatantPF2e } from "foundry-pf2e"
+import type { ActorPF2e, CombatantPF2e, TokenDocumentPF2e } from "foundry-pf2e"
 
 export function isJQuery(obj: unknown): obj is JQuery {
 	return obj instanceof jQuery
@@ -15,6 +15,10 @@ export function actorHasEffect(actor: ActorPF2e, slug: string) {
 export function combatantIsNext(c: CombatantPF2e) {
 	// @ts-expect-error missing type def
 	return c.parent?.nextCombatant.tokenId === c.tokenId
+}
+
+export function canEditDocuments(documents: Pick<TokenDocumentPF2e, "canUserModify">[]) {
+	return game.user.isGM || documents.every((t) => t.canUserModify(game.user, "update"))
 }
 
 export function sleep(ms: number) {
