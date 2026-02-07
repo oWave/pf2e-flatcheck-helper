@@ -64,7 +64,7 @@ export const TargetColors = Object.freeze({
 	},
 })
 
-export type LightLevel = typeof LightLevels.DARK
+export type LightLevel = (typeof LightLevels)["DARK" | "BRIGHT" | "DIM"]
 
 export function darknessAtPoint(x: number, y: number): number {
 	for (const source of (canvas.effects as any).darknessSources as Collection<
