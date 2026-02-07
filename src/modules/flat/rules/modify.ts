@@ -45,14 +45,20 @@ export function buildModifyFlatDCRuleElement() {
 		}
 
 		get tiebreakPriority() {
-			return Number(this.resolveValue(this.value)) || 0
+			return this.resolvedValue
+		}
+
+		get resolvedValue() {
+			const resolved = this.resolveValue(this.value, NaN)
+			if (Number.isNumeric(resolved)) return Number(resolved)
+			return NaN
 		}
 
 		getData(options: string[]) {
 			if (!this.test(options)) return null
 
-			const resolvedValue = Number(this.resolveValue(this.value)) || 0
-			if (!resolvedValue) return null
+			const resolvedValue = this.resolvedValue
+			if (Number.isNaN(resolvedValue)) return null
 
 			const data = {
 				label: this.label,
