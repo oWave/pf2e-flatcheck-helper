@@ -90,7 +90,7 @@ async function renderButtons(msg: ChatMessagePF2e, html: HTMLElement) {
 		baseDc: number | null
 		finalDc: number | null
 		reasons?: string[]
-		conditionAdjustment?: TreatAsAdjustment
+		conditionAdjustments?: TreatAsAdjustment[]
 		dcAdjustments?: string
 		rolls: { class: string; value: number }[]
 		rerollIcon?: string
@@ -147,7 +147,7 @@ async function renderButtons(msg: ChatMessagePF2e, html: HTMLElement) {
 			dcAdjustments: check.dcAdjustments?.map((a) => `${a.label}: ${a.value}`).join("<br>"),
 			type: check.type,
 			reasons: check.origin?.reasons,
-			conditionAdjustment: check.conditionAdjustment,
+			conditionAdjustments: check.conditionAdjustments,
 			origin: check.origin,
 			rolls: rollData,
 			rerollIcon: check.reroll?.keep ? REROLL_ICONS[check.reroll?.keep] : undefined,

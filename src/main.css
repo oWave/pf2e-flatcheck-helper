@@ -130,6 +130,7 @@
 			.fc-description {
 				font-size: var(--font-size-12);
 				opacity: 0.9;
+				text-align: center;
 			}
 
 			.adjusted {

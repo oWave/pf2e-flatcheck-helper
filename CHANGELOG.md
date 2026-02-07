@@ -9,6 +9,7 @@
 - Flat Checks: Added exceptions for actors without senses (like Hazards)
   - Never roll dim light or darkness checks
   - Don't hide results even when checks are missing or failed (to make skipping them quicker)
+- TreatAs rule elements can now chain instead of only one being processed
 
 ### Fixed
 - Wrong rounding when transfering damage with Share Life

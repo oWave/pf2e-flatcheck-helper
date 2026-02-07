@@ -2,18 +2,20 @@
 	{{#each @root.buttons}}
 		<div class="fc-check">
 			<span class="fc-label"
-			  {{#if (or this.conditionAdjustment this.reasons)}}
+			  {{#if (or this.conditionAdjustments this.reasons)}}
 				  data-tooltip="
 					  {{#if this.reasons}}
 						  {{#each this.reasons}}
 							  {{this}} <br>
 							{{/each}}
-							{{#if this.conditionAdjustment}}
+							{{#if this.conditionAdjustments}}
 							  <br>
 							{{/if}}
 						{{/if}}
-					  {{#if this.conditionAdjustment}}
-					    {{this.conditionAdjustment.label}}: {{ @root.localizeType this.conditionAdjustment.old }} → {{ @root.localizeType this.conditionAdjustment.new }}
+					  {{#if this.conditionAdjustments}}
+							{{#each this.conditionAdjustments}}
+					      {{this.label}}: {{ @root.localizeType this.old }} → {{ @root.localizeType this.new }} <br>
+							{{/each}}
 						{{/if}}
 					"
 				{{/if}}>

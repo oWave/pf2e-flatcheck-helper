@@ -15,7 +15,7 @@ export interface FlatCheckSource {
 export interface FlatCheckData extends FlatCheckSource {
 	finalDc: number | null
 	dcAdjustments?: DcAdjustment[]
-	conditionAdjustment?: TreatAsAdjustment
+	conditionAdjustments?: TreatAsAdjustment[]
 	secret?: true
 }
 

@@ -7,7 +7,7 @@ import type { TargetFlatCheckSource } from "../target"
 import type { AddCheckRuleElement } from "./add"
 import type { ModifyFlatDCData, ModifyFlatDCRuleElement } from "./modify"
 import { flatCheckRollOptions } from "./options"
-import type { TreatAsRuleElement } from "./treat-as"
+import { TreatAsConditionPriorities, type TreatAsRuleElement } from "./treat-as"
 
 export const PRIORITIES = {
 	add: 20,
@@ -147,10 +147,10 @@ export class Adjustments {
 		return { finalDc: currentDc, adjustments }
 	}
 
-	getTreatAsAdjustment(
+	getTreatAsAdjustments(
 		check: TargetFlatCheckSource,
 		rollOptions: string[],
-	): TreatAsAdjustment | null {
+	): TreatAsAdjustment[] | null {
 		if (!Object.keys(VisiblityLevelPriorities).includes(check.type)) return null
 
 		const checkOptions = [rollOptions, flatCheckRollOptions.forCheck(check)].flat()
@@ -160,21 +160,52 @@ export class Adjustments {
 			.map((rule) => rule.getData(checkOptions))
 			.filter((rule) => rule != null)
 
-		const originalCondition = check.type
-		const conditionPriority = VisiblityLevelPriorities[originalCondition]
-		let adjustment: { new: VisibilityLevels; label: string; slug: string } | null = null
+		let currentCondition = check.type
+		const adjustments: TreatAsAdjustment[] = []
+
 		for (const rule of rules) {
-			if (rule.condition !== originalCondition) continue
-			const rulePriority = rule.priority
+			if (rule.condition !== currentCondition) continue
+
 			if (
-				(rule.mode === "downgrade" && conditionPriority > rulePriority) ||
-				(rule.mode === "upgrade" && conditionPriority < rulePriority) ||
-				rule.mode === "override"
+				(rule.mode === "downgrade" &&
+					TreatAsConditionPriorities[rule.treatAs] >
+						TreatAsConditionPriorities[currentCondition]) ||
+				(rule.mode === "upgrade" &&
+					TreatAsConditionPriorities[rule.treatAs] < TreatAsConditionPriorities[currentCondition])
 			) {
-				adjustment = { new: rule.treatAs, label: rule.label, slug: rule.slug }
+				continue
 			}
+
+			adjustments.push({
+				label: rule.label,
+				slug: rule.slug,
+				old: currentCondition,
+				new: rule.treatAs,
+			})
+			currentCondition = rule.treatAs
 		}
-		if (adjustment) return { old: originalCondition, ...adjustment }
+		if (adjustments.length) return adjustments
+		return null
+	}
+
+	treatObservedAs(rollOptions: string[]): TargetFlatCheckSource | null {
+		const checkOptions = [rollOptions, flatCheckRollOptions.forCheck({ type: "observed" })].flat()
+		logOptions(`fc-TreatAs (observed)`, checkOptions)
+
+		const rules = this.treatAs
+			.map((rule) => rule.getData(checkOptions))
+			.filter((rule) => rule?.condition === "observed")
+
+		const highest = rules.at(-1)
+		if (highest)
+			return {
+				type: highest.treatAs,
+				conditionAdjustments: [
+					{ label: highest.label, old: "observed", new: highest.treatAs, slug: highest.slug },
+				],
+				origin: { label: highest.label, slug: highest.slug },
+			}
+
 		return null
 	}
 
