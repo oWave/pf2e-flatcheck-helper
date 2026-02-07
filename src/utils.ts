@@ -50,3 +50,12 @@ export function translateHandleMissing(key: string, opts: MissingOpts) {
 		})
 	return key
 }
+
+export const SYSTEM = {
+	get id() {
+		return game.system.id as "pf2e"
+	},
+	filePath(path: string) {
+		return `systems/${this.id}/${path}`
+	},
+}

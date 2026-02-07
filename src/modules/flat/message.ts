@@ -2,7 +2,7 @@ import type { ChatMessagePF2e, ChatMessageSourcePF2e, SpellPF2e } from "foundry-
 import type { RollJSON } from "foundry-pf2e/foundry/client/dice/roll.mjs"
 import { MODULE_ID } from "src/constants"
 import MODULE from "src/index"
-import { parseHTML, translate } from "src/utils"
+import { parseHTML, SYSTEM, translate } from "src/utils"
 import { BaseModule } from "../base"
 import { ActorTypesWithPerception } from "./constants"
 import { collectFlatChecks, type FlatCheckData } from "./data"
@@ -267,7 +267,7 @@ function renderHiddenRollMessage(msg: ChatMessagePF2e, html: HTMLElement) {
 }
 
 function shouldShowFlatChecks(msg: ChatMessagePF2e): boolean {
-	const contextType = msg.flags?.pf2e?.context?.type
+	const contextType = msg.flags?.[SYSTEM.id]?.context?.type
 	const blacklist: (typeof contextType)[] = [
 		"damage-roll",
 		"damage-taken",
@@ -281,8 +281,9 @@ function shouldShowFlatChecks(msg: ChatMessagePF2e): boolean {
 	// If the spell has an attack roll, don't show flat checks on the spell card, but only on the attack roll itself
 	if (contextType === "spell-cast") return (msg.item as SpellPF2e).isAttack === msg.isRoll
 
+	const context = msg.flags?.[SYSTEM.id]?.context
 	// If message is a roll, only show flat checks if it has a DC
-	if (msg.isRoll) return !!msg.flags?.pf2e?.context && "dc" in msg.flags.pf2e.context
+	if (msg.isRoll) return !!context && "dc" in context
 
 	if (!msg.item) return false
 

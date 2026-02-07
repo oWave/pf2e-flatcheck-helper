@@ -1,6 +1,6 @@
 import type { EncounterPF2e, RolledCombatant } from "foundry-pf2e"
 import { QUERIES } from "src/constants"
-import { translate } from "src/utils"
+import { SYSTEM, translate } from "src/utils"
 import { nextCombatant, setInitiativeFromDrop } from "./utils"
 
 interface GmMoveQueryData {
@@ -96,8 +96,9 @@ export async function handleGmMoveQuery(data: GmMoveQueryData) {
 			return promise
 		}
 
-		if (combat.combatant.flags.pf2e.roundOfLastTurnEnd !== combat.round) waitingForTurnEnd = true
-		if (nextCombatant(combat)?.flags.pf2e.roundOfLastTurn !== combat.round)
+		if (combat.combatant.flags[SYSTEM.id].roundOfLastTurnEnd !== combat.round)
+			waitingForTurnEnd = true
+		if (nextCombatant(combat)?.flags[SYSTEM.id].roundOfLastTurn !== combat.round)
 			waitingForTurnStart = true
 
 		if (waitingForTurnEnd || waitingForTurnStart) {
@@ -114,12 +115,12 @@ export async function handleGmMoveQuery(data: GmMoveQueryData) {
 
 			hookId = Hooks.on("updateCombatant", (_: any, update: any) => {
 				try {
-					if (typeof update?.flags?.pf2e?.roundOfLastTurnEnd === "number") {
+					if (typeof update?.flags?.[SYSTEM.id]?.roundOfLastTurnEnd === "number") {
 						/* console.log("got turn end")
 						if (!waitingForTurnEnd) console.warn("did not expect turn end!") */
 						seenTurnEnd = true
 					}
-					if (typeof update?.flags?.pf2e?.roundOfLastTurn === "number") {
+					if (typeof update?.flags?.[SYSTEM.id]?.roundOfLastTurn === "number") {
 						/* console.log("got turn start")
 						if (!waitingForTurnStart) console.warn("did not expect turn start!") */
 						seenTurnStart = true

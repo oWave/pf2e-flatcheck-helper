@@ -1,5 +1,6 @@
 import type { ChatMessagePF2e } from "foundry-pf2e"
 import { MODULE_ID } from "src/constants"
+import { SYSTEM } from "src/utils"
 import { BaseModule } from "../base"
 
 export class AltRollBreakdownModule extends BaseModule {
@@ -18,7 +19,7 @@ export class AltRollBreakdownModule extends BaseModule {
 
 function shouldHide(msg: ChatMessagePF2e) {
 	return (
-		!game.settings.get("pf2e", "metagame_showBreakdowns") &&
+		!game.settings.get(SYSTEM.id, "metagame_showBreakdowns") &&
 		msg.author?.isGM &&
 		!msg.actor?.hasPlayerOwner &&
 		msg.isRoll
@@ -27,9 +28,10 @@ function shouldHide(msg: ChatMessagePF2e) {
 
 async function onRenderChatMessage(msg: ChatMessagePF2e, html: HTMLElement) {
 	if (!shouldHide(msg)) return
-	if (!msg.flags.pf2e.modifiers) return
+	const modifiers = msg.flags[SYSTEM.id].modifiers
+	if (!modifiers) return
 
-	const toReveal = msg.flags.pf2e.modifiers.filter(
+	const toReveal = modifiers.filter(
 		(m) =>
 			m.type &&
 			["untyped", "circumstance", "status"].includes(m.type) &&
@@ -45,7 +47,7 @@ async function onRenderChatMessage(msg: ChatMessagePF2e, html: HTMLElement) {
 }
 
 function verifySettingsDialog() {
-	if (!game.user.isGM || !game.settings.get("pf2e", "metagame_showBreakdowns")) return
+	if (!game.user.isGM || !game.settings.get(SYSTEM.id, "metagame_showBreakdowns")) return
 
 	new foundry.applications.api.DialogV2({
 		window: { title: "PF2e Utility Buttons - Alternative Roll Breakdowns" },
@@ -62,7 +64,7 @@ function verifySettingsDialog() {
 				action: "enable",
 				label: "Disable system setting",
 				default: true,
-				callback: () => game.settings.set("pf2e", "metagame_showBreakdowns", false),
+				callback: () => game.settings.set(SYSTEM.id, "metagame_showBreakdowns", false),
 			},
 		],
 		submit: undefined,

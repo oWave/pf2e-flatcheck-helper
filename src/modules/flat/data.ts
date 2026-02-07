@@ -1,5 +1,6 @@
 import type { ActorPF2e, ChatMessagePF2e, TokenDocumentPF2e } from "foundry-pf2e"
 import * as R from "remeda"
+import { SYSTEM } from "src/utils"
 import type { MsgFlagData } from "./message"
 import { flatMessageConfig } from "./message-config"
 import { Adjustments, type DcAdjustment, type TreatAsAdjustment } from "./rules/common"
@@ -143,13 +144,13 @@ export class FlatCheckHelper {
 			if (
 				!ignored.has("deafened-spellcasting") &&
 				this.actor.conditions.stored.some((c) => c.slug === "deafened") &&
-				this.msg.flags?.pf2e?.origin?.type === "spell" &&
+				this.msg.flags?.[SYSTEM.id]?.origin?.type === "spell" &&
 				!this.msg.item?.system.traits.value?.some((t) => t === "subtle")
 			) {
 				sources.push({ type: "deafened", origin: { slug: "spell" }, baseDc: 5 })
 			}
 
-			if (!ignored.has("stupefied") && this.msg.flags?.pf2e?.origin?.type === "spell") {
+			if (!ignored.has("stupefied") && this.msg.flags?.[SYSTEM.id]?.origin?.type === "spell") {
 				const stupefied = this.actor.conditions.stupefied?.value
 				if (stupefied) {
 					sources.push({ type: "stupefied", origin: { slug: "spell" }, baseDc: 5 + stupefied })

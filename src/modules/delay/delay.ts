@@ -1,6 +1,6 @@
 import type { ActorPF2e, CombatantPF2e, TokenDocumentPF2e } from "foundry-pf2e"
 import MODULE from "src"
-import { combatantIsNext, translate } from "src/utils"
+import { combatantIsNext, SYSTEM, translate } from "src/utils"
 import { sendGmMoveQuery } from "./query"
 import { isDelaying } from "./utils"
 
@@ -62,7 +62,7 @@ export function createMessage(token: TokenDocumentPF2e, type: "delay" | "return"
 			speaker: ChatMessage.getSpeaker({ token }),
 			content: `<div class="pf2e chat-card action-card">
       <header class="card-header flexrow">
-			<img src="systems/pf2e/icons/actions/FreeAction.webp" alt="${title}">
+			<img src="${SYSTEM.filePath("icons/actions/FreeAction.webp")}" alt="${title}">
 			<h3>${title} <span class="action-glyph">F</span></h3>
       </header>
 			</div>`,

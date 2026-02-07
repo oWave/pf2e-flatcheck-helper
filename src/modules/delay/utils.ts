@@ -1,4 +1,5 @@
 import type { ActorPF2e, EncounterPF2e, RolledCombatant } from "foundry-pf2e"
+import { SYSTEM } from "src/utils"
 
 export function isDelaying(actor: ActorPF2e) {
 	return actor.items.some((e) => e.slug === "x-delay")
@@ -55,7 +56,7 @@ export function setInitiativeFromDrop(
 		const updates: EmbeddedDocumentUpdateData = { _id: id }
 		if (data.initiative !== undefined) updates.initiative = data.initiative
 		if (data.overridePriority !== undefined)
-			updates[`flags.pf2e.overridePriority.${newInitiative}`] = data.overridePriority
+			updates[`flags.${SYSTEM.id}.overridePriority.${newInitiative}`] = data.overridePriority
 		return updates
 	})
 }
@@ -93,9 +94,9 @@ export function debugCombat(msg: string, data?: { afterId: string }) {
 			}
 
 			const init = c.initiative
-			const tieBreak = (init && c.flags.pf2e.overridePriority[init]) ?? "-"
-			const lastTurn = c.flags.pf2e.roundOfLastTurn
-			const lastTurnEnd = c.flags.pf2e.roundOfLastTurnEnd
+			const tieBreak = (init && c.flags[SYSTEM.id].overridePriority[init]) ?? "-"
+			const lastTurn = c.flags[SYSTEM.id].roundOfLastTurn
+			const lastTurnEnd = c.flags[SYSTEM.id].roundOfLastTurnEnd
 			console.log(
 				`${label}${c.name} ${init} (${tieBreak}) lastTurn=${lastTurn} lastTurnEnd=${lastTurnEnd}`,
 			)

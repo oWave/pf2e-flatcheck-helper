@@ -29,8 +29,17 @@
 		{
 			"label": "Effects",
 			"name": "Effects",
-			"path": "packs/effects.db",
+			"path": "packs/effects",
 			"system": "pf2e",
+			"type": "Item",
+			"private": false,
+			"flags": {}
+		},
+		{
+			"label": "Effects (SF2e)",
+			"name": "Effects-sf2e",
+			"path": "packs/effects-sf2e",
+			"system": "sf2e",
 			"type": "Item",
 			"private": false,
 			"flags": {}
@@ -43,6 +52,13 @@
 				"type": "system",
 				"compatibility": {
 					"minimum": "7.7.4"
+				}
+			},
+			{
+				"id": "sf2e",
+				"type": "system",
+				"compatibility": {
+					"minimum": "0.0.4"
 				}
 			}
 		],

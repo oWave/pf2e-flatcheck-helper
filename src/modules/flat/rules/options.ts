@@ -1,4 +1,5 @@
 import type { ChatMessagePF2e, TokenDocumentPF2e, TokenPF2e } from "foundry-pf2e"
+import { SYSTEM } from "src/utils"
 import type { FlatCheckSource } from "../data"
 import { tokenLightLevel } from "../light/token"
 import { LightLevels } from "../light/utils"
@@ -20,19 +21,12 @@ function forCheck(source: Partial<FlatCheckSource>) {
 
 function forRollMessage(msg: ChatMessagePF2e) {
 	const options: Array<string | string[]> = []
-	if (
-		msg.flags.pf2e.context &&
-		"contextualOptions" in msg.flags.pf2e.context &&
-		msg.flags.pf2e.context.contextualOptions?.postRoll?.length
-	) {
-		options.push(msg.flags.pf2e.context.contextualOptions.postRoll)
+	const context = msg.flags[SYSTEM.id].context
+	if (context && "contextualOptions" in context && context.contextualOptions?.postRoll?.length) {
+		options.push(context.contextualOptions.postRoll)
 	}
-	if (
-		msg.flags.pf2e.context &&
-		"options" in msg.flags.pf2e.context &&
-		msg.flags.pf2e.context.options?.length
-	) {
-		options.push(msg.flags.pf2e.context.options)
+	if (context && "options" in context && context.options?.length) {
+		options.push(context.options)
 	}
 
 	return options.flat()
