@@ -2,6 +2,8 @@
 🥭
 
 ## [Unreleased]
+
+## [0.20.0] - 2026-02-07
 ### Added
 - SF2e compatibility
 - New user setting to change what part of the on-token flat check marker is displayed (everything, text only, outline only)
@@ -185,7 +187,10 @@ Foundry v13 release
 ### Fixed
 - Flat checks showing on damage/healing received messages
 
-[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.19.2...HEAD
+[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.20.0...HEAD
+[0.20.0]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.19.4...v0.20.0
+[0.19.4]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.19.3...v0.19.4
+[0.19.3]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.19.2...v0.19.3
 [0.19.2]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.19.1...v0.19.2
 [0.19.1]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.19.0...v0.19.1
 [0.19.0]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.18.3...v0.19.0
