@@ -64,7 +64,7 @@
                 "hint": "用户设置：选择目标时，在该指示物上方显示纯骰检定信息。",
                 "choices": {
                     "enabled": "启用",
-                    "onlyWithOrigin": "仅显示来源方",
+                    "onlyWithOrigin": "仅显示控制角色相对应的目标",
                     "disabled": "禁用"
                 }
             },
@@ -85,23 +85,23 @@
                 "hint": "允许再次点击延迟按钮后返回先攻顺序。"
             },
             "delay-prompt": {
-                "name": "提示新先攻",
+                "name": "新先攻顺序提示",
                 "hint": "让玩家选择一名参战角色延迟其回合。他们仍可以随时返回先攻顺序。"
             },
             "delay-create-message": {
                 "name": "延迟/返回先攻时发送聊天信息"
             },
             "token-hud-remove-combat-toggle": {
-                "name": "移除指示物Hud的战斗切换",
+                "name": "移除指示物Hud的切换战斗状态",
                 "hint": "在战斗中移除指示物右键菜单中的‘切换战斗状态’按钮。"
             },
             "pf2e-hud-enable": {
-                "name": "PF2e HUD修改",
+                "name": "PF2e HUD调整",
                 "hint": "以本模组的延迟功能覆盖PF2e HUD的原功能。如有问题请向我，而非PF2e HUD反馈！"
             },
             "lifelink": {
                 "name": "启用生命链接/灵魂链接自动化按钮",
-                "hint": "点击模组readme文件逐步设置。"
+                "hint": "点击模组说明文档逐步设置。"
             },
             "lifelink-formular": {
                 "name": "生命链接计算公式",
@@ -132,6 +132,15 @@
             "docs": {
                 "description": "有关各个功能的描述及相关设置的更多信息，请查阅文档说明：",
                 "button": "打开文档"
+            },
+            "flat-check-target-marker-display": {
+                "choices": {
+                    "all": "描边轮廓与文本",
+                    "textOnly": "仅文本",
+                    "outlineOnly": "仅描边轮廓"
+                },
+                "hint": " ",
+                "name": "在指示物上显示纯骰检定的方式"
             }
         },
         "delay": {
@@ -144,7 +153,7 @@
                 "no-active-gm": "GM未连接"
             },
             "dialog": {
-                "delay-after": "延迟至…后：",
+                "delay-after": "延迟至…之后：",
                 "confirm": "确认",
                 "cancel": "取消"
             },
@@ -181,10 +190,10 @@
                 "button-close": "关闭",
                 "button-require-flat-check": "{count}个目标需要进行纯骰检定",
                 "tooltip-highest-dc": "如果多个纯骰检定会导致或阻止相同的情况发生，则仅掷骰一次并使用检定中最高的DC。",
-                "reroll-hero-point": "消耗一英雄点重骰",
-                "reroll-new-result": "重骰并采用最新结果",
-                "reroll-lower-result": "重骰并采用较低的结果",
-                "reroll-higher-result": "重骰并采用较高的结果",
+                "reroll-hero-point": "消耗英雄点重骰",
+                "reroll-new-result": "重骰并采用最后一次的结果",
+                "reroll-lower-result": "重骰并采用较低结果",
+                "reroll-higher-result": "重骰并采用较高结果",
                 "button-reroll": "重骰",
                 "button-cancel": "取消",
                 "grabbed": "受擒",
@@ -212,11 +221,11 @@
             "life-link-cooldown-effect": "生命链接CD",
             "hp-add": "{actor} +{hp} HP",
             "hp-sub": "{actor} -{hp} HP",
-            "spirit-link-error-bad-actor": "{actor}身上的灵魂链接效果的来源角色有误！详见模组readme。",
-            "spirit-link-button": "{hp} HP to {actor}",
+            "spirit-link-error-bad-actor": "{actor}身上的灵魂链接效果的来源角色有误！详见模组说明文档。",
+            "spirit-link-button": "{hp} HP 给{actor}",
             "spirit-link-message": "<strong>灵魂链接</strong><br>{link}",
-            "life-link-error-bad-actor": "{actor}身上的生命链接效果的来源角色有误！详见模组readme。",
-            "share-life-error-bad-actor": "{actor}身上的护卫分命效果的来源角色有误！详见模组readme。",
+            "life-link-error-bad-actor": "{actor}身上的生命链接效果的来源角色有误！详见模组说明文档。",
+            "share-life-error-bad-actor": "{actor}身上的护卫分命效果的来源角色有误！详见模组说明文档。",
             "damage-button": "{damage}给{actor}",
             "share-life-damage-button": "（护卫分命）{damage}给{actor}",
             "life-link-damage-button": "（生命链接）{damage}给{actor}",
