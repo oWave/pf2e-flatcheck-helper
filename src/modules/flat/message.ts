@@ -391,6 +391,8 @@ async function autoRoll(msg: ChatMessagePF2e) {
 			userId: game.user.id,
 			rolls: JSON.stringify([roll])
 		})
+
+		addRollToTracker(msg, check, roll.total, !!check?.reroll)
 	}
 
 	return updates
