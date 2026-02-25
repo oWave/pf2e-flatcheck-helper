@@ -21,7 +21,6 @@ export class MessageFlatCheckModule extends BaseModule {
 		// this.registerHook("createChatMessage", onCreateChatMessage)
 		this.registerWrapper("ChatMessage.prototype._preCreate", messagePreCreateWrapper, "WRAPPER")
 		this.registerWrapper("ChatMessage.prototype.renderHTML", messageRenderHTMLWrapper, "WRAPPER")
-		this.registerSocket("flat-dice", handleDiceRollSocket)
 		this.registerChatAction("fc-reveal-hidden-message", handleRevealClick)
 
 		tokenExposureCache.enable()
@@ -374,11 +373,10 @@ function autoRoll(msg: ChatMessagePF2e) {
 	}
 
 	if (rolls.length)
-		emitRollSocket({
+		emitDiceSoNiceRoll({
 			msgId: msg.id,
 			userId: game.user.id,
-			rolls: JSON.stringify(rolls),
-			sound: false,
+			rolls: JSON.stringify(rolls)
 		})
 
 	return updates
@@ -447,20 +445,9 @@ interface SocketData {
 	msgId: string
 	userId: string
 	rolls: string
-	sound?: boolean
 }
 
-function emitRollSocket(data: SocketData) {
-	MODULE.socketHandler.emit("flat-dice", data)
-}
-
-function handleDiceRollSocket(data: SocketData) {
-	// @ts-expect-error
-	if (!game.dice3d && data.sound) {
-		game.audio.play(CONFIG.sounds.dice, { context: game.audio.interface })
-		return
-	}
-
+function emitDiceSoNiceRoll(data: SocketData) {
 	// @ts-expect-error
 	if (!game.dice3d) return
 
@@ -471,7 +458,7 @@ function handleDiceRollSocket(data: SocketData) {
 	for (const rollJson of JSON.parse(data.rolls)) {
 		const roll = Roll.fromData(rollJson)
 		// @ts-expect-error
-		game.dice3d.showForRoll(roll, user, false, null, false, data.msgId)
+		game.dice3d.showForRoll(roll, user, true, null, false, data.msgId)
 	}
 }
 
@@ -530,7 +517,9 @@ async function handleFlatButtonClick(msg: ChatMessagePF2e, key: string, dc: numb
 	}
 
 	if (Object.keys(updates).length > 0) {
-		emitRollSocket({
+		// Add the roll to the message to prevent the PF2e system from marking it as a blind roll...
+		msg.rolls.push(roll)
+		emitDiceSoNiceRoll({
 			msgId: msg.id,
 			userId: game.user.id,
 			rolls: JSON.stringify([roll.toJSON()]),
