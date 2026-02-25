@@ -50,6 +50,22 @@ interface MsgFlagTargetCountData {
 	targetCount: number
 }
 
+type RollTrackerTool = {
+	addRoll: (roll: {
+		value: number
+		time: number
+		type: "flat-check"
+		isPrivate: boolean
+		isReroll: boolean
+		actor?: string
+		encounter?: string
+		session?: string
+		outcome?: "success" | "failure"
+		modifier?: string
+	}) => void
+	settings?: { session?: string }
+}
+
 export type MsgFlagData = Record<string, MsgFlagCheckData> & {
 	target?: MsgFlagCheckData | MsgFlagTargetCountData
 }
@@ -447,6 +463,27 @@ interface SocketData {
 	rolls: string
 }
 
+function addRollToTracker(msg: ChatMessagePF2e, check: MsgFlagCheckData | undefined, roll: number, isReroll: boolean) {
+	// @ts-expect-error
+	const tool = game.toolbelt?.dev?.tools?.rollTracker as RollTrackerTool | undefined
+	if (!tool || !check) return
+
+	const outcome = check.finalDc == null ? undefined : roll >= check.finalDc ? "success" : "failure"
+
+	tool.addRoll({
+		value: roll,
+		time: Date.now(),
+		type: "flat-check",
+		isPrivate: !!check.secret,
+		isReroll,
+		actor: msg.actor?.uuid,
+		encounter: game.combat?.id,
+		session: tool.settings?.session,
+		outcome,
+		modifier: check.type,
+	})
+}
+
 function emitDiceSoNiceRoll(data: SocketData) {
 	// @ts-expect-error
 	if (!game.dice3d) return
@@ -465,6 +502,7 @@ function emitDiceSoNiceRoll(data: SocketData) {
 async function handleFlatButtonClick(msg: ChatMessagePF2e, key: string, dc: number) {
 	const roll = await new Roll("d20").roll()
 	const oldRoll = foundry.utils.getProperty(msg, `flags.${MODULE_ID}.flatchecks.${key}.roll`)
+	const check = foundry.utils.getProperty(msg, `flags.${MODULE_ID}.flatchecks.${key}`) as MsgFlagCheckData | undefined
 
 	const updates: Record<string, any> = {}
 
@@ -524,6 +562,8 @@ async function handleFlatButtonClick(msg: ChatMessagePF2e, key: string, dc: numb
 			userId: game.user.id,
 			rolls: JSON.stringify([roll.toJSON()]),
 		})
+
+		addRollToTracker(msg, check, roll.total, !!oldRoll)
 
 		await msg.update(updates)
 
