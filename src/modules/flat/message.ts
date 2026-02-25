@@ -306,7 +306,7 @@ export async function preCreateMessage(msg: ChatMessagePF2e) {
 		})
 
 		if (MODULE.settings.flatAutoRoll && !msg.isReroll) {
-			const rollUpdates = autoRoll(msg)
+			const rollUpdates = await autoRoll(msg)
 			msg.updateSource(rollUpdates)
 		}
 
@@ -357,59 +357,27 @@ export async function preCreateMessage(msg: ChatMessagePF2e) {
 	}
 }
 
-function autoRoll(msg: ChatMessagePF2e) {
+async function autoRoll(msg: ChatMessagePF2e) {
 	const data = msg.flags[MODULE_ID]?.flatchecks as MsgFlagData | undefined
 	if (!data) return
 	const updates: Record<string, number> = {}
-	const rolls: RollJSON[] = []
 
 	for (const [key, check] of Object.entries(data)) {
 		if (!("finalDc" in check)) continue
 		if (check.finalDc == null || check.finalDc <= 1 || check.finalDc >= 20) continue
 
-		const roll = Math.floor(Math.random() * 20) + 1
-		rolls.push(fakeRoll(roll))
-		updates[`flags.${MODULE_ID}.flatchecks.${key}.roll`] = roll
-	}
+		const roll = await new Roll("1d20").roll()
+		msg.rolls.push(roll)
+		updates[`flags.${MODULE_ID}.flatchecks.${key}.roll`] = roll.total
 
-	if (rolls.length)
 		emitDiceSoNiceRoll({
 			msgId: msg.id,
 			userId: game.user.id,
-			rolls: JSON.stringify(rolls)
+			rolls: JSON.stringify([roll])
 		})
+	}
 
 	return updates
-}
-
-function fakeRoll(total: number) {
-	return {
-		class: "Roll",
-		options: {},
-		dice: [],
-		formula: "1d20",
-		terms: [
-			{
-				class: "Die",
-				options: {
-					flavor: null,
-				},
-				evaluated: true,
-				number: 1,
-				faces: 20,
-				modifiers: [],
-				results: [
-					{
-						result: total,
-						active: true,
-					},
-				],
-				method: undefined,
-			},
-		],
-		total: total,
-		evaluated: true,
-	}
 }
 
 function passedAllFlatChecks(msg: ChatMessagePF2e, passIfNoChecks = true) {
@@ -451,9 +419,8 @@ function emitDiceSoNiceRoll(data: SocketData) {
 	// @ts-expect-error
 	if (!game.dice3d) return
 
-	const msg = game.messages.get(data.msgId)
 	const user = game.users.get(data.userId)
-	if (!user || !msg) return
+	if (!user) return
 
 	for (const rollJson of JSON.parse(data.rolls)) {
 		const roll = Roll.fromData(rollJson)
