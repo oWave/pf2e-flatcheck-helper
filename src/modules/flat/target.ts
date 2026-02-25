@@ -1,4 +1,4 @@
-import type { ActorPF2e, TokenDocumentPF2e, TokenPF2e } from "foundry-pf2e"
+import type { ActorPF2e, TokenDocumentPF2e, TokenPF2e } from "@7h3laughingman/pf2e-types"
 import {
 	ActorTypesWithPerception,
 	OriginToTargetCondition,

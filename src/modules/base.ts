@@ -1,4 +1,4 @@
-import type { HookCallback } from "foundry-pf2e/foundry/client/helpers/hooks.mjs"
+import type { HookCallback } from "@7h3laughingman/foundry-types/client/helpers/hooks.d.mts"
 import { MODULE_ID } from "src/constants"
 import MODULE from "src/index"
 import { type ChatActionCallback, ChatActionHandler } from "src/shared/chat-button-handler"
@@ -44,7 +44,6 @@ export abstract class BaseModule {
 		this.sockets = []
 
 		for (const name of this.queries) {
-			// @ts-expect-error
 			delete CONFIG.queries[name]
 		}
 		this.queries = []
@@ -78,7 +77,6 @@ export abstract class BaseModule {
 	}
 
 	registerQuery(name: string, callback: (data: any) => Promise<any>) {
-		// @ts-expect-error
 		CONFIG.queries[name] = callback
 	}
 

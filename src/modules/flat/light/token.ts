@@ -1,6 +1,6 @@
-import type { TokenDocumentPF2e, TokenPF2e } from "foundry-pf2e"
-import type Token from "foundry-pf2e/foundry/client/canvas/placeables/token.mjs"
-import type { HookCallback } from "foundry-pf2e/foundry/client/helpers/hooks.mjs"
+import type Token from "@7h3laughingman/foundry-types/client/canvas/placeables/token.mjs"
+import type { HookCallback } from "@7h3laughingman/foundry-types/client/helpers/hooks.mjs"
+import type { TokenDocumentPF2e, TokenPF2e } from "@7h3laughingman/pf2e-types"
 import { darknessAtPoint, LightLevels } from "./utils"
 
 function tokenExposure(token: Token) {

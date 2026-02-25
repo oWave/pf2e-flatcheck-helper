@@ -13,10 +13,9 @@
 			"./node_modules/@types"
 		], */
 		"types": [
-			"foundry-pf2e",
-			"foundry-pf2e/lib-wrapper",
 			"jquery",
-			"vite/client"
+			"vite/client",
+			"@7h3laughingman/pf2e-types"
 		],
 		"allowSyntheticDefaultImports": true,
 		"allowImportingTsExtensions": true,
@@ -24,7 +23,6 @@
 		"skipLibCheck": true,
 		"forceConsistentCasingInFileNames": true,
 		"verbatimModuleSyntax": true,
-		"baseUrl": ".",
 		"paths": {
 			"src": [
 				"./src/index"

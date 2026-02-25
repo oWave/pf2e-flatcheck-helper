@@ -1,4 +1,4 @@
-import type { ActorPF2e, EncounterPF2e, RolledCombatant } from "foundry-pf2e"
+import type { ActorPF2e, EncounterPF2e, RolledCombatant } from "@7h3laughingman/pf2e-types"
 import { SYSTEM } from "src/utils"
 
 export function isDelaying(actor: ActorPF2e) {

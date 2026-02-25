@@ -1,4 +1,9 @@
-import type { ChatMessagePF2e, ItemPF2e, SpellPF2e, SpellSheetPF2e } from "foundry-pf2e"
+import type {
+	ChatMessagePF2e,
+	ItemPF2e,
+	SpellPF2e,
+	SpellSheetPF2e,
+} from "@7h3laughingman/pf2e-types"
 import { MODULE_ID } from "src/constants"
 import MODULE from "src/index"
 import { parseHTML, translate } from "src/utils"

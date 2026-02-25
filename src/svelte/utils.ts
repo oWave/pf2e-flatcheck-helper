@@ -1,4 +1,4 @@
-import type { TokenPF2e } from "foundry-pf2e"
+import type { TokenPF2e } from "@7h3laughingman/pf2e-types"
 
 export function imgPropsForToken(token: TokenPF2e) {
 	const scale = (() => {

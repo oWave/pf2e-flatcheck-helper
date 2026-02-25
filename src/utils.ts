@@ -1,4 +1,4 @@
-import type { ActorPF2e, CombatantPF2e } from "foundry-pf2e"
+import type { ActorPF2e, CombatantPF2e } from "@7h3laughingman/pf2e-types"
 
 export function isJQuery(obj: unknown): obj is JQuery {
 	return obj instanceof jQuery

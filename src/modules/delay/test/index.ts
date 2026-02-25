@@ -22,7 +22,6 @@ async function combatant(combatant: CombatantData, round: number, state: Combata
 	const actor = game.actors.get(ACTOR_ID)
 	if (!actor) throw "no actor"
 
-	// @ts-expect-error
 	const tokenProto: TokenDocument = await actor.getTokenDocument({}, { parent: canvas.scene! })
 	// @ts-expect-error
 	const token = await getDocumentClass("Token").create(tokenProto, { parent: canvas.scene })

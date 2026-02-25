@@ -1,4 +1,10 @@
-import type { ActorPF2e, ChatMessagePF2e, CombatantPF2e, EffectPF2e, ItemPF2e } from "foundry-pf2e"
+import type {
+	ActorPF2e,
+	ChatMessagePF2e,
+	CombatantPF2e,
+	EffectPF2e,
+	ItemPF2e,
+} from "@7h3laughingman/pf2e-types"
 import { MODULE_ID } from "src/constants"
 import MODULE from "src/index"
 import { actorEffectBySlug, actorHasEffect, SYSTEM, translate } from "src/utils"

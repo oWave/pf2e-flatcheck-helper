@@ -1,4 +1,4 @@
-import type { ModelPropFromDataField } from "foundry-pf2e/foundry/common/data/fields.mjs"
+import type { ModelPropFromDataField } from "@7h3laughingman/foundry-types/common/data/fields.mjs"
 import type { AdditionalFlatCheckSource } from "./common"
 import { ValueField } from "./fields"
 

@@ -1,5 +1,5 @@
-import type { TokenPF2e } from "foundry-pf2e"
-import type Token from "foundry-pf2e/foundry/client/canvas/placeables/token.mjs"
+import type Token from "@7h3laughingman/foundry-types/client/canvas/placeables/token.mjs"
+import type { TokenPF2e } from "@7h3laughingman/pf2e-types"
 import MODULE from "src"
 import { MODULE_ID } from "src/constants"
 import { translate } from "src/utils"

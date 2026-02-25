@@ -1,5 +1,5 @@
-import type { DataFieldValidationOptions } from "foundry-pf2e/foundry/common/data/_module.mjs"
-import type { CleanFieldOptions } from "foundry-pf2e/foundry/common/data/fields.mjs"
+import type { DataFieldValidationOptions } from "@7h3laughingman/foundry-types/common/data/_module.mjs"
+import type { CleanFieldOptions } from "@7h3laughingman/foundry-types/common/data/fields.mjs"
 
 type RuleValue = string | number
 

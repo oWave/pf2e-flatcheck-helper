@@ -38,8 +38,8 @@
 </form>
 
 <script lang="ts">
-import type { CombatantPF2e, EncounterPF2e } from "foundry-pf2e"
-import type ApplicationV2 from "foundry-pf2e/foundry/client/applications/api/application.mjs"
+import type ApplicationV2 from "@7h3laughingman/foundry-types/client/applications/api/application.mjs"
+import type { CombatantPF2e, EncounterPF2e } from "@7h3laughingman/pf2e-types"
 import { imgPropsForToken } from "src/svelte/utils"
 import { translate } from "src/utils"
 import { applyDelay, createMessage } from "../delay"
