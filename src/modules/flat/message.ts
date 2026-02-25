@@ -446,11 +446,11 @@ function addRollToTracker(msg: ChatMessagePF2e, check: MsgFlagCheckData | undefi
 		type: "flat-check",
 		isPrivate: !!check.secret,
 		isReroll,
-		actor: msg.actor?.uuid,
+		actor: msg.actor?.id,
 		encounter: game.combat?.id,
 		session: tool.settings?.session,
 		outcome,
-		modifier: check.type,
+		modifier: "flat",
 	})
 }
 
