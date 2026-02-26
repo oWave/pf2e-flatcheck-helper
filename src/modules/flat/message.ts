@@ -421,6 +421,8 @@ async function addRollToTracker(msg: ChatMessagePF2e, check: MsgFlagCheckData | 
 	const toolBelt = game.toolbelt
 	if (!toolBelt || !check) return
 
+	if (!game.settings.get("pf2e-toolbelt", "rollTracker.enabled")) return
+
 	const outcome = check.finalDc == null ? undefined : roll >= check.finalDc ? "success" : "failure"
 
 	const currentData = game.settings.get("pf2e-toolbelt", "rollTracker.userRolls").slice()
