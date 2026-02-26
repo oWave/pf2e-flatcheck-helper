@@ -1,4 +1,4 @@
-import type { CombatantPF2e } from "foundry-pf2e"
+import type { CombatantPF2e } from "@7h3laughingman/pf2e-types"
 import MODULE from "src/index"
 import { parseHTML, translate } from "src/utils"
 import { handleRequest } from "./delay"

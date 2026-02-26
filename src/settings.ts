@@ -1,4 +1,4 @@
-import type SettingsConfig from "foundry-pf2e/foundry/client/applications/settings/config.mjs"
+import type SettingsConfig from "@7h3laughingman/foundry-types/client/applications/settings/config.mjs"
 import MODULE from "src"
 import { MODULE_ID } from "./constants"
 import { FlatMessageConfigApplication } from "./modules/flat/message-config"

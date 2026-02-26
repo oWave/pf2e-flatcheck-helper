@@ -1,4 +1,4 @@
-import type { EffectPF2e, SpellPF2e, TokenDocumentPF2e } from "foundry-pf2e"
+import type { EffectPF2e, SpellPF2e, TokenDocumentPF2e } from "@7h3laughingman/pf2e-types"
 import { MODULE_ID } from "src/constants"
 import { translate } from "src/utils"
 import { type EmanationRequestData, extractFlagData } from "./emanation"

@@ -1,5 +1,5 @@
-import type { ChatMessagePF2e, ChatMessageSourcePF2e, SpellPF2e } from "foundry-pf2e"
-import type { RollJSON } from "foundry-pf2e/foundry/client/dice/roll.mjs"
+import type { RollJSON } from "@7h3laughingman/foundry-types/client/dice/roll.mjs"
+import type { ChatMessagePF2e, ChatMessageSourcePF2e, SpellPF2e } from "@7h3laughingman/pf2e-types"
 import { MODULE_ID } from "src/constants"
 import MODULE from "src/index"
 import { parseHTML, SYSTEM, translate } from "src/utils"
@@ -391,8 +391,7 @@ async function autoRoll(msg: ChatMessagePF2e) {
 			userId: game.user.id,
 			rolls: JSON.stringify([roll])
 		})
-
-		addRollToTracker(msg, check, roll.total, !!check?.reroll)
+    addRollToTracker(msg, check, roll.total, !!check?.reroll)
 	}
 
 	return updates

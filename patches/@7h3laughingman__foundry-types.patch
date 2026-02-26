@@ -1,0 +1,11 @@
+diff --git a/src/client/canvas/containers/elements/precise-text.d.mts b/src/client/canvas/containers/elements/precise-text.d.mts
+index 487d00ff28d346eaa990f3346fb51e81808f53c4..1ab20b37ae88b36518dbae725a80b4abe6f091f1 100644
+--- a/src/client/canvas/containers/elements/precise-text.d.mts
++++ b/src/client/canvas/containers/elements/precise-text.d.mts
+@@ -14,5 +14,5 @@ export default class PreciseText extends PIXI.Text {
+      * @param options.anchor A text anchor point from CONST.TEXT_ANCHOR_POINTS
+      * @returns The prepared TextStyle
+      */
+-    static getTextStyle({ anchor, ...options }?: { anchor?: number; options?: Partial<PIXI.ITextStyle> }): PIXI.TextStyle;
++    static getTextStyle(opts?: { anchor?: number } & Partial<PIXI.ITextStyle>): PIXI.TextStyle;
+ }

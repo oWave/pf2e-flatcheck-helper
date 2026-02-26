@@ -2,8 +2,8 @@ import type {
 	ApplicationConfiguration,
 	ApplicationRenderContext,
 	ApplicationRenderOptions,
-} from "foundry-pf2e/foundry/client/applications/_types.mjs"
-import type ApplicationV2 from "foundry-pf2e/foundry/client/applications/api/application.mjs"
+} from "@7h3laughingman/foundry-types/client/applications/_types.mjs"
+import type ApplicationV2 from "@7h3laughingman/foundry-types/client/applications/api/application.mjs"
 import * as svelte from "svelte"
 
 export function SvelteMixin<TBase extends AbstractConstructorOf<ApplicationV2>>(

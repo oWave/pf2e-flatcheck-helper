@@ -1,4 +1,4 @@
-import type { ActorPF2e } from "foundry-pf2e"
+import type { ActorPF2e } from "@7h3laughingman/pf2e-types"
 import * as R from "remeda"
 import MODULE from "src"
 import { type VisibilityLevels, VisiblityLevelPriorities } from "../constants"

@@ -1,4 +1,4 @@
-import type { EncounterPF2e, RolledCombatant } from "foundry-pf2e"
+import type { EncounterPF2e, RolledCombatant } from "@7h3laughingman/pf2e-types"
 import { QUERIES } from "src/constants"
 import { SYSTEM, translate } from "src/utils"
 import { nextCombatant, setInitiativeFromDrop } from "./utils"

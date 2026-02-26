@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"module": "esnext",
+		"target": "esnext",
+		"checkJs": true,
+		"moduleResolution": "node",
+		"types": [
+			"@league-of-foundry-developers/foundry-vtt-types",
+			"@7h3laughingman/pf2e-types"
+		]
+	},
+	"include": [
+		"**/*.js",
+		"type-definitions/**/*.d.ts"
+	],
+	"exclude": [
+		"node_modules"
+	]
+}

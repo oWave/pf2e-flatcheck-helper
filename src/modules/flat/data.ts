@@ -1,4 +1,4 @@
-import type { ActorPF2e, ChatMessagePF2e, TokenDocumentPF2e } from "foundry-pf2e"
+import type { ActorPF2e, ChatMessagePF2e, TokenDocumentPF2e } from "@7h3laughingman/pf2e-types"
 import * as R from "remeda"
 import { SYSTEM } from "src/utils"
 import type { MsgFlagData } from "./message"

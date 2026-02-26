@@ -1,6 +1,6 @@
-import type { Token } from "foundry-pf2e/foundry/client/canvas/placeables/_module.mjs"
-import type AmbientLight from "foundry-pf2e/foundry/client/canvas/placeables/light.mjs"
-import type PointLightSource from "foundry-pf2e/foundry/client/canvas/sources/point-light-source.mjs"
+import type { Token } from "@7h3laughingman/foundry-types/client/canvas/placeables/_module.mjs"
+import type AmbientLight from "@7h3laughingman/foundry-types/client/canvas/placeables/light.mjs"
+import type PointLightSource from "@7h3laughingman/foundry-types/client/canvas/sources/point-light-source.mjs"
 
 export const Grid = class<T> {
 	#elements: Array<T>
