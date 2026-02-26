@@ -3,6 +3,15 @@
 
 ## [Unreleased]
 
+## [0.20.1] - 2026-02-26
+### Added
+- PF2e Toolbelt Roll Tracker Integration (@fotoply)
+
+### Fixed
+- Dice So Nice Integration (@fotoply)
+  - Dice showing as ghost/?
+  - Dice using the local settings instead of rolling users
+
 ## [0.20.0] - 2026-02-07
 ### Added
 - SF2e compatibility
@@ -187,7 +196,8 @@ Foundry v13 release
 ### Fixed
 - Flat checks showing on damage/healing received messages
 
-[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.20.0...HEAD
+[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.20.1...HEAD
+[0.20.1]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.20.0...v0.20.1
 [0.20.0]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.19.4...v0.20.0
 [0.19.4]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.19.3...v0.19.4
 [0.19.3]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.19.2...v0.19.3
