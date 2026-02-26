@@ -68,6 +68,14 @@
           "disabled": "Wyłączone"
         }
       },
+      "flat-check-target-marker-display": {
+        "name": "Pokaż płaski test na tokenie z",
+        "choices": {
+          "all": "Zarys i tekst",
+          "textOnly": "Tylko tekst",
+          "outlineOnly": "Tylko zarys"
+        }
+      },
       "light-level-vis": {
         "name": "Wizualizacja poziomów oświetlenia",
         "hint": "Ustawienie użytkownika: Przytrzymaj alt, aby podświetlić kwadraty bez światła/przyciemnione."
