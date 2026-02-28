@@ -1,4 +1,3 @@
-import type { RollJSON } from "@7h3laughingman/foundry-types/client/dice/roll.mjs"
 import type { ChatMessagePF2e, ChatMessageSourcePF2e, SpellPF2e } from "@7h3laughingman/pf2e-types"
 import { MODULE_ID } from "src/constants"
 import MODULE from "src/index"
@@ -373,9 +372,9 @@ async function autoRoll(msg: ChatMessagePF2e) {
 		emitDiceSoNiceRoll({
 			msgId: msg.id,
 			userId: game.user.id,
-			rolls: JSON.stringify([roll])
+			rolls: JSON.stringify([roll]),
 		})
-    await addRollToTracker(msg, check, roll.total, !!check?.reroll)
+		await addRollToTracker(msg, check, roll.total, !!check?.reroll)
 	}
 
 	return updates
@@ -416,7 +415,12 @@ interface SocketData {
 	rolls: string
 }
 
-async function addRollToTracker(msg: ChatMessagePF2e, check: MsgFlagCheckData | undefined, roll: number, isReroll: boolean) {
+async function addRollToTracker(
+	msg: ChatMessagePF2e,
+	check: MsgFlagCheckData | undefined,
+	roll: number,
+	isReroll: boolean,
+) {
 	// @ts-expect-error
 	const toolBelt = game.toolbelt
 	if (!toolBelt || !check) return
@@ -425,7 +429,7 @@ async function addRollToTracker(msg: ChatMessagePF2e, check: MsgFlagCheckData | 
 
 	const outcome = check.finalDc == null ? undefined : roll >= check.finalDc ? "success" : "failure"
 
-	const currentData = game.settings.get("pf2e-toolbelt", "rollTracker.userRolls").slice()
+	const currentData = (game.settings.get("pf2e-toolbelt", "rollTracker.userRolls") as any[]).slice()
 
 	currentData.push({
 		value: roll,
@@ -460,7 +464,9 @@ function emitDiceSoNiceRoll(data: SocketData) {
 async function handleFlatButtonClick(msg: ChatMessagePF2e, key: string, dc: number) {
 	const roll = await new Roll("d20").roll()
 	const oldRoll = foundry.utils.getProperty(msg, `flags.${MODULE_ID}.flatchecks.${key}.roll`)
-	const check = foundry.utils.getProperty(msg, `flags.${MODULE_ID}.flatchecks.${key}`) as MsgFlagCheckData | undefined
+	const check = foundry.utils.getProperty(msg, `flags.${MODULE_ID}.flatchecks.${key}`) as
+		| MsgFlagCheckData
+		| undefined
 
 	const updates: Record<string, any> = {}
 
