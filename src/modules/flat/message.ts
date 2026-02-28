@@ -50,22 +50,6 @@ interface MsgFlagTargetCountData {
 	targetCount: number
 }
 
-type RollTrackerTool = {
-	addRoll: (roll: {
-		value: number
-		time: number
-		type: "flat-check"
-		isPrivate: boolean
-		isReroll: boolean
-		actor?: string
-		encounter?: string
-		session?: string
-		outcome?: "success" | "failure"
-		modifier?: string
-	}) => void
-	settings?: { session?: string }
-}
-
 export type MsgFlagData = Record<string, MsgFlagCheckData> & {
 	target?: MsgFlagCheckData | MsgFlagTargetCountData
 }
@@ -391,7 +375,7 @@ async function autoRoll(msg: ChatMessagePF2e) {
 			userId: game.user.id,
 			rolls: JSON.stringify([roll])
 		})
-    addRollToTracker(msg, check, roll.total, !!check?.reroll)
+    await addRollToTracker(msg, check, roll.total, !!check?.reroll)
 	}
 
 	return updates
@@ -432,14 +416,18 @@ interface SocketData {
 	rolls: string
 }
 
-function addRollToTracker(msg: ChatMessagePF2e, check: MsgFlagCheckData | undefined, roll: number, isReroll: boolean) {
+async function addRollToTracker(msg: ChatMessagePF2e, check: MsgFlagCheckData | undefined, roll: number, isReroll: boolean) {
 	// @ts-expect-error
-	const tool = game.toolbelt?.dev?.tools?.rollTracker as RollTrackerTool | undefined
-	if (!tool || !check) return
+	const toolBelt = game.toolbelt
+	if (!toolBelt || !check) return
+
+	if (!game.settings.get("pf2e-toolbelt", "rollTracker.enabled")) return
 
 	const outcome = check.finalDc == null ? undefined : roll >= check.finalDc ? "success" : "failure"
 
-	tool.addRoll({
+	const currentData = game.settings.get("pf2e-toolbelt", "rollTracker.userRolls").slice()
+
+	currentData.push({
 		value: roll,
 		time: Date.now(),
 		type: "flat-check",
@@ -447,10 +435,12 @@ function addRollToTracker(msg: ChatMessagePF2e, check: MsgFlagCheckData | undefi
 		isReroll,
 		actor: msg.actor?.id,
 		encounter: game.combat?.id,
-		session: tool.settings?.session,
+		session: game.settings.get("pf2e-toolbelt", "rollTracker.session"),
 		outcome,
 		modifier: "flat",
 	})
+
+	await game.settings.set("pf2e-toolbelt", "rollTracker.userRolls", currentData)
 }
 
 function emitDiceSoNiceRoll(data: SocketData) {
@@ -531,7 +521,7 @@ async function handleFlatButtonClick(msg: ChatMessagePF2e, key: string, dc: numb
 			rolls: JSON.stringify([roll.toJSON()]),
 		})
 
-		addRollToTracker(msg, check, roll.total, !!oldRoll)
+		await addRollToTracker(msg, check, roll.total, !!oldRoll)
 
 		await msg.update(updates)
 
