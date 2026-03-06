@@ -68,6 +68,14 @@
           "disabled": "Désactivé"
         }
       },
+      "flat-check-target-marker-display": {
+        "name": "Afficher sur le jeton le test nu avec",
+        "choices": {
+          "all": "contour et texte",
+          "textOnly": "seulement le texte",
+          "outlineOnly": "seulement le contour"
+        }
+      },
       "light-level-vis": {
         "name": "Visualisation du niveau de lumière",
         "hint": "Paramètre utilisateur : maintenez la touche Alt enfoncée pour mettre en surbrillance les carrés sans lumière/faiblement éclairés."
