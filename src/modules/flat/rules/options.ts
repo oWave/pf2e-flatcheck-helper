@@ -68,7 +68,7 @@ function lightLevelOptions({
 	}
 
 	if (self) options.push(lightLevelForToken("self", self))
-	if (target) options.push(lightLevelForToken("self", target))
+	if (target) options.push(lightLevelForToken("target", target))
 	return options.flat()
 }
 
