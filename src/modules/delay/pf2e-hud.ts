@@ -1,4 +1,4 @@
-import type { EncounterPF2e } from "foundry-pf2e"
+import type { EncounterPF2e } from "@7h3laughingman/pf2e-types"
 import MODULE from "src/index"
 import { parseHTML, translate } from "src/utils"
 import { handleRequest } from "./delay"
@@ -14,7 +14,7 @@ export function onRenderPF2eHudTracker(app, tracker: HTMLElement) {
 		const id = el.dataset.combatantId
 		if (!id) continue
 		const c = combat.combatants.get(id)
-		if (!c || !c.isOwner || c.initiative == null) continue
+		if (!c?.isOwner || c.initiative == null) continue
 
 		let delayElement: HTMLElement | null = null
 		if (game.user.isGM) delayElement = el.querySelector<HTMLLinkElement>("div.extras a.delay")

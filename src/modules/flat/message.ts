@@ -1,8 +1,7 @@
-import type { ChatMessagePF2e, ChatMessageSourcePF2e, SpellPF2e } from "foundry-pf2e"
-import type { RollJSON } from "foundry-pf2e/foundry/client/dice/roll.mjs"
+import type { ChatMessagePF2e, ChatMessageSourcePF2e, SpellPF2e } from "@7h3laughingman/pf2e-types"
 import { MODULE_ID } from "src/constants"
 import MODULE from "src/index"
-import { parseHTML, translate } from "src/utils"
+import { parseHTML, SYSTEM, translate } from "src/utils"
 import { BaseModule } from "../base"
 import { ActorTypesWithPerception } from "./constants"
 import { collectFlatChecks, type FlatCheckData } from "./data"
@@ -21,7 +20,6 @@ export class MessageFlatCheckModule extends BaseModule {
 		// this.registerHook("createChatMessage", onCreateChatMessage)
 		this.registerWrapper("ChatMessage.prototype._preCreate", messagePreCreateWrapper, "WRAPPER")
 		this.registerWrapper("ChatMessage.prototype.renderHTML", messageRenderHTMLWrapper, "WRAPPER")
-		this.registerSocket("flat-dice", handleDiceRollSocket)
 		this.registerChatAction("fc-reveal-hidden-message", handleRevealClick)
 
 		tokenExposureCache.enable()
@@ -90,7 +88,8 @@ async function renderButtons(msg: ChatMessagePF2e, html: HTMLElement) {
 		baseDc: number | null
 		finalDc: number | null
 		reasons?: string[]
-		conditionAdjustment?: TreatAsAdjustment
+		conditionAdjustments?: TreatAsAdjustment[]
+		warning?: string
 		dcAdjustments?: string
 		rolls: { class: string; value: number }[]
 		rerollIcon?: string
@@ -147,7 +146,8 @@ async function renderButtons(msg: ChatMessagePF2e, html: HTMLElement) {
 			dcAdjustments: check.dcAdjustments?.map((a) => `${a.label}: ${a.value}`).join("<br>"),
 			type: check.type,
 			reasons: check.origin?.reasons,
-			conditionAdjustment: check.conditionAdjustment,
+			conditionAdjustments: check.conditionAdjustments,
+			warning: check.origin?.warning,
 			origin: check.origin,
 			rolls: rollData,
 			rerollIcon: check.reroll?.keep ? REROLL_ICONS[check.reroll?.keep] : undefined,
@@ -267,7 +267,7 @@ function renderHiddenRollMessage(msg: ChatMessagePF2e, html: HTMLElement) {
 }
 
 function shouldShowFlatChecks(msg: ChatMessagePF2e): boolean {
-	const contextType = msg.flags?.pf2e?.context?.type
+	const contextType = msg.flags?.[SYSTEM.id]?.context?.type
 	const blacklist: (typeof contextType)[] = [
 		"damage-roll",
 		"damage-taken",
@@ -281,12 +281,13 @@ function shouldShowFlatChecks(msg: ChatMessagePF2e): boolean {
 	// If the spell has an attack roll, don't show flat checks on the spell card, but only on the attack roll itself
 	if (contextType === "spell-cast") return (msg.item as SpellPF2e).isAttack === msg.isRoll
 
+	const context = msg.flags?.[SYSTEM.id]?.context
 	// If message is a roll, only show flat checks if it has a DC
-	if (msg.isRoll) return !!msg.flags?.pf2e?.context && "dc" in msg.flags.pf2e.context
+	if (msg.isRoll) return !!context && "dc" in context
 
 	if (!msg.item) return false
 
-	return msg.item.isOfType("action", "consumable", "equipment", "feat", "melee", "weapon")
+	return msg.item.isOfType("action", "consumable", "equipment", "feat", "melee", "spell", "weapon")
 }
 
 export async function preCreateMessage(msg: ChatMessagePF2e) {
@@ -306,7 +307,7 @@ export async function preCreateMessage(msg: ChatMessagePF2e) {
 		})
 
 		if (MODULE.settings.flatAutoRoll && !msg.isReroll) {
-			const rollUpdates = autoRoll(msg)
+			const rollUpdates = await autoRoll(msg)
 			msg.updateSource(rollUpdates)
 		}
 
@@ -357,60 +358,28 @@ export async function preCreateMessage(msg: ChatMessagePF2e) {
 	}
 }
 
-function autoRoll(msg: ChatMessagePF2e) {
+async function autoRoll(msg: ChatMessagePF2e) {
 	const data = msg.flags[MODULE_ID]?.flatchecks as MsgFlagData | undefined
 	if (!data) return
 	const updates: Record<string, number> = {}
-	const rolls: RollJSON[] = []
 
 	for (const [key, check] of Object.entries(data)) {
 		if (!("finalDc" in check)) continue
 		if (check.finalDc == null || check.finalDc <= 1 || check.finalDc >= 20) continue
 
-		const roll = Math.floor(Math.random() * 20) + 1
-		rolls.push(fakeRoll(roll))
-		updates[`flags.${MODULE_ID}.flatchecks.${key}.roll`] = roll
-	}
+		const roll = await new Roll("1d20").roll()
+		msg.rolls.push(roll)
+		updates[`flags.${MODULE_ID}.flatchecks.${key}.roll`] = roll.total
 
-	if (rolls.length)
-		emitRollSocket({
+		emitDiceSoNiceRoll({
 			msgId: msg.id,
 			userId: game.user.id,
-			rolls: JSON.stringify(rolls),
-			sound: false,
+			rolls: JSON.stringify([roll]),
 		})
+		await addRollToTracker(msg, check, roll.total, !!check?.reroll)
+	}
 
 	return updates
-}
-
-function fakeRoll(total: number) {
-	return {
-		class: "Roll",
-		options: {},
-		dice: [],
-		formula: "1d20",
-		terms: [
-			{
-				class: "Die",
-				options: {
-					flavor: null,
-				},
-				evaluated: true,
-				number: 1,
-				faces: 20,
-				modifiers: [],
-				results: [
-					{
-						result: total,
-						active: true,
-					},
-				],
-				method: undefined,
-			},
-		],
-		total: total,
-		evaluated: true,
-	}
 }
 
 function passedAllFlatChecks(msg: ChatMessagePF2e, passIfNoChecks = true) {
@@ -446,37 +415,60 @@ interface SocketData {
 	msgId: string
 	userId: string
 	rolls: string
-	sound?: boolean
 }
 
-function emitRollSocket(data: SocketData) {
-	MODULE.socketHandler.emit("flat-dice", data)
-}
-
-function handleDiceRollSocket(data: SocketData) {
+async function addRollToTracker(
+	msg: ChatMessagePF2e,
+	check: MsgFlagCheckData | undefined,
+	roll: number,
+	isReroll: boolean,
+) {
 	// @ts-expect-error
-	if (!game.dice3d && data.sound) {
-		game.audio.play(CONFIG.sounds.dice, { context: game.audio.interface })
-		return
-	}
+	const toolBelt = game.toolbelt
+	if (!toolBelt || !check) return
 
+	if (!game.settings.get("pf2e-toolbelt", "rollTracker.enabled")) return
+
+	const outcome = check.finalDc == null ? undefined : roll >= check.finalDc ? "success" : "failure"
+
+	const currentData = (game.settings.get("pf2e-toolbelt", "rollTracker.userRolls") as any[]).slice()
+
+	currentData.push({
+		value: roll,
+		time: Date.now(),
+		type: "flat-check",
+		isPrivate: !!check.secret,
+		isReroll,
+		actor: msg.actor?.id,
+		encounter: game.combat?.id,
+		session: game.settings.get("pf2e-toolbelt", "rollTracker.session"),
+		outcome,
+		modifier: "flat",
+	})
+
+	await game.settings.set("pf2e-toolbelt", "rollTracker.userRolls", currentData)
+}
+
+function emitDiceSoNiceRoll(data: SocketData) {
 	// @ts-expect-error
 	if (!game.dice3d) return
 
-	const msg = game.messages.get(data.msgId)
 	const user = game.users.get(data.userId)
-	if (!user || !msg) return
+	if (!user) return
 
 	for (const rollJson of JSON.parse(data.rolls)) {
 		const roll = Roll.fromData(rollJson)
 		// @ts-expect-error
-		game.dice3d.showForRoll(roll, user, false, null, false, data.msgId)
+		game.dice3d.showForRoll(roll, user, true, null, false, data.msgId)
 	}
 }
 
 async function handleFlatButtonClick(msg: ChatMessagePF2e, key: string, dc: number) {
 	const roll = await new Roll("d20").roll()
 	const oldRoll = foundry.utils.getProperty(msg, `flags.${MODULE_ID}.flatchecks.${key}.roll`)
+	const check = foundry.utils.getProperty(msg, `flags.${MODULE_ID}.flatchecks.${key}`) as
+		| MsgFlagCheckData
+		| undefined
 
 	const updates: Record<string, any> = {}
 
@@ -529,11 +521,15 @@ async function handleFlatButtonClick(msg: ChatMessagePF2e, key: string, dc: numb
 	}
 
 	if (Object.keys(updates).length > 0) {
-		emitRollSocket({
+		// Add the roll to the message to prevent the PF2e system from marking it as a blind roll...
+		msg.rolls.push(roll)
+		emitDiceSoNiceRoll({
 			msgId: msg.id,
 			userId: game.user.id,
 			rolls: JSON.stringify([roll.toJSON()]),
 		})
+
+		await addRollToTracker(msg, check, roll.total, !!oldRoll)
 
 		await msg.update(updates)
 

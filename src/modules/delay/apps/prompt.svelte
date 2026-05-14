@@ -1,14 +1,14 @@
 <form {onsubmit} class="p-2">
 	<div class="flex flex-col items-center">
 		<strong>{translate("delay.dialog.delay-after")}</strong>
-		<div class="py-3 overflow-y-auto overflow-x-visible max-h-[500px]">
+		<div class="py-3 overflow-y-auto overflow-x-visible max-h-125">
 			{#each turns as t,i}
 				{@const disabled=disabledTurns.includes(i)}
 				{@const isSelf=t===combatant}
 				{@const isSelected=t.id === selected}
 				<div
 				  class={[
-						"flex items-center h-[50px] pl-1 pr-2 border",
+						"flex items-center h-12.5 pl-1 pr-2 border",
 						disabled ? "cursor-not-allowed rounded-none" : "cursor-pointer rounded-sm",
 						isSelf ? "dark:bg-green-300/20 bg-green-600/20 border-green-400" :
 						disabled ? "dark:bg-white/10 bg-black/10 border-transparent" :
@@ -17,7 +17,7 @@
 					onclick={() => { if (!disabled) selected = t.id }}
 				>
 					<img class="h-full p-0.5" {...imgPropsForToken(t.token!.object!)} inert>
-					<p class="grow overflow-hidden text-ellipsis max-w-[20ch] max-h-[48px] ml-0.5" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">{displayName(t)}</p>
+					<p class="grow overflow-hidden text-ellipsis max-w-[20ch] max-h-12 ml-0.5" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">{displayName(t)}</p>
 					<p class="ml-3">{t.initiative}</p>
 				</div>
 				{:else}
@@ -38,8 +38,8 @@
 </form>
 
 <script lang="ts">
-import type { CombatantPF2e } from "foundry-pf2e"
-import type ApplicationV2 from "foundry-pf2e/foundry/client/applications/api/application.mjs"
+import type ApplicationV2 from "@7h3laughingman/foundry-types/client/applications/api/application.mjs"
+import type { CombatantPF2e, EncounterPF2e } from "@7h3laughingman/pf2e-types"
 import { imgPropsForToken } from "src/svelte/utils"
 import { translate } from "src/utils"
 import { applyDelay, createMessage } from "../delay"
@@ -49,13 +49,26 @@ interface Props {
 	combatant: CombatantPF2e
 	shell: ApplicationV2
 }
+
+function hasCombat(c: CombatantPF2e): c is CombatantPF2e<EncounterPF2e> {
+	return c.parent != null
+}
+
 const { combatant, shell }: Props = $props()
-if (!combatant.parent) throw new Error("Combatant has no combat!")
+if (!hasCombat(combatant)) throw new Error("Combatant has no combat!")
 const combat = combatant.parent
 const turns = combat.turns.filter((t) => t.initiative !== null)
-const currentTurn = turns.findIndex((t) => t === combatant)
+const currentTurn = turns.indexOf(combatant)
 const disabledTurns = [currentTurn]
 if (currentTurn > 0) disabledTurns.push(currentTurn - 1)
+
+// Disable any next up defeated combatants, since they would be skipped before the init updates
+if (combat.settings.skipDefeated) {
+	for (let i = currentTurn + 1; i < turns.length; i++) {
+		if (turns[i].defeated) disabledTurns.push(i)
+		else break
+	}
+}
 
 let loading = $state(false)
 

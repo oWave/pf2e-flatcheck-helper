@@ -1,4 +1,4 @@
-import type { CombatantPF2e } from "foundry-pf2e"
+import type { CombatantPF2e } from "@7h3laughingman/pf2e-types"
 import MODULE from "src/index"
 import { parseHTML, translate } from "src/utils"
 import { handleRequest } from "./delay"
@@ -7,7 +7,7 @@ import { isDelaying } from "./utils"
 export function onRenderCombatTracker(_tracker, html: HTMLElement, _data) {
 	if (!MODULE.settings.showInCombatTracker) return
 	const combat = game.combat
-	if (!combat || !combat.started) return
+	if (!combat?.started) return
 
 	const combatantElements = html.querySelectorAll<HTMLElement>("li.combatant")
 	for (const el of combatantElements) {
@@ -39,17 +39,18 @@ function drawButton(
 			: translate("delay.delaying")
 		const cls = MODULE.settings.allowReturn ? "initiative-return" : "initiative-delay-indicator"
 		buttonHTML = parseHTML(`
-      <div class="initiative-return" class="${cls}" title="${title}">
+      <div class="${cls}" title="${title}">
         <img class="delay-indicator" src="icons/svg/clockwork.svg"></img>
         <i class="fa-solid fa-play"></i>
       </div>
     `)
 	}
 
-	buttonHTML.firstElementChild?.addEventListener("click", (e) => {
-		e.stopPropagation()
-		handleRequest({ combatant, type })
-	})
+	if (MODULE.settings.allowReturn)
+		buttonHTML.firstElementChild?.addEventListener("click", (e) => {
+			e.stopPropagation()
+			handleRequest({ combatant, type })
+		})
 
 	const initiativeDiv = combatantHtml.querySelector<HTMLElement>(".token-initiative")
 	if (initiativeDiv) initiativeDiv.style.display = "none"

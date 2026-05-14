@@ -26,7 +26,8 @@
 }
 
 .initiative-delay,
-.initiative-return {
+.initiative-return,
+.initiative-delay-indicator {
 	height: var(--input-height);
 	width: var(--input-height);
 
@@ -40,21 +41,23 @@
 	border-radius: 4px;
 
 	cursor: pointer;
+
+	.fa-play {
+		display: none;
+	}
+	.delay-indicator {
+		animation: rotating 4s linear infinite;
+		padding: 4px;
+	}
 }
 
-.initiative-return .fa-play {
-	display: none;
-}
-.initiative-return .delay-indicator {
-	animation: rotating 4s linear infinite;
-	padding: 4px;
-}
-
-.initiative-return:hover .fa-play {
-	display: unset !important;
-}
-.initiative-return:hover .delay-indicator {
-	display: none !important;
+.initiative-return {
+	&:hover .fa-play {
+		display: unset !important;
+	}
+	&:hover .delay-indicator {
+		display: none !important;
+	}
 }
 
 #pf2e-hud-tracker {
@@ -99,8 +102,10 @@
 	flex-direction: column;
 
 	div.fc-check {
-		display: flex;
+		display: grid;
 		align-items: center;
+		grid-template-columns: 50% 20% 2fr auto;
+
 		font-size: var(--font-size-14);
 		font-family: var(--font-primary);
 		background: rgba(0, 0, 0, 0.1);
@@ -108,10 +113,6 @@
 		border-radius: 3px;
 		margin: 5px 0 0 0;
 		line-height: 28px;
-
-		> * {
-			flex: 0 0 0px;
-		}
 
 		> span {
 			display: flex;
@@ -123,23 +124,41 @@
 				border-right: 1px solid #999;
 			}
 		}
-		.fc-label {
-			min-width: 50%;
-			line-height: 1;
-			display: flex;
-			flex-direction: column;
-			.fc-description {
-				font-size: var(--font-size-12);
-				opacity: 0.9;
+
+		.fc-label-container {
+			display: grid;
+			align-items: center;
+			grid-template-columns: 1fr auto 1fr;
+
+			.fc-label {
+				grid-column: 2;
+
+				line-height: 1;
+				display: flex;
+				flex-direction: column;
+				.fc-description {
+					font-size: var(--font-size-12);
+					opacity: 0.9;
+					text-align: center;
+				}
+
+				.adjusted {
+					text-decoration: underline dotted;
+				}
 			}
 
-			.adjusted {
-				text-decoration: underline dotted;
+			.fc-warning {
+				grid-column: 3;
+				justify-self: flex-end;
+				cursor: help;
+
+				i {
+					margin: 0 4px;
+				}
 			}
 		}
-		.fc-dc {
-			min-width: 20%;
 
+		.fc-dc {
 			.fc-dcs {
 				margin-left: 2px;
 				display: flex;
@@ -166,7 +185,7 @@
 			/* background: rgba(0, 0, 0, 0.1); */
 			font-size: var(--font-size-20);
 			font-weight: bold;
-			flex-grow: 1;
+			flex-basis: 20%;
 
 			.fc-rolls {
 				flex-grow: 1;
@@ -203,8 +222,8 @@
 			}
 		}
 		button {
-			flex-basis: 10%;
-			margin: 0 !important;
+			padding: 8px;
+			margin: 0;
 			border: unset;
 			border-top-left-radius: 0;
 			border-bottom-left-radius: 0;

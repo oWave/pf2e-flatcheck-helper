@@ -1,6 +1,10 @@
 export function localizeType(type: string) {
 	const capitalized = type.capitalize()
-	for (const key of [`PF2E.ConditionType${capitalized}`, `PF2E.Trait${capitalized}`]) {
+	for (const key of [
+		`PF2E.ConditionType${capitalized}`,
+		`PF2E.Trait${capitalized}`,
+		`pf2e-fc.common.${type}`,
+	]) {
 		const t = tryTranslate(key)
 		if (t) return t
 	}

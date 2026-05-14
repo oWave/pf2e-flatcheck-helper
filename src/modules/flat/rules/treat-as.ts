@@ -1,4 +1,4 @@
-import type { ModelPropFromDataField } from "foundry-pf2e/foundry/common/data/fields.mjs"
+import type { ModelPropFromDataField } from "@7h3laughingman/foundry-types/common/data/fields.mjs"
 
 const fields = foundry.data.fields
 
@@ -31,7 +31,7 @@ type SchemaProps = {
 	[k in keyof SchemaType]: ModelPropFromDataField<SchemaType[k]>
 }
 
-const conditionPriorities = {
+export const TreatAsConditionPriorities = {
 	observed: 0,
 	concealed: 1,
 	hidden: 2,
@@ -69,7 +69,7 @@ export function buildTreatAsRuleElement() {
 		}
 
 		get tiebreakPriority() {
-			const p = conditionPriorities[this.treatAs]
+			const p = TreatAsConditionPriorities[this.treatAs]
 			if (this.mode === "downgrade") return -p
 			return p
 		}

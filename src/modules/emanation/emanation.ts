@@ -1,4 +1,9 @@
-import type { ChatMessagePF2e, ItemPF2e, SpellPF2e, SpellSheetPF2e } from "foundry-pf2e"
+import type {
+	ChatMessagePF2e,
+	ItemPF2e,
+	SpellPF2e,
+	SpellSheetPF2e,
+} from "@7h3laughingman/pf2e-types"
 import { MODULE_ID } from "src/constants"
 import MODULE from "src/index"
 import { parseHTML, translate } from "src/utils"
@@ -83,7 +88,7 @@ async function extractEffects(item: SpellPF2e) {
 async function onChatMessage(msg: ChatMessagePF2e, html: HTMLElement) {
 	if (!MODULE.settings.emanationAutomation) return
 	if (!game.user.isGM) return
-	if (!msg.item || !msg.item.isOfType("spell")) return
+	if (!msg.item?.isOfType("spell")) return
 	const spell = msg.item
 	const range = spell.system.area?.type === "emanation" ? spell.system.area?.value : null
 	const token = msg.actor?.getActiveTokens().at(0)

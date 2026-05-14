@@ -1,5 +1,6 @@
 import "./index.ts"
-import "./module.css"
+import "./main.css"
+import "./svelte/tailwind.css"
 
 if (!import.meta.env.DEV) {
 	const link = document.createElement("link")

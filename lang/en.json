@@ -68,6 +68,15 @@
 					"disabled": "Disabled"
 				}
 			},
+			"flat-check-target-marker-display": {
+				"name": "Show on token flat check with",
+				"hint": "",
+				"choices": {
+					"all": "Outline and Text",
+					"textOnly": "Text Only",
+					"outlineOnly": "Outline Only"
+				}
+			},
 			"light-level-vis": {
 				"name": "Light Level Visualization",
 				"hint": "User setting: Hold alt to highlight squares with no/dim light."
@@ -216,6 +225,9 @@
 				"custom": "Custom",
 				"dc": "DC",
 				"title": "More Flat Checks"
+			},
+			"warning": {
+				"differentLevels": "Origin and Target are on different scene levels. Light level checks are unavailable."
 			}
 		},
 		"life-link": {
@@ -252,6 +264,9 @@
 			},
 			"message-config-check-types": "Check Types",
 			"emanation-area": "{origin}, {area} ft"
+		},
+		"common": {
+			"unknown": "Unknown"
 		}
 	},
 	"PF2E": {

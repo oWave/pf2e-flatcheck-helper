@@ -15,30 +15,22 @@
 	"packageManager": "pnpm@10.2.0+sha512.0d27364e0139c6aadeed65ada153135e0ca96c8da42123bd50047f961339dc7a758fc2e944b428f52be570d1bd3372455c1c65fa2e7aa0bfbf931190f9552001",
 	"dependencies": {
 		"@foundryvtt/foundryvtt-cli": "^1.1.0",
-		"@sveltejs/vite-plugin-svelte": "^6.2.1",
-		"@tailwindcss/vite": "^4.1.14",
-		"keep-a-changelog": "^2.7.1",
-		"remeda": "^2.32.0",
-		"svelte": "^5.39.11",
-		"tailwindcss": "^4.1.14",
-		"typescript": "^5.9.3",
-		"vite": "^7.1.9",
-		"vite-tsconfig-paths": "^5.1.4"
-	},
-	"pnpm": {
-		"onlyBuiltDependencies": [
-			"@biomejs/biome",
-			"@tailwindcss/oxide",
-			"classic-level",
-			"esbuild"
-		]
+		"@sveltejs/vite-plugin-svelte": "^7.1.2",
+		"@tailwindcss/vite": "^4.3.0",
+		"keep-a-changelog": "^3.0.3",
+		"remeda": "^2.34.1",
+		"svelte": "^5.55.5",
+		"tailwindcss": "^4.3.0",
+		"typescript": "^6.0.3",
+		"vite": "^8.0.13"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.2.5",
-		"@types/jquery": "^3.5.33",
-		"@types/node": "^24.7.1",
-		"foundry-pf2e": "github:7H3LaughingMan/foundry-pf2e",
+		"@7h3laughingman/foundry-types": "^14.360.9",
+		"@7h3laughingman/pf2e-types": "^8.0.2",
+		"@biomejs/biome": "^2.4.15",
+		"@types/jquery": "^3.5.32",
+		"@types/node": "^24.1.0",
 		"sonda": "^0.9.0",
-		"svelte-check": "^4.3.3"
+		"svelte-check": "^4.4.8"
 	}
 }

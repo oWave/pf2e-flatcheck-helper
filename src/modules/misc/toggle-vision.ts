@@ -1,3 +1,4 @@
+import { SYSTEM } from "src/utils"
 import { BaseModule } from "../base"
 
 export class SharedVisionModule extends BaseModule {
@@ -14,12 +15,12 @@ export class SharedVisionModule extends BaseModule {
 	onReady() {
 		// Not perfect, but refreshing the setting if a second GM joins and gets activeGM should not cause any issues
 		if (game.users.activeGM === game.user)
-			game.settings.set("pf2e", "metagame_partyVision", !game.combat?.started)
+			game.settings.set(SYSTEM.id, "metagame_partyVision", !game.combat?.started)
 	}
 }
 
 function onUpdateSetting(s: { key: string }) {
-	if (game.user.isGM || s.key !== "pf2e.metagame_partyVision") return
+	if (game.user.isGM || s.key !== `${SYSTEM.id}.metagame_partyVision`) return
 
 	// Vision is updated in Token._onControl, so changing the party vision setting would only do something after a user (de)selects a token
 	// This is copied from _onControl to force refresh vision
@@ -38,8 +39,8 @@ function onUpdateSetting(s: { key: string }) {
 }
 
 function onCombatStart() {
-	if (game.users.activeGM === game.user) game.settings.set("pf2e", "metagame_partyVision", false)
+	if (game.users.activeGM === game.user) game.settings.set(SYSTEM.id, "metagame_partyVision", false)
 }
 function onDeleteCombat() {
-	if (game.users.activeGM === game.user) game.settings.set("pf2e", "metagame_partyVision", true)
+	if (game.users.activeGM === game.user) game.settings.set(SYSTEM.id, "metagame_partyVision", true)
 }

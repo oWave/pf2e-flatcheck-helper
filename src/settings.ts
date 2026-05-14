@@ -1,4 +1,4 @@
-import type SettingsConfig from "foundry-pf2e/foundry/client/applications/settings/config.mjs"
+import type SettingsConfig from "@7h3laughingman/foundry-types/client/applications/settings/config.mjs"
 import MODULE from "src"
 import { MODULE_ID } from "./constants"
 import { FlatMessageConfigApplication } from "./modules/flat/message-config"
@@ -54,6 +54,17 @@ export const settings = {
 			| "enabled"
 			| "disabled"
 			| "onlyWithOrigin"
+	},
+	get flatTargetMarkerDisplay() {
+		const value = game.settings.get(MODULE_ID, "flat-check-target-marker-display") as
+			| "all"
+			| "outlineOnly"
+			| "textOnly"
+
+		const text = value === "all" || value === "textOnly"
+		const outline = value === "all" || value === "outlineOnly"
+
+		return { text, outline }
 	},
 	get lifeLinkEnabled() {
 		return game.settings.get(MODULE_ID, "lifelink") as boolean
@@ -166,6 +177,20 @@ export const settings = {
 			choices: {
 				langKey: "pf2e-fc.settings.flat-check-target-marker.choices",
 				options: ["enabled", "onlyWithOrigin", "disabled"],
+			},
+			type: String,
+		})
+
+		register("flat-check-target-marker-display", {
+			name: "pf2e-fc.settings.flat-check-target-marker-display.name",
+			hint: "pf2e-fc.settings.flat-check-target-marker-display.hint",
+			scope: "user",
+			config: true,
+			default: "all",
+			choices: {
+				all: "pf2e-fc.settings.flat-check-target-marker-display.choices.all",
+				outlineOnly: "pf2e-fc.settings.flat-check-target-marker-display.choices.outlineOnly",
+				textOnly: "pf2e-fc.settings.flat-check-target-marker-display.choices.textOnly",
 			},
 			type: String,
 		})
@@ -316,8 +341,8 @@ export const settings = {
 			default: false,
 		})
 
-		Hooks.on("updateSetting", onUpdateSetting)
-		Hooks.on("renderSettingsConfig", onRenderSettingsConfig)
+		Hooks.on("updateSetting", onUpdateSetting as any)
+		Hooks.on("renderSettingsConfig", onRenderSettingsConfig as any)
 	},
 
 	addListener(key: string, callback: Callback) {

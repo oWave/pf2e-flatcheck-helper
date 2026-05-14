@@ -6,9 +6,9 @@
 	"library": "false",
 	"socket": true,
 	"compatibility": {
-		"minimum": "13.344",
-		"verified": "13",
-		"maximum": "13"
+		"minimum": "14.361",
+		"verified": "14",
+		"maximum": "14"
 	},
 	"authors": [
 		{
@@ -29,8 +29,17 @@
 		{
 			"label": "Effects",
 			"name": "Effects",
-			"path": "packs/effects.db",
+			"path": "packs/effects",
 			"system": "pf2e",
+			"type": "Item",
+			"private": false,
+			"flags": {}
+		},
+		{
+			"label": "Effects (SF2e)",
+			"name": "Effects-sf2e",
+			"path": "packs/effects-sf2e",
+			"system": "sf2e",
 			"type": "Item",
 			"private": false,
 			"flags": {}
@@ -42,7 +51,14 @@
 				"id": "pf2e",
 				"type": "system",
 				"compatibility": {
-					"minimum": "7.1.0"
+					"minimum": "8.1.0"
+				}
+			},
+			{
+				"id": "sf2e",
+				"type": "system",
+				"compatibility": {
+					"minimum": "1.1.0"
 				}
 			}
 		],
@@ -56,6 +72,11 @@
 			"lang": "en",
 			"name": "English",
 			"path": "lang/en.json"
+		},
+		{
+			"lang": "cn",
+			"name": "简体中文",
+			"path": "lang/cn.json"
 		},
 		{
 			"lang": "pl",

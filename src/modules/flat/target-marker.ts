@@ -1,5 +1,5 @@
-import type { TokenPF2e } from "foundry-pf2e"
-import type Token from "foundry-pf2e/foundry/client/canvas/placeables/token.mjs"
+import type Token from "@7h3laughingman/foundry-types/client/canvas/placeables/token.mjs"
+import type { TokenPF2e } from "@7h3laughingman/pf2e-types"
 import MODULE from "src"
 import { MODULE_ID } from "src/constants"
 import { translate } from "src/utils"
@@ -93,29 +93,33 @@ class TokenTargetRenderer {
 			return
 		}
 
-		const color = TargetColors.fromDC(check.finalDc)
-		this.#filter.uniforms.outlineColor = color.toArray()
-		this.#filter.enabled = true
+		if (MODULE.settings.flatTargetMarkerDisplay.outline) {
+			const color = TargetColors.fromDC(check.finalDc)
+			this.#filter.uniforms.outlineColor = color.toArray()
+			this.#filter.enabled = true
+		}
 
-		const textScale = calcScaleFromToken(this.token, 0.5)
-		const text = new foundry.canvas.containers.PreciseText(
-			translate("flat.target-marker-dc", {
-				dc: check.finalDc ?? "?",
-				label: localizeType(check.type),
-			}),
-			textStyles.normal(textScale),
-		)
-		text.x = this.token.bounds.width / 2 - text.width / 2
-		text.y = this.token.bounds.height * 0.95 - text.height
-		this.#layer.addChild(text)
-		if (check.origin && check.type !== check.origin.slug) {
-			const smallText = new foundry.canvas.containers.PreciseText(
-				localizeOrigin(check.origin),
-				textStyles.small(textScale),
+		if (MODULE.settings.flatTargetMarkerDisplay.text) {
+			const textScale = calcScaleFromToken(this.token, 0.5)
+			const text = new foundry.canvas.containers.PreciseText(
+				translate("flat.target-marker-dc", {
+					dc: check.finalDc ?? "?",
+					label: localizeType(check.type),
+				}),
+				textStyles.normal(textScale),
 			)
-			smallText.x = this.token.bounds.width / 2 - smallText.width / 2
-			smallText.y = text.y - smallText.height * 0.75
-			this.#layer.addChild(smallText)
+			text.x = this.token.bounds.width / 2 - text.width / 2
+			text.y = this.token.bounds.height * 0.95 - text.height
+			this.#layer.addChild(text)
+			if (check.origin && check.type !== check.origin.slug) {
+				const smallText = new foundry.canvas.containers.PreciseText(
+					localizeOrigin(check.origin),
+					textStyles.small(textScale),
+				)
+				smallText.x = this.token.bounds.width / 2 - smallText.width / 2
+				smallText.y = text.y - smallText.height * 0.75
+				this.#layer.addChild(smallText)
+			}
 		}
 	}
 	destroy() {

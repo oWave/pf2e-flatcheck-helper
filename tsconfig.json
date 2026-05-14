@@ -1,29 +1,27 @@
 {
 	"compilerOptions": {
-		"target": "ESNext",
-		"module": "ESNext",
-		"allowJs": true,
-		"outDir": "dist",
-		"rootDir": ".",
+		"target": "esnext",
+		"module": "esnext",
+		"moduleResolution": "bundler",
+		"lib": [
+			"ESNext",
+			"ESNext.Array",
+			"DOM",
+			"DOM.Iterable"
+		],
 		"noEmit": true,
 		"strict": true,
-		"noImplicitAny": false,
-		"moduleResolution": "Bundler",
-		/* "typeRoots": [
-			"./node_modules/@types"
-		], */
-		"types": [
-			"foundry-pf2e",
-			"foundry-pf2e/lib-wrapper",
-			"jquery",
-			"vite/client"
-		],
-		"allowSyntheticDefaultImports": true,
-		"allowImportingTsExtensions": true,
-		"esModuleInterop": true,
 		"skipLibCheck": true,
-		"forceConsistentCasingInFileNames": true,
+		"esModuleInterop": true,
+		"allowImportingTsExtensions": true,
+		"resolveJsonModule": true,
+		"noImplicitAny": false,
 		"verbatimModuleSyntax": true,
+		"types": [
+			"@7h3laughingman/pf2e-types",
+			"jquery",
+			"vite/client",
+		],
 		"paths": {
 			"src": [
 				"./src/index"
@@ -31,7 +29,7 @@
 			"src/*": [
 				"./src/*"
 			]
-		}
+		},
 	},
 	"include": [
 		"./src/**/*"

@@ -1,5 +1,6 @@
-import type { ActorPF2e, ChatMessagePF2e, TokenDocumentPF2e } from "foundry-pf2e"
+import type { ActorPF2e, ChatMessagePF2e, TokenDocumentPF2e } from "@7h3laughingman/pf2e-types"
 import * as R from "remeda"
+import { SYSTEM } from "src/utils"
 import type { MsgFlagData } from "./message"
 import { flatMessageConfig } from "./message-config"
 import { Adjustments, type DcAdjustment, type TreatAsAdjustment } from "./rules/common"
@@ -8,14 +9,14 @@ import { type BaseTargetFlatCheck, TargetFlatCheckHelper } from "./target"
 
 export interface FlatCheckSource {
 	type: string
-	origin?: { label?: string; slug: string; reasons?: string[] }
+	origin?: { label?: string; slug: string; reasons?: string[]; warning?: string }
 	baseDc: number | null
 }
 
 export interface FlatCheckData extends FlatCheckSource {
 	finalDc: number | null
 	dcAdjustments?: DcAdjustment[]
-	conditionAdjustment?: TreatAsAdjustment
+	conditionAdjustments?: TreatAsAdjustment[]
 	secret?: true
 }
 
@@ -106,6 +107,14 @@ export class FlatCheckHelper {
 				target: this.target ?? undefined,
 			})
 
+		options.push(
+			...flatCheckRollOptions.lightLevelOptions({
+				msg: this.msg,
+				self: this.token?.object,
+				target: this.target?.object,
+			}),
+		)
+
 		this.rollOptions = options
 
 		this.adjustments = new Adjustments(this.actor ?? null, this.target?.actor ?? null)
@@ -135,13 +144,13 @@ export class FlatCheckHelper {
 			if (
 				!ignored.has("deafened-spellcasting") &&
 				this.actor.conditions.stored.some((c) => c.slug === "deafened") &&
-				this.msg.flags?.pf2e?.origin?.type === "spell" &&
+				this.msg.flags?.[SYSTEM.id]?.origin?.type === "spell" &&
 				!this.msg.item?.system.traits.value?.some((t) => t === "subtle")
 			) {
 				sources.push({ type: "deafened", origin: { slug: "spell" }, baseDc: 5 })
 			}
 
-			if (!ignored.has("stupefied") && this.msg.flags?.pf2e?.origin?.type === "spell") {
+			if (!ignored.has("stupefied") && this.msg.flags?.[SYSTEM.id]?.origin?.type === "spell") {
 				const stupefied = this.actor.conditions.stupefied?.value
 				if (stupefied) {
 					sources.push({ type: "stupefied", origin: { slug: "spell" }, baseDc: 5 + stupefied })
@@ -225,7 +234,7 @@ export class FlatCheckHelper {
 					dcAdjustments: adjustments,
 				}
 			}),
-			R.firstBy([(d) => d.finalDc ?? -Infinity, "desc"]),
+			R.firstBy([(d) => d.finalDc ?? Infinity, "desc"]),
 		)
 	}
 }

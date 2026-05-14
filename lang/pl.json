@@ -19,7 +19,7 @@
 			},
 			"target": {
 				"label": "Cel",
-				"note": "Przysłonięty / Ukryty / Zamroczony / Oślepiony / itd. Wspiera PF2e Perception"
+				"note": "Przysłonięty / Ukryty / Zamroczony / Oślepiony / itd. Wspiera PF2e Visioner"
 			},
 			"light-level": {
 				"label": "Cel - Poziom oświetlenia",
@@ -35,8 +35,8 @@
 				"name": "Konfiguracja Płaskich Testów"
 			},
 			"flat-check-auto-roll": {
-				"name": "Automatyczne rzucanie płaskich testów",
-				"hint": "Automatycznie rzuca płaskie testy",
+				"name": "Automatyczny rzut na Płaskie Testy",
+				"hint": "Automatycznie rzuca wszelkie płaskie testy",
 				"choices": {
 					"always": "Zawsze",
 					"user": "Ustawienia użytkownika",
@@ -44,16 +44,42 @@
 				}
 			},
 			"flat-check-auto-roll-user": {
-				"name": "Automatyczne rzucanie płaskich testów",
+				"name": "Automatyczny rzut na Płaskie Testy",
 				"hint": "Ustawienia użytkownika: Zachowanie zależy od ustawień świata."
+			},
+			"flat-check-hide-roll": {
+				"name": "Ukryj rzuty z płaskimi testami",
+				"hint": "Jeśli rzut wymaga płaskiego testu, wynik będzie ukryty do momentu jego ujawnienia"
+			},
+			"flat-check-hide-roll-auto-reveal": {
+				"name": "Automatyczne ujawnianie wyników",
+				"hint": "Jeśli wszystkie płaskie testy zakończą się powodzeniem, wynik zostanie automatycznie ujawniony"
+			},
+			"flat-check-hide-roll-players-can-reveal": {
+				"name": "Gracze mogą ujawniać wyniki",
+				"hint": "Pozwala graczom ręcznie ujawnić ukryte rzuty, nawet jeśli nie wszystkie płaskie testy zakończyły się powodzeniem"
 			},
 			"flat-check-target-marker": {
 				"name": "Pokaż Płaskie Testy na tokenie",
-				"hint": "Ustawienie użytkownika: Wyświetla informacje o Płaskim Teście tokena podczas celowania."
+				"hint": "Ustawienia użytkownika: Wyświetla informacje o płaskim teście na tokenie podczas celowania.",
+				"choices": {
+					"enabled": "Włączone",
+					"onlyWithOrigin": "Tylko ze źródłem",
+					"disabled": "Wyłączone"
+				}
+			},
+			"flat-check-target-marker-display": {
+				"name": "Pokaż na tokenie płaski test z",
+				"hint": "",
+				"choices": {
+					"all": "Zarys i tekst",
+					"textOnly": "Tylko tekst",
+					"outlineOnly": "Tylko zarys"
+				}
 			},
 			"light-level-vis": {
 				"name": "Wizualizacja poziomów oświetlenia",
-				"hint": "Ustawienie użytkownika: Przytrzymaj alt, aby podświetlić kwadraty bez światła/przyciemnione."
+				"hint": "Ustawienia użytkownika: Przytrzymaj klawisz Alt, aby podświetlić kwadraty bez światła lub ze słabym światłem."
 			},
 			"delay-combat-tracker": {
 				"name": "Pokaż przycisk Opóźnienia akcji w śledzeniu walki",
@@ -157,7 +183,8 @@
 				"hidden": "Ukryty",
 				"dim-light": "Słabe światło",
 				"dazzled": "Zamroczony",
-				"concealed": "Przysłonięty"
+				"concealed": "Przysłonięty",
+				"magical-darkness": "Magiczna Ciemność"
 			},
 			"message": {
 				"button-close": "Zamknij",
@@ -172,7 +199,11 @@
 				"grabbed": "Pochwycony",
 				"deafened": "Ogłuchły",
 				"stupefied": "Ogłupiony {value}",
-				"dc": "ST {value}"
+				"dc": "ST {value}",
+				"hide": {
+					"disabled-tooltip": "Tylko MG",
+					"reveal-button": "Ujawnij rzut"
+				}
 			},
 			"more-dialog": {
 				"stupefied": "Ogłupiony",

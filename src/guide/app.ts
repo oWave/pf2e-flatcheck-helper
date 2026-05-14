@@ -1,4 +1,4 @@
-import type { ApplicationConfiguration } from "foundry-pf2e/foundry/client/applications/_types.mjs"
+import type { ApplicationConfiguration } from "@7h3laughingman/foundry-types/client/applications/_types.mjs"
 import { MODULE_ID } from "src/constants"
 import { SvelteMixin } from "src/svelte/mixin"
 import Guide from "./guide.svelte"

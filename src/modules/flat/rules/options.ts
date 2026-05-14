@@ -1,4 +1,5 @@
-import type { ChatMessagePF2e, TokenDocumentPF2e, TokenPF2e } from "foundry-pf2e"
+import type { ChatMessagePF2e, TokenDocumentPF2e, TokenPF2e } from "@7h3laughingman/pf2e-types"
+import { SYSTEM } from "src/utils"
 import type { FlatCheckSource } from "../data"
 import { tokenLightLevel } from "../light/token"
 import { LightLevels } from "../light/utils"
@@ -20,26 +21,12 @@ function forCheck(source: Partial<FlatCheckSource>) {
 
 function forRollMessage(msg: ChatMessagePF2e) {
 	const options: Array<string | string[]> = []
-	if (
-		msg.flags.pf2e.context &&
-		"contextualOptions" in msg.flags.pf2e.context &&
-		msg.flags.pf2e.context.contextualOptions?.postRoll?.length
-	) {
-		options.push(msg.flags.pf2e.context.contextualOptions.postRoll)
+	const context = msg.flags[SYSTEM.id].context
+	if (context && "contextualOptions" in context && context.contextualOptions?.postRoll?.length) {
+		options.push(context.contextualOptions.postRoll)
 	}
-	if (
-		msg.flags.pf2e.context &&
-		"options" in msg.flags.pf2e.context &&
-		msg.flags.pf2e.context.options?.length
-	) {
-		options.push(msg.flags.pf2e.context.options)
-	}
-
-	if (msg.target?.token.object) {
-		options.push(lightLevelForToken("target", msg.target.token.object))
-	}
-	if (msg.token?.object) {
-		options.push(lightLevelForToken("self", msg.token.object))
+	if (context && "options" in context && context.options?.length) {
+		options.push(context.options)
 	}
 
 	return options.flat()
@@ -61,13 +48,27 @@ function forMixed(data: {
 		options.push("target")
 	}
 
-	if (data.target?.object) {
-		options.push(lightLevelForToken("target", data.target.object))
-	}
-	if (data.origin?.object) {
-		options.push(lightLevelForToken("self", data.origin.object))
+	return options.flat()
+}
+
+function lightLevelOptions({
+	self,
+	target,
+	msg,
+}: {
+	self?: TokenPF2e | null
+	target?: TokenPF2e | null
+	msg?: ChatMessagePF2e
+}) {
+	const options: Array<string[] | string> = []
+
+	if (msg?.token?.object && msg.target?.token.object) {
+		self = msg.token.object
+		target = msg.target.token.object
 	}
 
+	if (self) options.push(lightLevelForToken("self", self))
+	if (target) options.push(lightLevelForToken("target", target))
 	return options.flat()
 }
 
@@ -75,4 +76,5 @@ export const flatCheckRollOptions = {
 	forCheck,
 	forRollMessage,
 	forMixed,
+	lightLevelOptions,
 }

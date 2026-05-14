@@ -1,5 +1,7 @@
-import type { DataFieldValidationOptions } from "foundry-pf2e/foundry/common/data/_module.mjs"
-import type { CleanFieldOptions } from "foundry-pf2e/foundry/common/data/fields.mjs"
+import type {
+	DataFieldValidationOptions,
+	DataModelCleaningOptions,
+} from "@7h3laughingman/foundry-types/common/data/_module.mjs"
 
 type RuleValue = string | number
 
@@ -12,7 +14,7 @@ export class ValueField<
 		return typeof value === "string" || typeof value === "number"
 	}
 
-	protected _cleanType(input: RuleValue, options?: CleanFieldOptions): RuleValue {
+	protected _cleanType(input: RuleValue, options?: Readonly<DataModelCleaningOptions>): RuleValue {
 		if (typeof input === "number") return input
 
 		const value = input.trim()

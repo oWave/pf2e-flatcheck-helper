@@ -1,5 +1,5 @@
-import type { TokenPF2e } from "foundry-pf2e"
-import type TokenHUD from "foundry-pf2e/foundry/client/applications/hud/token-hud.mjs"
+import type TokenHUD from "@7h3laughingman/foundry-types/client/applications/hud/token-hud.mjs"
+import type { TokenPF2e } from "@7h3laughingman/pf2e-types"
 import MODULE from "src"
 import { combatantIsNext, parseHTML, translate } from "src/utils"
 import { handleRequest } from "./delay"

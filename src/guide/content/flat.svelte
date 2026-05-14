@@ -39,6 +39,8 @@
 				With a token selected, this will use the selected actor's senses (low-light/darkvision) and include conditions like Dazzled.
 			</p>
 			<SettingInput key="flat-check-target-marker" label="Mode" />
+			<div class="mb-1"></div>
+			<SettingInput key="flat-check-target-marker-display" label="Display" />
 		</div>
 	</SettingSection>
 

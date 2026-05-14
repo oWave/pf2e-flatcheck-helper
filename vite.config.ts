@@ -1,11 +1,10 @@
 /* eslint-env node */
 import fs from "node:fs"
-import { type Connect, type PluginOption, defineConfig } from "vite"
-import tsconfigPaths from "vite-tsconfig-paths"
-import moduleJSON from "./module.json" with { type: "json" }
-import Sonda from "sonda/vite"
 import { svelte } from "@sveltejs/vite-plugin-svelte"
 import tailwindcss from "@tailwindcss/vite"
+// import Sonda from "sonda/vite"
+import { type Connect, defineConfig } from "vite"
+import moduleJSON from "./module.json" with { type: "json" }
 
 const packagePath = `modules/${moduleJSON.id}`
 // const { esmodules, styles } = moduleJSON
@@ -20,11 +19,10 @@ export default defineConfig(({ command: _buildOrServe }) => ({
 
 	clearScreen: true,
 
-	esbuild: {
-		target: ["es2022"],
+	resolve: {
+		conditions: ["import", "browser"],
+		tsconfigPaths: true,
 	},
-
-	resolve: { conditions: ["import", "browser"] },
 
 	server: {
 		open: false,
@@ -46,15 +44,7 @@ export default defineConfig(({ command: _buildOrServe }) => ({
 		outDir: "../dist",
 		emptyOutDir: true,
 		sourcemap: true,
-		minify: "terser" as const,
-		terserOptions: {
-			mangle: {
-				toplevel: true,
-				keep_classnames: true,
-				keep_fnames: true,
-			},
-			module: true,
-		},
+		// minify: false,
 		lib: {
 			entry: "vite-index.js",
 			formats: ["es"],
@@ -67,17 +57,12 @@ export default defineConfig(({ command: _buildOrServe }) => ({
 		},
 	},
 
-	optimizeDeps: {
-		esbuildOptions: {
-			target: "es2022",
-		},
-	},
+	optimizeDeps: {},
 
 	plugins: [
 		svelte(),
 		tailwindcss(),
 		// Sonda(),
-		tsconfigPaths(),
 		{
 			name: "change-names",
 			configureServer(server) {
@@ -112,6 +97,21 @@ export default defineConfig(({ command: _buildOrServe }) => ({
 				return {
 					code,
 					map: null,
+				}
+			},
+		},
+		{
+			name: "wrap-css-layer-build",
+			apply: "build",
+			enforce: "post",
+			generateBundle(_options, bundle) {
+				for (const [fileName, asset] of Object.entries(bundle)) {
+					if (asset.type !== "asset" || !fileName.endsWith(".css")) continue
+					const source =
+						typeof asset.source === "string"
+							? asset.source
+							: Buffer.from(asset.source).toString("utf8")
+					asset.source = `@layer modules.pf2e-fc{${source}}`
 				}
 			},
 		},

@@ -14,10 +14,55 @@ TODO:
 - i18n
 
 ## [Unreleased]
+
+## [0.20.3] - 2026-04-15
+### Fixed
+- Target light level roll option using the wrong prefix
+
+## [0.20.2] - 2026-02-28
+### Fixed
+- PF2e Toolbelt Roll Tracker integration for version 3.28.0+
+
+## [0.20.1] - 2026-02-26
+### Added
+- PF2e Toolbelt Roll Tracker Integration (@fotoply)
+
+### Fixed
+- Dice So Nice Integration (@fotoply)
+  - Dice showing as ghost/?
+  - Dice using the local settings instead of rolling users
+
+## [0.20.0] - 2026-02-07
+### Added
+- SF2e compatibility
+- New user setting to change what part of the on-token flat check marker is displayed (everything, text only, outline only)
+
 ### Changed
-- Flat checks: Exclude actors without senses (like Hazards)
+- Flat Checks: Added exceptions for actors without senses (like Hazards)
   - Never roll dim light or darkness checks
   - Don't hide results even when checks are missing or failed (to make skipping them quicker)
+- TreatAs rule elements can now chain instead of only one being processed
+
+### Fixed
+- Wrong rounding when transfering damage with Share Life
+- Spells without a defense set not having roll options for flat check REs
+- Modify Flat DC not working when the value is 0
+
+## [0.19.4] - 2025-11-25
+Minimum system version is now 7.7.4
+
+### Fixed
+- Alternative Roll Breakdowns not showing modifiers to players
+
+## [0.19.3] - 2025-11-21
+### Added
+- Chinese translation (@AlphaStarguide)
+
+### Fixed
+- Overhauled the way delaying updates the combat turn order again
+  - Should work with fewer surprises, but can also outright fail in unexpected circumstances
+  - Probably completely incompatible with other modules that override combat turn order
+- Don't allow delaying after upcoming defeated combatants if the "Skip Defeated" setting is enabled
 
 ## [0.19.2] - 2025-10-16
 ### Fixed
@@ -171,7 +216,11 @@ Foundry v13 release
 ### Fixed
 - Flat checks showing on damage/healing received messages
 
-[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.19.4...HEAD
+[Unreleased]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.20.3...HEAD
+[0.20.3]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.20.2...v0.20.3
+[0.20.2]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.20.1...v0.20.2
+[0.20.1]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.20.0...v0.20.1
+[0.20.0]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.19.4...v0.20.0
 [0.19.4]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.19.3...v0.19.4
 [0.19.3]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.19.2...v0.19.3
 [0.19.2]: https://github.com/oWave/pf2e-flatcheck-helper/compare/v0.19.1...v0.19.2

@@ -1,7 +1,13 @@
-import type { ActorPF2e, ChatMessagePF2e, CombatantPF2e, EffectPF2e, ItemPF2e } from "foundry-pf2e"
+import type {
+	ActorPF2e,
+	ChatMessagePF2e,
+	CombatantPF2e,
+	EffectPF2e,
+	ItemPF2e,
+} from "@7h3laughingman/pf2e-types"
 import { MODULE_ID } from "src/constants"
 import MODULE from "src/index"
-import { actorEffectBySlug, actorHasEffect, translate } from "src/utils"
+import { actorEffectBySlug, actorHasEffect, SYSTEM, translate } from "src/utils"
 import { BaseModule } from "./base"
 
 export class LifeLinkModule extends BaseModule {
@@ -94,7 +100,7 @@ async function handleTransferButton(args: ButtonArgs) {
 			{
 				type: "effect",
 				name: translate("life-link.life-link-cooldown-effect"),
-				img: "systems/pf2e/icons/spells/life-link.webp",
+				img: SYSTEM.filePath("icons/spells/life-link.webp"),
 				system: {
 					tokenIcon: { show: true },
 					duration: {
@@ -198,7 +204,7 @@ async function onCreateItem(item: ItemPF2e) {
 async function onCreateMessage(msg: ChatMessagePF2e) {
 	if (game.users?.activeGM?.id !== game.user?.id) return
 
-	const flags = msg.flags?.pf2e?.appliedDamage
+	const flags = msg.flags?.[SYSTEM.id]?.appliedDamage
 	const uuid = flags?.uuid
 	const dmg = flags?.updates.find((e) => e.path === "system.attributes.hp.value")?.value
 	if (!uuid || !dmg || dmg <= 0) return
@@ -263,7 +269,7 @@ async function onCreateMessage(msg: ChatMessagePF2e) {
 						}),
 						{
 							transfer: lifeLinkTransfer,
-							heal: remainingDmg === 1 ? 1 : Math.floor(remainingDmg / 2),
+							heal: remainingDmg === 1 ? 1 : Math.ceil(remainingDmg / 2),
 							dmg: Math.ceil(remainingDmg / 2),
 							cd: 1,
 							source: lifeLinkEffect.origin.uuid,
@@ -286,7 +292,7 @@ async function onCreateMessage(msg: ChatMessagePF2e) {
 							actor: shareLifeEffect.origin.name,
 						}),
 						{
-							heal: remainingDmg === 1 ? 1 : Math.floor(remainingDmg / 2),
+							heal: remainingDmg === 1 ? 1 : Math.ceil(remainingDmg / 2),
 							dmg: Math.ceil(remainingDmg / 2),
 							source: shareLifeEffect.origin.uuid,
 							target: actor.uuid,

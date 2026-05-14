@@ -1,4 +1,4 @@
-import type { ActorPF2e, CombatantPF2e, TokenDocumentPF2e } from "foundry-pf2e"
+import type { ActorPF2e, CombatantPF2e, TokenDocumentPF2e } from "@7h3laughingman/pf2e-types"
 
 export function isJQuery(obj: unknown): obj is JQuery {
 	return obj instanceof jQuery
@@ -35,7 +35,7 @@ export function parseHTML(string: string) {
 
 export function translate(key: string, data?: Record<string, string | number>) {
 	if (!key.startsWith("pf2e-fc.")) key = `pf2e-fc.${key}`
-	return data ? game.i18n.format(key, data) : game.i18n.localize(key)
+	return data ? game.i18n.localize(key, data) : game.i18n.localize(key)
 }
 
 type MissingOpts = {
@@ -45,7 +45,9 @@ type MissingOpts = {
 }
 export function translateHandleMissing(key: string, opts: MissingOpts) {
 	const fullKey = opts.prefix ? `${opts.prefix}${key}` : key
-	const translation = opts.data ? game.i18n.format(fullKey, opts.data) : game.i18n.localize(fullKey)
+	const translation = opts.data
+		? game.i18n.localize(fullKey, opts.data)
+		: game.i18n.localize(fullKey)
 	if (fullKey !== translation) return translation
 
 	if (opts.case === "title")
@@ -53,4 +55,13 @@ export function translateHandleMissing(key: string, opts: MissingOpts) {
 			return t.charAt(0).toUpperCase() + t.substring(1).toLowerCase()
 		})
 	return key
+}
+
+export const SYSTEM = {
+	get id() {
+		return game.system.id as "pf2e"
+	},
+	filePath(path: string) {
+		return `systems/${this.id}/${path}`
+	},
 }

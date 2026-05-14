@@ -2,7 +2,7 @@ import { MODULE_ID } from "src/constants"
 import { SvelteMap } from "svelte/reactivity"
 
 class SettingsStore {
-	#hookId = Hooks.on(`${MODULE_ID}.updateSetting`, this.#onUpdateSetting.bind(this))
+	#hookId = Hooks.on(`${MODULE_ID}.updateSetting`, this.#onUpdateSetting.bind(this) as any)
 	current = new SvelteMap<string, any>()
 	uncommitted = new SvelteMap<string, any>()
 	dirty = $derived.by(() => {

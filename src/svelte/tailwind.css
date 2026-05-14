@@ -1,53 +1,51 @@
 @custom-variant dark (&:where(.theme-dark, .theme-dark *));
 
-@layer modules.pf2e-fc {
-	.fc-svelte {
-		@import "tailwindcss/theme.css" layer(tailwind);
-		@import "tailwindcss/utilities.css" layer(tailwind);
+.fc-svelte {
+	@import "tailwindcss/theme.css" layer(tailwind);
+	@import "tailwindcss/utilities.css" layer(tailwind);
 
-		.window-content {
+	.window-content {
+		padding: 0;
+		ul,
+		ol,
+		li {
 			padding: 0;
-			ul,
-			ol,
-			li {
-				padding: 0;
-				margin: 0;
-			}
-		}
-
-		h3,
-		h4,
-		h5,
-		h6 {
-			color: var(--color-text-primary);
-			text-shadow: unset;
-			font-family: var(--font-h3);
-		}
-
-		/* Foundry applies user-select: none to all (via *) */
-		.select-text * {
-			user-select: text;
-			-webkit-user-select: text;
-		}
-
-		input[type="checkbox"]:disabled::after {
-			color: var(--color-form-hint);
+			margin: 0;
 		}
 	}
 
-	body.theme-light {
-		.fc-svelte {
-			img {
-				border: 1px solid #333;
-			}
-			hr {
-				background-image: linear-gradient(
-					90deg,
-					transparent 0%,
-					var(--color-dark-3) 50%,
-					transparent 100%
-				);
-			}
+	h3,
+	h4,
+	h5,
+	h6 {
+		color: var(--color-text-primary);
+		text-shadow: unset;
+		font-family: var(--font-h3);
+	}
+
+	/* Foundry applies user-select: none to all (via *) */
+	.select-text * {
+		user-select: text;
+		-webkit-user-select: text;
+	}
+
+	input[type="checkbox"]:disabled::after {
+		color: var(--color-form-hint);
+	}
+}
+
+body.theme-light {
+	.fc-svelte {
+		img {
+			border: 1px solid #333;
+		}
+		hr {
+			background-image: linear-gradient(
+				90deg,
+				transparent 0%,
+				var(--color-dark-3) 50%,
+				transparent 100%
+			);
 		}
 	}
 }

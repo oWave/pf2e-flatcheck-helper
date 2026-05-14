@@ -1,4 +1,4 @@
-import type { ActorPF2e, TokenDocumentPF2e, TokenPF2e } from "foundry-pf2e"
+import type { ActorPF2e, TokenDocumentPF2e, TokenPF2e } from "@7h3laughingman/pf2e-types"
 import {
 	ActorTypesWithPerception,
 	OriginToTargetCondition,
@@ -14,10 +14,10 @@ import { visionerAVSFlatCheck, visionerVisibilityFlatCheck } from "./visioner"
 
 export interface TargetFlatCheckSource extends Omit<FlatCheckSource, "baseDc"> {
 	type: TargetConditionSlug
+	conditionAdjustments?: TreatAsAdjustment[]
 }
 
 export interface BaseTargetFlatCheck extends TargetFlatCheckSource {
-	conditionAdjustment?: TreatAsAdjustment
 	baseDc: FlatCheckSource["baseDc"]
 }
 
@@ -128,25 +128,25 @@ export class TargetFlatCheckHelper {
 		) {
 			const lightCheck = conditionFromLightLevel(this.origin?.actor ?? null, this.target.object)
 			if (lightCheck) sources.push(lightCheck)
+
+			if (this.origin.level !== this.target.level) {
+				sources.push({
+					type: "unknown",
+					origin: {
+						slug: "scene-level",
+						label: "Levels",
+						warning: "warning.differentLevels",
+					},
+				})
+			}
 		}
 
 		return sources
 	}
 
 	#collectExtraConditions(): TargetFlatCheckSource[] {
-		const adjustment = this.adjustments.getTreatAsAdjustment({ type: "observed" }, this.rollOptions)
-		if (adjustment) {
-			return [
-				{
-					type: adjustment.new,
-					origin: {
-						slug: adjustment.slug,
-						label: adjustment.label,
-					},
-				},
-			]
-		}
-		return []
+		const treatObservedAs = this.adjustments.treatObservedAs(this.rollOptions)
+		return treatObservedAs ? [treatObservedAs] : []
 	}
 
 	async #collectVisionerAVSSource(): Promise<TargetFlatCheckSource[]> {
@@ -179,13 +179,16 @@ export class TargetFlatCheckHelper {
 				...source,
 				baseDc: TargetConditionToDC[source.type],
 			}
-			const adjustments = this.adjustments.getTreatAsAdjustment(check, this.rollOptions)
-			if (adjustments) {
-				if (adjustments.new === "observed") continue
-				check.type = adjustments.new
-				check.conditionAdjustment = adjustments
+			const adjustments = this.adjustments.getTreatAsAdjustments(check, this.rollOptions)
+			const last = adjustments?.at(-1)
+			if (last?.new === "observed") continue
+
+			if (last) {
+				check.type = last.new
+				check.conditionAdjustments = [check.conditionAdjustments ?? [], adjustments!].flat()
 				check.baseDc = TargetConditionToDC[check.type]
 			}
+
 			sources.push(check)
 		}
 

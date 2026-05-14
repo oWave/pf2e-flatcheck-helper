@@ -1,27 +1,36 @@
 <section class="fc-flatcheck-buttons">
 	{{#each @root.buttons}}
 		<div class="fc-check">
-			<span class="fc-label"
-			  {{#if (or this.conditionAdjustment this.reasons)}}
-				  data-tooltip="
-					  {{#if this.reasons}}
-						  {{#each this.reasons}}
-							  {{this}} <br>
-							{{/each}}
-							{{#if this.conditionAdjustment}}
-							  <br>
+			<span class="fc-label-container">
+				<span class="fc-label"
+					{{#if (or this.conditionAdjustments this.reasons)}}
+						data-tooltip="
+							{{#if this.reasons}}
+								{{#each this.reasons}}
+									{{this}} <br>
+								{{/each}}
+								{{#if this.conditionAdjustments}}
+									<br>
+								{{/if}}
 							{{/if}}
-						{{/if}}
-					  {{#if this.conditionAdjustment}}
-					    {{this.conditionAdjustment.label}}: {{ @root.localizeType this.conditionAdjustment.old }} → {{ @root.localizeType this.conditionAdjustment.new }}
-						{{/if}}
-					"
-				{{/if}}>
-				<span {{#if this.conditionAdjustment }} class="adjusted" {{/if}}>{{ @root.localizeType this.type }}</span>
-				{{#if this.origin}}
-					{{#unless (eq this.type this.origin.slug)}}
-						<span class="fc-description">{{ @root.localizeOrigin this.origin }}</span>
-					{{/unless}}
+							{{#if this.conditionAdjustments}}
+								{{#each this.conditionAdjustments}}
+									{{this.label}}: {{ @root.localizeType this.old }} → {{ @root.localizeType this.new }} <br>
+								{{/each}}
+							{{/if}}
+						"
+					{{/if}}>
+					<span {{#if this.conditionAdjustment }} class="adjusted" {{/if}}>{{ @root.localizeType this.type }}</span>
+					{{#if this.origin}}
+						{{#unless (eq this.type this.origin.slug)}}
+							<span class="fc-description">{{ @root.localizeOrigin this.origin }}</span>
+						{{/unless}}
+					{{/if}}
+				</span>
+				{{#if this.warning}}
+					<span class="fc-warning" data-tooltip="{{ @root.i18n this.warning }}">
+						<i class="fa-solid fa-triangle-exclamation"></i>
+					</span>
 				{{/if}}
 			</span>
 			<span class="fc-dc" data-tooltip="{{ this.tooltip }}">

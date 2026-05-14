@@ -1,4 +1,4 @@
-import type { TokenDocumentPF2e } from "foundry-pf2e"
+import type { TokenDocumentPF2e } from "@7h3laughingman/pf2e-types"
 import * as R from "remeda"
 import { type TargetConditionSlug, TargetConditionToDC } from "./constants"
 import type { TargetFlatCheckSource } from "./target"

@@ -1,4 +1,4 @@
-import type { ChatMessagePF2e, EncounterPF2e } from "foundry-pf2e"
+import type { ChatMessagePF2e, EncounterPF2e } from "@7h3laughingman/pf2e-types"
 import { QUERIES } from "src/constants"
 import { BaseModule } from "../base"
 import { handleRequest, removeDelayEffect } from "./delay"

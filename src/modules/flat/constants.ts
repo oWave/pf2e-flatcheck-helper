@@ -20,6 +20,7 @@ export const TargetConditionToDC = {
 	hidden: 11,
 	undetected: 11,
 	unnoticed: null,
+	unknown: null,
 } as const
 export type TargetConditionSlug = keyof typeof TargetConditionToDC
 
