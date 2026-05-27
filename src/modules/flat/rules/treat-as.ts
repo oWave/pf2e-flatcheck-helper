@@ -6,7 +6,7 @@ const schema = {
 	condition: new fields.StringField({
 		required: true,
 		blank: false,
-		choices: ["observed", "concealed", "hidden"],
+		choices: ["observed", "concealed", "hidden", "all"],
 	}),
 	treatAs: new fields.StringField({
 		required: true,
@@ -35,6 +35,7 @@ export const TreatAsConditionPriorities = {
 	observed: 0,
 	concealed: 1,
 	hidden: 2,
+	all: 3,
 } as const
 
 export const TreatAsModePriorities: Record<SchemaProps["mode"], number> = {

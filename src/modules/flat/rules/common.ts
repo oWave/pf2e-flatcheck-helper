@@ -164,14 +164,16 @@ export class Adjustments {
 		const adjustments: TreatAsAdjustment[] = []
 
 		for (const rule of rules) {
-			if (rule.condition !== currentCondition) continue
+			if (rule.condition !== "all" && rule.condition !== currentCondition) continue
 
 			if (
-				(rule.mode === "downgrade" &&
+				rule.condition !== "all" &&
+				((rule.mode === "downgrade" &&
 					TreatAsConditionPriorities[rule.treatAs] >
 						TreatAsConditionPriorities[currentCondition]) ||
-				(rule.mode === "upgrade" &&
-					TreatAsConditionPriorities[rule.treatAs] < TreatAsConditionPriorities[currentCondition])
+					(rule.mode === "upgrade" &&
+						TreatAsConditionPriorities[rule.treatAs] <
+							TreatAsConditionPriorities[currentCondition]))
 			) {
 				continue
 			}

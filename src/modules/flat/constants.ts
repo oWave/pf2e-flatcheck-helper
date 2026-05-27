@@ -4,6 +4,7 @@ export const VisiblityLevelPriorities = {
 	hidden: 2,
 	undetected: 4,
 	unnoticed: 5,
+	unknown: 6,
 } as const
 
 export type VisibilityLevels = keyof typeof VisiblityLevelPriorities
