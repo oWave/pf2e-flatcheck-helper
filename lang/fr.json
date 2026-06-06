@@ -210,6 +210,9 @@
         "custom": "Personnalisé",
         "dc": "DD",
         "title": "Plus de tests nus"
+      },
+      "warning": {
+        "differentLevels": "L'origine et la cible se situent sur des niveaux de scène différents. Les test de niveau d'éclairage ne sont pas disponibles."
       }
     },
     "life-link": {
@@ -246,6 +249,9 @@
       },
       "message-config-check-types": "Types de test",
       "emanation-area": "{origin}, {area} pieds"
+    },
+    "common": {
+      "unknown": "Inconnu"
     }
   },
   "PF2E": {
