@@ -7,7 +7,7 @@
 - `all` is a valid `condition` value for the Treat-As rule element
 
 ### Fixed
-– Visioner check flats never showing a source/reason
+- Visioner check flats never showing a source/reason
 
 ## [0.21.0] - 2026-05-15
 Minimum Core/System version is now 14.361/8.1.0
