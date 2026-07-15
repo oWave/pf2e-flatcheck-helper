@@ -1,7 +1,10 @@
 # Changelog
 🥭
 
-## [0.21.1] - 2026-07-17
+## [0.22.0] - 2026-07-17
+
+### Added
+- `all` is a valid `condition` value for the Treat-As rule element
 
 ### Fixed
 – Visioner check flats never showing a source/reason
