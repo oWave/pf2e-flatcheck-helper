@@ -1,6 +1,11 @@
 # Changelog
 🥭
 
+## [0.21.1] - 2026-07-17
+
+### Fixed
+– Visioner check flats never showing a source/reason
+
 ## [0.21.0] - 2026-05-15
 Minimum Core/System version is now 14.361/8.1.0
 
