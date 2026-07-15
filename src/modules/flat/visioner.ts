@@ -48,12 +48,6 @@ export async function visionerAVSFlatCheck(
 	origin: TokenDocumentPF2e,
 	target: TokenDocumentPF2e,
 ): Promise<TargetFlatCheckSource | null> {
-	// Prefer the richer getVisibilityFactors() API first: it carries slugs/reasons
-	// (e.g. "dazzled", "darkness") that visionerVisibilityFlatCheck()'s plain
-	// getVisibility() state string cannot provide. Falling back to
-	// visionerVisibilityFlatCheck() first meant this origin/reason data was
-	// almost never used, since getVisibility() nearly always resolves to a
-	// valid state.
 	const factors: VisibilityFactors = await game.modules
 		.get("pf2e-visioner")
 		// @ts-expect-error
