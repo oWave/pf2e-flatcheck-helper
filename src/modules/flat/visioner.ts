@@ -48,28 +48,33 @@ export async function visionerAVSFlatCheck(
 	origin: TokenDocumentPF2e,
 	target: TokenDocumentPF2e,
 ): Promise<TargetFlatCheckSource | null> {
-	const visibilityCheck = visionerVisibilityFlatCheck(origin, target)
-	if (visibilityCheck) return visibilityCheck
-
+	// Prefer the richer getVisibilityFactors() API first: it carries slugs/reasons
+	// (e.g. "dazzled", "darkness") that visionerVisibilityFlatCheck()'s plain
+	// getVisibility() state string cannot provide. Falling back to
+	// visionerVisibilityFlatCheck() first meant this origin/reason data was
+	// almost never used, since getVisibility() nearly always resolves to a
+	// valid state.
 	const factors: VisibilityFactors = await game.modules
 		.get("pf2e-visioner")
 		// @ts-expect-error
 		?.api.getVisibilityFactors(origin.id, target.id)
 
-	if (!factors || factors.state === "observed") return null
+	if (factors && factors.state !== "observed") {
+		// Visoner slugs are an array. Use highest priority slugs as origin
+		const sourceSlug = R.firstBy(factors.slugs, [(s) => slugPriorities.get(s) ?? Infinity, "asc"])
 
-	// Visoner slugs are an array. Use highest priority slugs as origin
-	const sourceSlug = R.firstBy(factors.slugs, [(s) => slugPriorities.get(s) ?? Infinity, "asc"])
+		const source: TargetFlatCheckSource = {
+			type: factors.state,
+		}
+		if (sourceSlug) {
+			source.origin = { slug: sourceSlug }
+			if (factors.reasons?.length) source.origin.reasons = factors.reasons
+		}
 
-	const source: TargetFlatCheckSource = {
-		type: factors.state,
+		return source
 	}
-	if (sourceSlug) {
-		source.origin = { slug: sourceSlug }
-		if (factors.reasons?.length) source.origin.reasons = factors.reasons
-	}
 
-	return source
+	return visionerVisibilityFlatCheck(origin, target)
 }
 
 export function visionerVisibilityFlatCheck(
