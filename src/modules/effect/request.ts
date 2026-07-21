@@ -4,11 +4,12 @@ import type {
 	EffectPF2e,
 	ItemPF2e,
 	TokenDocumentPF2e,
-} from "foundry-pf2e"
+} from "@7h3laughingman/pf2e-types"
 import MODULE from "src"
 import { QUERIES } from "src/constants"
+import type { SvelteAppProps } from "src/svelte/mixin"
 import { apply } from "./apply"
-import type { ApplyInputs } from "./apps"
+import type Apply from "./apps/apply.svelte"
 import { type Duration, dataFromItem } from "./data"
 
 export interface RequestApplyData {
@@ -16,6 +17,8 @@ export interface RequestApplyData {
 	item: string
 	effect: string
 	tokens: string[]
+	/** Subset of `tokens` the requesting user could not see. */
+	unseenTokens?: string[]
 	badge?: number
 	overrides?: {
 		duration: Duration
@@ -57,7 +60,8 @@ export async function handleApplyRequest(data: RequestApplyData) {
 			duration: data.overrides?.duration,
 		})
 	} else {
-		const inputs: ApplyInputs = {
+		const unseenUuids = new Set(data.unseenTokens ?? [])
+		const inputs: SvelteAppProps<typeof Apply> = {
 			config: dataFromItem(item, { _id: id }),
 			effect,
 			value: data.badge ?? null,
@@ -66,6 +70,7 @@ export async function handleApplyRequest(data: RequestApplyData) {
 			request: {
 				user,
 				duration: data.overrides?.duration,
+				unseenTokens: validTokens.filter((t) => unseenUuids.has(t.uuid)),
 			},
 		}
 

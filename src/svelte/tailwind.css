@@ -1,8 +1,28 @@
 @custom-variant dark (&:where(.theme-dark, .theme-dark *));
+@custom-variant light (&:where(.theme-light, .theme-light *));
 
 .fc-svelte {
 	@import "tailwindcss/theme.css" layer(tailwind);
 	@import "tailwindcss/utilities.css" layer(tailwind);
+
+	@theme {
+		--color-solid: light-dark(
+			var(--fc-color-bg-solid),
+			var(--fc-color-bg-solid-dark)
+		);
+		--color-bg: var(--fc-button-bg);
+		--color-border: var(--fc-button-border);
+		--color-active: var(--fc-button-active);
+		--color-highlight: light-dark(rgba(0, 0, 0, 0.2), rgba(255, 255, 255, 0.2));
+	}
+
+	--fc-color-bg: rgba(0, 0, 0, 0.1);
+	--fc-color-bg-solid: rgb(213, 212, 200);
+	--fc-color-bg-solid-dark: var(--color-cool-5);
+
+	--fc-button-bg: light-dark(rgba(0 0 0 / 10%), var(--color-cool-5-50));
+	--fc-button-border: light-dark(var(--color-dark-5), var(--color-light-5));
+	--fc-button-active: var(--color-warm-2);
 
 	.window-content {
 		padding: 0;

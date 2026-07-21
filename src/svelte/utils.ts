@@ -1,13 +1,15 @@
-import type { TokenPF2e } from "@7h3laughingman/pf2e-types"
+import type { TokenDocumentPF2e, TokenPF2e } from "@7h3laughingman/pf2e-types"
 
-export function imgPropsForToken(token: TokenPF2e) {
+export function imgPropsForToken(token: TokenPF2e | TokenDocumentPF2e) {
+	const document = "document" in token ? token.document : token
+
 	const scale = (() => {
 		const defaultRingThickness = 0.1269848
 		const defaultSubjectThickness = 0.6666666
-		const scaleCorrection = token.document.ring.enabled
+		const scaleCorrection = document.ring.enabled
 			? 1 / (defaultRingThickness + defaultSubjectThickness)
 			: 1
-		return Math.max(1, token.document.texture.scaleX ?? 1) * scaleCorrection
+		return Math.max(1, document.texture.scaleX ?? 1) * scaleCorrection
 	})()
 
 	let style = `transform:scale(${scale});`
@@ -19,7 +21,7 @@ export function imgPropsForToken(token: TokenPF2e) {
 	}
 
 	return {
-		src: token.document.texture.src,
+		src: document.texture.src,
 		style,
 	}
 }

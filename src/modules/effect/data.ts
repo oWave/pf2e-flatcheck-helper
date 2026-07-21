@@ -1,6 +1,8 @@
-import type { ActorPF2e, EffectSystemData, ItemPF2e } from "foundry-pf2e"
-import type { CompendiumIndexData } from "foundry-pf2e/foundry/client/documents/collections/compendium-collection.mjs"
+import type { CompendiumIndexData } from "@7h3laughingman/foundry-types/client/documents/collections/_module.mjs"
+import type { ActorPF2e, EffectSystemData, ItemPF2e } from "@7h3laughingman/pf2e-types"
 import { MODULE_ID } from "src/constants"
+import type Effect from "src/guide/content/effect.svelte"
+import { HTMLUtils } from "./html"
 
 /** Minimum types for fromUuidSync */
 export type EffectIndex = Pick<CompendiumIndexData, "_id" | "name" | "type" | "img"> & {
@@ -9,24 +11,20 @@ export type EffectIndex = Pick<CompendiumIndexData, "_id" | "name" | "type" | "i
 
 export type Duration = Pick<EffectSystemData["duration"], "value" | "unit">
 
-export interface BaseApplyConfig {
-	type: "selected" | "targets"
-	promptForDuration: boolean
-}
-
-export interface EmanationApplyConfig extends Omit<BaseApplyConfig, "type"> {
-	type: "emanation"
+export type EffectData = {
+	autoApply: {
+		type: "selected" | "targets" | "emanation" | null
+	}
 	emanation: {
 		affects: {
 			allies: boolean
-			excludeSelf: boolean
+			includeSelf: boolean
 			enemies: boolean
 		}
-		range: number
+		radius: number
 	}
+	promptForDuration?: boolean
 }
-
-export type EffectData = BaseApplyConfig | EmanationApplyConfig
 
 export interface ApplyDialogData {
 	config: EffectData
@@ -35,24 +33,25 @@ export interface ApplyDialogData {
 	item: ItemPF2e<ActorPF2e>
 }
 
-function defaultDataForItem(item: ItemPF2e): EffectData {
+export function defaultDataForItem(item: ItemPF2e): EffectData {
+	let radius = 5
+
 	if (item.isOfType("spell") && item.system.area?.type === "emanation" && item.system.area.value) {
-		return {
-			type: "emanation",
-			emanation: {
-				affects: {
-					allies: false,
-					excludeSelf: false,
-					enemies: false,
-				},
-				range: item.system.area.value,
-			},
-			promptForDuration: false,
-		}
+		radius = item.system.area.value
 	}
 
 	return {
-		type: "selected",
+		autoApply: {
+			type: null,
+		},
+		emanation: {
+			affects: {
+				allies: false,
+				includeSelf: false,
+				enemies: false,
+			},
+			radius,
+		},
 		promptForDuration: false,
 	}
 }
@@ -91,4 +90,14 @@ export function dataFromElement(containerElement: HTMLElement): ApplyDialogData 
 	}
 
 	return null
+}
+
+export async function saveConfigToItem(parent: ItemPF2e, effect: EffectIndex, data: EffectData) {
+	await parent.setFlag(MODULE_ID, `effects.${effect._id}`, data)
+	HTMLUtils.refreshButtons(effect)
+}
+
+export async function clearConfigOnItem(parent: ItemPF2e, effect: EffectIndex) {
+	await parent.setFlag(MODULE_ID, `effects.${effect._id}`, null)
+	HTMLUtils.removeButtons(effect)
 }

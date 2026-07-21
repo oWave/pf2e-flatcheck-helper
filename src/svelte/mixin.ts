@@ -3,38 +3,34 @@ import type {
 	ApplicationRenderContext,
 	ApplicationRenderOptions,
 } from "@7h3laughingman/foundry-types/client/applications/_types.mjs"
-import type ApplicationV2 from "@7h3laughingman/foundry-types/client/applications/api/application.mjs"
 import * as svelte from "svelte"
 
-export function SvelteMixin<TBase extends AbstractConstructorOf<ApplicationV2>>(
-	BaseApplication: TBase,
-) {
-	abstract class SvelteApp extends BaseApplication {
-		abstract component: svelte.Component<any>
+export abstract class SvelteApp<
+	TComponent extends svelte.Component<any> = svelte.Component<any>,
+> extends foundry.applications.api.ApplicationV2 {
+	abstract component: TComponent
 
-		static DEFAULT_OPTIONS: DeepPartial<ApplicationConfiguration> = {
-			classes: ["fc-svelte"],
-		}
+	static DEFAULT_OPTIONS: DeepPartial<ApplicationConfiguration> = {
+		classes: ["fc-svelte"],
+	}
 
-		async _renderHTML(context: ApplicationRenderContext, options: ApplicationRenderOptions) {
-			return { props: await this.getProps() }
-		}
-		_replaceHTML(
-			result: Awaited<ReturnType<typeof this._renderHTML>>,
-			content: HTMLElement,
-			options: ApplicationRenderOptions,
-		): void {
-			if (options.isFirstRender) {
-				svelte.mount(this.component, { target: content, props: { ...result.props, shell: this } })
-			}
-		}
-
-		async getProps(): Promise<svelte.ComponentProps<typeof this.component> | undefined> {
-			return undefined
+	async _renderHTML(context: ApplicationRenderContext, options: ApplicationRenderOptions) {
+		return { props: await this.getProps() }
+	}
+	_replaceHTML(
+		result: Awaited<ReturnType<typeof this._renderHTML>>,
+		content: HTMLElement,
+		options: ApplicationRenderOptions,
+	): void {
+		if (options.isFirstRender) {
+			svelte.mount(this.component, { target: content, props: { ...result.props, shell: this } })
 		}
 	}
 
-	return SvelteApp
+	abstract getProps(): Promise<Omit<svelte.ComponentProps<TComponent>, "shell">>
 }
 
-export const SvelteApp = SvelteMixin(foundry.applications.api.ApplicationV2)
+export type SvelteAppProps<T extends svelte.Component<any>> = Omit<
+	svelte.ComponentProps<T>,
+	"shell"
+>

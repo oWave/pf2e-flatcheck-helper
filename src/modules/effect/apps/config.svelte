@@ -1,69 +1,76 @@
 <form {onsubmit} class="p-2 flex flex-col gap-1">
 	<div class="flex items-center">
-		<img src={props.effect.img} class="h-8 pr-1">
-		<p class="grow">{props.effect.name}</p>
+		<img src={p.effect.img} class="h-8 pr-1">
+		<p class="grow">{p.effect.name}</p>
 		<button type="button" use:tooltip={{ text: "Reset effect config", align: "center" }} onclick={reset}>
 			<i class="fa-solid fa-trash"></i>
 		</button>
 	</div>
 
 	<fieldset>
-		<legend>Apply To</legend>
-		<div class="grid auto-cols-fr grid-flow-col ui-control split-button">
+		<legend use:tooltip={{ text: "The apply dialog will start with the tokens matching the selection below already listed" }}>Auto-Apply To <i class="fa-solid fa-circle-info"></i></legend>
+		<div class="grid auto-cols-fr grid-flow-col fc-split-buttons">
 			{#snippet button(type, icon, disabled = false, text = "")}
 				<button
 					type="button"
-				  class={[{"active": data.type == type}, "flex-1 px-2 flex-col h-fit"]}
-					onclick={() => { data.type = type }}
+				  class={[{"active": data.autoApply.type == type}, "flex-1 px-2 flex-col h-fit"]}
+					onclick={() => { data.autoApply.type = type }}
 					disabled={disabled}
 					use:tooltip={{text, align: "center"}}
 				>
 					<i class="fa-solid {icon} text-base"></i>
-					{type}
+					{type ?? "manual"}
 				</button>
 			{/snippet}
 
+			{@render button(null, "fa-xmark")}
 			{@render button("emanation", "fa-circle-dot")}
 			{@render button("selected", "fa-expand")}
 			{@render button("targets", "fa-bullseye")}
 		</div>
 	</fieldset>
-	{#if data.type === "emanation"}
-		<fieldset transition:slide={{ duration: 200 }}>
-			<legend>Emanation Affects</legend>
-			<div class="grid auto-cols-fr grid-flow-col gap-2">
-				<div class="flex flex-col">
-					<label>
-						<input type="checkbox" bind:checked={data.emanation.affects.allies}>
-						Allies
-					</label>
-					<label>
-						<input type="checkbox" bind:checked={data.emanation.affects.excludeSelf} disabled={!data.emanation.affects.allies}>
-						Exclude Self
-					</label>
+
+	<fieldset transition:slide={{ duration: 200 }}>
+		<legend>Emanation Affects</legend>
+		<div class="grid auto-cols-fr grid-flow-col gap-2">
+			<div class="flex flex-col">
+				<label>
+					<input type="checkbox" bind:checked={data.emanation.affects.allies}>
+					Allies
+				</label>
+				<label>
+					<input type="checkbox" bind:checked={data.emanation.affects.includeSelf} disabled={!data.emanation.affects.allies}>
+					Include Self
+				</label>
+			</div>
+
+			<label class="self-start">
+				<input type="checkbox" bind:checked={data.emanation.affects.enemies}>
+				Enemies
+			</label>
+		</div>
+		<div class="flex items-center">
+				Range
+
+				<div class="max-w-25 px-1">
+					<NumberInput min={5} step={5} bind:value={data.emanation.radius}></NumberInput>
 				</div>
 
-				<label class="self-start">
-					<input type="checkbox" bind:checked={data.emanation.affects.enemies}>
-					Enemies
-				</label>
-			</div>
-			<div class="flex flex-col items-center">
-				<label>
-					Range
-					<input type="number" min="5" step="5" required bind:value={data.emanation.range} class="max-w-[2.5rem] ml-2 mr-1">
-					ft
-				</label>
-			</div>
-		</fieldset>
-	{/if}
+				ft
+		</div>
+	</fieldset>
+
 
 	<fieldset>
 		<legend>Options</legend>
 		<div class="grid auto-cols-fr grid-flow-col gap-2">
 			<label>
-				<input type="checkbox" bind:checked={data.promptForDuration} disabled={props.effect.type === "condition"}>
-				Prompt for Duration
+				<input type="checkbox" bind:checked={data.promptForDuration}>
+				{#if p.effect.type === "condition"}
+					Apply condition with duration
+				{:else}
+					Allow changing effect duration
+				{/if}
 			</label>
 		</div>
 	</fieldset>
@@ -74,34 +81,43 @@
 </form>
 
 <script lang="ts">
-import { type ConditionPF2e, type EffectPF2e, type ItemPF2e, type SpellPF2e } from "foundry-pf2e"
-import { MODULE_ID } from "src/constants"
+import { type ItemPF2e } from "@7h3laughingman/pf2e-types"
 import { tooltip } from "src/guide/content/component/tooltip.svelte"
+import NumberInput from "src/svelte/components/number-input.svelte"
+import { untrack } from "svelte"
 import { slide } from "svelte/transition"
-import { dataFromItem, type EffectIndex } from "../data"
-import { HTMLUtils } from "../html"
+import {
+	clearConfigOnItem,
+	dataFromItem,
+	defaultDataForItem,
+	type EffectData,
+	type EffectIndex,
+	saveConfigToItem,
+} from "../data"
 
 interface Props {
 	parent: ItemPF2e
 	effect: EffectIndex
 	shell: foundry.applications.api.ApplicationV2
+	callback: (result: EffectData | "closed") => void
 }
-const props: Props = $props()
+const _reactiveProps: Props = $props()
+const p: Props = untrack(() => _reactiveProps)
 
-let data = $state(dataFromItem(props.parent, props.effect))
+let data = $state(dataFromItem(p.parent, p.effect))
 
 async function onsubmit(event: SubmitEvent) {
 	event.preventDefault()
-	await props.parent.setFlag(MODULE_ID, `effects.${props.effect._id}`, data)
-	HTMLUtils.refreshButtons(props.effect)
-	props.shell.close()
+	await saveConfigToItem(p.parent, p.effect, data)
+	p.callback(data)
+	p.shell.close()
 }
 
 async function reset(event: Event) {
 	event.preventDefault()
-	await props.parent.setFlag(MODULE_ID, `effects.${props.effect._id}-=`, null)
-	HTMLUtils.removeButtons(props.effect)
-	props.shell.close()
+	await clearConfigOnItem(p.parent, p.effect)
+	p.callback(defaultDataForItem(p.parent))
+	p.shell.close()
 }
 </script>
 
@@ -109,29 +125,5 @@ async function reset(event: Event) {
 	label {
 		display: flex;
 		align-items: center;
-	}
-
-	.split-button {
-		button:first-child {
-			border-top-right-radius: 0;
-			border-bottom-right-radius: 0;
-		}
-
-		button:last-child {
-			border-top-left-radius: 0;
-			border-bottom-left-radius: 0;
-		}
-
-		button:not(:first-child):not(:last-child) {
-			border-left-width: 0;
-			border-right-width: 0;
-			border-radius: 0;
-		}
-
-		button.active {
-			outline: none;
-			box-shadow: none;
-			background-color: color-mix(in srgb, var(--button-hover-background-color) 100%, transparent 20%);
-		}
 	}
 </style>

@@ -1,9 +1,14 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.1.2/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.4.15/schema.json",
 	"javascript": {
 		"formatter": {
 			"semicolons": "asNeeded",
 			"lineWidth": 100
+		}
+	},
+	"css": {
+		"parser": {
+			"tailwindDirectives": true
 		}
 	},
 	"linter": {

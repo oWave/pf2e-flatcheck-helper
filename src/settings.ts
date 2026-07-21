@@ -181,20 +181,6 @@ export const settings = {
 			type: String,
 		})
 
-		register("flat-check-target-marker-display", {
-			name: "pf2e-fc.settings.flat-check-target-marker-display.name",
-			hint: "pf2e-fc.settings.flat-check-target-marker-display.hint",
-			scope: "user",
-			config: true,
-			default: "all",
-			choices: {
-				all: "pf2e-fc.settings.flat-check-target-marker-display.choices.all",
-				outlineOnly: "pf2e-fc.settings.flat-check-target-marker-display.choices.outlineOnly",
-				textOnly: "pf2e-fc.settings.flat-check-target-marker-display.choices.textOnly",
-			},
-			type: String,
-		})
-
 		register("light-level-vis", {
 			name: "pf2e-fc.settings.light-level-vis.name",
 			hint: "pf2e-fc.settings.light-level-vis.hint",
