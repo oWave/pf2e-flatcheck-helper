@@ -1,4 +1,5 @@
-span.fc-effect-button {
+.fc-effect-button {
+	display: inline-block;
 	a.content-link {
 		&:first-child:not(:last-child) {
 			border-top-right-radius: 0;

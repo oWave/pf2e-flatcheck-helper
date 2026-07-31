@@ -1,4 +1,9 @@
-import type { ActorPF2e, CombatantPF2e, TokenDocumentPF2e } from "@7h3laughingman/pf2e-types"
+import type {
+	ActorPF2e,
+	CombatantPF2e,
+	TokenDocumentPF2e,
+	TokenPF2e,
+} from "@7h3laughingman/pf2e-types"
 
 export function isJQuery(obj: unknown): obj is JQuery {
 	return obj instanceof jQuery
@@ -19,6 +24,22 @@ export function combatantIsNext(c: CombatantPF2e) {
 
 export function canEditDocuments(documents: Pick<TokenDocumentPF2e, "canUserModify">[]) {
 	return game.user.isGM || documents.every((t) => t.canUserModify(game.user, "update"))
+}
+
+export function displayName(c: CombatantPF2e): string
+export function displayName(t: TokenPF2e): string
+export function displayName(t: TokenDocumentPF2e): string
+export function displayName(input: CombatantPF2e | TokenPF2e | TokenDocumentPF2e): string {
+	const name = input.name
+	const playersCanSeeName =
+		input instanceof Combatant
+			? input.playersCanSeeName
+			: input instanceof TokenDocument
+				? input.playersCanSeeName
+				: input.document.playersCanSeeName
+
+	if (!game.user.isGM && game.pf2e.settings.tokens.nameVisibility && !playersCanSeeName) return "?"
+	return name
 }
 
 export function sleep(ms: number) {

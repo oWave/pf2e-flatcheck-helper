@@ -1,5 +1,7 @@
 import "./index.ts"
 import "./main.css"
+import "./modules/effect/effect.css";
+import "./modules/flat/message.css";
 import "./svelte/tailwind.css"
 
 if (!import.meta.env.DEV) {

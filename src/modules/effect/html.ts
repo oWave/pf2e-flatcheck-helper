@@ -3,7 +3,8 @@ import MODULE from "src"
 import { MODULE_ID } from "src/constants"
 import { parseHTML } from "src/utils"
 import { collectTokens } from "./apply"
-import { dataFromElement, type EffectData, type EffectIndex } from "./data"
+import { ApplyContext } from "./context.svelte"
+import { dataFromElement, type EffectButtonConfig, type EffectIndex } from "./data"
 
 async function onClick(event: PointerEvent) {
 	if (!(event.target instanceof HTMLElement)) return
@@ -40,16 +41,17 @@ async function onClick(event: PointerEvent) {
 		return ui.notifications.error("Effect doesn't exist?")
 	}
 
-	const tokens = collectTokens(data.config, token) ?? []
+	const context = ApplyContext.forChatButton({
+		item: data.item,
+		effect,
+		config: data.config,
+		badge: data.value,
+		origin: token,
+		tokens: collectTokens(data.config, token) ?? [],
+	})
 
 	const { ApplyEffectApp } = await import("./apps/index")
-	new ApplyEffectApp({
-		config: data.config,
-		effect,
-		value: data.value,
-		item: data.item,
-		tokens: tokens,
-	}).render(true)
+	new ApplyEffectApp(context).render(true)
 }
 
 export const HTMLUtils = {
@@ -80,7 +82,7 @@ export const HTMLUtils = {
 
 	renderButton(parentItem: ItemPF2e, effectItem: EffectIndex, linkElement: HTMLAnchorElement) {
 		const data = parentItem.getFlag(MODULE_ID, `effects.${effectItem._id}`) as
-			| EffectData
+			| EffectButtonConfig
 			| undefined
 		if (!data) return
 		const icon = data.autoApply.type && this.icons[data.autoApply.type]

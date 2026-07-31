@@ -8,6 +8,7 @@
 	"scripts": {
 		"dev": "vite serve",
 		"build": "vite build",
+		"gen-lang": "node build/gen-lang.mjs",
 		"unpack": "node build/extract.mjs",
 		"pack": "node build/pack.mjs",
 		"changelog": "changelog --create --release"
@@ -32,6 +33,7 @@
 		"@types/jquery": "^3.5.32",
 		"@types/node": "^24.1.0",
 		"sonda": "^0.9.0",
-		"svelte-check": "^4.4.8"
+		"svelte-check": "^4.4.8",
+		"yaml": "^2.9.0"
 	}
 }

@@ -3,7 +3,7 @@
 		<img src={p.effect.img} class="h-8 pr-1">
 		<p class="grow">{p.effect.name}</p>
 		<button type="button" use:tooltip={{ text: "Reset effect config", align: "center" }} onclick={reset}>
-			<i class="fa-solid fa-trash"></i>
+			<i class="fa-solid fa-rotate-left"></i>
 		</button>
 	</div>
 
@@ -90,7 +90,7 @@ import {
 	clearConfigOnItem,
 	dataFromItem,
 	defaultDataForItem,
-	type EffectData,
+	type EffectButtonConfig,
 	type EffectIndex,
 	saveConfigToItem,
 } from "../data"
@@ -99,7 +99,7 @@ interface Props {
 	parent: ItemPF2e
 	effect: EffectIndex
 	shell: foundry.applications.api.ApplicationV2
-	callback: (result: EffectData | "closed") => void
+	callback: (result: EffectButtonConfig | "closed") => void
 }
 const _reactiveProps: Props = $props()
 const p: Props = untrack(() => _reactiveProps)

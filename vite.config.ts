@@ -89,10 +89,10 @@ export default defineConfig(({ command: _buildOrServe }) => ({
 		{
 			name: "tailwind-vars",
 			transform(code, id) {
-				if (id.includes("css")) {
-					code = code.replace(/:root, :host \{(.*?)\}/gms, "$1")
-					code = code.replace(/.fc-svelte :root,.fc-svelte :host/gms, ".fc-svelte")
-				}
+				if (!id.includes("css")) return null
+
+				code = code.replace(/:root, :host \{(.*?)\}/gms, "$1")
+				code = code.replace(/.fc-svelte :root,.fc-svelte :host/gms, ".fc-svelte")
 
 				return {
 					code,

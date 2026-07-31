@@ -3,7 +3,7 @@ import type { ItemPF2e } from "@7h3laughingman/pf2e-types"
 import { MODULE_ID } from "src/constants"
 import { SvelteApp, type SvelteAppProps } from "src/svelte/mixin"
 import type { ComponentProps } from "svelte"
-import type { EffectData } from "../data"
+import type { ApplyContext } from "../context.svelte"
 import Apply from "./apply.svelte"
 import Config from "./config.svelte"
 import Emanation from "./emanation.svelte"
@@ -47,20 +47,20 @@ export class EffectConfigApp extends SvelteApp {
 export class ApplyEffectApp extends SvelteApp {
 	component = Apply
 
-	constructor(private inputs: SvelteAppProps<typeof Apply>) {
+	constructor(private context: ApplyContext) {
 		super({
-			id: `${MODULE_ID}.effect.apply.${inputs.item.uuid}-${inputs.effect._id}`,
-			window: { title: inputs.request?.user ? "Apply Request" : "Apply Effect" },
+			id: `${MODULE_ID}.effect.apply.${context.item.uuid}-${context.effect._id}`,
+			window: { title: context.requester ? "Apply Request" : "Apply Effect" },
 		})
 	}
 
 	async getProps() {
-		return this.inputs
+		return { context: this.context }
 	}
 
-	static async wait(inputs: SvelteAppProps<typeof Apply>) {
+	static async wait(context: ApplyContext) {
 		return new Promise((resolve) => {
-			const app = new ApplyEffectApp(inputs)
+			const app = new ApplyEffectApp(context)
 			app.addEventListener("close", resolve)
 			app.render(true)
 		})

@@ -1,7 +1,6 @@
 import type { CompendiumIndexData } from "@7h3laughingman/foundry-types/client/documents/collections/_module.mjs"
 import type { ActorPF2e, EffectSystemData, ItemPF2e } from "@7h3laughingman/pf2e-types"
 import { MODULE_ID } from "src/constants"
-import type Effect from "src/guide/content/effect.svelte"
 import { HTMLUtils } from "./html"
 
 /** Minimum types for fromUuidSync */
@@ -11,7 +10,7 @@ export type EffectIndex = Pick<CompendiumIndexData, "_id" | "name" | "type" | "i
 
 export type Duration = Pick<EffectSystemData["duration"], "value" | "unit">
 
-export type EffectData = {
+export type EffectButtonConfig = {
 	autoApply: {
 		type: "selected" | "targets" | "emanation" | null
 	}
@@ -26,20 +25,14 @@ export type EffectData = {
 	promptForDuration?: boolean
 }
 
-export interface ApplyDialogData {
-	config: EffectData
+export interface ChatButtonData {
+	config: EffectButtonConfig
 	effectIndex: EffectIndex
 	value: number | null
 	item: ItemPF2e<ActorPF2e>
 }
 
-export function defaultDataForItem(item: ItemPF2e): EffectData {
-	let radius = 5
-
-	if (item.isOfType("spell") && item.system.area?.type === "emanation" && item.system.area.value) {
-		radius = item.system.area.value
-	}
-
+export function defaultConfig(): EffectButtonConfig {
 	return {
 		autoApply: {
 			type: null,
@@ -50,18 +43,28 @@ export function defaultDataForItem(item: ItemPF2e): EffectData {
 				includeSelf: false,
 				enemies: false,
 			},
-			radius,
+			radius: 5,
 		},
 		promptForDuration: false,
 	}
 }
 
+export function defaultDataForItem(item: ItemPF2e): EffectButtonConfig {
+	const config = defaultConfig()
+
+	if (item.isOfType("spell") && item.system.area?.type === "emanation" && item.system.area.value) {
+		config.emanation.radius = item.system.area.value
+	}
+
+	return config
+}
+
 export function dataFromItem(parent: ItemPF2e, effect: Pick<EffectIndex, "_id">) {
-	const data = parent.getFlag(MODULE_ID, `effects.${effect._id}`) as EffectData
+	const data = parent.getFlag(MODULE_ID, `effects.${effect._id}`) as EffectButtonConfig
 	return data ?? defaultDataForItem(parent)
 }
 
-export function dataFromElement(containerElement: HTMLElement): ApplyDialogData | null {
+export function dataFromElement(containerElement: HTMLElement): ChatButtonData | null {
 	const effectUuid =
 		containerElement?.firstElementChild instanceof HTMLAnchorElement &&
 		containerElement.firstElementChild.dataset.uuid
@@ -92,7 +95,11 @@ export function dataFromElement(containerElement: HTMLElement): ApplyDialogData 
 	return null
 }
 
-export async function saveConfigToItem(parent: ItemPF2e, effect: EffectIndex, data: EffectData) {
+export async function saveConfigToItem(
+	parent: ItemPF2e,
+	effect: EffectIndex,
+	data: EffectButtonConfig,
+) {
 	await parent.setFlag(MODULE_ID, `effects.${effect._id}`, data)
 	HTMLUtils.refreshButtons(effect)
 }

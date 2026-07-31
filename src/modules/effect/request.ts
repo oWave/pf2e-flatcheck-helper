@@ -1,81 +1,29 @@
-import type {
-	ActorPF2e,
-	ConditionPF2e,
-	EffectPF2e,
-	ItemPF2e,
-	TokenDocumentPF2e,
-} from "@7h3laughingman/pf2e-types"
 import MODULE from "src"
 import { QUERIES } from "src/constants"
-import type { SvelteAppProps } from "src/svelte/mixin"
-import { apply } from "./apply"
-import type Apply from "./apps/apply.svelte"
-import { type Duration, dataFromItem } from "./data"
+import { ApplyContext, type ApplyContextSource } from "./context.svelte"
 
-export interface RequestApplyData {
-	user: string
-	item: string
-	effect: string
-	tokens: string[]
-	/** Subset of `tokens` the requesting user could not see. */
-	unseenTokens?: string[]
-	badge?: number
-	overrides?: {
-		duration: Duration
-	}
-}
-
-export function sendApplyRequest(data: RequestApplyData) {
+export function sendApplyRequest(data: ApplyContextSource) {
 	return game.users.activeGM?.query(QUERIES.effect.request, data) as Promise<string | true>
 }
 
-export async function handleApplyRequest(data: RequestApplyData) {
-	const [item, effect, tokens] = await Promise.all([
-		fromUuid<ItemPF2e>(data.item),
-		fromUuid<EffectPF2e | ConditionPF2e>(data.effect),
-		Promise.all(data.tokens.map((id) => fromUuid<TokenDocumentPF2e>(id))),
-	])
+export async function handleApplyRequest(data: ApplyContextSource) {
+	let context: ApplyContext
+	try {
+		context = await ApplyContext.fromJSON(data)
+	} catch (error) {
+		return error instanceof Error ? error.message : String(error)
+	}
 
-	const hasParent = (item: ItemPF2e): item is ItemPF2e<ActorPF2e> => item.parent instanceof Actor
-
-	if (item == null) return "Error: parent item is null"
-	if (!hasParent(item)) return "Error: parent item has no actor"
-	if (effect == null) return "Error: effect is null"
-	const id = effect._id
-	if (id == null) return "Error: effect has no id"
-	const validTokens = tokens.filter((t) => t != null)
-	if (!validTokens.length) return "Error: no tokens"
-	const user = game.users.get(data.user)
-	if (!user) return "Error: invalid origin user id"
-
+	const requester = context.requester!
 	if (
 		MODULE.settings.quickApplyUserRequest === "auto-accept-always" ||
 		(MODULE.settings.quickApplyUserRequest === "auto-accept-trusted" &&
-			user.role >= CONST.USER_ROLES.TRUSTED)
+			requester.role >= CONST.USER_ROLES.TRUSTED)
 	) {
-		await apply({
-			tokens: validTokens,
-			parent: item,
-			effect: effect,
-			duration: data.overrides?.duration,
-		})
+		await context.apply()
 	} else {
-		const unseenUuids = new Set(data.unseenTokens ?? [])
-		const inputs: SvelteAppProps<typeof Apply> = {
-			config: dataFromItem(item, { _id: id }),
-			effect,
-			value: data.badge ?? null,
-			item,
-			tokens: validTokens,
-			request: {
-				user,
-				duration: data.overrides?.duration,
-				unseenTokens: validTokens.filter((t) => unseenUuids.has(t.uuid)),
-			},
-		}
-
 		const { ApplyEffectApp } = await import("./apps/index")
-		await ApplyEffectApp.wait(inputs)
+		await ApplyEffectApp.wait(context)
 	}
 
 	return true
